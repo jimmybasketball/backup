@@ -106,12 +106,13 @@ public class DemoApiImpl implements DemoApi {
             @ParamNotBlank Long id,
             @ParamNotBlank DemoEntity entity) {
         CommonRet<Void> ret = new CommonRet<Void>();
-        //开始事务
-        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);//这里是定义事务传播行为
-        TransactionStatus transactionStatus = transactionManager.getTransaction(def);//这里是初始化事务状态
-        boolean isCommit = true;
+
         if (distributedLock.fetch(UPDATEKEY)) {
+            //开始事务
+            DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);//这里是定义事务传播行为
+            TransactionStatus transactionStatus = transactionManager.getTransaction(def);//这里是初始化事务状态
+            boolean isCommit = true;
             try {
                 //具体业务逻辑
                 DemoDO demoDO = new DemoDO();
