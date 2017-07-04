@@ -3,14 +3,18 @@ package com.sfebiz.supplychain.entity;
 import com.sfebiz.supplychain.enums.SupplyChainReturnCode;
 import com.sfebiz.supplychain.util.JSONUtil;
 
+import java.io.Serializable;
+
 /**
  * 通用响应结果
  *
  * @author liujc
  * @create 2017-06-29 16:09
  **/
-public class CommonRet<T> {
+public class CommonRet<T> implements Serializable{
 
+
+    private static final long serialVersionUID = -7554908803357258034L;
     private T result;
 
     private Integer retCode = SupplyChainReturnCode.SUCCESS.code;
