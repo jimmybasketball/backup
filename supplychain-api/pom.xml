@@ -29,10 +29,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.sfebiz.supplychain</groupId>
-            <artifactId>supplychain-util</artifactId>
-        </dependency>
+
 
         <dependency>
             <groupId>net.sf.oval</groupId>

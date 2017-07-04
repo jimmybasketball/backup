@@ -24,20 +24,20 @@ public class DemoTest extends BaseServiceTest{
         demoEntity.name = "哈哈哈哈";
 
         CommonRet<Long> addRet = demoApi.addEntity(demoEntity);
-        System.out.println(addRet.toJsonString());
+        System.out.println(addRet.toString());
 
     }
 
     @Test
     public void testValidDemoApi() {
         CommonRet<Void> commonRet = demoApi.validTest(null,"haha", null);
-        System.out.println(commonRet.toJsonString());
+        System.out.println(commonRet.toString());
 
         DemoEntity demoEntity2 = new DemoEntity();
         demoEntity2.name = "测试";
         demoEntity2.gmtCreate = new Date();
         CommonRet<Void> commonRet2 = demoApi.validTest(123L,"yeye", demoEntity2);
-        System.out.println(commonRet2.toJsonString());
+        System.out.println(commonRet2.toString());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class DemoTest extends BaseServiceTest{
 
         Long id = 4L;
         CommonRet<Void> ret = demoApi.updateEntity(id, demoEntity);
-        System.out.println(ret.toJsonString());
+        System.out.println(ret.toString());
     }
 
 }

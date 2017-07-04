@@ -1,7 +1,6 @@
 package com.sfebiz.supplychain.entity;
 
 import com.sfebiz.supplychain.enums.SupplyChainReturnCode;
-import com.sfebiz.supplychain.util.JSONUtil;
 
 import java.io.Serializable;
 
@@ -58,9 +57,5 @@ public class CommonRet<T> implements Serializable{
         retCode = SupplyChainReturnCode.SUCCESS.code;
         result = null;
         retMsg = null;
-    }
-
-    public String toJsonString() {
-        return JSONUtil.toJson(this);
     }
 }

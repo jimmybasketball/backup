@@ -77,7 +77,7 @@ public class DemoApiImpl implements DemoApi {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.INFO)
                     .setMsg("[demo测试-新增] 成功")
-                    .addParm("ret", ret.toJsonString())
+                    .addParm("ret", ret.toString())
                     .log();
         } catch (Exception e) {
             LogBetter.instance(logger)
@@ -126,7 +126,7 @@ public class DemoApiImpl implements DemoApi {
                         .setLevel(LogLevel.INFO)
                         .setMsg("[demo测试-修改] 结束")
                         .addParm("DemoEntity", entity)
-                        .addParm("ret", ret.toJsonString())
+                        .addParm("ret", ret.toString())
                         .log();
             } catch (Exception e) {
                 LogBetter.instance(logger)
