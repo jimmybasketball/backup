@@ -72,7 +72,7 @@ public class DemoApiImpl implements DemoApi {
             Long id = demoDO.getId();
             ret.setResult(id);
 
-            int i = 1 / 0;//模拟异常点
+//            int i = 1 / 0;//模拟异常点
 
             LogBetter.instance(logger)
                     .setLevel(LogLevel.INFO)
