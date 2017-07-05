@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.persistence.base.domain;
+package com.sfebiz.supplychain.persistence.base.demo.domain;
 
 import com.sfebiz.common.dao.domain.BaseDO;
 

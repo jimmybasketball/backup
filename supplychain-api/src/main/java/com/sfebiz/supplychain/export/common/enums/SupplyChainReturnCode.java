@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.enums;
+package com.sfebiz.supplychain.export.common.enums;
 
 /**
  * 响应码

@@ -1,10 +1,10 @@
-package com.sfebiz.supplychain.persistence.base.manager;
+package com.sfebiz.supplychain.persistence.base.demo.manager;
 
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
-import com.sfebiz.supplychain.persistence.base.dao.DemoDao;
-import com.sfebiz.supplychain.persistence.base.domain.DemoDO;
+import com.sfebiz.supplychain.persistence.base.demo.dao.DemoDao;
+import com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

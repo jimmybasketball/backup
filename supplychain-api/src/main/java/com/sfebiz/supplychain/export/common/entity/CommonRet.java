@@ -1,6 +1,6 @@
-package com.sfebiz.supplychain.entity;
+package com.sfebiz.supplychain.export.common.entity;
 
-import com.sfebiz.supplychain.enums.SupplyChainReturnCode;
+import com.sfebiz.supplychain.export.common.enums.SupplyChainReturnCode;
 
 import java.io.Serializable;
 

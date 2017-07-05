@@ -1,8 +1,8 @@
-package com.sfebiz.supplychain.api;
+package com.sfebiz.supplychain.export.demo.api;
 
-import com.sfebiz.supplychain.entity.CommonRet;
-import com.sfebiz.supplychain.entity.DemoEntity;
-import com.sfebiz.supplychain.entity.Void;
+import com.sfebiz.supplychain.export.common.entity.CommonRet;
+import com.sfebiz.supplychain.export.demo.entity.DemoEntity;
+import com.sfebiz.supplychain.export.common.entity.Void;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.entity;
+package com.sfebiz.supplychain.export.common.entity;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.api;
+package com.sfebiz.supplychain.export;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

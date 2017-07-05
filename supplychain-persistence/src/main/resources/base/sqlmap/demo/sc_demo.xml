@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.sfebiz.supplychain.persistence.base.dao.DemoDao">
+<mapper namespace="com.sfebiz.supplychain.persistence.base.demo.dao.DemoDao">
 
-<resultMap id="demoDOResult" type="com.sfebiz.supplychain.persistence.base.domain.DemoDO">
+<resultMap id="demoDOResult" type="com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO">
     <result column="name" property="name"/>
     <result column="id" property="id"/>
     <result column="gmt_create" property="gmtCreate"/>
@@ -130,7 +130,7 @@
 </sql>
 
 
-<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.domain.DemoDO">
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO">
     insert into sc_demo
     (
         <include refid="demoDO_sqlForInsert"/>
@@ -143,7 +143,7 @@
     )
 </insert>
 
-<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.domain.DemoDO">
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO">
     update sc_demo
     <include refid="demoDO_setterForUpdate" />
     where id = #{id}
@@ -151,7 +151,7 @@
 </update>
 
 
-<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.domain.DemoDO">
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO">
     update sc_demo
     <set>
         gmt_modified = now(),
@@ -163,7 +163,7 @@
 </update>
 
 
-<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.domain.DemoDO">
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO">
     insert into sc_demo
     (
         <include refid="demoDO_sqlForInsert"/>
@@ -218,14 +218,14 @@
 </sql>
 
 
-<select id="query" resultMap="demoDOResult" parameterType="com.sfebiz.supplychain.persistence.base.domain.DemoDO">
+<select id="query" resultMap="demoDOResult" parameterType="com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO">
     <include refid="demoDO_selector"/>
     <include refid="demoDO_query_segment"/>
     <include refid="demoDO_groupBy"/>
     <include refid="demoDO_orderby"/>
 </select>
 
-<select id="query4Page" resultMap="demoDOResult" parameterType="com.sfebiz.supplychain.persistence.base.domain.DemoDO">
+<select id="query4Page" resultMap="demoDOResult" parameterType="com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO">
     <include refid="demoDO_selector"/>
     <include refid="demoDO_query_segment"/>
     <include refid="demoDO_groupBy"/>
