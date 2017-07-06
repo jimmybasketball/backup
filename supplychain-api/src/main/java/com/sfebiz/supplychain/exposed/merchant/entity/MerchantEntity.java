@@ -33,14 +33,14 @@ public class MerchantEntity implements Serializable {
     /**
      * 商户账户名称
      */
-    @NotNull(message = "商户账户名不能为空")
+    @NotNull(message = "商户账户ID不能为空")
     @MatchPattern(pattern = {"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$"},
-            message = "商户账户名由6-16位数字和字符串组成")
-    public String accountName;
+            message = "商户账户ID由6-16位数字和字符串组成")
+    public String merchantId;
 
 
     /**
-     * 账户状态，启用/禁用
+     * 商户状态
      */
     public String state;
 
@@ -136,13 +136,6 @@ public class MerchantEntity implements Serializable {
         this.name = name;
     }
 
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
 
     public String getState() {
         return state;
@@ -248,16 +241,34 @@ public class MerchantEntity implements Serializable {
         this.landlineTelephone = landlineTelephone;
     }
 
+    public String getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(String merchantId) {
+        this.merchantId = merchantId;
+    }
+
+
     @Override
     public String toString() {
-        return "MerchantEntity{" + "id=" + id + ", name='" + name + '\'' + ", accountName='"
-                + accountName + '\'' + ", state='" + state + '\'' + ", gmtCreate=" + gmtCreate
-                + ", createBy='" + createBy + '\'' + ", gmtModified=" + gmtModified
-                + ", modifiedBy='" + modifiedBy + '\'' + ", enterpriseName='" + enterpriseName
-                + '\'' + ", enterpriseAddress='" + enterpriseAddress + '\''
-                + ", businessLicenseNo='" + businessLicenseNo + '\'' + ", legalRepresentative='"
-                + legalRepresentative + '\'' + ", linkman='" + linkman + '\'' + ", linkmanEmail='"
-                + linkmanEmail + '\'' + ", cellPhoneNumber='" + cellPhoneNumber + '\''
-                + ", landlineTelephone='" + landlineTelephone + '\'' + '}';
+        return "MerchantEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", merchantId='" + merchantId + '\'' +
+                ", state='" + state + '\'' +
+                ", gmtCreate=" + gmtCreate +
+                ", createBy='" + createBy + '\'' +
+                ", gmtModified=" + gmtModified +
+                ", modifiedBy='" + modifiedBy + '\'' +
+                ", enterpriseName='" + enterpriseName + '\'' +
+                ", enterpriseAddress='" + enterpriseAddress + '\'' +
+                ", businessLicenseNo='" + businessLicenseNo + '\'' +
+                ", legalRepresentative='" + legalRepresentative + '\'' +
+                ", linkman='" + linkman + '\'' +
+                ", linkmanEmail='" + linkmanEmail + '\'' +
+                ", cellPhoneNumber='" + cellPhoneNumber + '\'' +
+                ", landlineTelephone='" + landlineTelephone + '\'' +
+                '}';
     }
 }

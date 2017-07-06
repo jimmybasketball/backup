@@ -23,12 +23,20 @@ public interface MerchantService{
     /**
      * 修改商户信息
      * @param operator          操作人
-     * @param merchantId        商户id
+     * @param id                id
      * @param merchantEntity    商户实体
      * @return                  void
      */
-    public CommonRet<Void> updateMerchantEntity(String operator, Long merchantId, MerchantEntity merchantEntity);
+    public CommonRet<Void> updateMerchantEntity(String operator, Long id, MerchantEntity merchantEntity);
 
 
+    /**
+     * 改变商户状态
+     * @param operator          操作人
+     * @param id                ID
+     * @param state             状态
+     * @return
+     */
+    public CommonRet<Void> changMerchantState(String operator, Long id, String state);
 
 }

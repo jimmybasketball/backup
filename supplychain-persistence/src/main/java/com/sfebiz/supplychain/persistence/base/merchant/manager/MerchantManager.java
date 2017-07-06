@@ -4,9 +4,9 @@ import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
 import com.sfebiz.supplychain.persistence.base.merchant.dao.MerchantDao;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -40,15 +40,42 @@ public class MerchantManager extends BaseManager<MerchantDO> {
 
 
     /**
-     * 判断商户是否已存在
-     * @param merchantEntity    merchantEntity
-     * @return                  true 存在，false 不存在
+     * 判断商户账户ID是否已存在
+     * @param id            主键ID
+     * @param merchantId    商户账户ID
+     * @return
      */
-    public boolean checkMerchantIsExist(MerchantEntity merchantEntity){
+    public boolean checkMerchantIdIsExist(Long id, String merchantId){
+        if (StringUtils.isBlank(merchantId)) {
+            return false;
+        }
         MerchantDO queryDO = new MerchantDO();
-        queryDO.setAccountName(merchantEntity.accountName);
+        queryDO.setMerchantId(merchantId);
+        BaseQuery<MerchantDO> query = new BaseQuery<MerchantDO>(queryDO);
+        if (id != null && id != 0L) {
+            query.addNotEquals("id", id);
+        }
+        long count = merchantDao.count(query);
+        return count > 0;
+    }
 
-        long count = merchantDao.count(new BaseQuery<MerchantDO>(queryDO));
+    /**
+     * 判断商户联系人邮箱是否已存在
+     * @param id
+     * @param email
+     * @return
+     */
+    public boolean checkMerchantLinkmanEmailIsExist(Long id, String email) {
+        if (StringUtils.isBlank(email)) {
+            return false;
+        }
+        MerchantDO queryDO = new MerchantDO();
+        queryDO.setLinkmanEmail(email);
+        BaseQuery<MerchantDO> query = new BaseQuery<MerchantDO>(queryDO);
+        if (id != null && id != 0L) {
+            query.addNotEquals("id", id);
+        }
+        long count = merchantDao.count(query);
         return count > 0;
     }
 

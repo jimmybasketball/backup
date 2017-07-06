@@ -44,6 +44,22 @@ public class CommonRet<T> implements Serializable{
         this.retMsg = retMsg;
     }
 
+    public CommonRet(String retMsg) {
+        this.retMsg = retMsg;
+    }
+
+    public CommonRet(Integer retCode, String retMsg) {
+        this.retCode = retCode;
+        this.retMsg = retMsg;
+    }
+
+    public CommonRet(Integer retCode) {
+        this.retCode = retCode;
+    }
+
+    public CommonRet() {
+    }
+
     @Override
     public String toString() {
         return "CommonRet{" +

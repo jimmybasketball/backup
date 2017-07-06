@@ -24,9 +24,9 @@ public class MerchantDO extends BaseDO {
     private String name;
 
     /**
-     * 商户账户名称
+     * 商户账户ID
      */
-    private String accountName;
+    private String merchantId;
 
 
     /**
@@ -112,14 +112,14 @@ public class MerchantDO extends BaseDO {
         this.name = name;
     }
 
-    public String getAccountName() {
-        return accountName;
+
+    public String getMerchantId() {
+        return merchantId;
     }
 
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
+    public void setMerchantId(String merchantId) {
+        this.merchantId = merchantId;
     }
-
 
     public String getState() {
         return state;
@@ -232,14 +232,23 @@ public class MerchantDO extends BaseDO {
 
     @Override
     public String toString() {
-        return "MerchantDO{" + "id=" + id + ", name='" + name + '\'' + ", accountName='"
-                + accountName + '\'' + ", state='" + state + '\'' + ", gmtCreate=" + gmtCreate
-                + ", createBy='" + createBy + '\'' + ", gmtModified=" + gmtModified
-                + ", modifiedBy='" + modifiedBy + '\'' + ", enterpriseName='" + enterpriseName
-                + '\'' + ", enterpriseAddress='" + enterpriseAddress + '\''
-                + ", businessLicenseNo='" + businessLicenseNo + '\'' + ", legalRepresentative='"
-                + legalRepresentative + '\'' + ", linkman='" + linkman + '\'' + ", linkmanEmail='"
-                + linkmanEmail + '\'' + ", cellPhoneNumber='" + cellPhoneNumber + '\''
-                + ", landlineTelephone='" + landlineTelephone + '\'' + '}';
+        return "MerchantDO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", merchantId='" + merchantId + '\'' +
+                ", state='" + state + '\'' +
+                ", gmtCreate=" + gmtCreate +
+                ", createBy='" + createBy + '\'' +
+                ", gmtModified=" + gmtModified +
+                ", modifiedBy='" + modifiedBy + '\'' +
+                ", enterpriseName='" + enterpriseName + '\'' +
+                ", enterpriseAddress='" + enterpriseAddress + '\'' +
+                ", businessLicenseNo='" + businessLicenseNo + '\'' +
+                ", legalRepresentative='" + legalRepresentative + '\'' +
+                ", linkman='" + linkman + '\'' +
+                ", linkmanEmail='" + linkmanEmail + '\'' +
+                ", cellPhoneNumber='" + cellPhoneNumber + '\'' +
+                ", landlineTelephone='" + landlineTelephone + '\'' +
+                '}';
     }
 }

@@ -6,7 +6,6 @@
     <result column="name" property="name"/>
     <result column="id" property="id"/>
     <result column="state" property="state"/>
-    <result column="account_name" property="accountName"/>
     <result column="gmt_create" property="gmtCreate"/>
     <result column="create_by" property="createBy"/>
     <result column="gmt_modified" property="gmtModified"/>
@@ -19,13 +18,13 @@
     <result column="linkman_email" property="linkmanEmail"/>
     <result column="cell_phone_number" property="cellPhoneNumber"/>
     <result column="landline_telephone" property="landlineTelephone"/>
+    <result column="merchant_id" property="merchantId"/>
 </resultMap>
 
 <sql id="merchantDO_columns">
     name,
     id,
     state,
-    account_name,
     gmt_create,
     create_by,
     gmt_modified,
@@ -37,14 +36,14 @@
     linkman,
     linkman_email,
     cell_phone_number,
-    landline_telephone
+    landline_telephone,
+    merchant_id
 </sql>
 
 <sql id="merchantDO_sqlForInsert">
     name,
     id,
     state,
-    account_name,
     gmt_create,
     create_by,
     gmt_modified,
@@ -56,14 +55,14 @@
     linkman,
     linkman_email,
     cell_phone_number,
-    landline_telephone
+    landline_telephone,
+    merchant_id
 </sql>
 
 <sql id="merchantDO_columnsForInsert">
     #{name},
     #{id},
     #{state},
-    #{accountName},
     now(),
     #{createBy},
     now(),
@@ -75,7 +74,8 @@
     #{linkman},
     #{linkmanEmail},
     #{cellPhoneNumber},
-    #{landlineTelephone}
+    #{landlineTelephone},
+    #{merchantId}
 </sql>
 
 <sql id="merchantDO_setterForUpdate">
@@ -86,9 +86,6 @@
         </if>
         <if test="state != null">
             state = #{state},
-        </if>
-        <if test="accountName != null">
-            account_name = #{accountName},
         </if>
         <if test="createBy != null">
             create_by = #{createBy},
@@ -120,6 +117,9 @@
         <if test="landlineTelephone != null">
             landline_telephone = #{landlineTelephone},
         </if>
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
+        </if>
     </set>
 </sql>
 
@@ -139,9 +139,6 @@
         </if>
         <if test="data.state != null">
             AND state = #{data.state}
-        </if>
-        <if test="data.accountName != null">
-            AND account_name = #{data.accountName}
         </if>
         <if test="data.gmtCreate != null">
             AND gmt_create = #{data.gmtCreate}
@@ -179,6 +176,9 @@
         <if test="data.landlineTelephone != null">
             AND landline_telephone = #{data.landlineTelephone}
         </if>
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
         <if test="ins != null and ins != ''">
             AND
             <foreach collection="ins" item="item" open="(" separator="and" close=")">
@@ -206,7 +206,7 @@
         <if test="notEquals != null and notEquals != ''">
             AND
             <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
-                ${item.column} = #{item.value}
+                ${item.column} != #{item.value}
             </foreach>
         </if>
         <if test="lts != null and lts != ''">
@@ -281,9 +281,6 @@
         <if test="update.state != null">
             state = #{update.state},
         </if>
-        <if test="update.accountName != null">
-            account_name = #{update.accountName},
-        </if>
         <if test="update.createBy != null">
             create_by = #{update.createBy},
         </if>
@@ -314,6 +311,9 @@
         <if test="update.landlineTelephone != null">
             landline_telephone = #{update.landlineTelephone},
         </if>
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
+        </if>
     </set>
     <include refid="merchantDO_query_segment"/>
 </update>
@@ -338,9 +338,6 @@
     </if>
     <if test="state != null">
         ,state = #{state}
-    </if>
-    <if test="accountName != null">
-        ,account_name = #{accountName}
     </if>
     <if test="createBy != null">
         ,create_by = #{createBy}
@@ -371,6 +368,9 @@
     </if>
     <if test="landlineTelephone != null">
         ,landline_telephone = #{landlineTelephone}
+    </if>
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
     </if>
 </insert>
 
