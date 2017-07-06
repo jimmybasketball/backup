@@ -56,15 +56,15 @@ public class MerchantServiceImpl implements MerchantService {
             @ParamNotBlank("操作人不能为空") String operator,
             @ParamNotBlank("商户不能为空") MerchantEntity merchantEntity) {
         CommonRet<Long> commonRet = new CommonRet<Long>();
-        String key = INSERT_KEY + merchantEntity.merchantId;
+        String key = INSERT_KEY + merchantEntity.merchantAccountId;
         // 并发控制
         if (distributedLock.fetch(key)) {
             try {
                 // 判断账号ID是否已存在
-                if (merchantManager.checkMerchantIdIsExist(null, merchantEntity.merchantId)) {
+                if (merchantManager.checkMerchantAccountIdIsExist(null, merchantEntity.merchantAccountId)) {
                     LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
                             .setMsg("[物流平台商户-创建] 商户账户ID已存在")
-                            .addParm("商户账户ID", merchantEntity.merchantId)
+                            .addParm("商户账户ID", merchantEntity.merchantAccountId)
                             .addParm("商户", merchantEntity).log();
                     commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
                     commonRet.setRetMsg("商户账户ID已存在");
@@ -133,10 +133,10 @@ public class MerchantServiceImpl implements MerchantService {
             try {
                 // 判断账号ID是否已存在
                 merchantEntity.setId(id);
-                if (merchantManager.checkMerchantIdIsExist(id, merchantEntity.merchantId)) {
+                if (merchantManager.checkMerchantAccountIdIsExist(id, merchantEntity.merchantAccountId)) {
                     LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
                             .setMsg("[物流平台商户-基本信息修改] 商户ID已存在")
-                            .addParm("商户账户ID", merchantEntity.merchantId)
+                            .addParm("商户账户ID", merchantEntity.merchantAccountId)
                             .addParm("商户", merchantEntity)
                             .log();
                     commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);

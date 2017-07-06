@@ -6,6 +6,7 @@
     <result column="name" property="name"/>
     <result column="id" property="id"/>
     <result column="state" property="state"/>
+    <result column="merchant_account_id" property="merchantAccountId"/>
     <result column="gmt_create" property="gmtCreate"/>
     <result column="create_by" property="createBy"/>
     <result column="gmt_modified" property="gmtModified"/>
@@ -18,13 +19,13 @@
     <result column="linkman_email" property="linkmanEmail"/>
     <result column="cell_phone_number" property="cellPhoneNumber"/>
     <result column="landline_telephone" property="landlineTelephone"/>
-    <result column="merchant_id" property="merchantId"/>
 </resultMap>
 
 <sql id="merchantDO_columns">
     name,
     id,
     state,
+    merchant_account_id,
     gmt_create,
     create_by,
     gmt_modified,
@@ -36,14 +37,14 @@
     linkman,
     linkman_email,
     cell_phone_number,
-    landline_telephone,
-    merchant_id
+    landline_telephone
 </sql>
 
 <sql id="merchantDO_sqlForInsert">
     name,
     id,
     state,
+    merchant_account_id,
     gmt_create,
     create_by,
     gmt_modified,
@@ -55,14 +56,14 @@
     linkman,
     linkman_email,
     cell_phone_number,
-    landline_telephone,
-    merchant_id
+    landline_telephone
 </sql>
 
 <sql id="merchantDO_columnsForInsert">
     #{name},
     #{id},
     #{state},
+    #{merchantAccountId},
     now(),
     #{createBy},
     now(),
@@ -74,8 +75,7 @@
     #{linkman},
     #{linkmanEmail},
     #{cellPhoneNumber},
-    #{landlineTelephone},
-    #{merchantId}
+    #{landlineTelephone}
 </sql>
 
 <sql id="merchantDO_setterForUpdate">
@@ -86,6 +86,9 @@
         </if>
         <if test="state != null">
             state = #{state},
+        </if>
+        <if test="merchantAccountId != null">
+            merchant_account_id = #{merchantAccountId},
         </if>
         <if test="createBy != null">
             create_by = #{createBy},
@@ -117,9 +120,6 @@
         <if test="landlineTelephone != null">
             landline_telephone = #{landlineTelephone},
         </if>
-        <if test="merchantId != null">
-            merchant_id = #{merchantId},
-        </if>
     </set>
 </sql>
 
@@ -139,6 +139,9 @@
         </if>
         <if test="data.state != null">
             AND state = #{data.state}
+        </if>
+        <if test="data.merchantAccountId != null">
+            AND merchant_account_id = #{data.merchantAccountId}
         </if>
         <if test="data.gmtCreate != null">
             AND gmt_create = #{data.gmtCreate}
@@ -175,9 +178,6 @@
         </if>
         <if test="data.landlineTelephone != null">
             AND landline_telephone = #{data.landlineTelephone}
-        </if>
-        <if test="data.merchantId != null">
-            AND merchant_id = #{data.merchantId}
         </if>
         <if test="ins != null and ins != ''">
             AND
@@ -281,6 +281,9 @@
         <if test="update.state != null">
             state = #{update.state},
         </if>
+        <if test="update.merchantAccountId != null">
+            merchant_account_id = #{update.merchantAccountId},
+        </if>
         <if test="update.createBy != null">
             create_by = #{update.createBy},
         </if>
@@ -311,9 +314,6 @@
         <if test="update.landlineTelephone != null">
             landline_telephone = #{update.landlineTelephone},
         </if>
-        <if test="update.merchantId != null">
-            merchant_id = #{update.merchantId},
-        </if>
     </set>
     <include refid="merchantDO_query_segment"/>
 </update>
@@ -338,6 +338,9 @@
     </if>
     <if test="state != null">
         ,state = #{state}
+    </if>
+    <if test="merchantAccountId != null">
+        ,merchant_account_id = #{merchantAccountId}
     </if>
     <if test="createBy != null">
         ,create_by = #{createBy}
@@ -368,9 +371,6 @@
     </if>
     <if test="landlineTelephone != null">
         ,landline_telephone = #{landlineTelephone}
-    </if>
-    <if test="merchantId != null">
-        ,merchant_id = #{merchantId}
     </if>
 </insert>
 

@@ -42,15 +42,15 @@ public class MerchantManager extends BaseManager<MerchantDO> {
     /**
      * 判断商户账户ID是否已存在
      * @param id            主键ID
-     * @param merchantId    商户账户ID
+     * @param merchantAccountId    商户账户ID
      * @return
      */
-    public boolean checkMerchantIdIsExist(Long id, String merchantId){
-        if (StringUtils.isBlank(merchantId)) {
+    public boolean checkMerchantAccountIdIsExist(Long id, String merchantAccountId){
+        if (StringUtils.isBlank(merchantAccountId)) {
             return false;
         }
         MerchantDO queryDO = new MerchantDO();
-        queryDO.setMerchantId(merchantId);
+        queryDO.setMerchantAccountId(merchantAccountId);
         BaseQuery<MerchantDO> query = new BaseQuery<MerchantDO>(queryDO);
         if (id != null && id != 0L) {
             query.addNotEquals("id", id);

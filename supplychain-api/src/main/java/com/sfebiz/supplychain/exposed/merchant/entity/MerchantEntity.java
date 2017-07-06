@@ -36,7 +36,7 @@ public class MerchantEntity implements Serializable {
     @NotNull(message = "商户账户ID不能为空")
     @MatchPattern(pattern = {"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$"},
             message = "商户账户ID由6-16位数字和字符串组成")
-    public String merchantId;
+    public String merchantAccountId;
 
 
     /**
@@ -241,21 +241,20 @@ public class MerchantEntity implements Serializable {
         this.landlineTelephone = landlineTelephone;
     }
 
-    public String getMerchantId() {
-        return merchantId;
+    public String getMerchantAccountId() {
+        return merchantAccountId;
     }
 
-    public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId;
+    public void setMerchantAccountId(String merchantAccountId) {
+        this.merchantAccountId = merchantAccountId;
     }
-
 
     @Override
     public String toString() {
         return "MerchantEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", merchantId='" + merchantId + '\'' +
+                ", merchantAccountId='" + merchantAccountId + '\'' +
                 ", state='" + state + '\'' +
                 ", gmtCreate=" + gmtCreate +
                 ", createBy='" + createBy + '\'' +

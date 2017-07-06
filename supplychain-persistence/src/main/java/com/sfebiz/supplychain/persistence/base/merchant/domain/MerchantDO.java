@@ -26,7 +26,7 @@ public class MerchantDO extends BaseDO {
     /**
      * 商户账户ID
      */
-    private String merchantId;
+    private String merchantAccountId;
 
 
     /**
@@ -112,13 +112,12 @@ public class MerchantDO extends BaseDO {
         this.name = name;
     }
 
-
-    public String getMerchantId() {
-        return merchantId;
+    public String getMerchantAccountId() {
+        return merchantAccountId;
     }
 
-    public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId;
+    public void setMerchantAccountId(String merchantAccountId) {
+        this.merchantAccountId = merchantAccountId;
     }
 
     public String getState() {
@@ -235,7 +234,7 @@ public class MerchantDO extends BaseDO {
         return "MerchantDO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", merchantId='" + merchantId + '\'' +
+                ", merchantAccountId='" + merchantAccountId + '\'' +
                 ", state='" + state + '\'' +
                 ", gmtCreate=" + gmtCreate +
                 ", createBy='" + createBy + '\'' +
