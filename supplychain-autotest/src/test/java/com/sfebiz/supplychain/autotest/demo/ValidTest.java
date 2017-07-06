@@ -1,7 +1,7 @@
 package com.sfebiz.supplychain.autotest.demo;
 
-import com.sfebiz.supplychain.export.demo.entity.DemoDetailEntity;
-import com.sfebiz.supplychain.export.demo.entity.DemoEntity;
+import com.sfebiz.supplychain.exposed.demo.entity.DemoDetailEntity;
+import com.sfebiz.supplychain.exposed.demo.entity.DemoEntity;
 import net.sf.oval.ConstraintViolation;
 import net.sf.oval.Validator;
 import org.junit.Test;

@@ -1,6 +1,6 @@
-package com.sfebiz.supplychain.export.merchant.entity;
+package com.sfebiz.supplychain.exposed.merchant.entity;
 
-import com.sfebiz.supplychain.export.common.enums.RegularExpressionConstant;
+import com.sfebiz.supplychain.exposed.common.enums.RegularExpressionConstant;
 import net.sf.oval.constraint.Email;
 import net.sf.oval.constraint.Length;
 import net.sf.oval.constraint.MatchPattern;
@@ -27,7 +27,7 @@ public class MerchantEntity implements Serializable {
      * 商户名称
      */
     @NotNull(message = "商户名称不能为空")
-    @Length(max = 64, min = 4, message = "商户名称长度为4-64位")
+    @Length(max = 64, min = 2, message = "商户名称长度为2-64位")
     public String name;
 
     /**
@@ -68,14 +68,14 @@ public class MerchantEntity implements Serializable {
      * 企业名称
      */
     @NotNull(message = "企业名称不能为空")
-    @Length(max = 128, min = 4, message = "企业名称长度为4-128位")
+    @Length(max = 128, min = 2, message = "企业名称长度为2-128位")
     public String enterpriseName;
 
     /**
      * 企业地址
      */
     @NotNull(message = "企业地址不能为空")
-    @Length(max = 256, min = 4, message = "企业地址长度为4-256位")
+    @Length(max = 256, min = 2, message = "企业地址长度为2-256位")
     public String enterpriseAddress;
 
     /**
@@ -109,14 +109,14 @@ public class MerchantEntity implements Serializable {
      * 手机号
      */
     @NotNull(message = "手机号不能为空")
-    @MatchPattern(pattern = {RegularExpressionConstant.PHONE_PATTERN}, message = "手机号不合法")
+    @MatchPattern(pattern = {RegularExpressionConstant.SIMPLE_PHONE_CHECK}, message = "手机号不合法")
     public String cellPhoneNumber;
 
     /**
      * 固定电话
      */
     @NotNull(message = "固定电话不能为空")
-    @MatchPattern(pattern = {RegularExpressionConstant.PHONE_TEL_PATTERN}, message = "固定电话不合法")
+    @MatchPattern(pattern = {RegularExpressionConstant.PHONE_CALL_PATTERN}, message = "固定电话不合法")
     public String landlineTelephone;
 
 

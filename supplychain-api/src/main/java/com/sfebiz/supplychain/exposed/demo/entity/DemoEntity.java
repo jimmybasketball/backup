@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.export.demo.entity;
+package com.sfebiz.supplychain.exposed.demo.entity;
 
 import net.sf.oval.constraint.NotNull;
 

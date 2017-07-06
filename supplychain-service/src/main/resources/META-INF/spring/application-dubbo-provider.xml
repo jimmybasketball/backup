@@ -32,7 +32,7 @@
 
 	<!-- dubbo demo -->
 	<bean id="DemoApiProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
-		<property name="interface" value="com.sfebiz.supplychain.export.demo.api.DemoApi" />
+		<property name="interface" value="com.sfebiz.supplychain.exposed.demo.api.DemoApi" />
 		<property name="ref" ref="demoApi" />
 		<property name="application" ref="dubboApplicationConfig" />
 		<property name="registry" ref="dubboRegistryConfig" />

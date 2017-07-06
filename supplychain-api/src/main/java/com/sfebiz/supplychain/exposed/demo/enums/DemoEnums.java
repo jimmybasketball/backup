@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.export.demo.enums;
+package com.sfebiz.supplychain.exposed.demo.enums;
 
 /**
  * 测试用例

@@ -1,9 +1,9 @@
 package com.sfebiz.supplychain.autotest.demo;
 
 import com.sfebiz.supplychain.autotest.BaseServiceTest;
-import com.sfebiz.supplychain.export.common.entity.CommonRet;
-import com.sfebiz.supplychain.export.demo.entity.DemoEntity;
-import com.sfebiz.supplychain.export.common.entity.Void;
+import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
+import com.sfebiz.supplychain.exposed.demo.entity.DemoEntity;
+import com.sfebiz.supplychain.exposed.common.entity.Void;
 import org.junit.Test;
 
 import java.util.Date;

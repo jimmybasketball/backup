@@ -1,14 +1,15 @@
-package com.sfebiz.supplychain.export.common.enums;
+package com.sfebiz.supplychain.exposed.common.enums;
 
 /**
- *
  * 常用正则表达式常量
  *
  * @author liujc [liujunchi@ifunq.com]
  * @date 2017/7/5 10:04
  */
 public class RegularExpressionConstant {
-    /** 座机电话格式验证 **/
+    /**
+     * 座机电话格式验证
+     **/
     public static final String PHONE_CALL_PATTERN =
             "^(?:\\(\\d{3,4}\\)|\\d{3,4}-)?\\d{7,8}(?:-\\d{1,4})?$";
 
@@ -30,7 +31,6 @@ public class RegularExpressionConstant {
     /**
      * 中国移动号码格式验证 手机段：134,135,136,137,138,139,150,151,152,157,158,159,182,183,184
      * ,187,188,147,178,1705
-     *
      **/
     public static final String CHINA_MOBILE_PATTERN =
             "(?:^(?:\\+86)?1(?:3[4-9]|4[7]|5[0-27-9]|7[8]|8[2-478])\\d{8}$)|(?:^(?:\\+86)?1705\\d{7}$)";

@@ -3,8 +3,8 @@ package com.sfebiz.supplychain.aop.valid;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
 import com.sfebiz.supplychain.aop.valid.oval.OvalValidProcessor;
 import com.sfebiz.supplychain.aop.valid.processor.ParamNotBlankProcessor;
-import com.sfebiz.supplychain.export.common.entity.CommonRet;
-import com.sfebiz.supplychain.export.common.enums.SupplyChainReturnCode;
+import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
+import com.sfebiz.supplychain.exposed.common.enums.SupplyChainReturnCode;
 
 import java.lang.annotation.Annotation;
 import java.util.List;

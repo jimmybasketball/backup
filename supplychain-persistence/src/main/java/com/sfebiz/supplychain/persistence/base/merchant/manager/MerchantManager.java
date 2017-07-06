@@ -1,8 +1,10 @@
 package com.sfebiz.supplychain.persistence.base.merchant.manager;
 
 import com.sfebiz.common.dao.BaseDao;
+import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
+import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
 import com.sfebiz.supplychain.persistence.base.merchant.dao.MerchantDao;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO;
 import org.springframework.stereotype.Component;
@@ -34,6 +36,20 @@ public class MerchantManager extends BaseManager<MerchantDO> {
                 MerchantDao.class,
                 MerchantDO.class,
                 "sc_merchant");
+    }
+
+
+    /**
+     * 判断商户是否已存在
+     * @param merchantEntity    merchantEntity
+     * @return                  true 存在，false 不存在
+     */
+    public boolean checkMerchantIsExist(MerchantEntity merchantEntity){
+        MerchantDO queryDO = new MerchantDO();
+        queryDO.setAccountName(merchantEntity.accountName);
+
+        long count = merchantDao.count(new BaseQuery<MerchantDO>(queryDO));
+        return count > 0;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.sfebiz.supplychain.autotest;
 
-import com.sfebiz.supplychain.export.demo.api.DemoApi;
+import com.sfebiz.supplychain.exposed.demo.api.DemoApi;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
