@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 物流平台商户实体
+ * 物流平台货主实体
  *
  * @author liujc [liujunchi@ifunq.com]
  * @date 2017/7/5 10:04
@@ -24,23 +24,23 @@ public class MerchantEntity implements Serializable {
     public Long id;
 
     /**
-     * 商户名称
+     * 货主名称
      */
-    @NotNull(message = "商户名称不能为空")
-    @Length(max = 64, min = 2, message = "商户名称长度为2-64位")
+    @NotNull(message = "货主名称不能为空")
+    @Length(max = 64, min = 2, message = "货主名称长度为2-64位")
     public String name;
 
     /**
-     * 商户账户名称
+     * 货主账户名称
      */
-    @NotNull(message = "商户账户ID不能为空")
+    @NotNull(message = "货主账户ID不能为空")
     @MatchPattern(pattern = {"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$"},
-            message = "商户账户ID由6-16位数字和字符串组成")
+            message = "货主账户ID由6-16位数字和字符串组成")
     public String merchantAccountId;
 
 
     /**
-     * 商户状态
+     * 货主状态
      */
     public String state;
 

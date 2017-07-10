@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * 物流平台商户Manager
+ * 物流平台货主Manager
  *
  * @author liujc
  * @create 2017-07-04 18:23
@@ -32,7 +32,7 @@ public class MerchantManager extends BaseManager<MerchantDO> {
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("/Users/liujunchi/git_projects/" +
                         "supplychain/supplychain-persistence/" +
-                        "src/main/resources/base/sqlmap/merchant/sc_merchant.xml",
+                        "src/main/resources/base/sqlmap/merchant/sc_merchant_sqlmap.xml",
                 MerchantDao.class,
                 MerchantDO.class,
                 "sc_merchant");
@@ -40,9 +40,9 @@ public class MerchantManager extends BaseManager<MerchantDO> {
 
 
     /**
-     * 判断商户账户ID是否已存在
+     * 判断货主账户ID是否已存在
      * @param id            主键ID
-     * @param merchantAccountId    商户账户ID
+     * @param merchantAccountId    货主账户ID
      * @return
      */
     public boolean checkMerchantAccountIdIsExist(Long id, String merchantAccountId){
@@ -60,7 +60,7 @@ public class MerchantManager extends BaseManager<MerchantDO> {
     }
 
     /**
-     * 判断商户联系人邮箱是否已存在
+     * 判断货主联系人邮箱是否已存在
      * @param id
      * @param email
      * @return

@@ -5,7 +5,7 @@ import com.sfebiz.common.dao.domain.BaseDO;
 import java.util.Date;
 
 /**
- * 物流平台商户DO
+ * 物流平台货主DO
  *
  * @author liujc
  * @create 2017-07-04 18:22
@@ -19,12 +19,12 @@ public class MerchantDO extends BaseDO {
     private Long id;
 
     /**
-     * 商户名称
+     * 货主名称
      */
     private String name;
 
     /**
-     * 商户账户ID
+     * 货主账户ID
      */
     private String merchantAccountId;
 
