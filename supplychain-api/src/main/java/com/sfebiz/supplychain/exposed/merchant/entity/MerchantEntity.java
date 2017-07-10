@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 物流平台商户实体
+ * 物流平台货主实体
  *
  * @author liujc [liujunchi@ifunq.com]
  * @date 2017/7/5 10:04
@@ -24,23 +24,23 @@ public class MerchantEntity implements Serializable {
     public Long id;
 
     /**
-     * 商户名称
+     * 货主名称
      */
-    @NotNull(message = "商户名称不能为空")
-    @Length(max = 64, min = 2, message = "商户名称长度为2-64位")
+    @NotNull(message = "货主名称不能为空")
+    @Length(max = 64, min = 2, message = "货主名称长度为2-64位")
     public String name;
 
     /**
-     * 商户账户名称
+     * 货主账户名称
      */
-    @NotNull(message = "商户账户名不能为空")
+    @NotNull(message = "货主账户ID不能为空")
     @MatchPattern(pattern = {"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$"},
-            message = "商户账户名由6-16位数字和字符串组成")
-    public String accountName;
+            message = "货主账户ID由6-16位数字和字符串组成")
+    public String merchantAccountId;
 
 
     /**
-     * 账户状态，启用/禁用
+     * 货主状态
      */
     public String state;
 
@@ -136,13 +136,6 @@ public class MerchantEntity implements Serializable {
         this.name = name;
     }
 
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
 
     public String getState() {
         return state;
@@ -248,16 +241,33 @@ public class MerchantEntity implements Serializable {
         this.landlineTelephone = landlineTelephone;
     }
 
+    public String getMerchantAccountId() {
+        return merchantAccountId;
+    }
+
+    public void setMerchantAccountId(String merchantAccountId) {
+        this.merchantAccountId = merchantAccountId;
+    }
+
     @Override
     public String toString() {
-        return "MerchantEntity{" + "id=" + id + ", name='" + name + '\'' + ", accountName='"
-                + accountName + '\'' + ", state='" + state + '\'' + ", gmtCreate=" + gmtCreate
-                + ", createBy='" + createBy + '\'' + ", gmtModified=" + gmtModified
-                + ", modifiedBy='" + modifiedBy + '\'' + ", enterpriseName='" + enterpriseName
-                + '\'' + ", enterpriseAddress='" + enterpriseAddress + '\''
-                + ", businessLicenseNo='" + businessLicenseNo + '\'' + ", legalRepresentative='"
-                + legalRepresentative + '\'' + ", linkman='" + linkman + '\'' + ", linkmanEmail='"
-                + linkmanEmail + '\'' + ", cellPhoneNumber='" + cellPhoneNumber + '\''
-                + ", landlineTelephone='" + landlineTelephone + '\'' + '}';
+        return "MerchantEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", merchantAccountId='" + merchantAccountId + '\'' +
+                ", state='" + state + '\'' +
+                ", gmtCreate=" + gmtCreate +
+                ", createBy='" + createBy + '\'' +
+                ", gmtModified=" + gmtModified +
+                ", modifiedBy='" + modifiedBy + '\'' +
+                ", enterpriseName='" + enterpriseName + '\'' +
+                ", enterpriseAddress='" + enterpriseAddress + '\'' +
+                ", businessLicenseNo='" + businessLicenseNo + '\'' +
+                ", legalRepresentative='" + legalRepresentative + '\'' +
+                ", linkman='" + linkman + '\'' +
+                ", linkmanEmail='" + linkmanEmail + '\'' +
+                ", cellPhoneNumber='" + cellPhoneNumber + '\'' +
+                ", landlineTelephone='" + landlineTelephone + '\'' +
+                '}';
     }
 }
