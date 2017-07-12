@@ -5,7 +5,7 @@ import com.sfebiz.common.dao.domain.BaseDO;
 import java.util.Date;
 
 /**
- * 物流平台商户DO
+ * 物流平台货主DO
  *
  * @author liujc
  * @create 2017-07-04 18:22
@@ -19,14 +19,14 @@ public class MerchantDO extends BaseDO {
     private Long id;
 
     /**
-     * 商户名称
+     * 货主名称
      */
     private String name;
 
     /**
-     * 商户账户名称
+     * 货主账户ID
      */
-    private String accountName;
+    private String merchantAccountId;
 
 
     /**
@@ -112,14 +112,13 @@ public class MerchantDO extends BaseDO {
         this.name = name;
     }
 
-    public String getAccountName() {
-        return accountName;
+    public String getMerchantAccountId() {
+        return merchantAccountId;
     }
 
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
+    public void setMerchantAccountId(String merchantAccountId) {
+        this.merchantAccountId = merchantAccountId;
     }
-
 
     public String getState() {
         return state;
@@ -232,14 +231,23 @@ public class MerchantDO extends BaseDO {
 
     @Override
     public String toString() {
-        return "MerchantDO{" + "id=" + id + ", name='" + name + '\'' + ", accountName='"
-                + accountName + '\'' + ", state='" + state + '\'' + ", gmtCreate=" + gmtCreate
-                + ", createBy='" + createBy + '\'' + ", gmtModified=" + gmtModified
-                + ", modifiedBy='" + modifiedBy + '\'' + ", enterpriseName='" + enterpriseName
-                + '\'' + ", enterpriseAddress='" + enterpriseAddress + '\''
-                + ", businessLicenseNo='" + businessLicenseNo + '\'' + ", legalRepresentative='"
-                + legalRepresentative + '\'' + ", linkman='" + linkman + '\'' + ", linkmanEmail='"
-                + linkmanEmail + '\'' + ", cellPhoneNumber='" + cellPhoneNumber + '\''
-                + ", landlineTelephone='" + landlineTelephone + '\'' + '}';
+        return "MerchantDO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", merchantAccountId='" + merchantAccountId + '\'' +
+                ", state='" + state + '\'' +
+                ", gmtCreate=" + gmtCreate +
+                ", createBy='" + createBy + '\'' +
+                ", gmtModified=" + gmtModified +
+                ", modifiedBy='" + modifiedBy + '\'' +
+                ", enterpriseName='" + enterpriseName + '\'' +
+                ", enterpriseAddress='" + enterpriseAddress + '\'' +
+                ", businessLicenseNo='" + businessLicenseNo + '\'' +
+                ", legalRepresentative='" + legalRepresentative + '\'' +
+                ", linkman='" + linkman + '\'' +
+                ", linkmanEmail='" + linkmanEmail + '\'' +
+                ", cellPhoneNumber='" + cellPhoneNumber + '\'' +
+                ", landlineTelephone='" + landlineTelephone + '\'' +
+                '}';
     }
 }

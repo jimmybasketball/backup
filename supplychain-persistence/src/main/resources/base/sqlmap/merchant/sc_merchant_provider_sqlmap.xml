@@ -1,84 +1,80 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.sfebiz.supplychain.persistence.base.merchant.dao.MerchantDao">
+<mapper namespace="com.sfebiz.supplychain.persistence.base.merchant.dao.MerchantProviderDao">
 
-<resultMap id="merchantDOResult" type="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO">
+<resultMap id="merchantProviderDOResult" type="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO">
     <result column="name" property="name"/>
     <result column="id" property="id"/>
     <result column="state" property="state"/>
-    <result column="account_name" property="accountName"/>
-    <result column="gmt_create" property="gmtCreate"/>
-    <result column="create_by" property="createBy"/>
-    <result column="gmt_modified" property="gmtModified"/>
-    <result column="modified_by" property="modifiedBy"/>
-    <result column="enterprise_name" property="enterpriseName"/>
-    <result column="enterprise_address" property="enterpriseAddress"/>
-    <result column="business_license_no" property="businessLicenseNo"/>
-    <result column="legal_representative" property="legalRepresentative"/>
+    <result column="merchant_id" property="merchantId"/>
+    <result column="full_name" property="fullName"/>
     <result column="linkman" property="linkman"/>
     <result column="linkman_email" property="linkmanEmail"/>
     <result column="cell_phone_number" property="cellPhoneNumber"/>
     <result column="landline_telephone" property="landlineTelephone"/>
+    <result column="return_address" property="returnAddress"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="create_by" property="createBy"/>
+    <result column="gmt_modified" property="gmtModified"/>
+    <result column="modified_by" property="modifiedBy"/>
+    <result column="nation_id" property="nationId"/>
 </resultMap>
 
-<sql id="merchantDO_columns">
+<sql id="merchantProviderDO_columns">
     name,
     id,
     state,
-    account_name,
+    merchant_id,
+    full_name,
+    linkman,
+    linkman_email,
+    cell_phone_number,
+    landline_telephone,
+    return_address,
     gmt_create,
     create_by,
     gmt_modified,
     modified_by,
-    enterprise_name,
-    enterprise_address,
-    business_license_no,
-    legal_representative,
-    linkman,
-    linkman_email,
-    cell_phone_number,
-    landline_telephone
+    nation_id
 </sql>
 
-<sql id="merchantDO_sqlForInsert">
+<sql id="merchantProviderDO_sqlForInsert">
     name,
     id,
     state,
-    account_name,
+    merchant_id,
+    full_name,
+    linkman,
+    linkman_email,
+    cell_phone_number,
+    landline_telephone,
+    return_address,
     gmt_create,
     create_by,
     gmt_modified,
     modified_by,
-    enterprise_name,
-    enterprise_address,
-    business_license_no,
-    legal_representative,
-    linkman,
-    linkman_email,
-    cell_phone_number,
-    landline_telephone
+    nation_id
 </sql>
 
-<sql id="merchantDO_columnsForInsert">
+<sql id="merchantProviderDO_columnsForInsert">
     #{name},
     #{id},
     #{state},
-    #{accountName},
+    #{merchantId},
+    #{fullName},
+    #{linkman},
+    #{linkmanEmail},
+    #{cellPhoneNumber},
+    #{landlineTelephone},
+    #{returnAddress},
     now(),
     #{createBy},
     now(),
     #{modifiedBy},
-    #{enterpriseName},
-    #{enterpriseAddress},
-    #{businessLicenseNo},
-    #{legalRepresentative},
-    #{linkman},
-    #{linkmanEmail},
-    #{cellPhoneNumber},
-    #{landlineTelephone}
+    #{nationId}
 </sql>
 
-<sql id="merchantDO_setterForUpdate">
+<sql id="merchantProviderDO_setterForUpdate">
     <set>
         gmt_modified = now(),
         <if test="name != null">
@@ -87,26 +83,11 @@
         <if test="state != null">
             state = #{state},
         </if>
-        <if test="accountName != null">
-            account_name = #{accountName},
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
         </if>
-        <if test="createBy != null">
-            create_by = #{createBy},
-        </if>
-        <if test="modifiedBy != null">
-            modified_by = #{modifiedBy},
-        </if>
-        <if test="enterpriseName != null">
-            enterprise_name = #{enterpriseName},
-        </if>
-        <if test="enterpriseAddress != null">
-            enterprise_address = #{enterpriseAddress},
-        </if>
-        <if test="businessLicenseNo != null">
-            business_license_no = #{businessLicenseNo},
-        </if>
-        <if test="legalRepresentative != null">
-            legal_representative = #{legalRepresentative},
+        <if test="fullName != null">
+            full_name = #{fullName},
         </if>
         <if test="linkman != null">
             linkman = #{linkman},
@@ -120,16 +101,28 @@
         <if test="landlineTelephone != null">
             landline_telephone = #{landlineTelephone},
         </if>
+        <if test="returnAddress != null">
+            return_address = #{returnAddress},
+        </if>
+        <if test="createBy != null">
+            create_by = #{createBy},
+        </if>
+        <if test="modifiedBy != null">
+            modified_by = #{modifiedBy},
+        </if>
+        <if test="nationId != null">
+            nation_id = #{nationId},
+        </if>
     </set>
 </sql>
 
-<sql id="merchantDO_selector">
+<sql id="merchantProviderDO_selector">
     select
-    <include refid="merchantDO_columns"/>
-    from sc_merchant
+    <include refid="merchantProviderDO_columns"/>
+    from sc_merchant_provider
 </sql>
 
-<sql id="merchantDO_query_segment">
+<sql id="merchantProviderDO_query_segment">
     <trim prefix="WHERE" prefixOverrides="AND|OR">
         <if test="data.name != null">
             AND name = #{data.name}
@@ -140,8 +133,26 @@
         <if test="data.state != null">
             AND state = #{data.state}
         </if>
-        <if test="data.accountName != null">
-            AND account_name = #{data.accountName}
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="data.fullName != null">
+            AND full_name = #{data.fullName}
+        </if>
+        <if test="data.linkman != null">
+            AND linkman = #{data.linkman}
+        </if>
+        <if test="data.linkmanEmail != null">
+            AND linkman_email = #{data.linkmanEmail}
+        </if>
+        <if test="data.cellPhoneNumber != null">
+            AND cell_phone_number = #{data.cellPhoneNumber}
+        </if>
+        <if test="data.landlineTelephone != null">
+            AND landline_telephone = #{data.landlineTelephone}
+        </if>
+        <if test="data.returnAddress != null">
+            AND return_address = #{data.returnAddress}
         </if>
         <if test="data.gmtCreate != null">
             AND gmt_create = #{data.gmtCreate}
@@ -155,29 +166,8 @@
         <if test="data.modifiedBy != null">
             AND modified_by = #{data.modifiedBy}
         </if>
-        <if test="data.enterpriseName != null">
-            AND enterprise_name = #{data.enterpriseName}
-        </if>
-        <if test="data.enterpriseAddress != null">
-            AND enterprise_address = #{data.enterpriseAddress}
-        </if>
-        <if test="data.businessLicenseNo != null">
-            AND business_license_no = #{data.businessLicenseNo}
-        </if>
-        <if test="data.legalRepresentative != null">
-            AND legal_representative = #{data.legalRepresentative}
-        </if>
-        <if test="data.linkman != null">
-            AND linkman = #{data.linkman}
-        </if>
-        <if test="data.linkmanEmail != null">
-            AND linkman_email = #{data.linkmanEmail}
-        </if>
-        <if test="data.cellPhoneNumber != null">
-            AND cell_phone_number = #{data.cellPhoneNumber}
-        </if>
-        <if test="data.landlineTelephone != null">
-            AND landline_telephone = #{data.landlineTelephone}
+        <if test="data.nationId != null">
+            AND nation_id = #{data.nationId}
         </if>
         <if test="ins != null and ins != ''">
             AND
@@ -250,29 +240,29 @@
 </sql>
 
 
-<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO">
-    insert into sc_merchant
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO">
+    insert into sc_merchant_provider
     (
-        <include refid="merchantDO_sqlForInsert"/>
+        <include refid="merchantProviderDO_sqlForInsert"/>
         ,is_delete
     )
     values
     (
-        <include refid="merchantDO_columnsForInsert"/>
+        <include refid="merchantProviderDO_columnsForInsert"/>
         ,0
     )
 </insert>
 
-<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO">
-    update sc_merchant
-    <include refid="merchantDO_setterForUpdate" />
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO">
+    update sc_merchant_provider
+    <include refid="merchantProviderDO_setterForUpdate" />
     where id = #{id}
     and is_delete = 0
 </update>
 
 
-<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO">
-    update sc_merchant
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO">
+    update sc_merchant_provider
     <set>
         gmt_modified = now(),
         <if test="update.name != null">
@@ -281,26 +271,11 @@
         <if test="update.state != null">
             state = #{update.state},
         </if>
-        <if test="update.accountName != null">
-            account_name = #{update.accountName},
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
         </if>
-        <if test="update.createBy != null">
-            create_by = #{update.createBy},
-        </if>
-        <if test="update.modifiedBy != null">
-            modified_by = #{update.modifiedBy},
-        </if>
-        <if test="update.enterpriseName != null">
-            enterprise_name = #{update.enterpriseName},
-        </if>
-        <if test="update.enterpriseAddress != null">
-            enterprise_address = #{update.enterpriseAddress},
-        </if>
-        <if test="update.businessLicenseNo != null">
-            business_license_no = #{update.businessLicenseNo},
-        </if>
-        <if test="update.legalRepresentative != null">
-            legal_representative = #{update.legalRepresentative},
+        <if test="update.fullName != null">
+            full_name = #{update.fullName},
         </if>
         <if test="update.linkman != null">
             linkman = #{update.linkman},
@@ -314,20 +289,32 @@
         <if test="update.landlineTelephone != null">
             landline_telephone = #{update.landlineTelephone},
         </if>
+        <if test="update.returnAddress != null">
+            return_address = #{update.returnAddress},
+        </if>
+        <if test="update.createBy != null">
+            create_by = #{update.createBy},
+        </if>
+        <if test="update.modifiedBy != null">
+            modified_by = #{update.modifiedBy},
+        </if>
+        <if test="update.nationId != null">
+            nation_id = #{update.nationId},
+        </if>
     </set>
-    <include refid="merchantDO_query_segment"/>
+    <include refid="merchantProviderDO_query_segment"/>
 </update>
 
 
-<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO">
-    insert into sc_merchant
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO">
+    insert into sc_merchant_provider
     (
-        <include refid="merchantDO_sqlForInsert"/>
+        <include refid="merchantProviderDO_sqlForInsert"/>
         ,is_delete
     )
     values
     (
-        <include refid="merchantDO_columnsForInsert"/>
+        <include refid="merchantProviderDO_columnsForInsert"/>
         ,0
     )
     on duplicate key update
@@ -339,26 +326,11 @@
     <if test="state != null">
         ,state = #{state}
     </if>
-    <if test="accountName != null">
-        ,account_name = #{accountName}
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
     </if>
-    <if test="createBy != null">
-        ,create_by = #{createBy}
-    </if>
-    <if test="modifiedBy != null">
-        ,modified_by = #{modifiedBy}
-    </if>
-    <if test="enterpriseName != null">
-        ,enterprise_name = #{enterpriseName}
-    </if>
-    <if test="enterpriseAddress != null">
-        ,enterprise_address = #{enterpriseAddress}
-    </if>
-    <if test="businessLicenseNo != null">
-        ,business_license_no = #{businessLicenseNo}
-    </if>
-    <if test="legalRepresentative != null">
-        ,legal_representative = #{legalRepresentative}
+    <if test="fullName != null">
+        ,full_name = #{fullName}
     </if>
     <if test="linkman != null">
         ,linkman = #{linkman}
@@ -372,16 +344,28 @@
     <if test="landlineTelephone != null">
         ,landline_telephone = #{landlineTelephone}
     </if>
+    <if test="returnAddress != null">
+        ,return_address = #{returnAddress}
+    </if>
+    <if test="createBy != null">
+        ,create_by = #{createBy}
+    </if>
+    <if test="modifiedBy != null">
+        ,modified_by = #{modifiedBy}
+    </if>
+    <if test="nationId != null">
+        ,nation_id = #{nationId}
+    </if>
 </insert>
 
 <!-- Delete -->
 <update id="delete">
-    update sc_merchant
+    update sc_merchant_provider
     set is_delete = 1, gmt_modified = now()
-    <include refid="merchantDO_query_segment"/>
+    <include refid="merchantProviderDO_query_segment"/>
 </update>
 <update id="deleteById">
-    update sc_merchant
+    update sc_merchant_provider
     set is_delete = 1, gmt_modified = now()
     where id = #{id}
 </update>
@@ -391,7 +375,7 @@
 
 
 <!-- query class -->
-<sql id="merchantDO_groupBy">
+<sql id="merchantProviderDO_groupBy">
     <if test="groupBys != null and groupBys != ''">
         group by
         <foreach collection="groupBys" item="item" open="" separator="," close="">
@@ -400,7 +384,7 @@
     </if>
 </sql>
 
-<sql id="merchantDO_orderby">
+<sql id="merchantProviderDO_orderby">
     <if test="orderBys != null and orderBys != ''">
         order by
         <foreach collection="orderBys" item="item" open="" separator="," close="">
@@ -410,35 +394,35 @@
 </sql>
 
 
-<select id="query" resultMap="merchantDOResult" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO">
-    <include refid="merchantDO_selector"/>
-    <include refid="merchantDO_query_segment"/>
-    <include refid="merchantDO_groupBy"/>
-    <include refid="merchantDO_orderby"/>
+<select id="query" resultMap="merchantProviderDOResult" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO">
+    <include refid="merchantProviderDO_selector"/>
+    <include refid="merchantProviderDO_query_segment"/>
+    <include refid="merchantProviderDO_groupBy"/>
+    <include refid="merchantProviderDO_orderby"/>
 </select>
 
-<select id="query4Page" resultMap="merchantDOResult" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO">
-    <include refid="merchantDO_selector"/>
-    <include refid="merchantDO_query_segment"/>
-    <include refid="merchantDO_groupBy"/>
-    <include refid="merchantDO_orderby"/>
+<select id="query4Page" resultMap="merchantProviderDOResult" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO">
+    <include refid="merchantProviderDO_selector"/>
+    <include refid="merchantProviderDO_query_segment"/>
+    <include refid="merchantProviderDO_groupBy"/>
+    <include refid="merchantProviderDO_orderby"/>
     limit ${startRowForMysql}, ${pageSize}
 </select>
 
 
 <select id="count" resultType="java.lang.Long">
-    SELECT COUNT(1) FROM sc_merchant
-    <include refid="merchantDO_query_segment"/>
+    SELECT COUNT(1) FROM sc_merchant_provider
+    <include refid="merchantProviderDO_query_segment"/>
 </select>
 
-<select id="getById" resultMap="merchantDOResult">
-    <include refid="merchantDO_selector"/>
+<select id="getById" resultMap="merchantProviderDOResult">
+    <include refid="merchantProviderDO_selector"/>
     where id = #{id}
     and is_delete = 0
 </select>
 
-<select id="getByIdForUpdate" resultMap="merchantDOResult">
-    <include refid="merchantDO_selector"/>
+<select id="getByIdForUpdate" resultMap="merchantProviderDOResult">
+    <include refid="merchantProviderDO_selector"/>
     where id = #{id}
     and is_delete = 0
     for update
