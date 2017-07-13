@@ -629,6 +629,7 @@ public class MerchantServiceImpl implements MerchantService {
      * @return
      */
     @Override
+    @MethodParamValidate
     public CommonRet<Void> deleteMerchantProviderLine(
             @ParamNotBlank String operator,
             @ParamNotBlank Long id) {
@@ -664,6 +665,7 @@ public class MerchantServiceImpl implements MerchantService {
      * @return
      */
     @Override
+    @MethodParamValidate
     public CommonRet<Void> changeMerchantProviderLineState(
             @ParamNotBlank String operator,
             @ParamNotBlank Long id,
