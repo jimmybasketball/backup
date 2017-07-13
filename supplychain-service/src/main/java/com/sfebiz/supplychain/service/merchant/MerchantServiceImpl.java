@@ -7,7 +7,7 @@ import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.merchant.api.MerchantService;
-import com.sfebiz.supplychain.exposed.merchant.code.MerchantReturnCode;
+import com.sfebiz.supplychain.exposed.common.code.MerchantReturnCode;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderLineEntity;

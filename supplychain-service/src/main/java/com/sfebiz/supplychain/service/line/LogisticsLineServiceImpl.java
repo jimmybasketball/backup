@@ -4,9 +4,9 @@ import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.aop.annotation.MethodParamValidate;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
+import com.sfebiz.supplychain.exposed.common.code.LogisticsLineReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
-import com.sfebiz.supplychain.exposed.common.enums.SupplyChainReturnCode;
 import com.sfebiz.supplychain.exposed.line.api.LogisticsLineService;
 import com.sfebiz.supplychain.exposed.line.entity.LogisticsLineEntity;
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineOperateStateType;
@@ -88,7 +88,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                     .setException(e)
                     .log();
             commonRet.reSet();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetCode(LogisticsLineReturnCode.LINE_UNKNOWN_ERROR.getCode());
             commonRet.setRetMsg(e.getMessage());
             return commonRet;
         }
@@ -142,7 +142,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                         .log();
 
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                commonRet.setRetCode(LogisticsLineReturnCode.LINE_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -153,7 +153,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                     setLevel(LogLevel.ERROR).
                     setMsg("[物流线路-修改] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetCode(LogisticsLineReturnCode.LINE_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }
@@ -174,7 +174,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
         CommonRet<Void> commonRet = new CommonRet<Void>();
         //校验状态是否有效
         if (!LogisticsLineStateType.containValue(state)) {
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetCode(LogisticsLineReturnCode.LINE_WRONG_STATE.getCode());
             commonRet.setRetMsg("状态值不合法");
             return commonRet;
         }
@@ -183,7 +183,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
             try {
                 LogisticsLineDO checkDO = logisticsLineManager.getById(id);
                 if (checkDO == null) {
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                    commonRet.setRetCode(LogisticsLineReturnCode.LINE_NOT_EXIST.getCode());
                     commonRet.setRetMsg("线路不存在");
                     return commonRet;
                 }
@@ -195,7 +195,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                             .addParm("物流线路当前状态", checkDO.getState())
                             .addParm("目的状态", state)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                    commonRet.setRetCode(LogisticsLineReturnCode.LINE_ALREADY_CHANGE_STATE.getCode());
                     commonRet.setRetMsg("物流线路状态已被" + LogisticsLineStateType.valueOf(state).name);
                     return commonRet;
                 }
@@ -220,7 +220,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                         .setException(e)
                         .log();
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                commonRet.setRetCode(LogisticsLineReturnCode.LINE_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -231,7 +231,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                     setLevel(LogLevel.ERROR).
                     setMsg("[物流线路-修改物流线路状态] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetCode(LogisticsLineReturnCode.LINE_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }
@@ -252,7 +252,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
         CommonRet<Void> commonRet = new CommonRet<Void>();
         //校验状态是否有效
         if (!LogisticsLineOperateStateType.containValue(operateState)) {
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetCode(LogisticsLineReturnCode.LINE_WRONG_OPERATE_STATE.getCode());
             commonRet.setRetMsg("状态值不合法");
             return commonRet;
         }
@@ -261,7 +261,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
             try {
                 LogisticsLineDO checkDO = logisticsLineManager.getById(id);
                 if (checkDO == null) {
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                    commonRet.setRetCode(LogisticsLineReturnCode.LINE_NOT_EXIST.getCode());
                     commonRet.setRetMsg("线路不存在");
                     return commonRet;
                 }
@@ -269,11 +269,11 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                 if (operateState.equals(checkDO.getOperateState())) {
                     LogBetter.instance(LOGGER)
                             .setLevel(LogLevel.ERROR)
-                            .setMsg("[物流线路-修改物流线路的运营状态] 物流线路状态和目的状态一致")
+                            .setMsg("[物流线路-修改物流线路的运营状态] 物流线路运营状态和目的状态一致")
                             .addParm("物流线路当前状态", checkDO.getState())
                             .addParm("目的状态", operateState)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                    commonRet.setRetCode(LogisticsLineReturnCode.LINE_ALREADY_CHANGE_OPERATE_STATE.getCode());
                     commonRet.setRetMsg("物流线路的运营状态已被" + LogisticsLineOperateStateType.valueOf(operateState).name);
                     return commonRet;
                 }
@@ -298,7 +298,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                         .setException(e)
                         .log();
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                commonRet.setRetCode(LogisticsLineReturnCode.LINE_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -309,7 +309,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                     setLevel(LogLevel.ERROR).
                     setMsg("[物流线路-修改物流线路的运营状态] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetCode(LogisticsLineReturnCode.LINE_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }

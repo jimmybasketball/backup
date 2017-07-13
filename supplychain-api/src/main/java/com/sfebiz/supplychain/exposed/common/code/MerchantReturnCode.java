@@ -1,6 +1,4 @@
-package com.sfebiz.supplychain.exposed.merchant.code;
-
-import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
+package com.sfebiz.supplychain.exposed.common.code;
 
 /**
  * 货主相关的响应码
