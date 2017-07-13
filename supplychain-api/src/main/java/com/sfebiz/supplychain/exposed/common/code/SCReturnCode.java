@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.exposed.common.entity.code;
+package com.sfebiz.supplychain.exposed.common.code;
 
 import net.pocrd.entity.AbstractReturnCode;
 
