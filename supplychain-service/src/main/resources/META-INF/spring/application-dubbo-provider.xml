@@ -41,6 +41,19 @@
 		<property name="timeout" value="${dubbo.export.timeout}" />
 	</bean>
 
+
+	<!-- 仓库相关接口 start -->
+	<bean id="warehouseManageServiceExport" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.exposed.warehouse.api.WarehouseManageService" />
+		<property name="ref" ref="warehouseManageService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
+	<!-- 仓库相关接口 end -->
+
 	<!-- 商户(货主)账户 -->
 	<bean id="MerchantProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
 		<property name="interface" value="com.sfebiz.supplychain.exposed.merchant.api.MerchantService" />
@@ -62,4 +75,6 @@
 		<property name="version" value="${dubbo.export.version}" />
 		<property name="timeout" value="${dubbo.export.timeout}" />
 	</bean>
+
+
 </beans>

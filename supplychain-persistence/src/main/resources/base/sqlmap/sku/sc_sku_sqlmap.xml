@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.sku.dao.SkuDao">
+
+<resultMap id="skuDOResult" type="com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO">
+    <result column="length" property="length"/>
+    <result column="name" property="name"/>
+    <result column="id" property="id"/>
+    <result column="goods_component_desc" property="goodsComponentDesc"/>
+    <result column="batch_generate_plan" property="batchGeneratePlan"/>
+    <result column="guaranty_pperiod" property="guarantyPperiod"/>
+    <result column="attributes_desc" property="attributesDesc"/>
+    <result column="material_quality_desc" property="materialQualityDesc"/>
+    <result column="gross_weight" property="grossWeight"/>
+    <result column="brand_name" property="brandName"/>
+    <result column="measuring_unit" property="measuringUnit"/>
+    <result column="net_weight" property="netWeight"/>
+    <result column="width" property="width"/>
+    <result column="height" property="height"/>
+    <result column="foreign_name" property="foreignName"/>
+    <result column="create_by" property="createBy"/>
+    <result column="modified_by" property="modifiedBy"/>
+    <result column="stockout_plan" property="stockoutPlan"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="gmt_modified" property="gmtModified"/>
+</resultMap>
+
+<sql id="skuDO_columns">
+    length,
+    name,
+    id,
+    goods_component_desc,
+    batch_generate_plan,
+    guaranty_pperiod,
+    attributes_desc,
+    material_quality_desc,
+    gross_weight,
+    brand_name,
+    measuring_unit,
+    net_weight,
+    width,
+    height,
+    foreign_name,
+    create_by,
+    modified_by,
+    stockout_plan,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="skuDO_sqlForInsert">
+    length,
+    name,
+    id,
+    goods_component_desc,
+    batch_generate_plan,
+    guaranty_pperiod,
+    attributes_desc,
+    material_quality_desc,
+    gross_weight,
+    brand_name,
+    measuring_unit,
+    net_weight,
+    width,
+    height,
+    foreign_name,
+    create_by,
+    modified_by,
+    stockout_plan,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="skuDO_columnsForInsert">
+    #{length},
+    #{name},
+    #{id},
+    #{goodsComponentDesc},
+    #{batchGeneratePlan},
+    #{guarantyPperiod},
+    #{attributesDesc},
+    #{materialQualityDesc},
+    #{grossWeight},
+    #{brandName},
+    #{measuringUnit},
+    #{netWeight},
+    #{width},
+    #{height},
+    #{foreignName},
+    #{createBy},
+    #{modifiedBy},
+    #{stockoutPlan},
+    now(),
+    now()
+</sql>
+
+<sql id="skuDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="length != null">
+            length = #{length},
+        </if>
+        <if test="name != null">
+            name = #{name},
+        </if>
+        <if test="goodsComponentDesc != null">
+            goods_component_desc = #{goodsComponentDesc},
+        </if>
+        <if test="batchGeneratePlan != null">
+            batch_generate_plan = #{batchGeneratePlan},
+        </if>
+        <if test="guarantyPperiod != null">
+            guaranty_pperiod = #{guarantyPperiod},
+        </if>
+        <if test="attributesDesc != null">
+            attributes_desc = #{attributesDesc},
+        </if>
+        <if test="materialQualityDesc != null">
+            material_quality_desc = #{materialQualityDesc},
+        </if>
+        <if test="grossWeight != null">
+            gross_weight = #{grossWeight},
+        </if>
+        <if test="brandName != null">
+            brand_name = #{brandName},
+        </if>
+        <if test="measuringUnit != null">
+            measuring_unit = #{measuringUnit},
+        </if>
+        <if test="netWeight != null">
+            net_weight = #{netWeight},
+        </if>
+        <if test="width != null">
+            width = #{width},
+        </if>
+        <if test="height != null">
+            height = #{height},
+        </if>
+        <if test="foreignName != null">
+            foreign_name = #{foreignName},
+        </if>
+        <if test="createBy != null">
+            create_by = #{createBy},
+        </if>
+        <if test="modifiedBy != null">
+            modified_by = #{modifiedBy},
+        </if>
+        <if test="stockoutPlan != null">
+            stockout_plan = #{stockoutPlan},
+        </if>
+    </set>
+</sql>
+
+<sql id="skuDO_selector">
+    select
+    <include refid="skuDO_columns"/>
+    from sc_sku
+</sql>
+
+<sql id="skuDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.length != null">
+            AND length = #{data.length}
+        </if>
+        <if test="data.name != null">
+            AND name = #{data.name}
+        </if>
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.goodsComponentDesc != null">
+            AND goods_component_desc = #{data.goodsComponentDesc}
+        </if>
+        <if test="data.batchGeneratePlan != null">
+            AND batch_generate_plan = #{data.batchGeneratePlan}
+        </if>
+        <if test="data.guarantyPperiod != null">
+            AND guaranty_pperiod = #{data.guarantyPperiod}
+        </if>
+        <if test="data.attributesDesc != null">
+            AND attributes_desc = #{data.attributesDesc}
+        </if>
+        <if test="data.materialQualityDesc != null">
+            AND material_quality_desc = #{data.materialQualityDesc}
+        </if>
+        <if test="data.grossWeight != null">
+            AND gross_weight = #{data.grossWeight}
+        </if>
+        <if test="data.brandName != null">
+            AND brand_name = #{data.brandName}
+        </if>
+        <if test="data.measuringUnit != null">
+            AND measuring_unit = #{data.measuringUnit}
+        </if>
+        <if test="data.netWeight != null">
+            AND net_weight = #{data.netWeight}
+        </if>
+        <if test="data.width != null">
+            AND width = #{data.width}
+        </if>
+        <if test="data.height != null">
+            AND height = #{data.height}
+        </if>
+        <if test="data.foreignName != null">
+            AND foreign_name = #{data.foreignName}
+        </if>
+        <if test="data.createBy != null">
+            AND create_by = #{data.createBy}
+        </if>
+        <if test="data.modifiedBy != null">
+            AND modified_by = #{data.modifiedBy}
+        </if>
+        <if test="data.stockoutPlan != null">
+            AND stockout_plan = #{data.stockoutPlan}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO">
+    insert into sc_sku
+    (
+        <include refid="skuDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="skuDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO">
+    update sc_sku
+    <include refid="skuDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO">
+    update sc_sku
+    <set>
+        gmt_modified = now(),
+        <if test="update.length != null">
+            length = #{update.length},
+        </if>
+        <if test="update.name != null">
+            name = #{update.name},
+        </if>
+        <if test="update.goodsComponentDesc != null">
+            goods_component_desc = #{update.goodsComponentDesc},
+        </if>
+        <if test="update.batchGeneratePlan != null">
+            batch_generate_plan = #{update.batchGeneratePlan},
+        </if>
+        <if test="update.guarantyPperiod != null">
+            guaranty_pperiod = #{update.guarantyPperiod},
+        </if>
+        <if test="update.attributesDesc != null">
+            attributes_desc = #{update.attributesDesc},
+        </if>
+        <if test="update.materialQualityDesc != null">
+            material_quality_desc = #{update.materialQualityDesc},
+        </if>
+        <if test="update.grossWeight != null">
+            gross_weight = #{update.grossWeight},
+        </if>
+        <if test="update.brandName != null">
+            brand_name = #{update.brandName},
+        </if>
+        <if test="update.measuringUnit != null">
+            measuring_unit = #{update.measuringUnit},
+        </if>
+        <if test="update.netWeight != null">
+            net_weight = #{update.netWeight},
+        </if>
+        <if test="update.width != null">
+            width = #{update.width},
+        </if>
+        <if test="update.height != null">
+            height = #{update.height},
+        </if>
+        <if test="update.foreignName != null">
+            foreign_name = #{update.foreignName},
+        </if>
+        <if test="update.createBy != null">
+            create_by = #{update.createBy},
+        </if>
+        <if test="update.modifiedBy != null">
+            modified_by = #{update.modifiedBy},
+        </if>
+        <if test="update.stockoutPlan != null">
+            stockout_plan = #{update.stockoutPlan},
+        </if>
+    </set>
+    <include refid="skuDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO">
+    insert into sc_sku
+    (
+        <include refid="skuDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="skuDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="length != null">
+        ,length = #{length}
+    </if>
+    <if test="name != null">
+        ,name = #{name}
+    </if>
+    <if test="goodsComponentDesc != null">
+        ,goods_component_desc = #{goodsComponentDesc}
+    </if>
+    <if test="batchGeneratePlan != null">
+        ,batch_generate_plan = #{batchGeneratePlan}
+    </if>
+    <if test="guarantyPperiod != null">
+        ,guaranty_pperiod = #{guarantyPperiod}
+    </if>
+    <if test="attributesDesc != null">
+        ,attributes_desc = #{attributesDesc}
+    </if>
+    <if test="materialQualityDesc != null">
+        ,material_quality_desc = #{materialQualityDesc}
+    </if>
+    <if test="grossWeight != null">
+        ,gross_weight = #{grossWeight}
+    </if>
+    <if test="brandName != null">
+        ,brand_name = #{brandName}
+    </if>
+    <if test="measuringUnit != null">
+        ,measuring_unit = #{measuringUnit}
+    </if>
+    <if test="netWeight != null">
+        ,net_weight = #{netWeight}
+    </if>
+    <if test="width != null">
+        ,width = #{width}
+    </if>
+    <if test="height != null">
+        ,height = #{height}
+    </if>
+    <if test="foreignName != null">
+        ,foreign_name = #{foreignName}
+    </if>
+    <if test="createBy != null">
+        ,create_by = #{createBy}
+    </if>
+    <if test="modifiedBy != null">
+        ,modified_by = #{modifiedBy}
+    </if>
+    <if test="stockoutPlan != null">
+        ,stockout_plan = #{stockoutPlan}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_sku
+    set is_delete = 1, gmt_modified = now()
+    <include refid="skuDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_sku
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="skuDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="skuDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="skuDOResult" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO">
+    <include refid="skuDO_selector"/>
+    <include refid="skuDO_query_segment"/>
+    <include refid="skuDO_groupBy"/>
+    <include refid="skuDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="skuDOResult" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO">
+    <include refid="skuDO_selector"/>
+    <include refid="skuDO_query_segment"/>
+    <include refid="skuDO_groupBy"/>
+    <include refid="skuDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_sku
+    <include refid="skuDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="skuDOResult">
+    <include refid="skuDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="skuDOResult">
+    <include refid="skuDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>
