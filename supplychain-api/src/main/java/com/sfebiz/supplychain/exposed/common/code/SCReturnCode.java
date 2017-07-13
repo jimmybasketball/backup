@@ -5,10 +5,14 @@ import net.pocrd.entity.AbstractReturnCode;
 /**
  * 
  * <p>
- * 供应链通用错误码 误码范围 （1000000 -- 2000000） 1000 以下为通用错误码 [1010000 - 1020000) 仓库相关
- * [1020000 - 1030000) 货主相关 [1030000 - 1040000) 线路相关 [1040000 - 1050000) 商品相关
- * [1050000 - 1060000) 出库相关 [1060000 - 1070000) 入库相关
- * 
+ * 供应链通用错误码 误码范围 （1000000 -- 2000000） 
+ * </br>[1000000 - 1001000) 通用接口码
+ * </br>[1010000 - 1020000) 仓库相关
+ * </br>[1020000 - 1030000) 货主相关 
+ * </br>[1030000 - 1040000) 线路相关 
+ * </br>[1040000 - 1050000) 商品相关
+ * </br>[1050000 - 1060000) 出库相关 
+ * </br>[1060000 - 1070000) 入库相关
  * </p>
  * 
  * @author matt
@@ -29,9 +33,23 @@ public class SCReturnCode extends AbstractReturnCode {
      */
     public final static int _C_COMMON_SUCCESS = 1000000;
     public final static int _C_COMMON_FAIL = 1000001;
+    public final static int _C_COMMON_SYSTEM_MAINTAINING = 1000002;
 
     public final static SCReturnCode COMMON_SUCCESS = new SCReturnCode("成功",
 	    _C_COMMON_SUCCESS);
     public final static SCReturnCode COMMON_FAIL = new SCReturnCode("失败",
 	    _C_COMMON_FAIL);
+    public final static SCReturnCode COMMON_SYSTEM_MAINTAINING = new SCReturnCode("系统维护中，请稍后重试",
+	    _C_COMMON_SYSTEM_MAINTAINING);
+    
+    /**
+     * 参数相关
+     * <p/>
+     * 错误范围 1000100 -- 1000200
+     * 
+     */
+    public final static int _C_PARAM_ILLEGAL_ERR = 1000100;
+    
+    public final static SCReturnCode PARAM_ILLEGAL_ERR = new SCReturnCode("参数非法",
+	    _C_PARAM_ILLEGAL_ERR);
 }
