@@ -1,0 +1,735 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.warehouse.dao.WarehouseDao">
+
+<resultMap id="warehouseDOResult" type="com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO">
+    <result column="address" property="address"/>
+    <result column="name" property="name"/>
+    <result column="id" property="id"/>
+    <result column="country" property="country"/>
+    <result column="region" property="region"/>
+    <result column="logistics_provider_id" property="logisticsProviderId"/>
+    <result column="warehouse_code" property="warehouseCode"/>
+    <result column="warehouse_nid" property="warehouseNid"/>
+    <result column="city" property="city"/>
+    <result column="province" property="province"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="sender_name" property="senderName"/>
+    <result column="is_storage" property="isStorage"/>
+    <result column="is_transit" property="isTransit"/>
+    <result column="district" property="district"/>
+    <result column="zipcode" property="zipcode"/>
+    <result column="sender_city" property="senderCity"/>
+    <result column="is_return" property="isReturn"/>
+    <result column="gmt_modified" property="gmtModified"/>
+    <result column="sender_country" property="senderCountry"/>
+    <result column="is_support_batch" property="isSupportBatch"/>
+    <result column="cooperation_state" property="cooperationState"/>
+    <result column="contact_email" property="contactEmail"/>
+    <result column="contact_cellphone" property="contactCellphone"/>
+    <result column="principal_email" property="principalEmail"/>
+    <result column="sender_province" property="senderProvince"/>
+    <result column="warehouse_type" property="warehouseType"/>
+    <result column="sender_zipcode" property="senderZipcode"/>
+    <result column="contact_name" property="contactName"/>
+    <result column="sender_address" property="senderAddress"/>
+    <result column="warehouse_state" property="warehouseState"/>
+    <result column="sender_district" property="senderDistrict"/>
+    <result column="sender_telephone" property="senderTelephone"/>
+    <result column="contact_telephone" property="contactTelephone"/>
+</resultMap>
+
+<sql id="warehouseDO_columns">
+    address,
+    name,
+    id,
+    country,
+    region,
+    logistics_provider_id,
+    warehouse_code,
+    warehouse_nid,
+    city,
+    province,
+    gmt_create,
+    sender_name,
+    is_storage,
+    is_transit,
+    district,
+    zipcode,
+    sender_city,
+    is_return,
+    gmt_modified,
+    sender_country,
+    is_support_batch,
+    cooperation_state,
+    contact_email,
+    contact_cellphone,
+    principal_email,
+    sender_province,
+    warehouse_type,
+    sender_zipcode,
+    contact_name,
+    sender_address,
+    warehouse_state,
+    sender_district,
+    sender_telephone,
+    contact_telephone
+</sql>
+
+<sql id="warehouseDO_sqlForInsert">
+    address,
+    name,
+    id,
+    country,
+    region,
+    logistics_provider_id,
+    warehouse_code,
+    warehouse_nid,
+    city,
+    province,
+    gmt_create,
+    sender_name,
+    is_storage,
+    is_transit,
+    district,
+    zipcode,
+    sender_city,
+    is_return,
+    gmt_modified,
+    sender_country,
+    is_support_batch,
+    cooperation_state,
+    contact_email,
+    contact_cellphone,
+    principal_email,
+    sender_province,
+    warehouse_type,
+    sender_zipcode,
+    contact_name,
+    sender_address,
+    warehouse_state,
+    sender_district,
+    sender_telephone,
+    contact_telephone
+</sql>
+
+<sql id="warehouseDO_columnsForInsert">
+    #{address},
+    #{name},
+    #{id},
+    #{country},
+    #{region},
+    #{logisticsProviderId},
+    #{warehouseCode},
+    #{warehouseNid},
+    #{city},
+    #{province},
+    now(),
+    #{senderName},
+    #{isStorage},
+    #{isTransit},
+    #{district},
+    #{zipcode},
+    #{senderCity},
+    #{isReturn},
+    now(),
+    #{senderCountry},
+    #{isSupportBatch},
+    #{cooperationState},
+    #{contactEmail},
+    #{contactCellphone},
+    #{principalEmail},
+    #{senderProvince},
+    #{warehouseType},
+    #{senderZipcode},
+    #{contactName},
+    #{senderAddress},
+    #{warehouseState},
+    #{senderDistrict},
+    #{senderTelephone},
+    #{contactTelephone}
+</sql>
+
+<sql id="warehouseDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="address != null">
+            address = #{address},
+        </if>
+        <if test="name != null">
+            name = #{name},
+        </if>
+        <if test="country != null">
+            country = #{country},
+        </if>
+        <if test="region != null">
+            region = #{region},
+        </if>
+        <if test="logisticsProviderId != null">
+            logistics_provider_id = #{logisticsProviderId},
+        </if>
+        <if test="warehouseCode != null">
+            warehouse_code = #{warehouseCode},
+        </if>
+        <if test="warehouseNid != null">
+            warehouse_nid = #{warehouseNid},
+        </if>
+        <if test="city != null">
+            city = #{city},
+        </if>
+        <if test="province != null">
+            province = #{province},
+        </if>
+        <if test="senderName != null">
+            sender_name = #{senderName},
+        </if>
+        <if test="isStorage != null">
+            is_storage = #{isStorage},
+        </if>
+        <if test="isTransit != null">
+            is_transit = #{isTransit},
+        </if>
+        <if test="district != null">
+            district = #{district},
+        </if>
+        <if test="zipcode != null">
+            zipcode = #{zipcode},
+        </if>
+        <if test="senderCity != null">
+            sender_city = #{senderCity},
+        </if>
+        <if test="isReturn != null">
+            is_return = #{isReturn},
+        </if>
+        <if test="senderCountry != null">
+            sender_country = #{senderCountry},
+        </if>
+        <if test="isSupportBatch != null">
+            is_support_batch = #{isSupportBatch},
+        </if>
+        <if test="cooperationState != null">
+            cooperation_state = #{cooperationState},
+        </if>
+        <if test="contactEmail != null">
+            contact_email = #{contactEmail},
+        </if>
+        <if test="contactCellphone != null">
+            contact_cellphone = #{contactCellphone},
+        </if>
+        <if test="principalEmail != null">
+            principal_email = #{principalEmail},
+        </if>
+        <if test="senderProvince != null">
+            sender_province = #{senderProvince},
+        </if>
+        <if test="warehouseType != null">
+            warehouse_type = #{warehouseType},
+        </if>
+        <if test="senderZipcode != null">
+            sender_zipcode = #{senderZipcode},
+        </if>
+        <if test="contactName != null">
+            contact_name = #{contactName},
+        </if>
+        <if test="senderAddress != null">
+            sender_address = #{senderAddress},
+        </if>
+        <if test="warehouseState != null">
+            warehouse_state = #{warehouseState},
+        </if>
+        <if test="senderDistrict != null">
+            sender_district = #{senderDistrict},
+        </if>
+        <if test="senderTelephone != null">
+            sender_telephone = #{senderTelephone},
+        </if>
+        <if test="contactTelephone != null">
+            contact_telephone = #{contactTelephone},
+        </if>
+    </set>
+</sql>
+
+<sql id="warehouseDO_selector">
+    select
+    <include refid="warehouseDO_columns"/>
+    from sc_warehouse
+</sql>
+
+<sql id="warehouseDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.address != null">
+            AND address = #{data.address}
+        </if>
+        <if test="data.name != null">
+            AND name = #{data.name}
+        </if>
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.country != null">
+            AND country = #{data.country}
+        </if>
+        <if test="data.region != null">
+            AND region = #{data.region}
+        </if>
+        <if test="data.logisticsProviderId != null">
+            AND logistics_provider_id = #{data.logisticsProviderId}
+        </if>
+        <if test="data.warehouseCode != null">
+            AND warehouse_code = #{data.warehouseCode}
+        </if>
+        <if test="data.warehouseNid != null">
+            AND warehouse_nid = #{data.warehouseNid}
+        </if>
+        <if test="data.city != null">
+            AND city = #{data.city}
+        </if>
+        <if test="data.province != null">
+            AND province = #{data.province}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.senderName != null">
+            AND sender_name = #{data.senderName}
+        </if>
+        <if test="data.isStorage != null">
+            AND is_storage = #{data.isStorage}
+        </if>
+        <if test="data.isTransit != null">
+            AND is_transit = #{data.isTransit}
+        </if>
+        <if test="data.district != null">
+            AND district = #{data.district}
+        </if>
+        <if test="data.zipcode != null">
+            AND zipcode = #{data.zipcode}
+        </if>
+        <if test="data.senderCity != null">
+            AND sender_city = #{data.senderCity}
+        </if>
+        <if test="data.isReturn != null">
+            AND is_return = #{data.isReturn}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="data.senderCountry != null">
+            AND sender_country = #{data.senderCountry}
+        </if>
+        <if test="data.isSupportBatch != null">
+            AND is_support_batch = #{data.isSupportBatch}
+        </if>
+        <if test="data.cooperationState != null">
+            AND cooperation_state = #{data.cooperationState}
+        </if>
+        <if test="data.contactEmail != null">
+            AND contact_email = #{data.contactEmail}
+        </if>
+        <if test="data.contactCellphone != null">
+            AND contact_cellphone = #{data.contactCellphone}
+        </if>
+        <if test="data.principalEmail != null">
+            AND principal_email = #{data.principalEmail}
+        </if>
+        <if test="data.senderProvince != null">
+            AND sender_province = #{data.senderProvince}
+        </if>
+        <if test="data.warehouseType != null">
+            AND warehouse_type = #{data.warehouseType}
+        </if>
+        <if test="data.senderZipcode != null">
+            AND sender_zipcode = #{data.senderZipcode}
+        </if>
+        <if test="data.contactName != null">
+            AND contact_name = #{data.contactName}
+        </if>
+        <if test="data.senderAddress != null">
+            AND sender_address = #{data.senderAddress}
+        </if>
+        <if test="data.warehouseState != null">
+            AND warehouse_state = #{data.warehouseState}
+        </if>
+        <if test="data.senderDistrict != null">
+            AND sender_district = #{data.senderDistrict}
+        </if>
+        <if test="data.senderTelephone != null">
+            AND sender_telephone = #{data.senderTelephone}
+        </if>
+        <if test="data.contactTelephone != null">
+            AND contact_telephone = #{data.contactTelephone}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO">
+    insert into sc_warehouse
+    (
+        <include refid="warehouseDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="warehouseDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO">
+    update sc_warehouse
+    <include refid="warehouseDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO">
+    update sc_warehouse
+    <set>
+        gmt_modified = now(),
+        <if test="update.address != null">
+            address = #{update.address},
+        </if>
+        <if test="update.name != null">
+            name = #{update.name},
+        </if>
+        <if test="update.country != null">
+            country = #{update.country},
+        </if>
+        <if test="update.region != null">
+            region = #{update.region},
+        </if>
+        <if test="update.logisticsProviderId != null">
+            logistics_provider_id = #{update.logisticsProviderId},
+        </if>
+        <if test="update.warehouseCode != null">
+            warehouse_code = #{update.warehouseCode},
+        </if>
+        <if test="update.warehouseNid != null">
+            warehouse_nid = #{update.warehouseNid},
+        </if>
+        <if test="update.city != null">
+            city = #{update.city},
+        </if>
+        <if test="update.province != null">
+            province = #{update.province},
+        </if>
+        <if test="update.senderName != null">
+            sender_name = #{update.senderName},
+        </if>
+        <if test="update.isStorage != null">
+            is_storage = #{update.isStorage},
+        </if>
+        <if test="update.isTransit != null">
+            is_transit = #{update.isTransit},
+        </if>
+        <if test="update.district != null">
+            district = #{update.district},
+        </if>
+        <if test="update.zipcode != null">
+            zipcode = #{update.zipcode},
+        </if>
+        <if test="update.senderCity != null">
+            sender_city = #{update.senderCity},
+        </if>
+        <if test="update.isReturn != null">
+            is_return = #{update.isReturn},
+        </if>
+        <if test="update.senderCountry != null">
+            sender_country = #{update.senderCountry},
+        </if>
+        <if test="update.isSupportBatch != null">
+            is_support_batch = #{update.isSupportBatch},
+        </if>
+        <if test="update.cooperationState != null">
+            cooperation_state = #{update.cooperationState},
+        </if>
+        <if test="update.contactEmail != null">
+            contact_email = #{update.contactEmail},
+        </if>
+        <if test="update.contactCellphone != null">
+            contact_cellphone = #{update.contactCellphone},
+        </if>
+        <if test="update.principalEmail != null">
+            principal_email = #{update.principalEmail},
+        </if>
+        <if test="update.senderProvince != null">
+            sender_province = #{update.senderProvince},
+        </if>
+        <if test="update.warehouseType != null">
+            warehouse_type = #{update.warehouseType},
+        </if>
+        <if test="update.senderZipcode != null">
+            sender_zipcode = #{update.senderZipcode},
+        </if>
+        <if test="update.contactName != null">
+            contact_name = #{update.contactName},
+        </if>
+        <if test="update.senderAddress != null">
+            sender_address = #{update.senderAddress},
+        </if>
+        <if test="update.warehouseState != null">
+            warehouse_state = #{update.warehouseState},
+        </if>
+        <if test="update.senderDistrict != null">
+            sender_district = #{update.senderDistrict},
+        </if>
+        <if test="update.senderTelephone != null">
+            sender_telephone = #{update.senderTelephone},
+        </if>
+        <if test="update.contactTelephone != null">
+            contact_telephone = #{update.contactTelephone},
+        </if>
+    </set>
+    <include refid="warehouseDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO">
+    insert into sc_warehouse
+    (
+        <include refid="warehouseDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="warehouseDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="address != null">
+        ,address = #{address}
+    </if>
+    <if test="name != null">
+        ,name = #{name}
+    </if>
+    <if test="country != null">
+        ,country = #{country}
+    </if>
+    <if test="region != null">
+        ,region = #{region}
+    </if>
+    <if test="logisticsProviderId != null">
+        ,logistics_provider_id = #{logisticsProviderId}
+    </if>
+    <if test="warehouseCode != null">
+        ,warehouse_code = #{warehouseCode}
+    </if>
+    <if test="warehouseNid != null">
+        ,warehouse_nid = #{warehouseNid}
+    </if>
+    <if test="city != null">
+        ,city = #{city}
+    </if>
+    <if test="province != null">
+        ,province = #{province}
+    </if>
+    <if test="senderName != null">
+        ,sender_name = #{senderName}
+    </if>
+    <if test="isStorage != null">
+        ,is_storage = #{isStorage}
+    </if>
+    <if test="isTransit != null">
+        ,is_transit = #{isTransit}
+    </if>
+    <if test="district != null">
+        ,district = #{district}
+    </if>
+    <if test="zipcode != null">
+        ,zipcode = #{zipcode}
+    </if>
+    <if test="senderCity != null">
+        ,sender_city = #{senderCity}
+    </if>
+    <if test="isReturn != null">
+        ,is_return = #{isReturn}
+    </if>
+    <if test="senderCountry != null">
+        ,sender_country = #{senderCountry}
+    </if>
+    <if test="isSupportBatch != null">
+        ,is_support_batch = #{isSupportBatch}
+    </if>
+    <if test="cooperationState != null">
+        ,cooperation_state = #{cooperationState}
+    </if>
+    <if test="contactEmail != null">
+        ,contact_email = #{contactEmail}
+    </if>
+    <if test="contactCellphone != null">
+        ,contact_cellphone = #{contactCellphone}
+    </if>
+    <if test="principalEmail != null">
+        ,principal_email = #{principalEmail}
+    </if>
+    <if test="senderProvince != null">
+        ,sender_province = #{senderProvince}
+    </if>
+    <if test="warehouseType != null">
+        ,warehouse_type = #{warehouseType}
+    </if>
+    <if test="senderZipcode != null">
+        ,sender_zipcode = #{senderZipcode}
+    </if>
+    <if test="contactName != null">
+        ,contact_name = #{contactName}
+    </if>
+    <if test="senderAddress != null">
+        ,sender_address = #{senderAddress}
+    </if>
+    <if test="warehouseState != null">
+        ,warehouse_state = #{warehouseState}
+    </if>
+    <if test="senderDistrict != null">
+        ,sender_district = #{senderDistrict}
+    </if>
+    <if test="senderTelephone != null">
+        ,sender_telephone = #{senderTelephone}
+    </if>
+    <if test="contactTelephone != null">
+        ,contact_telephone = #{contactTelephone}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_warehouse
+    set is_delete = 1, gmt_modified = now()
+    <include refid="warehouseDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_warehouse
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="warehouseDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="warehouseDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="warehouseDOResult" parameterType="com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO">
+    <include refid="warehouseDO_selector"/>
+    <include refid="warehouseDO_query_segment"/>
+    <include refid="warehouseDO_groupBy"/>
+    <include refid="warehouseDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="warehouseDOResult" parameterType="com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO">
+    <include refid="warehouseDO_selector"/>
+    <include refid="warehouseDO_query_segment"/>
+    <include refid="warehouseDO_groupBy"/>
+    <include refid="warehouseDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_warehouse
+    <include refid="warehouseDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="warehouseDOResult">
+    <include refid="warehouseDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="warehouseDOResult">
+    <include refid="warehouseDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>
