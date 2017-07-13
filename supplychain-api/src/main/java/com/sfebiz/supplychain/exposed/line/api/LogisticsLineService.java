@@ -32,6 +32,7 @@ public interface LogisticsLineService {
 
     /**
      * 修改物流线路状态
+     *
      * @param id    主键ID
      * @param state 状态值
      * @return void
@@ -41,9 +42,10 @@ public interface LogisticsLineService {
 
     /**
      * 修改物流线路的运营状态
-     * @param id    主键ID
-     * @param state 状态值
+     *
+     * @param id           主键ID
+     * @param operateState 状态值
      * @return void
      */
-    public CommonRet<Void> changechangeLogisticsLineOpState(Long id, String state);
+    public CommonRet<Void> changechangeLogisticsLineOpState(Long id, String operateState);
 }

@@ -38,6 +38,8 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
 
     private static final String CHANGE_STATE_KEY = LogisticsLineServiceImpl.class + "CHANGE_STATE_KEY";
 
+    private static final String CHANGE_OPERATE_STATE_KEY = LogisticsLineServiceImpl.class + "CHANGE_OPERATE_STATE_KEY";
+
     @Resource
     private Lock distributedLock;
 
@@ -100,6 +102,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
      * @return void
      */
     @Override
+    @MethodParamValidate
     public CommonRet<Void> updateLogisticsLine(
             @ParamNotBlank Long id,
             @ParamNotBlank LogisticsLineEntity logisticsLineEntity) {
@@ -164,20 +167,152 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
      * @return void
      */
     @Override
-    public CommonRet<Void> changeLogisticsLineState(Long id, String state) {
-        return null;
+    @MethodParamValidate
+    public CommonRet<Void> changeLogisticsLineState(
+            @ParamNotBlank("线路ID不能为空") Long id,
+            @ParamNotBlank("线路状态不能为空") String state) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        //校验状态是否有效
+        if (!LogisticsLineStateType.containValue(state)) {
+            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetMsg("状态值不合法");
+            return commonRet;
+        }
+        String key = CHANGE_STATE_KEY + id;
+        if (distributedLock.fetch(key)) {
+            try {
+                LogisticsLineDO checkDO = logisticsLineManager.getById(id);
+                if (checkDO == null) {
+                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                    commonRet.setRetMsg("线路不存在");
+                    return commonRet;
+                }
+
+                if (state.equals(checkDO.getState())) {
+                    LogBetter.instance(LOGGER)
+                            .setLevel(LogLevel.ERROR)
+                            .setMsg("[物流线路-修改物流线路状态] 物流线路状态和目的状态一致")
+                            .addParm("物流线路当前状态", checkDO.getState())
+                            .addParm("目的状态", state)
+                            .log();
+                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                    commonRet.setRetMsg("物流线路状态已被" + LogisticsLineStateType.valueOf(state).name);
+                    return commonRet;
+                }
+
+                LogisticsLineDO updateDO = new LogisticsLineDO();
+                updateDO.setId(id);
+                updateDO.setState(state);
+
+                logisticsLineManager.update(updateDO);
+
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.INFO)
+                        .setMsg("[物流线路-修改物流线路状态] 成功")
+                        .addParm("id", id)
+                        .addParm("state", state)
+                        .log();
+                return commonRet;
+            } catch (Exception e) {
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.ERROR)
+                        .setErrorMsg("[物流线路-修改物流线路状态] 异常")
+                        .setException(e)
+                        .log();
+                commonRet.reSet();
+                commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                commonRet.setRetMsg(e.getMessage());
+                return commonRet;
+            } finally {
+                distributedLock.realease(key);
+            }
+        } else {
+            LogBetter.instance(LOGGER).
+                    setLevel(LogLevel.ERROR).
+                    setMsg("[物流线路-修改物流线路状态] 并发异常")
+                    .log();
+            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetMsg("并发异常");
+            return commonRet;
+        }
     }
 
     /**
      * 修改物流线路的运营状态
      *
-     * @param id    主键ID
-     * @param state 状态值
+     * @param id           主键ID
+     * @param operateState 状态值
      * @return void
      */
     @Override
-    public CommonRet<Void> changechangeLogisticsLineOpState(Long id, String state) {
-        return null;
+    @MethodParamValidate
+    public CommonRet<Void> changechangeLogisticsLineOpState(
+            @ParamNotBlank("线路ID不能为空") Long id,
+            @ParamNotBlank("线路物流运营状态不能为空") String operateState) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        //校验状态是否有效
+        if (!LogisticsLineOperateStateType.containValue(operateState)) {
+            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetMsg("状态值不合法");
+            return commonRet;
+        }
+        String key = CHANGE_OPERATE_STATE_KEY + id;
+        if (distributedLock.fetch(key)) {
+            try {
+                LogisticsLineDO checkDO = logisticsLineManager.getById(id);
+                if (checkDO == null) {
+                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                    commonRet.setRetMsg("线路不存在");
+                    return commonRet;
+                }
+
+                if (operateState.equals(checkDO.getOperateState())) {
+                    LogBetter.instance(LOGGER)
+                            .setLevel(LogLevel.ERROR)
+                            .setMsg("[物流线路-修改物流线路的运营状态] 物流线路状态和目的状态一致")
+                            .addParm("物流线路当前状态", checkDO.getState())
+                            .addParm("目的状态", operateState)
+                            .log();
+                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                    commonRet.setRetMsg("物流线路的运营状态已被" + LogisticsLineOperateStateType.valueOf(operateState).name);
+                    return commonRet;
+                }
+
+                LogisticsLineDO updateDO = new LogisticsLineDO();
+                updateDO.setId(id);
+                updateDO.setOperateState(operateState);
+
+                logisticsLineManager.update(updateDO);
+
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.INFO)
+                        .setMsg("[物流线路-修改物流线路的运营状态] 成功")
+                        .addParm("id", id)
+                        .addParm("operateState", operateState)
+                        .log();
+                return commonRet;
+            } catch (Exception e) {
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.ERROR)
+                        .setErrorMsg("[物流线路-修改物流线路的运营状态] 异常")
+                        .setException(e)
+                        .log();
+                commonRet.reSet();
+                commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+                commonRet.setRetMsg(e.getMessage());
+                return commonRet;
+            } finally {
+                distributedLock.realease(key);
+            }
+        } else {
+            LogBetter.instance(LOGGER).
+                    setLevel(LogLevel.ERROR).
+                    setMsg("[物流线路-修改物流线路的运营状态] 并发异常")
+                    .log();
+            commonRet.setRetCode(SupplyChainReturnCode.FAIL.code);
+            commonRet.setRetMsg("并发异常");
+            return commonRet;
+        }
     }
 
 
