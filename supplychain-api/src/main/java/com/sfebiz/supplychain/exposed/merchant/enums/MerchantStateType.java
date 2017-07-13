@@ -16,11 +16,12 @@ import java.util.concurrent.locks.ReentrantLock;
  * @create 2017-07-05 16:05
  **/
 public class MerchantStateType extends Enumerable4StringValue {
-    private static final long serialVersionUID = 3732079449160619098L;
+
 
     private static final Logger log = LoggerFactory.getLogger(Enumerable4StringValue.class);
 
     private static final Lock lock = new ReentrantLock();
+    private static final long serialVersionUID = 1799447059913812945L;
 
     private static volatile transient Map<String, MerchantStateType> allbyvalue = new HashMap<String, MerchantStateType>();
 

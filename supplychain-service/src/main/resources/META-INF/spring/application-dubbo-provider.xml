@@ -51,4 +51,15 @@
 		<property name="version" value="${dubbo.export.version}" />
 		<property name="timeout" value="${dubbo.export.timeout}" />
 	</bean>
+
+	<!-- 物流线路 -->
+	<bean id="logisticsLineProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.exposed.line.api.LogisticsLineService" />
+		<property name="ref" ref="logisticsLineService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
 </beans>

@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.line.dao.LogisticsLineDao">
+
+<resultMap id="logisticsLineDOResult" type="com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO">
+    <result column="priority" property="priority"/>
+    <result column="id" property="id"/>
+    <result column="state" property="state"/>
+    <result column="logistics_line_nid" property="logisticsLineNid"/>
+    <result column="operate_state" property="operateState"/>
+    <result column="service_type" property="serviceType"/>
+    <result column="port_id" property="portId"/>
+    <result column="warehouse_id" property="warehouseId"/>
+    <result column="transit_warehouse_id" property="transitWarehouseId"/>
+    <result column="clearance_logistics_provider_nid" property="clearanceLogisticsProviderNid"/>
+    <result column="domestic_logistics_provider_nid" property="domesticLogisticsProviderNid"/>
+    <result column="international_logistics_provider_nid" property="internationalLogisticsProviderNid"/>
+    <result column="domestic_route_provider_nid" property="domesticRouteProviderNid"/>
+    <result column="international_route_provider_nid" property="internationalRouteProviderNid"/>
+    <result column="nation_id" property="nationId"/>
+    <result column="time_limit" property="timeLimit"/>
+    <result column="time_limit_min" property="timeLimitMin"/>
+    <result column="time_limit_max" property="timeLimitMax"/>
+    <result column="route_code" property="routeCode"/>
+    <result column="route_biz_code" property="routeBizCode"/>
+    <result column="is_need_waybill_number" property="isNeedWaybillNumber"/>
+    <result column="pdf_template" property="pdfTemplate"/>
+    <result column="is_need_id_card_photo" property="isNeedIdCardPhoto"/>
+    <result column="fixed_cost" property="fixedCost"/>
+    <result column="first_weight" property="firstWeight"/>
+    <result column="first_weight_cost_rmb" property="firstWeightCostRmb"/>
+    <result column="additional_weight" property="additionalWeight"/>
+    <result column="additional_weight_cost_rmb" property="additionalWeightCostRmb"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="gmt_modified" property="gmtModified"/>
+</resultMap>
+
+<sql id="logisticsLineDO_columns">
+    priority,
+    id,
+    state,
+    logistics_line_nid,
+    operate_state,
+    service_type,
+    port_id,
+    warehouse_id,
+    transit_warehouse_id,
+    clearance_logistics_provider_nid,
+    domestic_logistics_provider_nid,
+    international_logistics_provider_nid,
+    domestic_route_provider_nid,
+    international_route_provider_nid,
+    nation_id,
+    time_limit,
+    time_limit_min,
+    time_limit_max,
+    route_code,
+    route_biz_code,
+    is_need_waybill_number,
+    pdf_template,
+    is_need_id_card_photo,
+    fixed_cost,
+    first_weight,
+    first_weight_cost_rmb,
+    additional_weight,
+    additional_weight_cost_rmb,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="logisticsLineDO_sqlForInsert">
+    priority,
+    id,
+    state,
+    logistics_line_nid,
+    operate_state,
+    service_type,
+    port_id,
+    warehouse_id,
+    transit_warehouse_id,
+    clearance_logistics_provider_nid,
+    domestic_logistics_provider_nid,
+    international_logistics_provider_nid,
+    domestic_route_provider_nid,
+    international_route_provider_nid,
+    nation_id,
+    time_limit,
+    time_limit_min,
+    time_limit_max,
+    route_code,
+    route_biz_code,
+    is_need_waybill_number,
+    pdf_template,
+    is_need_id_card_photo,
+    fixed_cost,
+    first_weight,
+    first_weight_cost_rmb,
+    additional_weight,
+    additional_weight_cost_rmb,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="logisticsLineDO_columnsForInsert">
+    #{priority},
+    #{id},
+    #{state},
+    #{logisticsLineNid},
+    #{operateState},
+    #{serviceType},
+    #{portId},
+    #{warehouseId},
+    #{transitWarehouseId},
+    #{clearanceLogisticsProviderNid},
+    #{domesticLogisticsProviderNid},
+    #{internationalLogisticsProviderNid},
+    #{domesticRouteProviderNid},
+    #{internationalRouteProviderNid},
+    #{nationId},
+    #{timeLimit},
+    #{timeLimitMin},
+    #{timeLimitMax},
+    #{routeCode},
+    #{routeBizCode},
+    #{isNeedWaybillNumber},
+    #{pdfTemplate},
+    #{isNeedIdCardPhoto},
+    #{fixedCost},
+    #{firstWeight},
+    #{firstWeightCostRmb},
+    #{additionalWeight},
+    #{additionalWeightCostRmb},
+    now(),
+    now()
+</sql>
+
+<sql id="logisticsLineDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="priority != null">
+            priority = #{priority},
+        </if>
+        <if test="state != null">
+            state = #{state},
+        </if>
+        <if test="logisticsLineNid != null">
+            logistics_line_nid = #{logisticsLineNid},
+        </if>
+        <if test="operateState != null">
+            operate_state = #{operateState},
+        </if>
+        <if test="serviceType != null">
+            service_type = #{serviceType},
+        </if>
+        <if test="portId != null">
+            port_id = #{portId},
+        </if>
+        <if test="warehouseId != null">
+            warehouse_id = #{warehouseId},
+        </if>
+        <if test="transitWarehouseId != null">
+            transit_warehouse_id = #{transitWarehouseId},
+        </if>
+        <if test="clearanceLogisticsProviderNid != null">
+            clearance_logistics_provider_nid = #{clearanceLogisticsProviderNid},
+        </if>
+        <if test="domesticLogisticsProviderNid != null">
+            domestic_logistics_provider_nid = #{domesticLogisticsProviderNid},
+        </if>
+        <if test="internationalLogisticsProviderNid != null">
+            international_logistics_provider_nid = #{internationalLogisticsProviderNid},
+        </if>
+        <if test="domesticRouteProviderNid != null">
+            domestic_route_provider_nid = #{domesticRouteProviderNid},
+        </if>
+        <if test="internationalRouteProviderNid != null">
+            international_route_provider_nid = #{internationalRouteProviderNid},
+        </if>
+        <if test="nationId != null">
+            nation_id = #{nationId},
+        </if>
+        <if test="timeLimit != null">
+            time_limit = #{timeLimit},
+        </if>
+        <if test="timeLimitMin != null">
+            time_limit_min = #{timeLimitMin},
+        </if>
+        <if test="timeLimitMax != null">
+            time_limit_max = #{timeLimitMax},
+        </if>
+        <if test="routeCode != null">
+            route_code = #{routeCode},
+        </if>
+        <if test="routeBizCode != null">
+            route_biz_code = #{routeBizCode},
+        </if>
+        <if test="isNeedWaybillNumber != null">
+            is_need_waybill_number = #{isNeedWaybillNumber},
+        </if>
+        <if test="pdfTemplate != null">
+            pdf_template = #{pdfTemplate},
+        </if>
+        <if test="isNeedIdCardPhoto != null">
+            is_need_id_card_photo = #{isNeedIdCardPhoto},
+        </if>
+        <if test="fixedCost != null">
+            fixed_cost = #{fixedCost},
+        </if>
+        <if test="firstWeight != null">
+            first_weight = #{firstWeight},
+        </if>
+        <if test="firstWeightCostRmb != null">
+            first_weight_cost_rmb = #{firstWeightCostRmb},
+        </if>
+        <if test="additionalWeight != null">
+            additional_weight = #{additionalWeight},
+        </if>
+        <if test="additionalWeightCostRmb != null">
+            additional_weight_cost_rmb = #{additionalWeightCostRmb},
+        </if>
+    </set>
+</sql>
+
+<sql id="logisticsLineDO_selector">
+    select
+    <include refid="logisticsLineDO_columns"/>
+    from sc_logistics_line
+</sql>
+
+<sql id="logisticsLineDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.priority != null">
+            AND priority = #{data.priority}
+        </if>
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.state != null">
+            AND state = #{data.state}
+        </if>
+        <if test="data.logisticsLineNid != null">
+            AND logistics_line_nid = #{data.logisticsLineNid}
+        </if>
+        <if test="data.operateState != null">
+            AND operate_state = #{data.operateState}
+        </if>
+        <if test="data.serviceType != null">
+            AND service_type = #{data.serviceType}
+        </if>
+        <if test="data.portId != null">
+            AND port_id = #{data.portId}
+        </if>
+        <if test="data.warehouseId != null">
+            AND warehouse_id = #{data.warehouseId}
+        </if>
+        <if test="data.transitWarehouseId != null">
+            AND transit_warehouse_id = #{data.transitWarehouseId}
+        </if>
+        <if test="data.clearanceLogisticsProviderNid != null">
+            AND clearance_logistics_provider_nid = #{data.clearanceLogisticsProviderNid}
+        </if>
+        <if test="data.domesticLogisticsProviderNid != null">
+            AND domestic_logistics_provider_nid = #{data.domesticLogisticsProviderNid}
+        </if>
+        <if test="data.internationalLogisticsProviderNid != null">
+            AND international_logistics_provider_nid = #{data.internationalLogisticsProviderNid}
+        </if>
+        <if test="data.domesticRouteProviderNid != null">
+            AND domestic_route_provider_nid = #{data.domesticRouteProviderNid}
+        </if>
+        <if test="data.internationalRouteProviderNid != null">
+            AND international_route_provider_nid = #{data.internationalRouteProviderNid}
+        </if>
+        <if test="data.nationId != null">
+            AND nation_id = #{data.nationId}
+        </if>
+        <if test="data.timeLimit != null">
+            AND time_limit = #{data.timeLimit}
+        </if>
+        <if test="data.timeLimitMin != null">
+            AND time_limit_min = #{data.timeLimitMin}
+        </if>
+        <if test="data.timeLimitMax != null">
+            AND time_limit_max = #{data.timeLimitMax}
+        </if>
+        <if test="data.routeCode != null">
+            AND route_code = #{data.routeCode}
+        </if>
+        <if test="data.routeBizCode != null">
+            AND route_biz_code = #{data.routeBizCode}
+        </if>
+        <if test="data.isNeedWaybillNumber != null">
+            AND is_need_waybill_number = #{data.isNeedWaybillNumber}
+        </if>
+        <if test="data.pdfTemplate != null">
+            AND pdf_template = #{data.pdfTemplate}
+        </if>
+        <if test="data.isNeedIdCardPhoto != null">
+            AND is_need_id_card_photo = #{data.isNeedIdCardPhoto}
+        </if>
+        <if test="data.fixedCost != null">
+            AND fixed_cost = #{data.fixedCost}
+        </if>
+        <if test="data.firstWeight != null">
+            AND first_weight = #{data.firstWeight}
+        </if>
+        <if test="data.firstWeightCostRmb != null">
+            AND first_weight_cost_rmb = #{data.firstWeightCostRmb}
+        </if>
+        <if test="data.additionalWeight != null">
+            AND additional_weight = #{data.additionalWeight}
+        </if>
+        <if test="data.additionalWeightCostRmb != null">
+            AND additional_weight_cost_rmb = #{data.additionalWeightCostRmb}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO">
+    insert into sc_logistics_line
+    (
+        <include refid="logisticsLineDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="logisticsLineDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO">
+    update sc_logistics_line
+    <include refid="logisticsLineDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO">
+    update sc_logistics_line
+    <set>
+        gmt_modified = now(),
+        <if test="update.priority != null">
+            priority = #{update.priority},
+        </if>
+        <if test="update.state != null">
+            state = #{update.state},
+        </if>
+        <if test="update.logisticsLineNid != null">
+            logistics_line_nid = #{update.logisticsLineNid},
+        </if>
+        <if test="update.operateState != null">
+            operate_state = #{update.operateState},
+        </if>
+        <if test="update.serviceType != null">
+            service_type = #{update.serviceType},
+        </if>
+        <if test="update.portId != null">
+            port_id = #{update.portId},
+        </if>
+        <if test="update.warehouseId != null">
+            warehouse_id = #{update.warehouseId},
+        </if>
+        <if test="update.transitWarehouseId != null">
+            transit_warehouse_id = #{update.transitWarehouseId},
+        </if>
+        <if test="update.clearanceLogisticsProviderNid != null">
+            clearance_logistics_provider_nid = #{update.clearanceLogisticsProviderNid},
+        </if>
+        <if test="update.domesticLogisticsProviderNid != null">
+            domestic_logistics_provider_nid = #{update.domesticLogisticsProviderNid},
+        </if>
+        <if test="update.internationalLogisticsProviderNid != null">
+            international_logistics_provider_nid = #{update.internationalLogisticsProviderNid},
+        </if>
+        <if test="update.domesticRouteProviderNid != null">
+            domestic_route_provider_nid = #{update.domesticRouteProviderNid},
+        </if>
+        <if test="update.internationalRouteProviderNid != null">
+            international_route_provider_nid = #{update.internationalRouteProviderNid},
+        </if>
+        <if test="update.nationId != null">
+            nation_id = #{update.nationId},
+        </if>
+        <if test="update.timeLimit != null">
+            time_limit = #{update.timeLimit},
+        </if>
+        <if test="update.timeLimitMin != null">
+            time_limit_min = #{update.timeLimitMin},
+        </if>
+        <if test="update.timeLimitMax != null">
+            time_limit_max = #{update.timeLimitMax},
+        </if>
+        <if test="update.routeCode != null">
+            route_code = #{update.routeCode},
+        </if>
+        <if test="update.routeBizCode != null">
+            route_biz_code = #{update.routeBizCode},
+        </if>
+        <if test="update.isNeedWaybillNumber != null">
+            is_need_waybill_number = #{update.isNeedWaybillNumber},
+        </if>
+        <if test="update.pdfTemplate != null">
+            pdf_template = #{update.pdfTemplate},
+        </if>
+        <if test="update.isNeedIdCardPhoto != null">
+            is_need_id_card_photo = #{update.isNeedIdCardPhoto},
+        </if>
+        <if test="update.fixedCost != null">
+            fixed_cost = #{update.fixedCost},
+        </if>
+        <if test="update.firstWeight != null">
+            first_weight = #{update.firstWeight},
+        </if>
+        <if test="update.firstWeightCostRmb != null">
+            first_weight_cost_rmb = #{update.firstWeightCostRmb},
+        </if>
+        <if test="update.additionalWeight != null">
+            additional_weight = #{update.additionalWeight},
+        </if>
+        <if test="update.additionalWeightCostRmb != null">
+            additional_weight_cost_rmb = #{update.additionalWeightCostRmb},
+        </if>
+    </set>
+    <include refid="logisticsLineDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO">
+    insert into sc_logistics_line
+    (
+        <include refid="logisticsLineDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="logisticsLineDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="priority != null">
+        ,priority = #{priority}
+    </if>
+    <if test="state != null">
+        ,state = #{state}
+    </if>
+    <if test="logisticsLineNid != null">
+        ,logistics_line_nid = #{logisticsLineNid}
+    </if>
+    <if test="operateState != null">
+        ,operate_state = #{operateState}
+    </if>
+    <if test="serviceType != null">
+        ,service_type = #{serviceType}
+    </if>
+    <if test="portId != null">
+        ,port_id = #{portId}
+    </if>
+    <if test="warehouseId != null">
+        ,warehouse_id = #{warehouseId}
+    </if>
+    <if test="transitWarehouseId != null">
+        ,transit_warehouse_id = #{transitWarehouseId}
+    </if>
+    <if test="clearanceLogisticsProviderNid != null">
+        ,clearance_logistics_provider_nid = #{clearanceLogisticsProviderNid}
+    </if>
+    <if test="domesticLogisticsProviderNid != null">
+        ,domestic_logistics_provider_nid = #{domesticLogisticsProviderNid}
+    </if>
+    <if test="internationalLogisticsProviderNid != null">
+        ,international_logistics_provider_nid = #{internationalLogisticsProviderNid}
+    </if>
+    <if test="domesticRouteProviderNid != null">
+        ,domestic_route_provider_nid = #{domesticRouteProviderNid}
+    </if>
+    <if test="internationalRouteProviderNid != null">
+        ,international_route_provider_nid = #{internationalRouteProviderNid}
+    </if>
+    <if test="nationId != null">
+        ,nation_id = #{nationId}
+    </if>
+    <if test="timeLimit != null">
+        ,time_limit = #{timeLimit}
+    </if>
+    <if test="timeLimitMin != null">
+        ,time_limit_min = #{timeLimitMin}
+    </if>
+    <if test="timeLimitMax != null">
+        ,time_limit_max = #{timeLimitMax}
+    </if>
+    <if test="routeCode != null">
+        ,route_code = #{routeCode}
+    </if>
+    <if test="routeBizCode != null">
+        ,route_biz_code = #{routeBizCode}
+    </if>
+    <if test="isNeedWaybillNumber != null">
+        ,is_need_waybill_number = #{isNeedWaybillNumber}
+    </if>
+    <if test="pdfTemplate != null">
+        ,pdf_template = #{pdfTemplate}
+    </if>
+    <if test="isNeedIdCardPhoto != null">
+        ,is_need_id_card_photo = #{isNeedIdCardPhoto}
+    </if>
+    <if test="fixedCost != null">
+        ,fixed_cost = #{fixedCost}
+    </if>
+    <if test="firstWeight != null">
+        ,first_weight = #{firstWeight}
+    </if>
+    <if test="firstWeightCostRmb != null">
+        ,first_weight_cost_rmb = #{firstWeightCostRmb}
+    </if>
+    <if test="additionalWeight != null">
+        ,additional_weight = #{additionalWeight}
+    </if>
+    <if test="additionalWeightCostRmb != null">
+        ,additional_weight_cost_rmb = #{additionalWeightCostRmb}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_logistics_line
+    set is_delete = 1, gmt_modified = now()
+    <include refid="logisticsLineDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_logistics_line
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="logisticsLineDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="logisticsLineDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="logisticsLineDOResult" parameterType="com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO">
+    <include refid="logisticsLineDO_selector"/>
+    <include refid="logisticsLineDO_query_segment"/>
+    <include refid="logisticsLineDO_groupBy"/>
+    <include refid="logisticsLineDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="logisticsLineDOResult" parameterType="com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO">
+    <include refid="logisticsLineDO_selector"/>
+    <include refid="logisticsLineDO_query_segment"/>
+    <include refid="logisticsLineDO_groupBy"/>
+    <include refid="logisticsLineDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_logistics_line
+    <include refid="logisticsLineDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="logisticsLineDOResult">
+    <include refid="logisticsLineDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="logisticsLineDOResult">
+    <include refid="logisticsLineDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>

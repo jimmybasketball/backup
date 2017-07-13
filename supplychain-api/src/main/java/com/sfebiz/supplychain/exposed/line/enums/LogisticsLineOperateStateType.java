@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.exposed.merchant.enums;
+package com.sfebiz.supplychain.exposed.line.enums;
 
 import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
 import org.slf4j.Logger;
@@ -10,33 +10,32 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 开放物流平台货主供应商状态类型
+ * 线路运营状态
  *
  * @author liujc
  * @create 2017-07-05 16:05
  **/
-public class MerchantProviderStateType extends Enumerable4StringValue {
-
+public class LogisticsLineOperateStateType extends Enumerable4StringValue {
 
     private static final Logger log = LoggerFactory.getLogger(Enumerable4StringValue.class);
 
     private static final Lock lock = new ReentrantLock();
-    private static final long serialVersionUID = 6414474358252572778L;
+    private static final long serialVersionUID = -2002750560453167578L;
 
-    private static volatile transient Map<String, MerchantProviderStateType> allbyvalue = new HashMap<String, MerchantProviderStateType>();
+    private static volatile transient Map<String, LogisticsLineOperateStateType> allbyvalue = new HashMap<String, LogisticsLineOperateStateType>();
 
-    private static volatile transient Map<String, MerchantProviderStateType> allbyname = new HashMap<String, MerchantProviderStateType>();
+    private static volatile transient Map<String, LogisticsLineOperateStateType> allbyname = new HashMap<String, LogisticsLineOperateStateType>();
 
-    public static MerchantProviderStateType ENABLE = MerchantProviderStateType.valueOf("ENABLE", "启用");
+    public static LogisticsLineOperateStateType NORMAL = LogisticsLineOperateStateType.valueOf("NORMAL", "正常");
 
-    public static MerchantProviderStateType DISABLE = MerchantProviderStateType.valueOf("DISABLE", "禁用");
+    public static LogisticsLineOperateStateType STOPED = LogisticsLineOperateStateType.valueOf("STOPED", "停止");
 
-    public MerchantProviderStateType(String value, String name) {
+    public LogisticsLineOperateStateType(String value, String name) {
         super(value, name);
     }
 
-    public static MerchantProviderStateType valueOf(String value, String name) {
-        MerchantProviderStateType e = allbyvalue.get(value);
+    public static LogisticsLineOperateStateType valueOf(String value, String name) {
+        LogisticsLineOperateStateType e = allbyvalue.get(value);
         if (e != null) {
             if (e.name.equals(name) || undefined.equals(name))
                 //undefined可以更新， 其他的name不可以更新？ No, 所有值都可以更新; 但是不能用undefined覆盖已有值
@@ -47,9 +46,9 @@ public class MerchantProviderStateType extends Enumerable4StringValue {
             }
         }
 
-        Map<String, MerchantProviderStateType> allbyvalue_new = new HashMap<String, MerchantProviderStateType>();
-        Map<String, MerchantProviderStateType> allbyname_new = new HashMap<String, MerchantProviderStateType>();
-        e = new MerchantProviderStateType(value, name);
+        Map<String, LogisticsLineOperateStateType> allbyvalue_new = new HashMap<String, LogisticsLineOperateStateType>();
+        Map<String, LogisticsLineOperateStateType> allbyname_new = new HashMap<String, LogisticsLineOperateStateType>();
+        e = new LogisticsLineOperateStateType(value, name);
         lock.lock();
         try {
             allbyvalue_new.putAll(allbyvalue);
@@ -64,8 +63,8 @@ public class MerchantProviderStateType extends Enumerable4StringValue {
         return e;
     }
 
-    public static MerchantProviderStateType valueOf(String value) {
-        MerchantProviderStateType e = allbyvalue.get(value);
+    public static LogisticsLineOperateStateType valueOf(String value) {
+        LogisticsLineOperateStateType e = allbyvalue.get(value);
         if (e != null) {
             return e;
         } else {
@@ -74,7 +73,7 @@ public class MerchantProviderStateType extends Enumerable4StringValue {
     }
 
     public static boolean containValue(String value) {
-        MerchantProviderStateType e = allbyvalue.get(value);
+        LogisticsLineOperateStateType e = allbyvalue.get(value);
         if (e != null) {
             return true;
         } else {
@@ -82,8 +81,8 @@ public class MerchantProviderStateType extends Enumerable4StringValue {
         }
     }
 
-    public static MerchantProviderStateType[] values() {
-        return allbyvalue.values().toArray(new MerchantProviderStateType[0]);
+    public static LogisticsLineOperateStateType[] values() {
+        return allbyvalue.values().toArray(new LogisticsLineOperateStateType[0]);
     }
     
 }
