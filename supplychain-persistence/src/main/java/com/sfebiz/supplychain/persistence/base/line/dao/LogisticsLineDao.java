@@ -10,4 +10,6 @@ import com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO;
  * @date 2017-07-11 11:18
  **/
 public interface LogisticsLineDao extends BaseDao<LogisticsLineDO>{
+
+    public int updateBySelected(LogisticsLineDO logisticsLineDO);
 }

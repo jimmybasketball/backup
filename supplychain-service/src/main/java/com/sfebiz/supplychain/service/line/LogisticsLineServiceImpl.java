@@ -120,10 +120,7 @@ public class LogisticsLineServiceImpl implements LogisticsLineService {
                 //生成线路名
                 String lineName = generateLineName(logisticsLineEntity);
                 logisticsLineDO.setLogisticsLineNid(lineName);
-                //将状态置空，这里只涉及到基本信息修改
-                logisticsLineDO.setState(null);
-                logisticsLineDO.setOperateState(null);
-                logisticsLineManager.update(logisticsLineDO);
+                logisticsLineManager.updateBySelected(logisticsLineDO);
 
                 LogBetter.instance(LOGGER)
                         .setLevel(LogLevel.INFO)

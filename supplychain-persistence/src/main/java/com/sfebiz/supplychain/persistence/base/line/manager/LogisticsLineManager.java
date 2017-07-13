@@ -36,4 +36,7 @@ public class LogisticsLineManager extends BaseManager<LogisticsLineDO>{
     }
 
 
+    public int updateBySelected(LogisticsLineDO logisticsLineDO) {
+        return logisticsLineDao.updateBySelected(logisticsLineDO);
+    }
 }

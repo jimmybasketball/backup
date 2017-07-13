@@ -40,9 +40,9 @@ public class LogisticsLineServiceType extends Enumerable4IntValue {
     //客户-丰趣集货-丰趣清关（非一单到底）
     public static LogisticsLineServiceType FENG_JI_JIBAO = LogisticsLineServiceType.valueOf(42, "丰集产品(非一单到底，集包物流)");
     //客户供应商-丰趣转运邮政
-    public static LogisticsLineServiceType FENG_JI_USPS_C = LogisticsLineServiceType.valueOf(43, "丰集产品(USPS)--C客户用丰趣系统小量发件");
+    public static LogisticsLineServiceType FENG_JI_USPS_C = LogisticsLineServiceType.valueOf(43, "丰集产品(USPS)-C客户用丰趣系统小量发件");
     //客户国外网站-丰趣转运邮政
-    public static LogisticsLineServiceType FENG_JI_USPS_B = LogisticsLineServiceType.valueOf(44, "丰集产品(USPS)--B客户有系统发货");
+    public static LogisticsLineServiceType FENG_JI_USPS_B = LogisticsLineServiceType.valueOf(44, "丰集产品(USPS)-B客户有系统发货");
 
 
     private LogisticsLineServiceType(int value, String name) {

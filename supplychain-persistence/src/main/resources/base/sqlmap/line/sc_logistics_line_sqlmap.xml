@@ -668,4 +668,38 @@
     for update
 </select>
 
+    <!-- 对象属性为空 则会置空 不会修改状态-->
+    <update id="updateBySelected" parameterType="com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO">
+        update sc_logistics_line
+        <set>
+            gmt_modified = now(),
+            priority = #{priority},
+            logistics_line_nid = #{logisticsLineNid},
+            service_type = #{serviceType},
+            port_id = #{portId},
+            warehouse_id = #{warehouseId},
+            transit_warehouse_id = #{transitWarehouseId},
+            clearance_logistics_provider_nid = #{clearanceLogisticsProviderNid},
+            domestic_logistics_provider_nid = #{domesticLogisticsProviderNid},
+            international_logistics_provider_nid = #{internationalLogisticsProviderNid},
+            domestic_route_provider_nid = #{domesticRouteProviderNid},
+            international_route_provider_nid = #{internationalRouteProviderNid},
+            nation_id = #{nationId},
+            time_limit = #{timeLimit},
+            time_limit_min = #{timeLimitMin},
+            time_limit_max = #{timeLimitMax},
+            route_code = #{routeCode},
+            route_biz_code = #{routeBizCode},
+            is_need_waybill_number = #{isNeedWaybillNumber},
+            pdf_template = #{pdfTemplate},
+            is_need_id_card_photo = #{isNeedIdCardPhoto},
+            fixed_cost = #{fixedCost},
+            first_weight = #{firstWeight},
+            first_weight_cost_rmb = #{firstWeightCostRmb},
+            additional_weight = #{additionalWeight},
+            additional_weight_cost_rmb = #{additionalWeightCostRmb},
+        </set>
+        where id = #{id}
+        and is_delete = 0
+    </update>
 </mapper>
