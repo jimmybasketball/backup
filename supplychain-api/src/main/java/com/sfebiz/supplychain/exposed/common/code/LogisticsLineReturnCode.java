@@ -22,7 +22,7 @@ public class LogisticsLineReturnCode extends SCReturnCode {
     public final static int _C_LINE_NOT_EXIST = 1030003;
     public final static int _C_LINE_ALREADY_CHANGE_STATE = 1030004;
     public final static int _C_LINE_ALREADY_CHANGE_OPERATE_STATE = 1030005;
-    public final static int _C_LINE_WRONG_OPERATE_STATE = 1030005;
+    public final static int _C_LINE_WRONG_OPERATE_STATE = 1030006;
 
     public final static LogisticsLineReturnCode LINE_CONCURRENT_EXCEPTION = new LogisticsLineReturnCode("线路服务并发异常", _C_LINE_CONCURRENT_EXCEPTION);
     public final static LogisticsLineReturnCode LINE_UNKNOWN_ERROR = new LogisticsLineReturnCode("线路服务未知异常", _C_LINE_UNKNOWN_ERROR);

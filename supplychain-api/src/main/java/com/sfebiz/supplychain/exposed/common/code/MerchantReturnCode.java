@@ -59,7 +59,7 @@ public class MerchantReturnCode extends SCReturnCode{
     public final static int _C_MERCHANT_PROVIDER_LINE_ENTITY_VALIDATE_FAIL = 1022002;
     public final static int _C_MERCHANT_PROVIDER_LINE_WRONG_STATE = 1022003;
     public final static int _C_MERCHANT_PROVIDER_LINE_NOT_EXIST = 1022004;
-    public final static int _C_MERCHANT_PROVIDER_LINE_ALREADY_CHANGE_STATE = 1022004;
+    public final static int _C_MERCHANT_PROVIDER_LINE_ALREADY_CHANGE_STATE = 1022005;
 
     public final static MerchantReturnCode MERCHANT_PROVIDER_LINE_UNKNOWN_ERROR =  new MerchantReturnCode("货主供应商线路服务未知异常",_C_MERCHANT_PROVIDER_LINE_UNKNOWN_ERROR);
     public final static MerchantReturnCode MERCHANT_PROVIDER_LINE_ENTITY_VALIDATE_FAIL =  new MerchantReturnCode("货主供应商线路实体校验失败",_C_MERCHANT_PROVIDER_LINE_ENTITY_VALIDATE_FAIL);
