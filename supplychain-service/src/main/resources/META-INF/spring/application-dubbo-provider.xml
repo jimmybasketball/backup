@@ -76,5 +76,25 @@
 		<property name="timeout" value="${dubbo.export.timeout}" />
 	</bean>
 
+	<!-- 商品start -->
+	<bean id="skuProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.exposed.sku.api.SkuService" />
+		<property name="ref" ref="skuService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
+	<bean id="skuMerchantProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.exposed.sku.api.SkuMerchantService" />
+		<property name="ref" ref="skuMerchantService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
+	<!-- 商品end -->
 
 </beans>

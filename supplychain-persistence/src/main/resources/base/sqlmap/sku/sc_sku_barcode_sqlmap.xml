@@ -4,58 +4,58 @@
 
 <resultMap id="skuBarcodeDOResult" type="com.sfebiz.supplychain.persistence.base.sku.domain.SkuBarcodeDO">
     <result column="id" property="id"/>
-    <result column="sku_id" property="skuId"/>
+    <result column="barcode" property="barcode"/>
+    <result column="gmt_create" property="gmtCreate"/>
     <result column="modified_by" property="modifiedBy"/>
+    <result column="sku_id" property="skuId"/>
     <result column="create_by" property="createBy"/>
     <result column="gmt_modified" property="gmtModified"/>
-    <result column="bar_code" property="barCode"/>
-    <result column="gmt_create" property="gmtCreate"/>
 </resultMap>
 
 <sql id="skuBarcodeDO_columns">
     id,
-    sku_id,
+    barcode,
+    gmt_create,
     modified_by,
+    sku_id,
     create_by,
-    gmt_modified,
-    bar_code,
-    gmt_create
+    gmt_modified
 </sql>
 
 <sql id="skuBarcodeDO_sqlForInsert">
     id,
-    sku_id,
+    barcode,
+    gmt_create,
     modified_by,
+    sku_id,
     create_by,
-    gmt_modified,
-    bar_code,
-    gmt_create
+    gmt_modified
 </sql>
 
 <sql id="skuBarcodeDO_columnsForInsert">
     #{id},
-    #{skuId},
-    #{modifiedBy},
-    #{createBy},
+    #{barcode},
     now(),
-    #{barCode},
+    #{modifiedBy},
+    #{skuId},
+    #{createBy},
     now()
 </sql>
 
 <sql id="skuBarcodeDO_setterForUpdate">
     <set>
         gmt_modified = now(),
-        <if test="skuId != null">
-            sku_id = #{skuId},
+        <if test="barcode != null">
+            barcode = #{barcode},
         </if>
         <if test="modifiedBy != null">
             modified_by = #{modifiedBy},
         </if>
+        <if test="skuId != null">
+            sku_id = #{skuId},
+        </if>
         <if test="createBy != null">
             create_by = #{createBy},
-        </if>
-        <if test="barCode != null">
-            bar_code = #{barCode},
         </if>
     </set>
 </sql>
@@ -71,23 +71,23 @@
         <if test="data.id != null">
             AND id = #{data.id}
         </if>
-        <if test="data.skuId != null">
-            AND sku_id = #{data.skuId}
+        <if test="data.barcode != null">
+            AND barcode = #{data.barcode}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
         </if>
         <if test="data.modifiedBy != null">
             AND modified_by = #{data.modifiedBy}
+        </if>
+        <if test="data.skuId != null">
+            AND sku_id = #{data.skuId}
         </if>
         <if test="data.createBy != null">
             AND create_by = #{data.createBy}
         </if>
         <if test="data.gmtModified != null">
             AND gmt_modified = #{data.gmtModified}
-        </if>
-        <if test="data.barCode != null">
-            AND bar_code = #{data.barCode}
-        </if>
-        <if test="data.gmtCreate != null">
-            AND gmt_create = #{data.gmtCreate}
         </if>
         <if test="ins != null and ins != ''">
             AND
@@ -185,17 +185,20 @@
     update sc_sku_barcode
     <set>
         gmt_modified = now(),
-        <if test="update.skuId != null">
-            sku_id = #{update.skuId},
+        <if test="update.barcode != null">
+            barcode = #{update.barcode},
         </if>
         <if test="update.modifiedBy != null">
             modified_by = #{update.modifiedBy},
         </if>
+        <if test="update.skuId != null">
+            sku_id = #{update.skuId},
+        </if>
         <if test="update.createBy != null">
             create_by = #{update.createBy},
         </if>
-        <if test="update.barCode != null">
-            bar_code = #{update.barCode},
+        <if test="update.isDelete != null">
+            is_delete = #{update.isDelete},
         </if>
     </set>
     <include refid="skuBarcodeDO_query_segment"/>
@@ -216,17 +219,17 @@
     on duplicate key update
     gmt_modified = now()
     ,is_delete = 0
-    <if test="skuId != null">
-        ,sku_id = #{skuId}
+    <if test="barcode != null">
+        ,barcode = #{barcode}
     </if>
     <if test="modifiedBy != null">
         ,modified_by = #{modifiedBy}
     </if>
+    <if test="skuId != null">
+        ,sku_id = #{skuId}
+    </if>
     <if test="createBy != null">
         ,create_by = #{createBy}
-    </if>
-    <if test="barCode != null">
-        ,bar_code = #{barCode}
     </if>
 </insert>
 

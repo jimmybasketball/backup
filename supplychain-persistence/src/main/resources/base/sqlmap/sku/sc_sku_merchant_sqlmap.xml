@@ -4,31 +4,108 @@
 
 <resultMap id="skuMerchantDOResult" type="com.sfebiz.supplychain.persistence.base.sku.domain.SkuMerchantDO">
     <result column="id" property="id"/>
+    <result column="merchant_barcode" property="merchantBarcode"/>
+    <result column="planned_sale_amount" property="plannedSaleAmount"/>
+    <result column="modified_by" property="modifiedBy"/>
+    <result column="supply_land" property="supplyLand"/>
+    <result column="manufacturer" property="manufacturer"/>
+    <result column="cost_amount" property="costAmount"/>
+    <result column="create_by" property="createBy"/>
     <result column="gmt_modified" property="gmtModified"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="origin_land" property="originLand"/>
     <result column="gmt_create" property="gmtCreate"/>
+    <result column="merchant_id" property="merchantId"/>
+    <result column="bill_name" property="billName"/>
 </resultMap>
 
 <sql id="skuMerchantDO_columns">
     id,
+    merchant_barcode,
+    planned_sale_amount,
+    modified_by,
+    supply_land,
+    manufacturer,
+    cost_amount,
+    create_by,
     gmt_modified,
-    gmt_create
+    sku_id,
+    origin_land,
+    gmt_create,
+    merchant_id,
+    bill_name
 </sql>
 
 <sql id="skuMerchantDO_sqlForInsert">
     id,
+    merchant_barcode,
+    planned_sale_amount,
+    modified_by,
+    supply_land,
+    manufacturer,
+    cost_amount,
+    create_by,
     gmt_modified,
-    gmt_create
+    sku_id,
+    origin_land,
+    gmt_create,
+    merchant_id,
+    bill_name
 </sql>
 
 <sql id="skuMerchantDO_columnsForInsert">
     #{id},
+    #{merchantBarcode},
+    #{plannedSaleAmount},
+    #{modifiedBy},
+    #{supplyLand},
+    #{manufacturer},
+    #{costAmount},
+    #{createBy},
     now(),
-    now()
+    #{skuId},
+    #{originLand},
+    now(),
+    #{merchantId},
+    #{billName}
 </sql>
 
 <sql id="skuMerchantDO_setterForUpdate">
     <set>
         gmt_modified = now(),
+        <if test="merchantBarcode != null">
+            merchant_barcode = #{merchantBarcode},
+        </if>
+        <if test="plannedSaleAmount != null">
+            planned_sale_amount = #{plannedSaleAmount},
+        </if>
+        <if test="modifiedBy != null">
+            modified_by = #{modifiedBy},
+        </if>
+        <if test="supplyLand != null">
+            supply_land = #{supplyLand},
+        </if>
+        <if test="manufacturer != null">
+            manufacturer = #{manufacturer},
+        </if>
+        <if test="costAmount != null">
+            cost_amount = #{costAmount},
+        </if>
+        <if test="createBy != null">
+            create_by = #{createBy},
+        </if>
+        <if test="skuId != null">
+            sku_id = #{skuId},
+        </if>
+        <if test="originLand != null">
+            origin_land = #{originLand},
+        </if>
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
+        </if>
+        <if test="billName != null">
+            bill_name = #{billName},
+        </if>
     </set>
 </sql>
 
@@ -43,11 +120,44 @@
         <if test="data.id != null">
             AND id = #{data.id}
         </if>
+        <if test="data.merchantBarcode != null">
+            AND merchant_barcode = #{data.merchantBarcode}
+        </if>
+        <if test="data.plannedSaleAmount != null">
+            AND planned_sale_amount = #{data.plannedSaleAmount}
+        </if>
+        <if test="data.modifiedBy != null">
+            AND modified_by = #{data.modifiedBy}
+        </if>
+        <if test="data.supplyLand != null">
+            AND supply_land = #{data.supplyLand}
+        </if>
+        <if test="data.manufacturer != null">
+            AND manufacturer = #{data.manufacturer}
+        </if>
+        <if test="data.costAmount != null">
+            AND cost_amount = #{data.costAmount}
+        </if>
+        <if test="data.createBy != null">
+            AND create_by = #{data.createBy}
+        </if>
         <if test="data.gmtModified != null">
             AND gmt_modified = #{data.gmtModified}
         </if>
+        <if test="data.skuId != null">
+            AND sku_id = #{data.skuId}
+        </if>
+        <if test="data.originLand != null">
+            AND origin_land = #{data.originLand}
+        </if>
         <if test="data.gmtCreate != null">
             AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="data.billName != null">
+            AND bill_name = #{data.billName}
         </if>
         <if test="ins != null and ins != ''">
             AND
@@ -145,6 +255,39 @@
     update sc_sku_merchant
     <set>
         gmt_modified = now(),
+        <if test="update.merchantBarcode != null">
+            merchant_barcode = #{update.merchantBarcode},
+        </if>
+        <if test="update.plannedSaleAmount != null">
+            planned_sale_amount = #{update.plannedSaleAmount},
+        </if>
+        <if test="update.modifiedBy != null">
+            modified_by = #{update.modifiedBy},
+        </if>
+        <if test="update.supplyLand != null">
+            supply_land = #{update.supplyLand},
+        </if>
+        <if test="update.manufacturer != null">
+            manufacturer = #{update.manufacturer},
+        </if>
+        <if test="update.costAmount != null">
+            cost_amount = #{update.costAmount},
+        </if>
+        <if test="update.createBy != null">
+            create_by = #{update.createBy},
+        </if>
+        <if test="update.skuId != null">
+            sku_id = #{update.skuId},
+        </if>
+        <if test="update.originLand != null">
+            origin_land = #{update.originLand},
+        </if>
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
+        </if>
+        <if test="update.billName != null">
+            bill_name = #{update.billName},
+        </if>
     </set>
     <include refid="skuMerchantDO_query_segment"/>
 </update>
@@ -164,6 +307,39 @@
     on duplicate key update
     gmt_modified = now()
     ,is_delete = 0
+    <if test="merchantBarcode != null">
+        ,merchant_barcode = #{merchantBarcode}
+    </if>
+    <if test="plannedSaleAmount != null">
+        ,planned_sale_amount = #{plannedSaleAmount}
+    </if>
+    <if test="modifiedBy != null">
+        ,modified_by = #{modifiedBy}
+    </if>
+    <if test="supplyLand != null">
+        ,supply_land = #{supplyLand}
+    </if>
+    <if test="manufacturer != null">
+        ,manufacturer = #{manufacturer}
+    </if>
+    <if test="costAmount != null">
+        ,cost_amount = #{costAmount}
+    </if>
+    <if test="createBy != null">
+        ,create_by = #{createBy}
+    </if>
+    <if test="skuId != null">
+        ,sku_id = #{skuId}
+    </if>
+    <if test="originLand != null">
+        ,origin_land = #{originLand}
+    </if>
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
+    </if>
+    <if test="billName != null">
+        ,bill_name = #{billName}
+    </if>
 </insert>
 
 <!-- Delete -->

@@ -50,7 +50,7 @@ public class SkuEntity implements Serializable {
     /**
      * 保质期，单位天
      */
-    public Integer guarantyPperiod;
+    public Integer guarantyPeriod;
 
     /**
      * 规格型号
@@ -167,12 +167,12 @@ public class SkuEntity implements Serializable {
         this.measuringUnit = measuringUnit;
     }
 
-    public Integer getGuarantyPperiod() {
-        return guarantyPperiod;
+    public Integer getGuarantyPeriod() {
+        return guarantyPeriod;
     }
 
-    public void setGuarantyPperiod(Integer guarantyPperiod) {
-        this.guarantyPperiod = guarantyPperiod;
+    public void setGuarantyPeriod(Integer guarantyPeriod) {
+        this.guarantyPeriod = guarantyPeriod;
     }
 
     public String getAttributesDesc() {
@@ -303,7 +303,7 @@ public class SkuEntity implements Serializable {
                 ", foreignName='" + foreignName + '\'' +
                 ", brandName='" + brandName + '\'' +
                 ", measuringUnit='" + measuringUnit + '\'' +
-                ", guarantyPperiod='" + guarantyPperiod + '\'' +
+                ", guarantyPeriod='" + guarantyPeriod + '\'' +
                 ", attributesDesc='" + attributesDesc + '\'' +
                 ", grossWeight='" + grossWeight + '\'' +
                 ", netWeight='" + netWeight + '\'' +

@@ -85,7 +85,7 @@ public class SkuMerchantEntity implements Serializable  {
     /**
      * 基本商品信息
      */
-    public SkuEntity sku;
+    public SkuEntity skuEntity;
 
     public Long getId() {
         return id;
@@ -199,12 +199,12 @@ public class SkuMerchantEntity implements Serializable  {
         this.modifiedBy = modifiedBy;
     }
 
-    public SkuEntity getSku() {
-        return sku;
+    public SkuEntity getSkuEntity() {
+        return skuEntity;
     }
 
-    public void setSku(SkuEntity sku) {
-        this.sku = sku;
+    public void setSkuEntity(SkuEntity skuEntity) {
+        this.skuEntity = skuEntity;
     }
 
     @Override
@@ -220,7 +220,7 @@ public class SkuMerchantEntity implements Serializable  {
                 ", costAmount='" + costAmount + '\'' +
                 ", plannedSaleAmount='" + plannedSaleAmount + '\'' +
                 ", manufacturer='" + manufacturer + '\'' +
-                ", sku='" + sku + '\'' +
+                ", skuEntity='" + skuEntity + '\'' +
                 '}';
     }
 }

@@ -40,7 +40,7 @@ public class SkuDO extends BaseDO {
     /**
      * 保质期，单位天
      */
-    private Integer guarantyPperiod;
+    private Integer guarantyPeriod;
 
     /**
      * 规格型号
@@ -154,12 +154,12 @@ public class SkuDO extends BaseDO {
         this.measuringUnit = measuringUnit;
     }
 
-    public Integer getGuarantyPperiod() {
-        return guarantyPperiod;
+    public Integer getGuarantyPeriod() {
+        return guarantyPeriod;
     }
 
-    public void setGuarantyPperiod(Integer guarantyPperiod) {
-        this.guarantyPperiod = guarantyPperiod;
+    public void setGuarantyPeriod(Integer guarantyPeriod) {
+        this.guarantyPeriod = guarantyPeriod;
     }
 
     public String getAttributesDesc() {
@@ -274,7 +274,7 @@ public class SkuDO extends BaseDO {
                 ", foreignName='" + foreignName + '\'' +
                 ", brandName='" + brandName + '\'' +
                 ", measuringUnit='" + measuringUnit + '\'' +
-                ", guarantyPperiod='" + guarantyPperiod + '\'' +
+                ", guarantyPeriod='" + guarantyPeriod + '\'' +
                 ", attributesDesc='" + attributesDesc + '\'' +
                 ", grossWeight='" + grossWeight + '\'' +
                 ", netWeight='" + netWeight + '\'' +
