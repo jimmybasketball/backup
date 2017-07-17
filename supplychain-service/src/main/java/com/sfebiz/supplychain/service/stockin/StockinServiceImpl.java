@@ -36,18 +36,14 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * Created by zhangyajing on 2017/7/12.
+ * Created by zhangyajing on 2017/7/17.
  */
-
-@Component("stockinService")
-public class StockInServiceImpl implements StockInService {
-
+public class StockInServiceImpl implements StockInService{
     private static Logger logger = LoggerFactory.getLogger(StockInServiceImpl.class);
     private static final HaitaoTraceLogger traceLogger = HaitaoTraceLoggerFactory.getTraceLogger("stockinorder");
     private final static ModelMapper modelMapper = new ModelMapper();
@@ -74,7 +70,7 @@ public class StockInServiceImpl implements StockInService {
     @MethodParamValidate
     public CommonRet<Long> createStockinOrder (
             @ParamNotBlank("请求不能为空") StockinOrderEntity stockinOrderEntity, Long userId, String userName) throws ServiceException {
-       CommonRet<Long> commonRet = new CommonRet<Long>();
+        CommonRet<Long> commonRet = new CommonRet<Long>();
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setMsg("[物流平台入库单-创建]")
@@ -131,7 +127,7 @@ public class StockInServiceImpl implements StockInService {
                 .addParm("入库单ID", stockinOrderId)
                 .addParm("明细", stockinOrderDetailEntities)
                 .addParm("操作者", userName)
-               .log();
+                .log();
 
         if ( null == stockinOrderId) {
             LogBetter.instance(logger)
