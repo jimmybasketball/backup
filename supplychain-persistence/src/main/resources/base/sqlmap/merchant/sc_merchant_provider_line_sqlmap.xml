@@ -169,6 +169,14 @@
     </trim>
 </sql>
 
+    <select id="getByProviderAndWarehouse" parameterType="java.util.HashMap" resultMap="merchantProviderLineDOResult">
+        SELECT * FROM sc_merchant_provider_line
+        WHERE merchant_provider_id = #{providerId}
+        AND line_id IN (
+	      SELECT sc_logistics_line.id FROM sc_logistics_line WHERE sc_logistics_line.warehouse_id = #{warehouseId}
+	    )and is_delete = 0 and state = 'ENABLE';
+    </select>
+
 
 <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderLineDO">
     insert into sc_merchant_provider_line

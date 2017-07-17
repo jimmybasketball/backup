@@ -16,7 +16,7 @@ public class CommonRet<T> implements Serializable{
     private static final long serialVersionUID = -7554908803357258034L;
     private T result;
 
-    private Integer retCode = SupplyChainReturnCode.SUCCESS.code;
+    private Integer retCode = SupplyChainReturnCode.SUCCESS.getCode();
 
     private String retMsg;
 
@@ -70,7 +70,7 @@ public class CommonRet<T> implements Serializable{
     }
 
     public void reSet() {
-        retCode = SupplyChainReturnCode.SUCCESS.code;
+        retCode = SupplyChainReturnCode.SUCCESS.getCode();
         result = null;
         retMsg = null;
     }
