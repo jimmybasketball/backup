@@ -1,9 +1,11 @@
 package com.sfebiz.supplychain;
 
+import com.alibaba.dubbo.container.Main;
+
 public class LocalDubboBoot {
 
     public static void main(String[] args) throws Exception {
-	com.alibaba.dubbo.container.Main.main(args);
+	    Main.main(args);
     }
 
 }
