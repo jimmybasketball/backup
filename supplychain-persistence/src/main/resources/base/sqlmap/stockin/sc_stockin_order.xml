@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.stockin.dao.StockinOrderDao">
+
+<resultMap id="stockinOrderDOResult" type="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO">
+    <result column="state" property="state"/>
+    <result column="type" property="type"/>
+    <result column="warehouse_id" property="warehouseId"/>
+    <result column="contact_name" property="contactName"/>
+    <result column="contact_phone" property="contactPhone"/>
+    <result column="mail_no" property="mailNo"/>
+    <result column="merchant_id" property="merchantId"/>
+    <result column="transport_type" property="transportType"/>
+    <result column="plate_number" property="plateNumber"/>
+    <result column="logistics_company" property="logisticsCompany"/>
+    <result column="merchant_provider_id" property="merchantProviderId"/>
+    <result column="asn_success_time" property="asnSuccessTime"/>
+    <result column="predict_send_time" property="predictSendTime"/>
+    <result column="predict_arrive_port" property="predictArrivePort"/>
+    <result column="actdict_arrive_port" property="actdictArrivePort"/>
+    <result column="warehouse_stockin_time" property="warehouseStockinTime"/>
+    <result column="stockin_finish_time" property="stockinFinishTime"/>
+    <result column="warehouse_confirm_start" property="warehouseConfirmStart"/>
+    <result column="warehouse_confirm_end" property="warehouseConfirmEnd"/>
+    <result column="biz_id" property="bizId"/>
+    <result column="stockin_id" property="stockinId"/>
+    <result column="id" property="id"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="gmt_modified" property="gmtModified"/>
+</resultMap>
+
+<sql id="stockinOrderDO_columns">
+    state,
+    type,
+    warehouse_id,
+    contact_name,
+    contact_phone,
+    mail_no,
+    merchant_id,
+    transport_type,
+    plate_number,
+    logistics_company,
+    merchant_provider_id,
+    asn_success_time,
+    predict_send_time,
+    predict_arrive_port,
+    actdict_arrive_port,
+    warehouse_stockin_time,
+    stockin_finish_time,
+    warehouse_confirm_start,
+    warehouse_confirm_end,
+    biz_id,
+    stockin_id,
+    id,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="stockinOrderDO_sqlForInsert">
+    state,
+    type,
+    warehouse_id,
+    contact_name,
+    contact_phone,
+    mail_no,
+    merchant_id,
+    transport_type,
+    plate_number,
+    logistics_company,
+    merchant_provider_id,
+    asn_success_time,
+    predict_send_time,
+    predict_arrive_port,
+    actdict_arrive_port,
+    warehouse_stockin_time,
+    stockin_finish_time,
+    warehouse_confirm_start,
+    warehouse_confirm_end,
+    biz_id,
+    stockin_id,
+    id,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="stockinOrderDO_columnsForInsert">
+    #{state},
+    #{type},
+    #{warehouseId},
+    #{contactName},
+    #{contactPhone},
+    #{mailNo},
+    #{merchantId},
+    #{transportType},
+    #{plateNumber},
+    #{logisticsCompany},
+    #{merchantProviderId},
+    #{asnSuccessTime},
+    #{predictSendTime},
+    #{predictArrivePort},
+    #{actdictArrivePort},
+    #{warehouseStockinTime},
+    #{stockinFinishTime},
+    #{warehouseConfirmStart},
+    #{warehouseConfirmEnd},
+    #{bizId},
+    #{stockinId},
+    #{id},
+    now(),
+    now()
+</sql>
+
+<sql id="stockinOrderDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="state != null">
+            state = #{state},
+        </if>
+        <if test="type != null">
+            type = #{type},
+        </if>
+        <if test="warehouseId != null">
+            warehouse_id = #{warehouseId},
+        </if>
+        <if test="contactName != null">
+            contact_name = #{contactName},
+        </if>
+        <if test="contactPhone != null">
+            contact_phone = #{contactPhone},
+        </if>
+        <if test="mailNo != null">
+            mail_no = #{mailNo},
+        </if>
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
+        </if>
+        <if test="transportType != null">
+            transport_type = #{transportType},
+        </if>
+        <if test="plateNumber != null">
+            plate_number = #{plateNumber},
+        </if>
+        <if test="logisticsCompany != null">
+            logistics_company = #{logisticsCompany},
+        </if>
+        <if test="merchantProviderId != null">
+            merchant_provider_id = #{merchantProviderId},
+        </if>
+        <if test="asnSuccessTime != null">
+            asn_success_time = #{asnSuccessTime},
+        </if>
+        <if test="predictSendTime != null">
+            predict_send_time = #{predictSendTime},
+        </if>
+        <if test="predictArrivePort != null">
+            predict_arrive_port = #{predictArrivePort},
+        </if>
+        <if test="actdictArrivePort != null">
+            actdict_arrive_port = #{actdictArrivePort},
+        </if>
+        <if test="warehouseStockinTime != null">
+            warehouse_stockin_time = #{warehouseStockinTime},
+        </if>
+        <if test="stockinFinishTime != null">
+            stockin_finish_time = #{stockinFinishTime},
+        </if>
+        <if test="warehouseConfirmStart != null">
+            warehouse_confirm_start = #{warehouseConfirmStart},
+        </if>
+        <if test="warehouseConfirmEnd != null">
+            warehouse_confirm_end = #{warehouseConfirmEnd},
+        </if>
+        <if test="bizId != null">
+            biz_id = #{bizId},
+        </if>
+        <if test="stockinId != null">
+            stockin_id = #{stockinId},
+        </if>
+    </set>
+</sql>
+
+<sql id="stockinOrderDO_selector">
+    select
+    <include refid="stockinOrderDO_columns"/>
+    from sc_stockin_order
+</sql>
+
+<sql id="stockinOrderDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.state != null">
+            AND state = #{data.state}
+        </if>
+        <if test="data.type != null">
+            AND type = #{data.type}
+        </if>
+        <if test="data.warehouseId != null">
+            AND warehouse_id = #{data.warehouseId}
+        </if>
+        <if test="data.contactName != null">
+            AND contact_name = #{data.contactName}
+        </if>
+        <if test="data.contactPhone != null">
+            AND contact_phone = #{data.contactPhone}
+        </if>
+        <if test="data.mailNo != null">
+            AND mail_no = #{data.mailNo}
+        </if>
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="data.transportType != null">
+            AND transport_type = #{data.transportType}
+        </if>
+        <if test="data.plateNumber != null">
+            AND plate_number = #{data.plateNumber}
+        </if>
+        <if test="data.logisticsCompany != null">
+            AND logistics_company = #{data.logisticsCompany}
+        </if>
+        <if test="data.merchantProviderId != null">
+            AND merchant_provider_id = #{data.merchantProviderId}
+        </if>
+        <if test="data.asnSuccessTime != null">
+            AND asn_success_time = #{data.asnSuccessTime}
+        </if>
+        <if test="data.predictSendTime != null">
+            AND predict_send_time = #{data.predictSendTime}
+        </if>
+        <if test="data.predictArrivePort != null">
+            AND predict_arrive_port = #{data.predictArrivePort}
+        </if>
+        <if test="data.actdictArrivePort != null">
+            AND actdict_arrive_port = #{data.actdictArrivePort}
+        </if>
+        <if test="data.warehouseStockinTime != null">
+            AND warehouse_stockin_time = #{data.warehouseStockinTime}
+        </if>
+        <if test="data.stockinFinishTime != null">
+            AND stockin_finish_time = #{data.stockinFinishTime}
+        </if>
+        <if test="data.warehouseConfirmStart != null">
+            AND warehouse_confirm_start = #{data.warehouseConfirmStart}
+        </if>
+        <if test="data.warehouseConfirmEnd != null">
+            AND warehouse_confirm_end = #{data.warehouseConfirmEnd}
+        </if>
+        <if test="data.bizId != null">
+            AND biz_id = #{data.bizId}
+        </if>
+        <if test="data.stockinId != null">
+            AND stockin_id = #{data.stockinId}
+        </if>
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO">
+    insert into sc_stockin_order
+    (
+        <include refid="stockinOrderDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockinOrderDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO">
+    update sc_stockin_order
+    <include refid="stockinOrderDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO">
+    update sc_stockin_order
+    <set>
+        gmt_modified = now(),
+        <if test="update.state != null">
+            state = #{update.state},
+        </if>
+        <if test="update.type != null">
+            type = #{update.type},
+        </if>
+        <if test="update.warehouseId != null">
+            warehouse_id = #{update.warehouseId},
+        </if>
+        <if test="update.contactName != null">
+            contact_name = #{update.contactName},
+        </if>
+        <if test="update.contactPhone != null">
+            contact_phone = #{update.contactPhone},
+        </if>
+        <if test="update.mailNo != null">
+            mail_no = #{update.mailNo},
+        </if>
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
+        </if>
+        <if test="update.transportType != null">
+            transport_type = #{update.transportType},
+        </if>
+        <if test="update.plateNumber != null">
+            plate_number = #{update.plateNumber},
+        </if>
+        <if test="update.logisticsCompany != null">
+            logistics_company = #{update.logisticsCompany},
+        </if>
+        <if test="update.merchantProviderId != null">
+            merchant_provider_id = #{update.merchantProviderId},
+        </if>
+        <if test="update.asnSuccessTime != null">
+            asn_success_time = #{update.asnSuccessTime},
+        </if>
+        <if test="update.predictSendTime != null">
+            predict_send_time = #{update.predictSendTime},
+        </if>
+        <if test="update.predictArrivePort != null">
+            predict_arrive_port = #{update.predictArrivePort},
+        </if>
+        <if test="update.actdictArrivePort != null">
+            actdict_arrive_port = #{update.actdictArrivePort},
+        </if>
+        <if test="update.warehouseStockinTime != null">
+            warehouse_stockin_time = #{update.warehouseStockinTime},
+        </if>
+        <if test="update.stockinFinishTime != null">
+            stockin_finish_time = #{update.stockinFinishTime},
+        </if>
+        <if test="update.warehouseConfirmStart != null">
+            warehouse_confirm_start = #{update.warehouseConfirmStart},
+        </if>
+        <if test="update.warehouseConfirmEnd != null">
+            warehouse_confirm_end = #{update.warehouseConfirmEnd},
+        </if>
+        <if test="update.bizId != null">
+            biz_id = #{update.bizId},
+        </if>
+        <if test="update.stockinId != null">
+            stockin_id = #{update.stockinId},
+        </if>
+    </set>
+    <include refid="stockinOrderDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO">
+    insert into sc_stockin_order
+    (
+        <include refid="stockinOrderDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockinOrderDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="state != null">
+        ,state = #{state}
+    </if>
+    <if test="type != null">
+        ,type = #{type}
+    </if>
+    <if test="warehouseId != null">
+        ,warehouse_id = #{warehouseId}
+    </if>
+    <if test="contactName != null">
+        ,contact_name = #{contactName}
+    </if>
+    <if test="contactPhone != null">
+        ,contact_phone = #{contactPhone}
+    </if>
+    <if test="mailNo != null">
+        ,mail_no = #{mailNo}
+    </if>
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
+    </if>
+    <if test="transportType != null">
+        ,transport_type = #{transportType}
+    </if>
+    <if test="plateNumber != null">
+        ,plate_number = #{plateNumber}
+    </if>
+    <if test="logisticsCompany != null">
+        ,logistics_company = #{logisticsCompany}
+    </if>
+    <if test="merchantProviderId != null">
+        ,merchant_provider_id = #{merchantProviderId}
+    </if>
+    <if test="asnSuccessTime != null">
+        ,asn_success_time = #{asnSuccessTime}
+    </if>
+    <if test="predictSendTime != null">
+        ,predict_send_time = #{predictSendTime}
+    </if>
+    <if test="predictArrivePort != null">
+        ,predict_arrive_port = #{predictArrivePort}
+    </if>
+    <if test="actdictArrivePort != null">
+        ,actdict_arrive_port = #{actdictArrivePort}
+    </if>
+    <if test="warehouseStockinTime != null">
+        ,warehouse_stockin_time = #{warehouseStockinTime}
+    </if>
+    <if test="stockinFinishTime != null">
+        ,stockin_finish_time = #{stockinFinishTime}
+    </if>
+    <if test="warehouseConfirmStart != null">
+        ,warehouse_confirm_start = #{warehouseConfirmStart}
+    </if>
+    <if test="warehouseConfirmEnd != null">
+        ,warehouse_confirm_end = #{warehouseConfirmEnd}
+    </if>
+    <if test="bizId != null">
+        ,biz_id = #{bizId}
+    </if>
+    <if test="stockinId != null">
+        ,stockin_id = #{stockinId}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_stockin_order
+    set is_delete = 1, gmt_modified = now()
+    <include refid="stockinOrderDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_stockin_order
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="stockinOrderDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="stockinOrderDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="stockinOrderDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO">
+    <include refid="stockinOrderDO_selector"/>
+    <include refid="stockinOrderDO_query_segment"/>
+    <include refid="stockinOrderDO_groupBy"/>
+    <include refid="stockinOrderDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="stockinOrderDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO">
+    <include refid="stockinOrderDO_selector"/>
+    <include refid="stockinOrderDO_query_segment"/>
+    <include refid="stockinOrderDO_groupBy"/>
+    <include refid="stockinOrderDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_stockin_order
+    <include refid="stockinOrderDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="stockinOrderDOResult">
+    <include refid="stockinOrderDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="stockinOrderDOResult">
+    <include refid="stockinOrderDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>
