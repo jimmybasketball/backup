@@ -96,5 +96,17 @@
 		<property name="timeout" value="${dubbo.export.timeout}" />
 	</bean>
 	<!-- 商品end -->
+	
+	<!-- 开放平台相关接口 start -->
+	<bean id="openWmsTradeServiceExport" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.open.exposed.wms.api.OpenWmsTradeService" />
+		<property name="ref" ref="openWmsTradeService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
+	<!-- 开放平台相关接口 end -->
 
 </beans>
