@@ -27,7 +27,7 @@ public class SkuBarcodeDO extends BaseDO {
     /**
      * 商品条码
      */
-    private String barCode;
+    private String barcode;
 
     /**
      * 创建时间
@@ -72,12 +72,12 @@ public class SkuBarcodeDO extends BaseDO {
         this.skuId = skuId;
     }
 
-    public String getBarCode() {
-        return barCode;
+    public String getBarcode() {
+        return barcode;
     }
 
-    public void setBarCode(String barCode) {
-        this.barCode = barCode;
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 
     @Override
@@ -129,7 +129,7 @@ public class SkuBarcodeDO extends BaseDO {
         return "SkuBarcodeDO{" +
                 "id=" + id +
                 ", skuId='" + skuId + '\'' +
-                ", barCode='" + barCode + '\'' +
+                ", barcode='" + barcode + '\'' +
                 '}';
     }
 }

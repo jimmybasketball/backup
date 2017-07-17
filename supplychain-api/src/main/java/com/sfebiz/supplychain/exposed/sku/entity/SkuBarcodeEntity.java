@@ -25,7 +25,7 @@ public class SkuBarcodeEntity implements Serializable {
     /**
      * 商品条码
      */
-    private String barCode;
+    private String barcode;
 
     /**
      * 创建时间
@@ -63,12 +63,12 @@ public class SkuBarcodeEntity implements Serializable {
         this.skuId = skuId;
     }
 
-    public String getBarCode() {
-        return barCode;
+    public String getBarcode() {
+        return barcode;
     }
 
-    public void setBarCode(String barCode) {
-        this.barCode = barCode;
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 
     public Date getGmtCreate() {
@@ -108,7 +108,7 @@ public class SkuBarcodeEntity implements Serializable {
         return "SkuBarcodeEntity{" +
                 "id=" + id +
                 ", skuId='" + skuId + '\'' +
-                ", barCode='" + barCode + '\'' +
+                ", barcode='" + barcode + '\'' +
                 '}';
     }
 }
