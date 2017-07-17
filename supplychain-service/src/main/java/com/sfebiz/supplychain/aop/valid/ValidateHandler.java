@@ -3,8 +3,8 @@ package com.sfebiz.supplychain.aop.valid;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
 import com.sfebiz.supplychain.aop.valid.oval.OvalValidProcessor;
 import com.sfebiz.supplychain.aop.valid.processor.ParamNotBlankProcessor;
+import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
-import com.sfebiz.supplychain.exposed.common.enums.SupplyChainReturnCode;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -72,7 +72,7 @@ public class ValidateHandler {
             if (CommonRet.class.equals(returnType)) {
                 //目前支持返回类型为CommonRet的方法，在校验失败后可以正常返回，其他返回类型通过抛出运行时异常返回
                 CommonRet ret = new CommonRet();
-                ret.setRetCode(SupplyChainReturnCode.FAIL.code);
+                ret.setRetCode(SCReturnCode.COMMON_FAIL.getCode());
                 ret.setRetMsg(failMsg.toString());
 
                 ValidResult<Object> validResult = new ValidResult<Object>();

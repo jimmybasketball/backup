@@ -4,11 +4,11 @@ import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.aop.annotation.MethodParamValidate;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
-import com.sfebiz.supplychain.exposed.demo.api.DemoApi;
+import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
-import com.sfebiz.supplychain.exposed.demo.entity.DemoEntity;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
-import com.sfebiz.supplychain.exposed.common.enums.SupplyChainReturnCode;
+import com.sfebiz.supplychain.exposed.demo.api.DemoApi;
+import com.sfebiz.supplychain.exposed.demo.entity.DemoEntity;
 import com.sfebiz.supplychain.lock.DistributedLock;
 import com.sfebiz.supplychain.persistence.base.demo.domain.DemoDO;
 import com.sfebiz.supplychain.persistence.base.demo.manager.DemoManager;
@@ -86,7 +86,7 @@ public class DemoApiImpl implements DemoApi {
                     .setErrorMsg("[demo测试-新增] 异常")
                     .log();
             ret.reSet();
-            ret.setRetCode(SupplyChainReturnCode.FAIL.code);
+            ret.setRetCode(SCReturnCode.COMMON_FAIL.getCode());
             ret.setRetMsg(e.getMessage());
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -136,7 +136,7 @@ public class DemoApiImpl implements DemoApi {
                         .log();
 
                 ret.reSet();
-                ret.setRetCode(SupplyChainReturnCode.FAIL.code);
+                ret.setRetCode(SCReturnCode.COMMON_FAIL.getCode());
                 ret.setRetMsg(e.getMessage());
 
                 isCommit = false;
@@ -157,7 +157,7 @@ public class DemoApiImpl implements DemoApi {
                     .log();
             ret.reSet();
             ret.setRetMsg("并发异常");
-            ret.setRetCode(SupplyChainReturnCode.FAIL.code);
+            ret.setRetCode(SCReturnCode.COMMON_FAIL.getCode());
         }
 
         return ret;

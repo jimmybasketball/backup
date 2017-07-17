@@ -1,6 +1,6 @@
 package com.sfebiz.supplychain.exposed.common.entity;
 
-import com.sfebiz.supplychain.exposed.common.enums.SupplyChainReturnCode;
+import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ public class CommonRet<T> implements Serializable{
     private static final long serialVersionUID = -7554908803357258034L;
     private T result;
 
-    private Integer retCode = SupplyChainReturnCode.SUCCESS.getCode();
+    private Integer retCode = SCReturnCode.COMMON_SUCCESS.getCode();
 
     private String retMsg;
 
@@ -70,7 +70,7 @@ public class CommonRet<T> implements Serializable{
     }
 
     public void reSet() {
-        retCode = SupplyChainReturnCode.SUCCESS.getCode();
+        retCode = SCReturnCode.COMMON_SUCCESS.getCode();
         result = null;
         retMsg = null;
     }

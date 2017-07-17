@@ -10,9 +10,9 @@ import com.sfebiz.common.utils.log.TraceLogEntity;
 import com.sfebiz.supplychain.aop.annotation.MethodParamValidate;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
 import com.sfebiz.supplychain.config.SystemConstants;
+import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
-import com.sfebiz.supplychain.exposed.common.enums.SupplyChainReturnCode;
 import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderDetailEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderEntity;
@@ -85,21 +85,21 @@ public class StockInServiceImpl implements StockInService {
         Long stockinOrderId = null;
 
         if(CollectionUtils.isEmpty(stockinOrderEntity.getSkus())) {
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(SCReturnCode.COMMON_FAIL.getCode());
             commonRet.setRetMsg("[物流平台入库单-创建]：商品明细不能为空");
             return commonRet;
         }
 
         WarehouseDO warehouseDO = warehouseManager.getById(stockinOrderEntity.getWarehouseId());
         if (null == warehouseDO) {
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(SCReturnCode.COMMON_FAIL.getCode());
             commonRet.setRetMsg("[物流平台入库单-创建]:仓库不存在，warehouseId：" + stockinOrderEntity.getWarehouseId());
             return commonRet;
         }
 
         List<MerchantProviderLineDO> merchantProviderLineDOList = merchantProviderLineManager.getByProviderAndWarehouse(stockinOrderEntity.getMerchantProviderId(), stockinOrderEntity.getWarehouseId());
         if(CollectionUtils.isEmpty(merchantProviderLineDOList)){
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(SCReturnCode.COMMON_FAIL.getCode());
             commonRet.setRetMsg("[物流平台入库单-创建]:仓库"+stockinOrderEntity.getWarehouseId() + "不属于供应商" + stockinOrderEntity.getMerchantProviderId());
             return commonRet;
         }
@@ -136,12 +136,12 @@ public class StockInServiceImpl implements StockInService {
         if ( null == stockinOrderId) {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
-                    .setErrorMsg("[供应链-更新入库单明细异常]: " + SupplyChainReturnCode.STOCKIN_ORDER_PARAMS_ILLEGAL.getDesc())
+                    .setErrorMsg("[供应链-更新入库单明细异常]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc())
                     .addParm("入库单ID", stockinOrderId)
                     .addParm("操作者", userName)
                     .log();
-            throw new ServiceException(SupplyChainReturnCode.STOCKIN_ORDER_PARAMS_ILLEGAL,
-                    "[供应链-更新入库单明细异常]: " + SupplyChainReturnCode.STOCKIN_ORDER_PARAMS_ILLEGAL.getDesc());
+            throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR,
+                    "[供应链-更新入库单明细异常]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc());
         }
 
         //1. 控制并发
@@ -160,20 +160,20 @@ public class StockInServiceImpl implements StockInService {
         if (null == stockinOrderId) {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
-                    .setErrorMsg("[供应链-入库单操作失败]: " + SupplyChainReturnCode.STOCKIN_ORDER_PARAMS_ILLEGAL.getDesc())
+                    .setErrorMsg("[供应链-入库单操作失败]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc())
                     .addParm("入库单ID", stockinOrderId)
                     .log();
-            throw new ServiceException(SupplyChainReturnCode.STOCKIN_ORDER_PARAMS_ILLEGAL);
+            throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR);
         }
         StockinOrderDO stockinOrderDO = stockinOrderManager.getById(stockinOrderId);
         if (null == stockinOrderDO) {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
                     .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-入库单操作失败]: " + SupplyChainReturnCode.STOCKIN_ORDER_NOT_EXIST.getDesc())
+                    .setErrorMsg("[供应链-入库单操作失败]: " + SCReturnCode.STOCKIN_ORDER_NOT_EXIST.getDesc())
                     .addParm("入库单ID", stockinOrderId)
                     .log();
-            throw new ServiceException(SupplyChainReturnCode.STOCKIN_ORDER_INNER_EXCEPTION);
+            throw new ServiceException(SCReturnCode.STOCKIN_ORDER_INNER_EXCEPTION);
         }
         return stockinOrderDO;
     }

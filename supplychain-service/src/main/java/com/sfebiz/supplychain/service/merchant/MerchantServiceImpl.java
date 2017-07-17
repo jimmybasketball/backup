@@ -1,12 +1,23 @@
 package com.sfebiz.supplychain.service.merchant;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.aop.annotation.MethodParamValidate;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
+import com.sfebiz.supplychain.exposed.common.code.MerchantReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
-import com.sfebiz.supplychain.exposed.common.enums.SupplyChainReturnCode;
 import com.sfebiz.supplychain.exposed.merchant.api.MerchantService;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderEntity;
@@ -21,17 +32,10 @@ import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderL
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantManager;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderLineManager;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderManager;
+
 import net.sf.oval.ConstraintViolation;
 import net.sf.oval.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
-import javax.annotation.Resource;
-import java.util.List;
+import retrofit.http.HEAD;
 
 /**
  * 物流平台货主服务实现
@@ -87,8 +91,8 @@ public class MerchantServiceImpl implements MerchantService {
                             .addParm("货主账户ID", merchantEntity.merchantAccountId)
                             .addParm("货主", merchantEntity)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
-                    commonRet.setRetMsg("货主账户ID已存在");
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_ACCOUNT_ID_ALREADY_EXISTS.getCode());
+                    commonRet.setRetMsg(MerchantReturnCode.MERCHANT_ACCOUNT_ID_ALREADY_EXISTS.getDesc());
                     return commonRet;
                 }
                 MerchantDO merchantDO = new MerchantDO();
@@ -116,7 +120,7 @@ public class MerchantServiceImpl implements MerchantService {
                         .setException(e)
                         .log();
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -127,7 +131,7 @@ public class MerchantServiceImpl implements MerchantService {
                     setLevel(LogLevel.ERROR).
                     setMsg("[物流平台货主-创建] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }
@@ -160,8 +164,8 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-基本信息修改] 货主不存在")
                             .addParm("id", id)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
-                    commonRet.setRetMsg("货主不存在");
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_NOT_EXIST.getCode());
+                    commonRet.setRetMsg(MerchantReturnCode.MERCHANT_NOT_EXIST.getDesc());
                     return commonRet;
                 }
                 // 判断账号ID是否已存在
@@ -173,8 +177,8 @@ public class MerchantServiceImpl implements MerchantService {
                             .addParm("货主账户ID", merchantEntity.merchantAccountId)
                             .addParm("货主", merchantEntity)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
-                    commonRet.setRetMsg("货主账户ID已存在");
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_ACCOUNT_ID_ALREADY_EXISTS.getCode());
+                    commonRet.setRetMsg(MerchantReturnCode.MERCHANT_ACCOUNT_ID_ALREADY_EXISTS.getDesc());
                     return commonRet;
                 }
 
@@ -202,7 +206,7 @@ public class MerchantServiceImpl implements MerchantService {
                         .setException(e)
                         .log();
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -213,7 +217,7 @@ public class MerchantServiceImpl implements MerchantService {
                     setLevel(LogLevel.ERROR).
                     setMsg("[物流平台货主-基本信息修改] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }
@@ -245,7 +249,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-修改货主状态] 货主状态值不合法")
                             .addParm("state", state)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_WRONG_STATE.getCode());
                     commonRet.setRetMsg("货主状态不合法");
                     return commonRet;
                 }
@@ -258,7 +262,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-修改货主状态] 货主不存在")
                             .addParm("id", id)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_NOT_EXIST.getCode());
                     commonRet.setRetMsg("货主不存在");
                     return commonRet;
                 }
@@ -271,7 +275,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .addParm("货主当前状态", merchantDO.getState())
                             .addParm("目的状态", state)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_ALREADY_CHANGE_STATE.getCode());
                     commonRet.setRetMsg("货主已被" + MerchantStateType.valueOf(state).name);
                     return commonRet;
                 }
@@ -298,7 +302,7 @@ public class MerchantServiceImpl implements MerchantService {
                         .setException(e)
                         .log();
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -309,7 +313,7 @@ public class MerchantServiceImpl implements MerchantService {
                     setLevel(LogLevel.ERROR).
                     setMsg("[物流平台货主-修改货主状态] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }
@@ -338,7 +342,7 @@ public class MerchantServiceImpl implements MerchantService {
                         .setMsg("[物流平台货主-创建货主供应商] 货主不存在")
                         .addParm("merchantId", merchantId)
                         .log();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_NOT_EXIST.getCode());
                 commonRet.setRetMsg("货主不存在");
             }
 
@@ -368,7 +372,7 @@ public class MerchantServiceImpl implements MerchantService {
                     .setException(e)
                     .log();
             commonRet.reSet();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_UNKNOWN_ERROR.getCode());
             commonRet.setRetMsg(e.getMessage());
             return commonRet;
         }
@@ -401,7 +405,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-修改货主供应商基本信息] 货主供应商不存在")
                             .addParm("id", id)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_NOT_EXIST.getCode());
                     commonRet.setRetMsg("货主供应商不存在");
                 }
 
@@ -413,7 +417,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-修改货主供应商基本信息] 货主不存在")
                             .addParm("merchantId", merchantId)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_NOT_EXIST.getCode());
                     commonRet.setRetMsg("货主不存在");
                 }
 
@@ -440,7 +444,7 @@ public class MerchantServiceImpl implements MerchantService {
                         .setException(e)
                         .log();
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -451,7 +455,7 @@ public class MerchantServiceImpl implements MerchantService {
                     .setLevel(LogLevel.ERROR)
                     .setErrorMsg("[物流平台货主-修改货主供应商基本信息] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }
@@ -482,7 +486,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-修改货主供应商状态] 货主供应商状态值不合法")
                             .addParm("state", state)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_WRONG_STATE.getCode());
                     commonRet.setRetMsg("货主供应商状态值不合法");
                     return commonRet;
                 }
@@ -495,7 +499,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-修改货主供应商状态] 货主供应商不存在")
                             .addParm("id", id)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_NOT_EXIST.getCode());
                     commonRet.setRetMsg("货主供应商不存在");
                     return commonRet;
                 }
@@ -508,7 +512,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .addParm("货主供应商当前状态", checkDO.getState())
                             .addParm("目的状态", state)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_ALREADY_CHANGE_STATE.getCode());
                     commonRet.setRetMsg("货主供应商已被" + MerchantStateType.valueOf(state).name);
                     return commonRet;
                 }
@@ -536,7 +540,7 @@ public class MerchantServiceImpl implements MerchantService {
                         .setException(e)
                         .log();
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -547,7 +551,7 @@ public class MerchantServiceImpl implements MerchantService {
                     setLevel(LogLevel.ERROR).
                     setMsg("[物流平台货主-修改货主供应商状态] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }
@@ -582,8 +586,8 @@ public class MerchantServiceImpl implements MerchantService {
                     //校验失败，直接返回 并且事务回归
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     commonRet.reSet();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
-                    commonRet.setRetMsg(violations.toString());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_LINE_ENTITY_VALIDATE_FAIL.getCode());
+                    commonRet.setRetMsg(MerchantReturnCode.MERCHANT_PROVIDER_LINE_ENTITY_VALIDATE_FAIL.getDesc());
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return commonRet;
                 }
@@ -614,7 +618,7 @@ public class MerchantServiceImpl implements MerchantService {
                     .setException(e)
                     .log();
             commonRet.reSet();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_LINE_UNKNOWN_ERROR.getCode());
             commonRet.setRetMsg(e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return commonRet;
@@ -629,6 +633,7 @@ public class MerchantServiceImpl implements MerchantService {
      * @return
      */
     @Override
+    @MethodParamValidate
     public CommonRet<Void> deleteMerchantProviderLine(
             @ParamNotBlank String operator,
             @ParamNotBlank Long id) {
@@ -649,7 +654,7 @@ public class MerchantServiceImpl implements MerchantService {
                     .setException(e)
                     .log();
             commonRet.reSet();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_LINE_UNKNOWN_ERROR.getCode());
             commonRet.setRetMsg(e.getMessage());
             return commonRet;
         }
@@ -664,6 +669,7 @@ public class MerchantServiceImpl implements MerchantService {
      * @return
      */
     @Override
+    @MethodParamValidate
     public CommonRet<Void> changeMerchantProviderLineState(
             @ParamNotBlank String operator,
             @ParamNotBlank Long id,
@@ -679,7 +685,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-修改供应商线路] 状态值不合法")
                             .addParm("state", state)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_LINE_WRONG_STATE.getCode());
                     commonRet.setRetMsg("供应商线路状态值不合法");
                     return commonRet;
                 }
@@ -692,7 +698,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .setMsg("[物流平台货主-修改供应商线路] 供应商线路不存在")
                             .addParm("id", id)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_LINE_NOT_EXIST.getCode());
                     commonRet.setRetMsg("供应商线路不存在");
                     return commonRet;
                 }
@@ -705,7 +711,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .addParm("供应商线路当前状态", checkDO.getState())
                             .addParm("目的状态", state)
                             .log();
-                    commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                    commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_LINE_ALREADY_CHANGE_STATE.getCode());
                     commonRet.setRetMsg("供应商线路已被" + MerchantStateType.valueOf(state).name);
                     return commonRet;
                 }
@@ -733,7 +739,7 @@ public class MerchantServiceImpl implements MerchantService {
                         .setException(e)
                         .log();
                 commonRet.reSet();
-                commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_LINE_UNKNOWN_ERROR.getCode());
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
             } finally {
@@ -744,7 +750,7 @@ public class MerchantServiceImpl implements MerchantService {
                     setLevel(LogLevel.ERROR).
                     setMsg("[物流平台货主-修改供应商线路] 并发异常")
                     .log();
-            commonRet.setRetCode(SupplyChainReturnCode.FAIL.getCode());
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
             return commonRet;
         }

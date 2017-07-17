@@ -6,12 +6,10 @@
     <result column="state" property="state"/>
     <result column="type" property="type"/>
     <result column="warehouse_id" property="warehouseId"/>
+    <result column="biz_id" property="bizId"/>
+    <result column="stockin_id" property="stockinId"/>
     <result column="contact_name" property="contactName"/>
     <result column="contact_phone" property="contactPhone"/>
-    <result column="mail_no" property="mailNo"/>
-    <result column="merchant_id" property="merchantId"/>
-    <result column="transport_type" property="transportType"/>
-    <result column="plate_number" property="plateNumber"/>
     <result column="logistics_company" property="logisticsCompany"/>
     <result column="merchant_provider_id" property="merchantProviderId"/>
     <result column="asn_success_time" property="asnSuccessTime"/>
@@ -22,8 +20,10 @@
     <result column="stockin_finish_time" property="stockinFinishTime"/>
     <result column="warehouse_confirm_start" property="warehouseConfirmStart"/>
     <result column="warehouse_confirm_end" property="warehouseConfirmEnd"/>
-    <result column="biz_id" property="bizId"/>
-    <result column="stockin_id" property="stockinId"/>
+    <result column="mail_no" property="mailNo"/>
+    <result column="plate_number" property="plateNumber"/>
+    <result column="merchant_id" property="merchantId"/>
+    <result column="transport_type" property="transportType"/>
     <result column="id" property="id"/>
     <result column="gmt_create" property="gmtCreate"/>
     <result column="gmt_modified" property="gmtModified"/>
@@ -33,12 +33,10 @@
     state,
     type,
     warehouse_id,
+    biz_id,
+    stockin_id,
     contact_name,
     contact_phone,
-    mail_no,
-    merchant_id,
-    transport_type,
-    plate_number,
     logistics_company,
     merchant_provider_id,
     asn_success_time,
@@ -49,8 +47,10 @@
     stockin_finish_time,
     warehouse_confirm_start,
     warehouse_confirm_end,
-    biz_id,
-    stockin_id,
+    mail_no,
+    plate_number,
+    merchant_id,
+    transport_type,
     id,
     gmt_create,
     gmt_modified
@@ -60,12 +60,10 @@
     state,
     type,
     warehouse_id,
+    biz_id,
+    stockin_id,
     contact_name,
     contact_phone,
-    mail_no,
-    merchant_id,
-    transport_type,
-    plate_number,
     logistics_company,
     merchant_provider_id,
     asn_success_time,
@@ -76,8 +74,10 @@
     stockin_finish_time,
     warehouse_confirm_start,
     warehouse_confirm_end,
-    biz_id,
-    stockin_id,
+    mail_no,
+    plate_number,
+    merchant_id,
+    transport_type,
     id,
     gmt_create,
     gmt_modified
@@ -87,12 +87,10 @@
     #{state},
     #{type},
     #{warehouseId},
+    #{bizId},
+    #{stockinId},
     #{contactName},
     #{contactPhone},
-    #{mailNo},
-    #{merchantId},
-    #{transportType},
-    #{plateNumber},
     #{logisticsCompany},
     #{merchantProviderId},
     #{asnSuccessTime},
@@ -103,8 +101,10 @@
     #{stockinFinishTime},
     #{warehouseConfirmStart},
     #{warehouseConfirmEnd},
-    #{bizId},
-    #{stockinId},
+    #{mailNo},
+    #{plateNumber},
+    #{merchantId},
+    #{transportType},
     #{id},
     now(),
     now()
@@ -122,23 +122,17 @@
         <if test="warehouseId != null">
             warehouse_id = #{warehouseId},
         </if>
+        <if test="bizId != null">
+            biz_id = #{bizId},
+        </if>
+        <if test="stockinId != null">
+            stockin_id = #{stockinId},
+        </if>
         <if test="contactName != null">
             contact_name = #{contactName},
         </if>
         <if test="contactPhone != null">
             contact_phone = #{contactPhone},
-        </if>
-        <if test="mailNo != null">
-            mail_no = #{mailNo},
-        </if>
-        <if test="merchantId != null">
-            merchant_id = #{merchantId},
-        </if>
-        <if test="transportType != null">
-            transport_type = #{transportType},
-        </if>
-        <if test="plateNumber != null">
-            plate_number = #{plateNumber},
         </if>
         <if test="logisticsCompany != null">
             logistics_company = #{logisticsCompany},
@@ -170,11 +164,17 @@
         <if test="warehouseConfirmEnd != null">
             warehouse_confirm_end = #{warehouseConfirmEnd},
         </if>
-        <if test="bizId != null">
-            biz_id = #{bizId},
+        <if test="mailNo != null">
+            mail_no = #{mailNo},
         </if>
-        <if test="stockinId != null">
-            stockin_id = #{stockinId},
+        <if test="plateNumber != null">
+            plate_number = #{plateNumber},
+        </if>
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
+        </if>
+        <if test="transportType != null">
+            transport_type = #{transportType},
         </if>
     </set>
 </sql>
@@ -196,23 +196,17 @@
         <if test="data.warehouseId != null">
             AND warehouse_id = #{data.warehouseId}
         </if>
+        <if test="data.bizId != null">
+            AND biz_id = #{data.bizId}
+        </if>
+        <if test="data.stockinId != null">
+            AND stockin_id = #{data.stockinId}
+        </if>
         <if test="data.contactName != null">
             AND contact_name = #{data.contactName}
         </if>
         <if test="data.contactPhone != null">
             AND contact_phone = #{data.contactPhone}
-        </if>
-        <if test="data.mailNo != null">
-            AND mail_no = #{data.mailNo}
-        </if>
-        <if test="data.merchantId != null">
-            AND merchant_id = #{data.merchantId}
-        </if>
-        <if test="data.transportType != null">
-            AND transport_type = #{data.transportType}
-        </if>
-        <if test="data.plateNumber != null">
-            AND plate_number = #{data.plateNumber}
         </if>
         <if test="data.logisticsCompany != null">
             AND logistics_company = #{data.logisticsCompany}
@@ -244,11 +238,17 @@
         <if test="data.warehouseConfirmEnd != null">
             AND warehouse_confirm_end = #{data.warehouseConfirmEnd}
         </if>
-        <if test="data.bizId != null">
-            AND biz_id = #{data.bizId}
+        <if test="data.mailNo != null">
+            AND mail_no = #{data.mailNo}
         </if>
-        <if test="data.stockinId != null">
-            AND stockin_id = #{data.stockinId}
+        <if test="data.plateNumber != null">
+            AND plate_number = #{data.plateNumber}
+        </if>
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="data.transportType != null">
+            AND transport_type = #{data.transportType}
         </if>
         <if test="data.id != null">
             AND id = #{data.id}
@@ -364,23 +364,17 @@
         <if test="update.warehouseId != null">
             warehouse_id = #{update.warehouseId},
         </if>
+        <if test="update.bizId != null">
+            biz_id = #{update.bizId},
+        </if>
+        <if test="update.stockinId != null">
+            stockin_id = #{update.stockinId},
+        </if>
         <if test="update.contactName != null">
             contact_name = #{update.contactName},
         </if>
         <if test="update.contactPhone != null">
             contact_phone = #{update.contactPhone},
-        </if>
-        <if test="update.mailNo != null">
-            mail_no = #{update.mailNo},
-        </if>
-        <if test="update.merchantId != null">
-            merchant_id = #{update.merchantId},
-        </if>
-        <if test="update.transportType != null">
-            transport_type = #{update.transportType},
-        </if>
-        <if test="update.plateNumber != null">
-            plate_number = #{update.plateNumber},
         </if>
         <if test="update.logisticsCompany != null">
             logistics_company = #{update.logisticsCompany},
@@ -412,11 +406,17 @@
         <if test="update.warehouseConfirmEnd != null">
             warehouse_confirm_end = #{update.warehouseConfirmEnd},
         </if>
-        <if test="update.bizId != null">
-            biz_id = #{update.bizId},
+        <if test="update.mailNo != null">
+            mail_no = #{update.mailNo},
         </if>
-        <if test="update.stockinId != null">
-            stockin_id = #{update.stockinId},
+        <if test="update.plateNumber != null">
+            plate_number = #{update.plateNumber},
+        </if>
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
+        </if>
+        <if test="update.transportType != null">
+            transport_type = #{update.transportType},
         </if>
     </set>
     <include refid="stockinOrderDO_query_segment"/>
@@ -446,23 +446,17 @@
     <if test="warehouseId != null">
         ,warehouse_id = #{warehouseId}
     </if>
+    <if test="bizId != null">
+        ,biz_id = #{bizId}
+    </if>
+    <if test="stockinId != null">
+        ,stockin_id = #{stockinId}
+    </if>
     <if test="contactName != null">
         ,contact_name = #{contactName}
     </if>
     <if test="contactPhone != null">
         ,contact_phone = #{contactPhone}
-    </if>
-    <if test="mailNo != null">
-        ,mail_no = #{mailNo}
-    </if>
-    <if test="merchantId != null">
-        ,merchant_id = #{merchantId}
-    </if>
-    <if test="transportType != null">
-        ,transport_type = #{transportType}
-    </if>
-    <if test="plateNumber != null">
-        ,plate_number = #{plateNumber}
     </if>
     <if test="logisticsCompany != null">
         ,logistics_company = #{logisticsCompany}
@@ -494,11 +488,17 @@
     <if test="warehouseConfirmEnd != null">
         ,warehouse_confirm_end = #{warehouseConfirmEnd}
     </if>
-    <if test="bizId != null">
-        ,biz_id = #{bizId}
+    <if test="mailNo != null">
+        ,mail_no = #{mailNo}
     </if>
-    <if test="stockinId != null">
-        ,stockin_id = #{stockinId}
+    <if test="plateNumber != null">
+        ,plate_number = #{plateNumber}
+    </if>
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
+    </if>
+    <if test="transportType != null">
+        ,transport_type = #{transportType}
     </if>
 </insert>
 
