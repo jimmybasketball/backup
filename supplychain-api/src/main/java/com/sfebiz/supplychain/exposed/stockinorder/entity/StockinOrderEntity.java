@@ -97,7 +97,7 @@ public class StockinOrderEntity implements Serializable {
     /**
      * 入库明细列表
      */
-    public List<StockinOrderDetailEntity> skus;
+    public List<StockinOrderDetailEntity> detailEntities;
 
     @Override
     public String toString() {
@@ -123,7 +123,7 @@ public class StockinOrderEntity implements Serializable {
                 ", warehouseConfirmEnd=" + warehouseConfirmEnd +
                 ", warehouseStockinTime=" + warehouseStockinTime +
                 ", stockinFinishTime=" + stockinFinishTime +
-                ", skus=" + skus +
+                ", detailEntities=" + detailEntities +
                 '}';
     }
 
@@ -295,11 +295,11 @@ public class StockinOrderEntity implements Serializable {
         this.stockinFinishTime = stockinFinishTime;
     }
 
-    public List<StockinOrderDetailEntity> getSkus() {
-        return skus;
+    public List<StockinOrderDetailEntity> getDetailEntities() {
+        return detailEntities;
     }
 
-    public void setSkus(List<StockinOrderDetailEntity> skus) {
-        this.skus = skus;
+    public void setDetailEntities(List<StockinOrderDetailEntity> detailEntities) {
+        this.detailEntities = detailEntities;
     }
 }

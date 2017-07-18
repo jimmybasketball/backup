@@ -62,7 +62,7 @@
           class="com.sfebiz.supplychain.service.stockin.statemachine.StockinOrderStateMachineServiceImpl"
           parent="abstractPersistenceService"/>
 
-    <bean id="engineService" class="com.sfebiz.logistics.service.statemachine.EngineServiceImpl"/>
+    <bean id="engineService" class="com.sfebiz.supplychain.service.statemachine.EngineServiceImpl"/>
 
     <bean id="stateMachineStateServiceMaps" class="java.util.HashMap">
         <constructor-arg>

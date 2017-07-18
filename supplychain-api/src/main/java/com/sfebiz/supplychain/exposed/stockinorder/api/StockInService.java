@@ -1,7 +1,6 @@
 package com.sfebiz.supplychain.exposed.stockinorder.api;
 
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
-import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderDetailEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderEntity;
 import net.pocrd.entity.ServiceException;
@@ -21,7 +20,7 @@ public interface StockInService {
      * @return
      * @throws ServiceException
      */
-    public CommonRet<Long> createStockinOrder (StockinOrderEntity stockinOrderEntity, Long userId, String userName) throws ServiceException;
+    public CommonRet<List<Long>> createStockinOrder (StockinOrderEntity stockinOrderEntity, Long userId, String userName);
 
     /**
      * 更新入库单明细
@@ -32,6 +31,6 @@ public interface StockInService {
      * @return
      * @throws ServiceException
      */
-    public CommonRet<Void> updateStockinOrderDetails(Long stockinOrderId, List<StockinOrderDetailEntity> stockinOrderDetailEntities, Long userId, String userName) throws ServiceException;
+    public CommonRet<List<Long>> updateStockinOrderDetails(Long stockinOrderId, List<StockinOrderDetailEntity> stockinOrderDetailEntities, Long userId, String userName);
 
 }
