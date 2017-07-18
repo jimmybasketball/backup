@@ -110,7 +110,7 @@
 	<!-- 开放平台相关接口 end -->
 
 	<!-- 入库单start -->
-	<bean id="stockInService" class="com.alibaba.dubbo.config.spring.ServiceBean">
+	<bean id="stockInProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
 		<property name="interface" value="com.sfebiz.supplychain.exposed.stockinorder.api.StockInService" />
 		<property name="ref" ref="stockInService" />
 		<property name="application" ref="dubboApplicationConfig" />
