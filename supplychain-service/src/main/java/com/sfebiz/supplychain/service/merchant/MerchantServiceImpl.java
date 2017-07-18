@@ -1,13 +1,24 @@
 package com.sfebiz.supplychain.service.merchant;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.aop.annotation.MethodParamValidate;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
+import com.sfebiz.supplychain.exposed.common.code.MerchantReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.merchant.api.MerchantService;
-import com.sfebiz.supplychain.exposed.common.code.MerchantReturnCode;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderLineEntity;
@@ -21,17 +32,10 @@ import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderL
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantManager;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderLineManager;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderManager;
+
 import net.sf.oval.ConstraintViolation;
 import net.sf.oval.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
-import javax.annotation.Resource;
-import java.util.List;
+import retrofit.http.HEAD;
 
 /**
  * 物流平台货主服务实现

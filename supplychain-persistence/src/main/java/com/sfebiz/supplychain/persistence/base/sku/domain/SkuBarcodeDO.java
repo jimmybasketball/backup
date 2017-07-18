@@ -52,7 +52,7 @@ public class SkuBarcodeDO extends BaseDO {
     /**
      * 删除标识
      */
-    private int isDelete;
+    private Integer isDelete;
 
     @Override
     public Long getId() {
@@ -116,11 +116,11 @@ public class SkuBarcodeDO extends BaseDO {
         this.modifiedBy = modifiedBy;
     }
 
-    public int getIsDelete() {
+    public Integer getIsDelete() {
         return isDelete;
     }
 
-    public void setIsDelete(int isDelete) {
+    public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
     }
 

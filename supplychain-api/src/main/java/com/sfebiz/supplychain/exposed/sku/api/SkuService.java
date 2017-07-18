@@ -63,4 +63,9 @@ public interface SkuService {
      */
     public CommonRet<List<SkuEntity>> selectBarcodeBySkuId(Long skuId);
 
+    /**
+     * 根据商品ID查找商品信息,只查出sku信息，不查效期方案等
+     */
+    public CommonRet<SkuEntity> getSkuOnlySkuInfo(long id);
+
 }
