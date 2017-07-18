@@ -656,6 +656,5 @@
         <module>supplychain-persistence</module>
         <module>supplychain-sdk</module>
         <module>supplychain-sdk-tws</module>
-        <module>supplychain-util</module>
   </modules>
 </project>
