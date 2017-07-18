@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderDao">
+
+<resultMap id="stockoutOrderDOResult" type="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO">
+    <result column="id" property="id"/>
+    <result column="gmt_modified" property="gmtModified"/>
+    <result column="intl_carrier_code" property="intlCarrierCode"/>
+    <result column="warehouse_id" property="warehouseId"/>
+    <result column="delivery_mode" property="deliveryMode"/>
+    <result column="actual_weight" property="actualWeight"/>
+    <result column="order_source" property="orderSource"/>
+    <result column="declare_pay_no" property="declarePayNo"/>
+    <result column="user_discount_price" property="userDiscountPrice"/>
+    <result column="user_freight_fee" property="userFreightFee"/>
+    <result column="service_type" property="serviceType"/>
+    <result column="merchant_pay_type" property="merchantPayType"/>
+    <result column="cal_freight_fee" property="calFreightFee"/>
+    <result column="user_goods_price" property="userGoodsPrice"/>
+    <result column="declare_payer_name" property="declarePayerName"/>
+    <result column="merchant_pay_no" property="merchantPayNo"/>
+    <result column="estimated_shipping_time" property="estimatedShippingTime"/>
+    <result column="merchant_order_no" property="merchantOrderNo"/>
+    <result column="settle_freight_fee" property="settleFreightFee"/>
+    <result column="declare_payer_cert_type" property="declarePayerCertType"/>
+    <result column="declare_pay_type" property="declarePayType"/>
+    <result column="intr_carrier_code" property="intrCarrierCode"/>
+    <result column="declare_payer_cert_no" property="declarePayerCertNo"/>
+    <result column="merchant_provider_id" property="merchantProviderId"/>
+    <result column="pkg_width" property="pkgWidth"/>
+    <result column="line_id" property="lineId"/>
+    <result column="order_type" property="orderType"/>
+    <result column="destcode" property="destcode"/>
+    <result column="pkg_height" property="pkgHeight"/>
+    <result column="intl_mail_no" property="intlMailNo"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="pkg_length" property="pkgLength"/>
+    <result column="biz_id" property="bizId"/>
+    <result column="wave_no" property="waveNo"/>
+    <result column="intr_mail_no" property="intrMailNo"/>
+    <result column="cal_weight" property="calWeight"/>
+    <result column="remarks" property="remarks"/>
+    <result column="need_check" property="needCheck"/>
+    <result column="order_state" property="orderState"/>
+    <result column="merchant_id" property="merchantId"/>
+</resultMap>
+
+<sql id="stockoutOrderDO_columns">
+    id,
+    gmt_modified,
+    intl_carrier_code,
+    warehouse_id,
+    delivery_mode,
+    actual_weight,
+    order_source,
+    declare_pay_no,
+    user_discount_price,
+    user_freight_fee,
+    service_type,
+    merchant_pay_type,
+    cal_freight_fee,
+    user_goods_price,
+    declare_payer_name,
+    merchant_pay_no,
+    estimated_shipping_time,
+    merchant_order_no,
+    settle_freight_fee,
+    declare_payer_cert_type,
+    declare_pay_type,
+    intr_carrier_code,
+    declare_payer_cert_no,
+    merchant_provider_id,
+    pkg_width,
+    line_id,
+    order_type,
+    destcode,
+    pkg_height,
+    intl_mail_no,
+    gmt_create,
+    pkg_length,
+    biz_id,
+    wave_no,
+    intr_mail_no,
+    cal_weight,
+    remarks,
+    need_check,
+    order_state,
+    merchant_id
+</sql>
+
+<sql id="stockoutOrderDO_sqlForInsert">
+    id,
+    gmt_modified,
+    intl_carrier_code,
+    warehouse_id,
+    delivery_mode,
+    actual_weight,
+    order_source,
+    declare_pay_no,
+    user_discount_price,
+    user_freight_fee,
+    service_type,
+    merchant_pay_type,
+    cal_freight_fee,
+    user_goods_price,
+    declare_payer_name,
+    merchant_pay_no,
+    estimated_shipping_time,
+    merchant_order_no,
+    settle_freight_fee,
+    declare_payer_cert_type,
+    declare_pay_type,
+    intr_carrier_code,
+    declare_payer_cert_no,
+    merchant_provider_id,
+    pkg_width,
+    line_id,
+    order_type,
+    destcode,
+    pkg_height,
+    intl_mail_no,
+    gmt_create,
+    pkg_length,
+    biz_id,
+    wave_no,
+    intr_mail_no,
+    cal_weight,
+    remarks,
+    need_check,
+    order_state,
+    merchant_id
+</sql>
+
+<sql id="stockoutOrderDO_columnsForInsert">
+    #{id},
+    now(),
+    #{intlCarrierCode},
+    #{warehouseId},
+    #{deliveryMode},
+    #{actualWeight},
+    #{orderSource},
+    #{declarePayNo},
+    #{userDiscountPrice},
+    #{userFreightFee},
+    #{serviceType},
+    #{merchantPayType},
+    #{calFreightFee},
+    #{userGoodsPrice},
+    #{declarePayerName},
+    #{merchantPayNo},
+    #{estimatedShippingTime},
+    #{merchantOrderNo},
+    #{settleFreightFee},
+    #{declarePayerCertType},
+    #{declarePayType},
+    #{intrCarrierCode},
+    #{declarePayerCertNo},
+    #{merchantProviderId},
+    #{pkgWidth},
+    #{lineId},
+    #{orderType},
+    #{destcode},
+    #{pkgHeight},
+    #{intlMailNo},
+    now(),
+    #{pkgLength},
+    #{bizId},
+    #{waveNo},
+    #{intrMailNo},
+    #{calWeight},
+    #{remarks},
+    #{needCheck},
+    #{orderState},
+    #{merchantId}
+</sql>
+
+<sql id="stockoutOrderDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="intlCarrierCode != null">
+            intl_carrier_code = #{intlCarrierCode},
+        </if>
+        <if test="warehouseId != null">
+            warehouse_id = #{warehouseId},
+        </if>
+        <if test="deliveryMode != null">
+            delivery_mode = #{deliveryMode},
+        </if>
+        <if test="actualWeight != null">
+            actual_weight = #{actualWeight},
+        </if>
+        <if test="orderSource != null">
+            order_source = #{orderSource},
+        </if>
+        <if test="declarePayNo != null">
+            declare_pay_no = #{declarePayNo},
+        </if>
+        <if test="userDiscountPrice != null">
+            user_discount_price = #{userDiscountPrice},
+        </if>
+        <if test="userFreightFee != null">
+            user_freight_fee = #{userFreightFee},
+        </if>
+        <if test="serviceType != null">
+            service_type = #{serviceType},
+        </if>
+        <if test="merchantPayType != null">
+            merchant_pay_type = #{merchantPayType},
+        </if>
+        <if test="calFreightFee != null">
+            cal_freight_fee = #{calFreightFee},
+        </if>
+        <if test="userGoodsPrice != null">
+            user_goods_price = #{userGoodsPrice},
+        </if>
+        <if test="declarePayerName != null">
+            declare_payer_name = #{declarePayerName},
+        </if>
+        <if test="merchantPayNo != null">
+            merchant_pay_no = #{merchantPayNo},
+        </if>
+        <if test="estimatedShippingTime != null">
+            estimated_shipping_time = #{estimatedShippingTime},
+        </if>
+        <if test="merchantOrderNo != null">
+            merchant_order_no = #{merchantOrderNo},
+        </if>
+        <if test="settleFreightFee != null">
+            settle_freight_fee = #{settleFreightFee},
+        </if>
+        <if test="declarePayerCertType != null">
+            declare_payer_cert_type = #{declarePayerCertType},
+        </if>
+        <if test="declarePayType != null">
+            declare_pay_type = #{declarePayType},
+        </if>
+        <if test="intrCarrierCode != null">
+            intr_carrier_code = #{intrCarrierCode},
+        </if>
+        <if test="declarePayerCertNo != null">
+            declare_payer_cert_no = #{declarePayerCertNo},
+        </if>
+        <if test="merchantProviderId != null">
+            merchant_provider_id = #{merchantProviderId},
+        </if>
+        <if test="pkgWidth != null">
+            pkg_width = #{pkgWidth},
+        </if>
+        <if test="lineId != null">
+            line_id = #{lineId},
+        </if>
+        <if test="orderType != null">
+            order_type = #{orderType},
+        </if>
+        <if test="destcode != null">
+            destcode = #{destcode},
+        </if>
+        <if test="pkgHeight != null">
+            pkg_height = #{pkgHeight},
+        </if>
+        <if test="intlMailNo != null">
+            intl_mail_no = #{intlMailNo},
+        </if>
+        <if test="pkgLength != null">
+            pkg_length = #{pkgLength},
+        </if>
+        <if test="bizId != null">
+            biz_id = #{bizId},
+        </if>
+        <if test="waveNo != null">
+            wave_no = #{waveNo},
+        </if>
+        <if test="intrMailNo != null">
+            intr_mail_no = #{intrMailNo},
+        </if>
+        <if test="calWeight != null">
+            cal_weight = #{calWeight},
+        </if>
+        <if test="remarks != null">
+            remarks = #{remarks},
+        </if>
+        <if test="needCheck != null">
+            need_check = #{needCheck},
+        </if>
+        <if test="orderState != null">
+            order_state = #{orderState},
+        </if>
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
+        </if>
+    </set>
+</sql>
+
+<sql id="stockoutOrderDO_selector">
+    select
+    <include refid="stockoutOrderDO_columns"/>
+    from sc_stockout_order
+</sql>
+
+<sql id="stockoutOrderDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="data.intlCarrierCode != null">
+            AND intl_carrier_code = #{data.intlCarrierCode}
+        </if>
+        <if test="data.warehouseId != null">
+            AND warehouse_id = #{data.warehouseId}
+        </if>
+        <if test="data.deliveryMode != null">
+            AND delivery_mode = #{data.deliveryMode}
+        </if>
+        <if test="data.actualWeight != null">
+            AND actual_weight = #{data.actualWeight}
+        </if>
+        <if test="data.orderSource != null">
+            AND order_source = #{data.orderSource}
+        </if>
+        <if test="data.declarePayNo != null">
+            AND declare_pay_no = #{data.declarePayNo}
+        </if>
+        <if test="data.userDiscountPrice != null">
+            AND user_discount_price = #{data.userDiscountPrice}
+        </if>
+        <if test="data.userFreightFee != null">
+            AND user_freight_fee = #{data.userFreightFee}
+        </if>
+        <if test="data.serviceType != null">
+            AND service_type = #{data.serviceType}
+        </if>
+        <if test="data.merchantPayType != null">
+            AND merchant_pay_type = #{data.merchantPayType}
+        </if>
+        <if test="data.calFreightFee != null">
+            AND cal_freight_fee = #{data.calFreightFee}
+        </if>
+        <if test="data.userGoodsPrice != null">
+            AND user_goods_price = #{data.userGoodsPrice}
+        </if>
+        <if test="data.declarePayerName != null">
+            AND declare_payer_name = #{data.declarePayerName}
+        </if>
+        <if test="data.merchantPayNo != null">
+            AND merchant_pay_no = #{data.merchantPayNo}
+        </if>
+        <if test="data.estimatedShippingTime != null">
+            AND estimated_shipping_time = #{data.estimatedShippingTime}
+        </if>
+        <if test="data.merchantOrderNo != null">
+            AND merchant_order_no = #{data.merchantOrderNo}
+        </if>
+        <if test="data.settleFreightFee != null">
+            AND settle_freight_fee = #{data.settleFreightFee}
+        </if>
+        <if test="data.declarePayerCertType != null">
+            AND declare_payer_cert_type = #{data.declarePayerCertType}
+        </if>
+        <if test="data.declarePayType != null">
+            AND declare_pay_type = #{data.declarePayType}
+        </if>
+        <if test="data.intrCarrierCode != null">
+            AND intr_carrier_code = #{data.intrCarrierCode}
+        </if>
+        <if test="data.declarePayerCertNo != null">
+            AND declare_payer_cert_no = #{data.declarePayerCertNo}
+        </if>
+        <if test="data.merchantProviderId != null">
+            AND merchant_provider_id = #{data.merchantProviderId}
+        </if>
+        <if test="data.pkgWidth != null">
+            AND pkg_width = #{data.pkgWidth}
+        </if>
+        <if test="data.lineId != null">
+            AND line_id = #{data.lineId}
+        </if>
+        <if test="data.orderType != null">
+            AND order_type = #{data.orderType}
+        </if>
+        <if test="data.destcode != null">
+            AND destcode = #{data.destcode}
+        </if>
+        <if test="data.pkgHeight != null">
+            AND pkg_height = #{data.pkgHeight}
+        </if>
+        <if test="data.intlMailNo != null">
+            AND intl_mail_no = #{data.intlMailNo}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.pkgLength != null">
+            AND pkg_length = #{data.pkgLength}
+        </if>
+        <if test="data.bizId != null">
+            AND biz_id = #{data.bizId}
+        </if>
+        <if test="data.waveNo != null">
+            AND wave_no = #{data.waveNo}
+        </if>
+        <if test="data.intrMailNo != null">
+            AND intr_mail_no = #{data.intrMailNo}
+        </if>
+        <if test="data.calWeight != null">
+            AND cal_weight = #{data.calWeight}
+        </if>
+        <if test="data.remarks != null">
+            AND remarks = #{data.remarks}
+        </if>
+        <if test="data.needCheck != null">
+            AND need_check = #{data.needCheck}
+        </if>
+        <if test="data.orderState != null">
+            AND order_state = #{data.orderState}
+        </if>
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO">
+    insert into sc_stockout_order
+    (
+        <include refid="stockoutOrderDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockoutOrderDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO">
+    update sc_stockout_order
+    <include refid="stockoutOrderDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO">
+    update sc_stockout_order
+    <set>
+        gmt_modified = now(),
+        <if test="update.intlCarrierCode != null">
+            intl_carrier_code = #{update.intlCarrierCode},
+        </if>
+        <if test="update.warehouseId != null">
+            warehouse_id = #{update.warehouseId},
+        </if>
+        <if test="update.deliveryMode != null">
+            delivery_mode = #{update.deliveryMode},
+        </if>
+        <if test="update.actualWeight != null">
+            actual_weight = #{update.actualWeight},
+        </if>
+        <if test="update.orderSource != null">
+            order_source = #{update.orderSource},
+        </if>
+        <if test="update.declarePayNo != null">
+            declare_pay_no = #{update.declarePayNo},
+        </if>
+        <if test="update.userDiscountPrice != null">
+            user_discount_price = #{update.userDiscountPrice},
+        </if>
+        <if test="update.userFreightFee != null">
+            user_freight_fee = #{update.userFreightFee},
+        </if>
+        <if test="update.serviceType != null">
+            service_type = #{update.serviceType},
+        </if>
+        <if test="update.merchantPayType != null">
+            merchant_pay_type = #{update.merchantPayType},
+        </if>
+        <if test="update.calFreightFee != null">
+            cal_freight_fee = #{update.calFreightFee},
+        </if>
+        <if test="update.userGoodsPrice != null">
+            user_goods_price = #{update.userGoodsPrice},
+        </if>
+        <if test="update.declarePayerName != null">
+            declare_payer_name = #{update.declarePayerName},
+        </if>
+        <if test="update.merchantPayNo != null">
+            merchant_pay_no = #{update.merchantPayNo},
+        </if>
+        <if test="update.estimatedShippingTime != null">
+            estimated_shipping_time = #{update.estimatedShippingTime},
+        </if>
+        <if test="update.merchantOrderNo != null">
+            merchant_order_no = #{update.merchantOrderNo},
+        </if>
+        <if test="update.settleFreightFee != null">
+            settle_freight_fee = #{update.settleFreightFee},
+        </if>
+        <if test="update.declarePayerCertType != null">
+            declare_payer_cert_type = #{update.declarePayerCertType},
+        </if>
+        <if test="update.declarePayType != null">
+            declare_pay_type = #{update.declarePayType},
+        </if>
+        <if test="update.intrCarrierCode != null">
+            intr_carrier_code = #{update.intrCarrierCode},
+        </if>
+        <if test="update.declarePayerCertNo != null">
+            declare_payer_cert_no = #{update.declarePayerCertNo},
+        </if>
+        <if test="update.merchantProviderId != null">
+            merchant_provider_id = #{update.merchantProviderId},
+        </if>
+        <if test="update.pkgWidth != null">
+            pkg_width = #{update.pkgWidth},
+        </if>
+        <if test="update.lineId != null">
+            line_id = #{update.lineId},
+        </if>
+        <if test="update.orderType != null">
+            order_type = #{update.orderType},
+        </if>
+        <if test="update.destcode != null">
+            destcode = #{update.destcode},
+        </if>
+        <if test="update.pkgHeight != null">
+            pkg_height = #{update.pkgHeight},
+        </if>
+        <if test="update.intlMailNo != null">
+            intl_mail_no = #{update.intlMailNo},
+        </if>
+        <if test="update.pkgLength != null">
+            pkg_length = #{update.pkgLength},
+        </if>
+        <if test="update.bizId != null">
+            biz_id = #{update.bizId},
+        </if>
+        <if test="update.waveNo != null">
+            wave_no = #{update.waveNo},
+        </if>
+        <if test="update.intrMailNo != null">
+            intr_mail_no = #{update.intrMailNo},
+        </if>
+        <if test="update.calWeight != null">
+            cal_weight = #{update.calWeight},
+        </if>
+        <if test="update.remarks != null">
+            remarks = #{update.remarks},
+        </if>
+        <if test="update.needCheck != null">
+            need_check = #{update.needCheck},
+        </if>
+        <if test="update.orderState != null">
+            order_state = #{update.orderState},
+        </if>
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
+        </if>
+    </set>
+    <include refid="stockoutOrderDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO">
+    insert into sc_stockout_order
+    (
+        <include refid="stockoutOrderDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockoutOrderDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="intlCarrierCode != null">
+        ,intl_carrier_code = #{intlCarrierCode}
+    </if>
+    <if test="warehouseId != null">
+        ,warehouse_id = #{warehouseId}
+    </if>
+    <if test="deliveryMode != null">
+        ,delivery_mode = #{deliveryMode}
+    </if>
+    <if test="actualWeight != null">
+        ,actual_weight = #{actualWeight}
+    </if>
+    <if test="orderSource != null">
+        ,order_source = #{orderSource}
+    </if>
+    <if test="declarePayNo != null">
+        ,declare_pay_no = #{declarePayNo}
+    </if>
+    <if test="userDiscountPrice != null">
+        ,user_discount_price = #{userDiscountPrice}
+    </if>
+    <if test="userFreightFee != null">
+        ,user_freight_fee = #{userFreightFee}
+    </if>
+    <if test="serviceType != null">
+        ,service_type = #{serviceType}
+    </if>
+    <if test="merchantPayType != null">
+        ,merchant_pay_type = #{merchantPayType}
+    </if>
+    <if test="calFreightFee != null">
+        ,cal_freight_fee = #{calFreightFee}
+    </if>
+    <if test="userGoodsPrice != null">
+        ,user_goods_price = #{userGoodsPrice}
+    </if>
+    <if test="declarePayerName != null">
+        ,declare_payer_name = #{declarePayerName}
+    </if>
+    <if test="merchantPayNo != null">
+        ,merchant_pay_no = #{merchantPayNo}
+    </if>
+    <if test="estimatedShippingTime != null">
+        ,estimated_shipping_time = #{estimatedShippingTime}
+    </if>
+    <if test="merchantOrderNo != null">
+        ,merchant_order_no = #{merchantOrderNo}
+    </if>
+    <if test="settleFreightFee != null">
+        ,settle_freight_fee = #{settleFreightFee}
+    </if>
+    <if test="declarePayerCertType != null">
+        ,declare_payer_cert_type = #{declarePayerCertType}
+    </if>
+    <if test="declarePayType != null">
+        ,declare_pay_type = #{declarePayType}
+    </if>
+    <if test="intrCarrierCode != null">
+        ,intr_carrier_code = #{intrCarrierCode}
+    </if>
+    <if test="declarePayerCertNo != null">
+        ,declare_payer_cert_no = #{declarePayerCertNo}
+    </if>
+    <if test="merchantProviderId != null">
+        ,merchant_provider_id = #{merchantProviderId}
+    </if>
+    <if test="pkgWidth != null">
+        ,pkg_width = #{pkgWidth}
+    </if>
+    <if test="lineId != null">
+        ,line_id = #{lineId}
+    </if>
+    <if test="orderType != null">
+        ,order_type = #{orderType}
+    </if>
+    <if test="destcode != null">
+        ,destcode = #{destcode}
+    </if>
+    <if test="pkgHeight != null">
+        ,pkg_height = #{pkgHeight}
+    </if>
+    <if test="intlMailNo != null">
+        ,intl_mail_no = #{intlMailNo}
+    </if>
+    <if test="pkgLength != null">
+        ,pkg_length = #{pkgLength}
+    </if>
+    <if test="bizId != null">
+        ,biz_id = #{bizId}
+    </if>
+    <if test="waveNo != null">
+        ,wave_no = #{waveNo}
+    </if>
+    <if test="intrMailNo != null">
+        ,intr_mail_no = #{intrMailNo}
+    </if>
+    <if test="calWeight != null">
+        ,cal_weight = #{calWeight}
+    </if>
+    <if test="remarks != null">
+        ,remarks = #{remarks}
+    </if>
+    <if test="needCheck != null">
+        ,need_check = #{needCheck}
+    </if>
+    <if test="orderState != null">
+        ,order_state = #{orderState}
+    </if>
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_stockout_order
+    set is_delete = 1, gmt_modified = now()
+    <include refid="stockoutOrderDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_stockout_order
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="stockoutOrderDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="stockoutOrderDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="stockoutOrderDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO">
+    <include refid="stockoutOrderDO_selector"/>
+    <include refid="stockoutOrderDO_query_segment"/>
+    <include refid="stockoutOrderDO_groupBy"/>
+    <include refid="stockoutOrderDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="stockoutOrderDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO">
+    <include refid="stockoutOrderDO_selector"/>
+    <include refid="stockoutOrderDO_query_segment"/>
+    <include refid="stockoutOrderDO_groupBy"/>
+    <include refid="stockoutOrderDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_stockout_order
+    <include refid="stockoutOrderDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="stockoutOrderDOResult">
+    <include refid="stockoutOrderDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="stockoutOrderDOResult">
+    <include refid="stockoutOrderDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>
