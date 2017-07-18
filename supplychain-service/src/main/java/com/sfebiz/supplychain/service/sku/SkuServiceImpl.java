@@ -96,4 +96,9 @@ public class SkuServiceImpl implements SkuService {
     public CommonRet<List<SkuEntity>> selectBarcodeBySkuId(Long skuId) {
         return null;
     }
+
+    @Override
+    public CommonRet<SkuEntity> getSkuOnlySkuInfo(long id) {
+        return null;
+    }
 }

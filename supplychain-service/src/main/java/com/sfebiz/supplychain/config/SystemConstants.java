@@ -121,4 +121,9 @@ public class SystemConstants {
     public static final String FEMALE = "Female";
     public static final String UNISEX = "Unisex";
     public static final String HSH_PROVIDER_NAME="海尚汇";
+
+    /**
+     * 货主代码
+     */
+    public static final String CUSTOMER_CODE="SFHT";
 }

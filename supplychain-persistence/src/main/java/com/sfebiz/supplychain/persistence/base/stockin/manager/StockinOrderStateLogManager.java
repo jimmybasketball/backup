@@ -5,12 +5,14 @@ import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.stockin.dao.StockinOrderStateLogDao;
 import com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderStateLogDO;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 /**
  * Created by zhangyajing on 2017/7/12.
  */
+@Component("stockinOrderStateLogManager")
 public class StockinOrderStateLogManager extends BaseManager<StockinOrderStateLogDO>{
 
     @Resource
