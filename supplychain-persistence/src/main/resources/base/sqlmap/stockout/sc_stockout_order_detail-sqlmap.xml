@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderDetailDao">
+
+<resultMap id="stockoutOrderDetailDOResult" type="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO">
+    <result column="id" property="id"/>
+    <result column="merchant_provider_id" property="merchantProviderId"/>
+    <result column="merchant_discount_price" property="merchantDiscountPrice"/>
+    <result column="merchant_sku_id" property="merchantSkuId"/>
+    <result column="merchant_price" property="merchantPrice"/>
+    <result column="stockout_order_id" property="stockoutOrderId"/>
+    <result column="stockin_order_id" property="stockinOrderId"/>
+    <result column="sku_bill_name" property="skuBillName"/>
+    <result column="gmt_modified" property="gmtModified"/>
+    <result column="sku_foreign_name" property="skuForeignName"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="sku_barcode" property="skuBarcode"/>
+    <result column="sku_batch" property="skuBatch"/>
+    <result column="quantity" property="quantity"/>
+    <result column="freight_fee" property="freightFee"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="weight" property="weight"/>
+    <result column="sku_name" property="skuName"/>
+    <result column="brand_name" property="brandName"/>
+    <result column="currency" property="currency"/>
+    <result column="remark" property="remark"/>
+    <result column="out_state" property="outState"/>
+</resultMap>
+
+<sql id="stockoutOrderDetailDO_columns">
+    id,
+    merchant_provider_id,
+    merchant_discount_price,
+    merchant_sku_id,
+    merchant_price,
+    stockout_order_id,
+    stockin_order_id,
+    sku_bill_name,
+    gmt_modified,
+    sku_foreign_name,
+    sku_id,
+    sku_barcode,
+    sku_batch,
+    quantity,
+    freight_fee,
+    gmt_create,
+    weight,
+    sku_name,
+    brand_name,
+    currency,
+    remark,
+    out_state
+</sql>
+
+<sql id="stockoutOrderDetailDO_sqlForInsert">
+    id,
+    merchant_provider_id,
+    merchant_discount_price,
+    merchant_sku_id,
+    merchant_price,
+    stockout_order_id,
+    stockin_order_id,
+    sku_bill_name,
+    gmt_modified,
+    sku_foreign_name,
+    sku_id,
+    sku_barcode,
+    sku_batch,
+    quantity,
+    freight_fee,
+    gmt_create,
+    weight,
+    sku_name,
+    brand_name,
+    currency,
+    remark,
+    out_state
+</sql>
+
+<sql id="stockoutOrderDetailDO_columnsForInsert">
+    #{id},
+    #{merchantProviderId},
+    #{merchantDiscountPrice},
+    #{merchantSkuId},
+    #{merchantPrice},
+    #{stockoutOrderId},
+    #{stockinOrderId},
+    #{skuBillName},
+    now(),
+    #{skuForeignName},
+    #{skuId},
+    #{skuBarcode},
+    #{skuBatch},
+    #{quantity},
+    #{freightFee},
+    now(),
+    #{weight},
+    #{skuName},
+    #{brandName},
+    #{currency},
+    #{remark},
+    #{outState}
+</sql>
+
+<sql id="stockoutOrderDetailDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="merchantProviderId != null">
+            merchant_provider_id = #{merchantProviderId},
+        </if>
+        <if test="merchantDiscountPrice != null">
+            merchant_discount_price = #{merchantDiscountPrice},
+        </if>
+        <if test="merchantSkuId != null">
+            merchant_sku_id = #{merchantSkuId},
+        </if>
+        <if test="merchantPrice != null">
+            merchant_price = #{merchantPrice},
+        </if>
+        <if test="stockoutOrderId != null">
+            stockout_order_id = #{stockoutOrderId},
+        </if>
+        <if test="stockinOrderId != null">
+            stockin_order_id = #{stockinOrderId},
+        </if>
+        <if test="skuBillName != null">
+            sku_bill_name = #{skuBillName},
+        </if>
+        <if test="skuForeignName != null">
+            sku_foreign_name = #{skuForeignName},
+        </if>
+        <if test="skuId != null">
+            sku_id = #{skuId},
+        </if>
+        <if test="skuBarcode != null">
+            sku_barcode = #{skuBarcode},
+        </if>
+        <if test="skuBatch != null">
+            sku_batch = #{skuBatch},
+        </if>
+        <if test="quantity != null">
+            quantity = #{quantity},
+        </if>
+        <if test="freightFee != null">
+            freight_fee = #{freightFee},
+        </if>
+        <if test="weight != null">
+            weight = #{weight},
+        </if>
+        <if test="skuName != null">
+            sku_name = #{skuName},
+        </if>
+        <if test="brandName != null">
+            brand_name = #{brandName},
+        </if>
+        <if test="currency != null">
+            currency = #{currency},
+        </if>
+        <if test="remark != null">
+            remark = #{remark},
+        </if>
+        <if test="outState != null">
+            out_state = #{outState},
+        </if>
+    </set>
+</sql>
+
+<sql id="stockoutOrderDetailDO_selector">
+    select
+    <include refid="stockoutOrderDetailDO_columns"/>
+    from sc_stockout_order_detail
+</sql>
+
+<sql id="stockoutOrderDetailDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.merchantProviderId != null">
+            AND merchant_provider_id = #{data.merchantProviderId}
+        </if>
+        <if test="data.merchantDiscountPrice != null">
+            AND merchant_discount_price = #{data.merchantDiscountPrice}
+        </if>
+        <if test="data.merchantSkuId != null">
+            AND merchant_sku_id = #{data.merchantSkuId}
+        </if>
+        <if test="data.merchantPrice != null">
+            AND merchant_price = #{data.merchantPrice}
+        </if>
+        <if test="data.stockoutOrderId != null">
+            AND stockout_order_id = #{data.stockoutOrderId}
+        </if>
+        <if test="data.stockinOrderId != null">
+            AND stockin_order_id = #{data.stockinOrderId}
+        </if>
+        <if test="data.skuBillName != null">
+            AND sku_bill_name = #{data.skuBillName}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="data.skuForeignName != null">
+            AND sku_foreign_name = #{data.skuForeignName}
+        </if>
+        <if test="data.skuId != null">
+            AND sku_id = #{data.skuId}
+        </if>
+        <if test="data.skuBarcode != null">
+            AND sku_barcode = #{data.skuBarcode}
+        </if>
+        <if test="data.skuBatch != null">
+            AND sku_batch = #{data.skuBatch}
+        </if>
+        <if test="data.quantity != null">
+            AND quantity = #{data.quantity}
+        </if>
+        <if test="data.freightFee != null">
+            AND freight_fee = #{data.freightFee}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.weight != null">
+            AND weight = #{data.weight}
+        </if>
+        <if test="data.skuName != null">
+            AND sku_name = #{data.skuName}
+        </if>
+        <if test="data.brandName != null">
+            AND brand_name = #{data.brandName}
+        </if>
+        <if test="data.currency != null">
+            AND currency = #{data.currency}
+        </if>
+        <if test="data.remark != null">
+            AND remark = #{data.remark}
+        </if>
+        <if test="data.outState != null">
+            AND out_state = #{data.outState}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO">
+    insert into sc_stockout_order_detail
+    (
+        <include refid="stockoutOrderDetailDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockoutOrderDetailDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO">
+    update sc_stockout_order_detail
+    <include refid="stockoutOrderDetailDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO">
+    update sc_stockout_order_detail
+    <set>
+        gmt_modified = now(),
+        <if test="update.merchantProviderId != null">
+            merchant_provider_id = #{update.merchantProviderId},
+        </if>
+        <if test="update.merchantDiscountPrice != null">
+            merchant_discount_price = #{update.merchantDiscountPrice},
+        </if>
+        <if test="update.merchantSkuId != null">
+            merchant_sku_id = #{update.merchantSkuId},
+        </if>
+        <if test="update.merchantPrice != null">
+            merchant_price = #{update.merchantPrice},
+        </if>
+        <if test="update.stockoutOrderId != null">
+            stockout_order_id = #{update.stockoutOrderId},
+        </if>
+        <if test="update.stockinOrderId != null">
+            stockin_order_id = #{update.stockinOrderId},
+        </if>
+        <if test="update.skuBillName != null">
+            sku_bill_name = #{update.skuBillName},
+        </if>
+        <if test="update.skuForeignName != null">
+            sku_foreign_name = #{update.skuForeignName},
+        </if>
+        <if test="update.skuId != null">
+            sku_id = #{update.skuId},
+        </if>
+        <if test="update.skuBarcode != null">
+            sku_barcode = #{update.skuBarcode},
+        </if>
+        <if test="update.skuBatch != null">
+            sku_batch = #{update.skuBatch},
+        </if>
+        <if test="update.quantity != null">
+            quantity = #{update.quantity},
+        </if>
+        <if test="update.freightFee != null">
+            freight_fee = #{update.freightFee},
+        </if>
+        <if test="update.weight != null">
+            weight = #{update.weight},
+        </if>
+        <if test="update.skuName != null">
+            sku_name = #{update.skuName},
+        </if>
+        <if test="update.brandName != null">
+            brand_name = #{update.brandName},
+        </if>
+        <if test="update.currency != null">
+            currency = #{update.currency},
+        </if>
+        <if test="update.remark != null">
+            remark = #{update.remark},
+        </if>
+        <if test="update.outState != null">
+            out_state = #{update.outState},
+        </if>
+    </set>
+    <include refid="stockoutOrderDetailDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO">
+    insert into sc_stockout_order_detail
+    (
+        <include refid="stockoutOrderDetailDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockoutOrderDetailDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="merchantProviderId != null">
+        ,merchant_provider_id = #{merchantProviderId}
+    </if>
+    <if test="merchantDiscountPrice != null">
+        ,merchant_discount_price = #{merchantDiscountPrice}
+    </if>
+    <if test="merchantSkuId != null">
+        ,merchant_sku_id = #{merchantSkuId}
+    </if>
+    <if test="merchantPrice != null">
+        ,merchant_price = #{merchantPrice}
+    </if>
+    <if test="stockoutOrderId != null">
+        ,stockout_order_id = #{stockoutOrderId}
+    </if>
+    <if test="stockinOrderId != null">
+        ,stockin_order_id = #{stockinOrderId}
+    </if>
+    <if test="skuBillName != null">
+        ,sku_bill_name = #{skuBillName}
+    </if>
+    <if test="skuForeignName != null">
+        ,sku_foreign_name = #{skuForeignName}
+    </if>
+    <if test="skuId != null">
+        ,sku_id = #{skuId}
+    </if>
+    <if test="skuBarcode != null">
+        ,sku_barcode = #{skuBarcode}
+    </if>
+    <if test="skuBatch != null">
+        ,sku_batch = #{skuBatch}
+    </if>
+    <if test="quantity != null">
+        ,quantity = #{quantity}
+    </if>
+    <if test="freightFee != null">
+        ,freight_fee = #{freightFee}
+    </if>
+    <if test="weight != null">
+        ,weight = #{weight}
+    </if>
+    <if test="skuName != null">
+        ,sku_name = #{skuName}
+    </if>
+    <if test="brandName != null">
+        ,brand_name = #{brandName}
+    </if>
+    <if test="currency != null">
+        ,currency = #{currency}
+    </if>
+    <if test="remark != null">
+        ,remark = #{remark}
+    </if>
+    <if test="outState != null">
+        ,out_state = #{outState}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_stockout_order_detail
+    set is_delete = 1, gmt_modified = now()
+    <include refid="stockoutOrderDetailDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_stockout_order_detail
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="stockoutOrderDetailDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="stockoutOrderDetailDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="stockoutOrderDetailDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO">
+    <include refid="stockoutOrderDetailDO_selector"/>
+    <include refid="stockoutOrderDetailDO_query_segment"/>
+    <include refid="stockoutOrderDetailDO_groupBy"/>
+    <include refid="stockoutOrderDetailDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="stockoutOrderDetailDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO">
+    <include refid="stockoutOrderDetailDO_selector"/>
+    <include refid="stockoutOrderDetailDO_query_segment"/>
+    <include refid="stockoutOrderDetailDO_groupBy"/>
+    <include refid="stockoutOrderDetailDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_stockout_order_detail
+    <include refid="stockoutOrderDetailDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="stockoutOrderDetailDOResult">
+    <include refid="stockoutOrderDetailDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="stockoutOrderDetailDOResult">
+    <include refid="stockoutOrderDetailDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>

@@ -17,30 +17,82 @@ import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
  * Time: 上午1:29
  */
 public class StockoutOrderState extends Enumerable4StringValue {
-    
-    private static final long serialVersionUID = 2504548743721319723L;
-    private static final Logger log = LoggerFactory.getLogger(Enumerable4StringValue.class);
-    private static volatile transient Map<String, StockoutOrderState> allbyvalue = new HashMap<String, StockoutOrderState>();
-    private static volatile transient Map<String, StockoutOrderState> allbyname = new HashMap<String, StockoutOrderState>();
-    private static final Lock lock = new ReentrantLock();
 
-    public static StockoutOrderState WAIT_AUDITING = StockoutOrderState.valueOf("WAIT_AUDITING", "待审核");
-    public static StockoutOrderState WAIT_STOCKOUT = StockoutOrderState.valueOf("WAIT_STOCKOUT", "待出库");
-    public static StockoutOrderState STOCKOUTING = StockoutOrderState.valueOf("STOCKOUTING", "出库中");
-    public static StockoutOrderState STOCKOUT_FINISH = StockoutOrderState.valueOf("STOCKOUT_FINISH", "已出库");
-    public static StockoutOrderState OVERSEA_STOCKIN_FINISH = StockoutOrderState.valueOf("OVERSEA_STOCKIN_FINISH", "海外仓已入库");
-    public static StockoutOrderState OVERSEA_STOCKOUT_FINISH = StockoutOrderState.valueOf("OVERSEA_STOCKOUT_FINISH", "海外仓已出库");
-    public static StockoutOrderState OVERSEA_DELIVERING = StockoutOrderState.valueOf("OVERSEA_DELIVERING", "海外运输开始");
-    public static StockoutOrderState CLEARANCE_PICKING = StockoutOrderState.valueOf("CLEARANCE_PICKING", "清关公司提货");
-    public static StockoutOrderState CLEARANCE_BEGIN = StockoutOrderState.valueOf("CLEARANCE_BEGIN", "清关开始");
-    public static StockoutOrderState CLEARANCE_CHECKING = StockoutOrderState.valueOf("CLEARANCE_CHECKING", "清关异常");
-    public static StockoutOrderState CLEARANCE_END = StockoutOrderState.valueOf("CLEARANCE_END", "清关结束");
-    public static StockoutOrderState COLLECTED = StockoutOrderState.valueOf("COLLECTED", "快递已收件");
-    public static StockoutOrderState DELIVEING = StockoutOrderState.valueOf("DELIVEING", "快递派件中");
-    public static StockoutOrderState SIGNED = StockoutOrderState.valueOf("SIGNED", "用户已签收");
-    public static StockoutOrderState STOCKOUT_CANCEL = StockoutOrderState.valueOf("STOCKOUT_CANCEL", "已取消");
-    public static StockoutOrderState CLOSED = StockoutOrderState.valueOf("CLOSED", "已关闭");
-    public static StockoutOrderState INTERNATIONAL_DELIVEING= StockoutOrderState.valueOf("INTERNATIONAL_DELIVEING", "国际段运输中");
+    private static final long                                         serialVersionUID        = 2504548743721319723L;
+    private static final Logger                                       log                     = LoggerFactory
+                                                                                                  .getLogger(Enumerable4StringValue.class);
+    private static volatile transient Map<String, StockoutOrderState> allbyvalue              = new HashMap<String, StockoutOrderState>();
+    private static volatile transient Map<String, StockoutOrderState> allbyname               = new HashMap<String, StockoutOrderState>();
+    private static final Lock                                         lock                    = new ReentrantLock();
+
+    public static StockoutOrderState                                  WAIT_AUDITING           = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "WAIT_AUDITING",
+                                                                                                      "待审核");
+    public static StockoutOrderState                                  WAIT_STOCKOUT           = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "WAIT_STOCKOUT",
+                                                                                                      "待出库");
+    public static StockoutOrderState                                  STOCKOUTING             = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "STOCKOUTING",
+                                                                                                      "出库中");
+    public static StockoutOrderState                                  STOCKOUT_FINISH         = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "STOCKOUT_FINISH",
+                                                                                                      "已出库");
+    public static StockoutOrderState                                  OVERSEA_STOCKIN_FINISH  = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "OVERSEA_STOCKIN_FINISH",
+                                                                                                      "海外仓已入库");
+    public static StockoutOrderState                                  OVERSEA_STOCKOUT_FINISH = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "OVERSEA_STOCKOUT_FINISH",
+                                                                                                      "海外仓已出库");
+    public static StockoutOrderState                                  OVERSEA_DELIVERING      = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "OVERSEA_DELIVERING",
+                                                                                                      "海外运输开始");
+    public static StockoutOrderState                                  CLEARANCE_PICKING       = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "CLEARANCE_PICKING",
+                                                                                                      "清关公司提货");
+    public static StockoutOrderState                                  CLEARANCE_BEGIN         = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "CLEARANCE_BEGIN",
+                                                                                                      "清关开始");
+    public static StockoutOrderState                                  CLEARANCE_CHECKING      = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "CLEARANCE_CHECKING",
+                                                                                                      "清关异常");
+    public static StockoutOrderState                                  CLEARANCE_END           = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "CLEARANCE_END",
+                                                                                                      "清关结束");
+    public static StockoutOrderState                                  COLLECTED               = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "COLLECTED",
+                                                                                                      "快递已收件");
+    public static StockoutOrderState                                  DELIVEING               = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "DELIVEING",
+                                                                                                      "快递派件中");
+    public static StockoutOrderState                                  SIGNED                  = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "SIGNED",
+                                                                                                      "用户已签收");
+    public static StockoutOrderState                                  STOCKOUT_CANCEL         = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "STOCKOUT_CANCEL",
+                                                                                                      "已取消");
+    public static StockoutOrderState                                  CLOSED                  = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "CLOSED",
+                                                                                                      "已关闭");
+    public static StockoutOrderState                                  INTERNATIONAL_DELIVEING = StockoutOrderState
+                                                                                                  .valueOf(
+                                                                                                      "INTERNATIONAL_DELIVEING",
+                                                                                                      "国际段运输中");
 
     private StockoutOrderState(String value, String name) {
         super(value, name);
@@ -54,7 +106,8 @@ public class StockoutOrderState extends Enumerable4StringValue {
                 return e;
             else {
                 //命名不相同
-                log.warn("Name to be change. value:" + value + ", old name:" + e.name + ", new name:" + name);
+                log.warn("Name to be change. value:" + value + ", old name:" + e.name
+                         + ", new name:" + name);
             }
         }
 
@@ -74,7 +127,6 @@ public class StockoutOrderState extends Enumerable4StringValue {
         }
         return e;
     }
-
 
     public static StockoutOrderState valueOf(String value) {
         StockoutOrderState e = allbyvalue.get(value);
@@ -96,10 +148,5 @@ public class StockoutOrderState extends Enumerable4StringValue {
 
     public static StockoutOrderState[] values() {
         return allbyvalue.values().toArray(new StockoutOrderState[0]);
-    }
-
-    public static void main(String[] args) {
-        StockoutOrderState stockoutOrderState = StockoutOrderState.STOCKOUT_CANCEL;
-        System.out.println(stockoutOrderState);
     }
 }
