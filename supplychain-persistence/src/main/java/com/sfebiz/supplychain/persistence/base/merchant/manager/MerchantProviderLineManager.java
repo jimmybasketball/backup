@@ -8,6 +8,9 @@ import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderL
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 供应商线路管理
@@ -24,6 +27,19 @@ public class MerchantProviderLineManager extends BaseManager<MerchantProviderLin
     @Override
     public BaseDao<MerchantProviderLineDO> getDao() {
         return merchantProviderLineDao;
+    }
+
+    /**
+     * 根据供应商id和仓库id查询
+     * @param providerId
+     * @param warehouseId
+     * @return
+     */
+    public List<MerchantProviderLineDO> getByProviderAndWarehouse(Long providerId, Long warehouseId){
+        Map<String, Long> paramMap = new HashMap<String, Long>();
+        paramMap.put("providerId", providerId);
+        paramMap.put("warehouseId", warehouseId);
+        return merchantProviderLineDao.getByProviderAndWarehouse(paramMap);
     }
 
 

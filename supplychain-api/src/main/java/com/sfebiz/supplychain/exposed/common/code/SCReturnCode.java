@@ -13,6 +13,7 @@ import net.pocrd.entity.AbstractReturnCode;
  * </br>[1040000 - 1050000) 商品相关
  * </br>[1050000 - 1060000) 出库相关 
  * </br>[1060000 - 1070000) 入库相关
+ * </br>[1070000 - 1080000) 流程引擎
  * </p>
  * 
  * @author matt
@@ -52,4 +53,20 @@ public class SCReturnCode extends AbstractReturnCode {
     
     public final static SCReturnCode PARAM_ILLEGAL_ERR = new SCReturnCode("参数非法",
 	    _C_PARAM_ILLEGAL_ERR);
+
+    /**
+     * 入库单
+     * 错误码范围 1060000 - 1070000
+     */
+    public final static SCReturnCode STOCKIN_ORDER_NOT_EXIST = new SCReturnCode("入库单不存在", 1060000);
+    public final static SCReturnCode STOCKIN_ORDER_INNER_EXCEPTION = new SCReturnCode("入库单系统内部异常", 1060001);
+
+    /**
+     * 流程引擎
+     * 错误码范围 1070000 - 1080000
+     */
+    public final static SCReturnCode LOGISTICS_STATE_MACHINE_INTERNAL_EXCEPTION = new SCReturnCode("状态机内部异常", 1070000);
+    public final static SCReturnCode STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION = new SCReturnCode("单据状态流转异常", 1070001);
+    public final static SCReturnCode STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE = new SCReturnCode("状态流转参数不合法，缺少ID", 1070002);
+
 }
