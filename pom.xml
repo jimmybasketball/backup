@@ -121,6 +121,11 @@
             </dependency>
             <dependency>
                 <groupId>com.sfebiz.supplychain</groupId>
+                <artifactId>supplychain-api-open</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sfebiz.supplychain</groupId>
                 <artifactId>supplychain-persistence</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -644,12 +649,12 @@
 
     <modules>
         <module>supplychain-api</module>
+		<module>supplychain-api-open</module>
         <module>supplychain-service</module>
         <module>supplychain-autotest</module>
         <module>supplychain-config</module>
         <module>supplychain-persistence</module>
         <module>supplychain-sdk</module>
         <module>supplychain-sdk-tws</module>
-    <module>supplychain-util</module>
   </modules>
 </project>

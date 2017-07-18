@@ -34,6 +34,10 @@
         </dependency>
         <dependency>
             <groupId>com.sfebiz.supplychain</groupId>
+            <artifactId>supplychain-api-open</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sfebiz.supplychain</groupId>
             <artifactId>supplychain-persistence</artifactId>
         </dependency>
         <dependency>
