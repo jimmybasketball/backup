@@ -22,7 +22,7 @@ public class StockinOrderDetailDO extends BaseDO {
     //商品批次
     private String skuBatch;
      //批次生成规则
-    private String batchMakePlan;
+    private String batchGeneratePlan;
      //不带流水码的批次号
     private String originBatch;
     //商品条形码
@@ -61,7 +61,7 @@ public class StockinOrderDetailDO extends BaseDO {
                 ", skuId=" + skuId +
                 ", skuName='" + skuName + '\'' +
                 ", skuBatch='" + skuBatch + '\'' +
-                ", batchMakePlan='" + batchMakePlan + '\'' +
+                ", batchGeneratePlan='" + batchGeneratePlan + '\'' +
                 ", originBatch='" + originBatch + '\'' +
                 ", skuBarcode='" + skuBarcode + '\'' +
                 ", skuForeignName='" + skuForeignName + '\'' +
@@ -112,12 +112,12 @@ public class StockinOrderDetailDO extends BaseDO {
         this.skuBatch = skuBatch;
     }
 
-    public String getBatchMakePlan() {
-        return batchMakePlan;
+    public String getBatchGeneratePlan() {
+        return batchGeneratePlan;
     }
 
-    public void setBatchMakePlan(String batchMakePlan) {
-        this.batchMakePlan = batchMakePlan;
+    public void setBatchGeneratePlan(String batchGeneratePlan) {
+        this.batchGeneratePlan = batchGeneratePlan;
     }
 
     public String getOriginBatch() {

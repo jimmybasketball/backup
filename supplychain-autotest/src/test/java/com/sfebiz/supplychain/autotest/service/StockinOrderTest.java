@@ -3,7 +3,6 @@ package com.sfebiz.supplychain.autotest.service;
 import com.sfebiz.supplychain.autotest.BaseServiceTest;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderDetailEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderEntity;
-import com.sfebiz.supplychain.exposed.stockinorder.enums.BatchMakePlan;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderType;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinTransportType;
 import org.junit.Test;
@@ -25,8 +24,9 @@ public class StockinOrderTest extends BaseServiceTest{
         stockinOrderDetailEntity.setSkuId(1132011L);
         stockinOrderDetailEntity.setSkuBarcode("B12037");
         stockinOrderDetailEntity.setSkuName("三鹿奶粉");
-        stockinOrderDetailEntity.setBatchMakePlan(BatchMakePlan.EXP_SAME.getValue());
+//        stockinOrderDetailEntity.setBatchMakePlan(BatchMakePlan.EXP_SAME.getValue());
         stockinOrderDetailEntity.setCount(100);
+        stockinOrderDetailEntityList.add(stockinOrderDetailEntity);
         stockinOrderDetailEntityList.add(stockinOrderDetailEntity);
         stockinOrderEntity.setDetailEntities(stockinOrderDetailEntityList);
         stockinOrderEntity.setMerchantId(5L);
@@ -41,6 +41,6 @@ public class StockinOrderTest extends BaseServiceTest{
         stockinOrderEntity.setTransportType(StockinTransportType.OCEAN.getType());
         stockinOrderEntity.setLogisticsCompany("圆通");
 
-//        stockInService.createStockinOrder(stockinOrderEntity, 1L, "张雅静");
+        stockInService.createStockinOrder(stockinOrderEntity, 1L, "张雅静");
     }
 }

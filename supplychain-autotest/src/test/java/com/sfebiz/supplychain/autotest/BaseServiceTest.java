@@ -1,6 +1,7 @@
 package com.sfebiz.supplychain.autotest;
 
 import com.sfebiz.supplychain.exposed.demo.api.DemoApi;
+import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,5 +31,6 @@ public class BaseServiceTest {
     @Resource
     protected DemoApi demoApi;
 
-
+    @Resource
+    protected StockInService stockInService;
 }
