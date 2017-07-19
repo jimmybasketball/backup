@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.stock.dao.StockFreezeDao">
+
+<resultMap id="stockFreezeDOResult" type="com.sfebiz.supplychain.persistence.base.stock.domain.StockFreezeDO">
+    <result column="id" property="id"/>
+    <result column="stock_batch_id" property="stockBatchId"/>
+    <result column="warehouse_id" property="warehouseId"/>
+    <result column="freeze_count" property="freezeCount"/>
+    <result column="stock_order_id" property="stockOrderId"/>
+    <result column="freeze_state" property="freezeState"/>
+    <result column="gmt_modified" property="gmtModified"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="merchant_id" property="merchantId"/>
+    <result column="batch_no" property="batchNo"/>
+    <result column="real_count" property="realCount"/>
+    <result column="order_type" property="orderType"/>
+    <result column="gmt_create" property="gmtCreate"/>
+</resultMap>
+
+<sql id="stockFreezeDO_columns">
+    id,
+    stock_batch_id,
+    warehouse_id,
+    freeze_count,
+    stock_order_id,
+    freeze_state,
+    gmt_modified,
+    sku_id,
+    merchant_id,
+    batch_no,
+    real_count,
+    order_type,
+    gmt_create
+</sql>
+
+<sql id="stockFreezeDO_sqlForInsert">
+    id,
+    stock_batch_id,
+    warehouse_id,
+    freeze_count,
+    stock_order_id,
+    freeze_state,
+    gmt_modified,
+    sku_id,
+    merchant_id,
+    batch_no,
+    real_count,
+    order_type,
+    gmt_create
+</sql>
+
+<sql id="stockFreezeDO_columnsForInsert">
+    #{id},
+    #{stockBatchId},
+    #{warehouseId},
+    #{freezeCount},
+    #{stockOrderId},
+    #{freezeState},
+    now(),
+    #{skuId},
+    #{merchantId},
+    #{batchNo},
+    #{realCount},
+    #{orderType},
+    now()
+</sql>
+
+<sql id="stockFreezeDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="stockBatchId != null">
+            stock_batch_id = #{stockBatchId},
+        </if>
+        <if test="warehouseId != null">
+            warehouse_id = #{warehouseId},
+        </if>
+        <if test="freezeCount != null">
+            freeze_count = #{freezeCount},
+        </if>
+        <if test="stockOrderId != null">
+            stock_order_id = #{stockOrderId},
+        </if>
+        <if test="freezeState != null">
+            freeze_state = #{freezeState},
+        </if>
+        <if test="skuId != null">
+            sku_id = #{skuId},
+        </if>
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
+        </if>
+        <if test="batchNo != null">
+            batch_no = #{batchNo},
+        </if>
+        <if test="realCount != null">
+            real_count = #{realCount},
+        </if>
+        <if test="orderType != null">
+            order_type = #{orderType},
+        </if>
+    </set>
+</sql>
+
+<sql id="stockFreezeDO_selector">
+    select
+    <include refid="stockFreezeDO_columns"/>
+    from sc_stock_freeze
+</sql>
+
+<sql id="stockFreezeDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.stockBatchId != null">
+            AND stock_batch_id = #{data.stockBatchId}
+        </if>
+        <if test="data.warehouseId != null">
+            AND warehouse_id = #{data.warehouseId}
+        </if>
+        <if test="data.freezeCount != null">
+            AND freeze_count = #{data.freezeCount}
+        </if>
+        <if test="data.stockOrderId != null">
+            AND stock_order_id = #{data.stockOrderId}
+        </if>
+        <if test="data.freezeState != null">
+            AND freeze_state = #{data.freezeState}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="data.skuId != null">
+            AND sku_id = #{data.skuId}
+        </if>
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="data.batchNo != null">
+            AND batch_no = #{data.batchNo}
+        </if>
+        <if test="data.realCount != null">
+            AND real_count = #{data.realCount}
+        </if>
+        <if test="data.orderType != null">
+            AND order_type = #{data.orderType}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockFreezeDO">
+    insert into sc_stock_freeze
+    (
+        <include refid="stockFreezeDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockFreezeDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockFreezeDO">
+    update sc_stock_freeze
+    <include refid="stockFreezeDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockFreezeDO">
+    update sc_stock_freeze
+    <set>
+        gmt_modified = now(),
+        <if test="update.stockBatchId != null">
+            stock_batch_id = #{update.stockBatchId},
+        </if>
+        <if test="update.warehouseId != null">
+            warehouse_id = #{update.warehouseId},
+        </if>
+        <if test="update.freezeCount != null">
+            freeze_count = #{update.freezeCount},
+        </if>
+        <if test="update.stockOrderId != null">
+            stock_order_id = #{update.stockOrderId},
+        </if>
+        <if test="update.freezeState != null">
+            freeze_state = #{update.freezeState},
+        </if>
+        <if test="update.skuId != null">
+            sku_id = #{update.skuId},
+        </if>
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
+        </if>
+        <if test="update.batchNo != null">
+            batch_no = #{update.batchNo},
+        </if>
+        <if test="update.realCount != null">
+            real_count = #{update.realCount},
+        </if>
+        <if test="update.orderType != null">
+            order_type = #{update.orderType},
+        </if>
+    </set>
+    <include refid="stockFreezeDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockFreezeDO">
+    insert into sc_stock_freeze
+    (
+        <include refid="stockFreezeDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockFreezeDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="stockBatchId != null">
+        ,stock_batch_id = #{stockBatchId}
+    </if>
+    <if test="warehouseId != null">
+        ,warehouse_id = #{warehouseId}
+    </if>
+    <if test="freezeCount != null">
+        ,freeze_count = #{freezeCount}
+    </if>
+    <if test="stockOrderId != null">
+        ,stock_order_id = #{stockOrderId}
+    </if>
+    <if test="freezeState != null">
+        ,freeze_state = #{freezeState}
+    </if>
+    <if test="skuId != null">
+        ,sku_id = #{skuId}
+    </if>
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
+    </if>
+    <if test="batchNo != null">
+        ,batch_no = #{batchNo}
+    </if>
+    <if test="realCount != null">
+        ,real_count = #{realCount}
+    </if>
+    <if test="orderType != null">
+        ,order_type = #{orderType}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_stock_freeze
+    set is_delete = 1, gmt_modified = now()
+    <include refid="stockFreezeDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_stock_freeze
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="stockFreezeDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="stockFreezeDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="stockFreezeDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockFreezeDO">
+    <include refid="stockFreezeDO_selector"/>
+    <include refid="stockFreezeDO_query_segment"/>
+    <include refid="stockFreezeDO_groupBy"/>
+    <include refid="stockFreezeDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="stockFreezeDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockFreezeDO">
+    <include refid="stockFreezeDO_selector"/>
+    <include refid="stockFreezeDO_query_segment"/>
+    <include refid="stockFreezeDO_groupBy"/>
+    <include refid="stockFreezeDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_stock_freeze
+    <include refid="stockFreezeDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="stockFreezeDOResult">
+    <include refid="stockFreezeDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="stockFreezeDOResult">
+    <include refid="stockFreezeDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>
