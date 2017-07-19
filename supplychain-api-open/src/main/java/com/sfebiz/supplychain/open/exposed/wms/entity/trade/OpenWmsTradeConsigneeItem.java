@@ -68,7 +68,7 @@ public class OpenWmsTradeConsigneeItem implements Serializable {
 	public String idBackImgUrl;
 	
     /** 
-     * @see java.lang.Object#toString()
+     * @see Object#toString()
      */
     @Override
     public String toString() {

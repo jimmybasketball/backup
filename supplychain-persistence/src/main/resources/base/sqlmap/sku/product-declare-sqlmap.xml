@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.sku.dao.ProductDeclareDao">
+
+    <resultMap id="productDeclareDOResult" type="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO">
+        <result column="state" property="state"/>
+        <result column="attributes" property="attributes"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="port_id" property="portId"/>
+        <result column="record_no" property="recordNo"/>
+        <result column="remark" property="remark"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="declare_name" property="declareName"/>
+        <result column="post_tax_no" property="postTaxNo"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="bar_code" property="barCode"/>
+        <result column="brand" property="brand"/>
+        <result column="origin" property="origin"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="submit_time" property="submitTime"/>
+        <result column="price_rmb" property="priceRmb"/>
+        <result column="product_id" property="productId"/>
+        <result column="net_weight" property="netWeight"/>
+        <result column="gross_weight" property="grossWeight"/>
+        <result column="hs_code" property="hsCode"/>
+        <result column="tax_rate" property="taxRate"/>
+        <result column="consumption_duty_rate" property="consumptionDutyRate"/>
+        <result column="added_value_tax_rate" property="addedValueTaxRate"/>
+        <result column="tariff_rate" property="tariffRate"/>
+        <result column="declare_mode" property="declareMode"/>
+        <result column="start_collect_time" property="startCollectTime"/>
+        <result column="finish_collect_time" property="finishCollectTime"/>
+        <result column="measuring_unit" property="measuringUnit"/>
+        <result column="create_user" property="createUser"/>
+        <result column="data_collect_user" property="dataCollectUser"/>
+        <result column="filing_user" property="filingUser"/>
+        <result column="provider_name" property="providerName"/>
+        <result column="purchase_mode" property="purchaseMode"/>
+        <result column="id" property="id"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="first_measuringUnit" property="firstMeasuringUnit"/>
+        <result column="first_weight" property="firstWeight"/>
+        <result column="second_measuringUnit" property="secondMeasuringUnit"/>
+        <result column="second_weight" property="secondWeight"/>
+    </resultMap>
+
+    <sql id="productDeclareDO_columns">
+    state,
+    attributes,
+    sku_id,
+    port_id,
+    record_no,
+    remark,
+    finish_time,
+    declare_name,
+    post_tax_no,
+    category_name,
+    bar_code,
+    brand,
+    origin,
+    category_id,
+    submit_time,
+    price_rmb,
+    product_id,
+    net_weight,
+    gross_weight,
+    hs_code,
+    tax_rate,
+    consumption_duty_rate,
+    added_value_tax_rate,
+    tariff_rate,
+    declare_mode,
+    start_collect_time,
+    finish_collect_time,
+    measuring_unit,
+    create_user,
+    data_collect_user,
+    filing_user,
+    provider_name,
+    purchase_mode,
+    id,
+    gmt_create,
+    gmt_modified,
+    first_measuringUnit,
+    first_weight,
+    second_measuringUnit,
+    second_weight
+</sql>
+
+    <sql id="productDeclareDO_sqlForInsert">
+    state,
+    attributes,
+    sku_id,
+    port_id,
+    record_no,
+    remark,
+    finish_time,
+    declare_name,
+    post_tax_no,
+    category_name,
+    bar_code,
+    brand,
+    origin,
+    category_id,
+    submit_time,
+    price_rmb,
+    product_id,
+    net_weight,
+    gross_weight,
+    hs_code,
+    tax_rate,
+    consumption_duty_rate,
+    added_value_tax_rate,
+    tariff_rate,
+    declare_mode,
+    start_collect_time,
+    finish_collect_time,
+    measuring_unit,
+    create_user,
+    data_collect_user,
+    filing_user,
+    provider_name,
+    purchase_mode,
+    id,
+    gmt_create,
+    gmt_modified,
+    first_measuringUnit,
+    first_weight,
+    second_measuringUnit,
+    second_weight
+</sql>
+
+    <sql id="productDeclareDO_columnsForInsert">
+    #{state},
+    #{attributes},
+    #{skuId},
+    #{portId},
+    #{recordNo},
+    #{remark},
+    #{finishTime},
+    #{declareName},
+    #{postTaxNo},
+    #{categoryName},
+    #{barCode},
+    #{brand},
+    #{origin},
+    #{categoryId},
+    #{submitTime},
+    #{priceRmb},
+    #{productId},
+    #{netWeight},
+    #{grossWeight},
+    #{hsCode},
+    #{taxRate},
+    #{consumptionDutyRate},
+    #{addedValueTaxRate},
+    #{tariffRate},
+    #{declareMode},
+    #{startCollectTime},
+    #{finishCollectTime},
+    #{measuringUnit},
+    #{createUser},
+    #{dataCollectUser},
+    #{filingUser},
+    #{providerName},
+    #{purchaseMode},
+    #{id},
+    now(),
+    now(),
+    #{firstMeasuringUnit},
+    #{firstWeight},
+    #{secondMeasuringUnit},
+    #{secondWeight}
+</sql>
+
+    <sql id="productDeclareDO_setterForUpdate">
+        <set>
+            gmt_modified = now(),
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="attributes != null">
+                attributes = #{attributes},
+            </if>
+            <if test="skuId != null">
+                sku_id = #{skuId},
+            </if>
+            <if test="portId != null">
+                port_id = #{portId},
+            </if>
+            <if test="recordNo != null">
+                record_no = #{recordNo},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="finishTime != null">
+                finish_time = #{finishTime},
+            </if>
+            <if test="declareName != null">
+                declare_name = #{declareName},
+            </if>
+            <if test="postTaxNo != null">
+                post_tax_no = #{postTaxNo},
+            </if>
+            <if test="categoryName != null">
+                category_name = #{categoryName},
+            </if>
+            <if test="barCode != null">
+                bar_code = #{barCode},
+            </if>
+            <if test="brand != null">
+                brand = #{brand},
+            </if>
+            <if test="origin != null">
+                origin = #{origin},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="submitTime != null">
+                submit_time = #{submitTime},
+            </if>
+            <if test="priceRmb != null">
+                price_rmb = #{priceRmb},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId},
+            </if>
+            <if test="netWeight != null">
+                net_weight = #{netWeight},
+            </if>
+            <if test="grossWeight != null">
+                gross_weight = #{grossWeight},
+            </if>
+            <if test="hsCode != null">
+                hs_code = #{hsCode},
+            </if>
+            <if test="taxRate != null">
+                tax_rate = #{taxRate},
+            </if>
+            <if test="consumptionDutyRate != null">
+                consumption_duty_rate = #{consumptionDutyRate},
+            </if>
+            <if test="addedValueTaxRate != null">
+                added_value_tax_rate = #{addedValueTaxRate},
+            </if>
+            <if test="tariffRate != null">
+                tariff_rate = #{tariffRate},
+            </if>
+            <if test="declareMode != null">
+                declare_mode = #{declareMode},
+            </if>
+            <if test="startCollectTime != null">
+                start_collect_time = #{startCollectTime},
+            </if>
+            <if test="finishCollectTime != null">
+                finish_collect_time = #{finishCollectTime},
+            </if>
+            <if test="measuringUnit != null">
+                measuring_unit = #{measuringUnit},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser},
+            </if>
+            <if test="dataCollectUser != null">
+                data_collect_user = #{dataCollectUser},
+            </if>
+            <if test="filingUser != null">
+                filing_user = #{filingUser},
+            </if>
+            <if test="providerName != null">
+                provider_name = #{providerName},
+            </if>
+            <if test="purchaseMode != null">
+                purchase_mode = #{purchaseMode},
+            </if>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="firstMeasuringUnit != null">
+                first_measuringUnit = #{firstMeasuringUnit},
+            </if>
+            <if test="firstWeight != null">
+                first_weight = #{firstWeight},
+            </if>
+            <if test="secondMeasuringUnit != null">
+                second_measuringUnit = #{secondMeasuringUnit},
+            </if>
+            <if test="secondWeight != null">
+                second_weight = #{secondWeight},
+            </if>
+        </set>
+    </sql>
+
+    <sql id="productDeclareDO_selector">
+        select
+        <include refid="productDeclareDO_columns"/>
+        from sc_product_declare
+    </sql>
+
+    <sql id="productDeclareDO_query_segment">
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="data.state != null">
+                AND state = #{data.state}
+            </if>
+            <if test="data.attributes != null">
+                AND attributes = #{data.attributes}
+            </if>
+            <if test="data.skuId != null">
+                AND sku_id = #{data.skuId}
+            </if>
+            <if test="data.portId != null">
+                AND port_id = #{data.portId}
+            </if>
+            <if test="data.recordNo != null">
+                AND record_no = #{data.recordNo}
+            </if>
+            <if test="data.remark != null">
+                AND remark = #{data.remark}
+            </if>
+            <if test="data.finishTime != null">
+                AND finish_time = #{data.finishTime}
+            </if>
+            <if test="data.declareName != null">
+                AND declare_name = #{data.declareName}
+            </if>
+            <if test="data.postTaxNo != null">
+                AND post_tax_no = #{data.postTaxNo}
+            </if>
+            <if test="data.categoryName != null">
+                AND category_name = #{data.categoryName}
+            </if>
+            <if test="data.barCode != null">
+                AND bar_code = #{data.barCode}
+            </if>
+            <if test="data.brand != null">
+                AND brand = #{data.brand}
+            </if>
+            <if test="data.origin != null">
+                AND origin = #{data.origin}
+            </if>
+            <if test="data.categoryId != null">
+                AND category_id = #{data.categoryId}
+            </if>
+            <if test="data.submitTime != null">
+                AND submit_time = #{data.submitTime}
+            </if>
+            <if test="data.priceRmb != null">
+                AND price_rmb = #{data.priceRmb}
+            </if>
+            <if test="data.productId != null">
+                AND product_id = #{data.productId}
+            </if>
+            <if test="data.netWeight != null">
+                AND net_weight = #{data.netWeight}
+            </if>
+            <if test="data.grossWeight != null">
+                AND gross_weight = #{data.grossWeight}
+            </if>
+            <if test="data.hsCode != null">
+                AND hs_code = #{data.hsCode}
+            </if>
+            <if test="data.taxRate != null">
+                AND tax_rate = #{data.taxRate}
+            </if>
+            <if test="data.consumptionDutyRate != null">
+                AND consumption_duty_rate = #{data.consumptionDutyRate}
+            </if>
+            <if test="data.addedValueTaxRate != null">
+                AND added_value_tax_rate = #{data.addedValueTaxRate}
+            </if>
+            <if test="data.tariffRate != null">
+                AND tariff_rate = #{data.tariffRate}
+            </if>
+            <if test="data.declareMode != null">
+                AND declare_mode = #{data.declareMode}
+            </if>
+            <if test="data.startCollectTime != null">
+                AND start_collect_time = #{data.startCollectTime}
+            </if>
+            <if test="data.finishCollectTime != null">
+                AND finish_collect_time = #{data.finishCollectTime}
+            </if>
+            <if test="data.measuringUnit != null">
+                AND measuring_unit = #{data.measuringUnit}
+            </if>
+            <if test="data.createUser != null">
+                AND create_user = #{data.createUser}
+            </if>
+            <if test="data.dataCollectUser != null">
+                AND data_collect_user = #{data.dataCollectUser}
+            </if>
+            <if test="data.filingUser != null">
+                AND filing_user = #{data.filingUser}
+            </if>
+            <if test="data.providerName != null">
+                AND provider_name = #{data.providerName}
+            </if>
+            <if test="data.purchaseMode != null">
+                AND purchase_mode = #{data.purchaseMode}
+            </if>
+            <if test="data.id != null">
+                AND id = #{data.id}
+            </if>
+            <if test="data.gmtCreate != null">
+                AND gmt_create = #{data.gmtCreate}
+            </if>
+            <if test="data.gmtModified != null">
+                AND gmt_modified = #{data.gmtModified}
+            </if>
+            <if test="ins != null and ins != ''">
+                AND
+                <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                    ${item.column} in
+                    <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </foreach>
+            </if>
+            <if test="notIns != null and notIns != ''">
+                AND
+                <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                    ${item.column} not in
+                    <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </foreach>
+            </if>
+            <if test="equals != null and equals != ''">
+                AND
+                <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                    ${item.column} = #{item.value}
+                </foreach>
+            </if>
+            <if test="notEquals != null and notEquals != ''">
+                AND
+                <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                    ${item.column} = #{item.value}
+                </foreach>
+            </if>
+            <if test="lts != null and lts != ''">
+                AND
+                <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ < ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="gts != null and gts != ''">
+                AND
+                <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ > ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="likes != null and likes != ''">
+                AND
+                <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                    ${item.column} like concat('%', #{item.value}, '%')
+                </foreach>
+            </if>
+            <if test="ltes != null and ltes != ''">
+                AND
+                <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ <= ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="gtes != null and gtes != ''">
+                AND
+                <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ >= ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="ranges != null and ranges != ''">
+                AND
+                <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+                </foreach>
+            </if>
+            AND is_delete = 0
+        </trim>
+    </sql>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO">
+        insert into sc_product_declare
+        (
+        <include refid="productDeclareDO_sqlForInsert"/>
+        ,is_delete
+        )
+        values
+        (
+        <include refid="productDeclareDO_columnsForInsert"/>
+        ,0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO">
+        update sc_product_declare
+        <include refid="productDeclareDO_setterForUpdate"/>
+        where id = #{id}
+        and is_delete = 0
+    </update>
+
+
+    <update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO">
+        update sc_product_declare
+        <set>
+            gmt_modified = now(),
+            <if test="update.state != null">
+                state = #{update.state},
+            </if>
+            <if test="update.attributes != null">
+                attributes = #{update.attributes},
+            </if>
+            <if test="update.skuId != null">
+                sku_id = #{update.skuId},
+            </if>
+            <if test="update.portId != null">
+                port_id = #{update.portId},
+            </if>
+            <if test="update.recordNo != null">
+                record_no = #{update.recordNo},
+            </if>
+            <if test="update.remark != null">
+                remark = #{update.remark},
+            </if>
+            <if test="update.finishTime != null">
+                finish_time = #{update.finishTime},
+            </if>
+            <if test="update.declareName != null">
+                declare_name = #{update.declareName},
+            </if>
+            <if test="update.postTaxNo != null">
+                post_tax_no = #{update.postTaxNo},
+            </if>
+            <if test="update.categoryName != null">
+                category_name = #{update.categoryName},
+            </if>
+            <if test="update.barCode != null">
+                bar_code = #{update.barCode},
+            </if>
+            <if test="update.brand != null">
+                brand = #{update.brand},
+            </if>
+            <if test="update.origin != null">
+                origin = #{update.origin},
+            </if>
+            <if test="update.categoryId != null">
+                category_id = #{update.categoryId},
+            </if>
+            <if test="update.submitTime != null">
+                submit_time = #{update.submitTime},
+            </if>
+            <if test="update.priceRmb != null">
+                price_rmb = #{update.priceRmb},
+            </if>
+            <if test="update.productId != null">
+                product_id = #{update.productId},
+            </if>
+            <if test="update.netWeight != null">
+                net_weight = #{update.netWeight},
+            </if>
+            <if test="update.grossWeight != null">
+                gross_weight = #{update.grossWeight},
+            </if>
+            <if test="update.hsCode != null">
+                hs_code = #{update.hsCode},
+            </if>
+            <if test="update.taxRate != null">
+                tax_rate = #{update.taxRate},
+            </if>
+            <if test="update.consumptionDutyRate != null">
+                consumption_duty_rate = #{update.consumptionDutyRate},
+            </if>
+            <if test="update.addedValueTaxRate != null">
+                added_value_tax_rate = #{update.addedValueTaxRate},
+            </if>
+            <if test="update.tariffRate != null">
+                tariff_rate = #{update.tariffRate},
+            </if>
+            <if test="update.declareMode != null">
+                declare_mode = #{update.declareMode},
+            </if>
+            <if test="update.startCollectTime != null">
+                start_collect_time = #{update.startCollectTime},
+            </if>
+            <if test="update.finishCollectTime != null">
+                finish_collect_time = #{update.finishCollectTime},
+            </if>
+            <if test="update.measuringUnit != null">
+                measuring_unit = #{update.measuringUnit},
+            </if>
+            <if test="update.createUser != null">
+                create_user = #{update.createUser},
+            </if>
+            <if test="update.dataCollectUser != null">
+                data_collect_user = #{update.dataCollectUser},
+            </if>
+            <if test="update.filingUser != null">
+                filing_user = #{update.filingUser},
+            </if>
+            <if test="update.providerName != null">
+                provider_name = #{update.providerName},
+            </if>
+            <if test="update.purchaseMode != null">
+                purchase_mode = #{update.purchaseMode},
+            </if>
+            <if test="update.id != null">
+                id = #{update.id},
+            </if>
+        </set>
+        <include refid="productDeclareDO_query_segment"/>
+    </update>
+
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO">
+        insert into sc_product_declare
+        (
+        <include refid="productDeclareDO_sqlForInsert"/>
+        ,is_delete
+        )
+        values
+        (
+        <include refid="productDeclareDO_columnsForInsert"/>
+        ,0
+        )
+        on duplicate key update
+        gmt_modified = now()
+        ,is_delete = 0
+        <if test="state != null">
+            ,state = #{state}
+        </if>
+        <if test="attributes != null">
+            ,attributes = #{attributes}
+        </if>
+        <if test="skuId != null">
+            ,sku_id = #{skuId}
+        </if>
+        <if test="portId != null">
+            ,port_id = #{portId}
+        </if>
+        <if test="recordNo != null">
+            ,record_no = #{recordNo}
+        </if>
+        <if test="remark != null">
+            ,remark = #{remark}
+        </if>
+        <if test="finishTime != null">
+            ,finish_time = #{finishTime}
+        </if>
+        <if test="declareName != null">
+            ,declare_name = #{declareName}
+        </if>
+        <if test="postTaxNo != null">
+            ,post_tax_no = #{postTaxNo}
+        </if>
+        <if test="categoryName != null">
+            ,category_name = #{categoryName}
+        </if>
+        <if test="barCode != null">
+            ,bar_code = #{barCode}
+        </if>
+        <if test="brand != null">
+            ,brand = #{brand}
+        </if>
+        <if test="origin != null">
+            ,origin = #{origin}
+        </if>
+        <if test="categoryId != null">
+            ,category_id = #{categoryId}
+        </if>
+        <if test="submitTime != null">
+            ,submit_time = #{submitTime}
+        </if>
+        <if test="priceRmb != null">
+            ,price_rmb = #{priceRmb}
+        </if>
+        <if test="productId != null">
+            ,product_id = #{productId}
+        </if>
+        <if test="netWeight != null">
+            ,net_weight = #{netWeight}
+        </if>
+        <if test="grossWeight != null">
+            ,gross_weight = #{grossWeight}
+        </if>
+        <if test="hsCode != null">
+            ,hs_code = #{hsCode}
+        </if>
+        <if test="taxRate != null">
+            ,tax_rate = #{taxRate}
+        </if>
+        <if test="consumptionDutyRate != null">
+            ,consumption_duty_rate = #{consumptionDutyRate}
+        </if>
+        <if test="addedValueTaxRate != null">
+            ,added_value_tax_rate = #{addedValueTaxRate}
+        </if>
+        <if test="tariffRate != null">
+            ,tariff_rate = #{tariffRate}
+        </if>
+        <if test="declareMode != null">
+            ,declare_mode = #{declareMode}
+        </if>
+        <if test="startCollectTime != null">
+            ,start_collect_time = #{startCollectTime}
+        </if>
+        <if test="finishCollectTime != null">
+            ,finish_collect_time = #{finishCollectTime}
+        </if>
+        <if test="measuringUnit != null">
+            ,measuring_unit = #{measuringUnit}
+        </if>
+        <if test="createUser != null">
+            ,create_user = #{createUser}
+        </if>
+        <if test="dataCollectUser != null">
+            ,data_collect_user = #{dataCollectUser}
+        </if>
+        <if test="filingUser != null">
+            ,filing_user = #{filingUser}
+        </if>
+        <if test="providerName != null">
+            ,provider_name = #{providerName}
+        </if>
+        <if test="purchaseMode != null">
+            ,purchase_mode = #{purchaseMode}
+        </if>
+    </insert>
+
+    <!-- Delete -->
+    <update id="delete">
+        update sc_product_declare
+        set is_delete = 1, gmt_modified = now()
+        <include refid="productDeclareDO_query_segment"/>
+    </update>
+    <update id="deleteById">
+    update sc_product_declare
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+    <!-- query class -->
+    <sql id="productDeclareDO_groupBy">
+        <if test="groupBys != null and groupBys != ''">
+            group by
+            <foreach collection="groupBys" item="item" open="" separator="," close="">
+                #{item}
+            </foreach>
+        </if>
+    </sql>
+
+    <sql id="productDeclareDO_orderby">
+        <if test="orderBys != null and orderBys != ''">
+            order by
+            <foreach collection="orderBys" item="item" open="" separator="," close="">
+                ${item.column} ${item.direction}
+            </foreach>
+        </if>
+    </sql>
+
+
+    <select id="query" resultMap="productDeclareDOResult"
+            parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO">
+        <include refid="productDeclareDO_selector"/>
+        <include refid="productDeclareDO_query_segment"/>
+        <include refid="productDeclareDO_groupBy"/>
+        <include refid="productDeclareDO_orderby"/>
+    </select>
+
+    <select id="query4Page" resultMap="productDeclareDOResult"
+            parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO">
+        <include refid="productDeclareDO_selector"/>
+        <include refid="productDeclareDO_query_segment"/>
+        <include refid="productDeclareDO_groupBy"/>
+        <include refid="productDeclareDO_orderby"/>
+        limit ${startRowForMysql}, ${pageSize}
+    </select>
+
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM sc_product_declare
+        <include refid="productDeclareDO_query_segment"/>
+    </select>
+
+    <select id="getById" resultMap="productDeclareDOResult">
+        <include refid="productDeclareDO_selector"/>
+        where id = #{id}
+        and is_delete = 0
+    </select>
+
+    <select id="getByIdForUpdate" resultMap="productDeclareDOResult">
+        <include refid="productDeclareDO_selector"/>
+        where id = #{id}
+        and is_delete = 0
+        for update
+    </select>
+
+    <select id="getTaxAndUnitInfoBySkuId" parameterType="java.lang.Long" resultMap="productDeclareDOResult">
+    select post_tax_no, tax_rate, measuring_unit from sc_product_declare
+    where sku_id = #{skuId}
+    and tax_rate != '0'
+    and is_delete = 0
+    limit 1
+    </select>
+
+    <select id="queryDeclareSkuTaxRateExist" parameterType="java.lang.Long" resultMap="productDeclareDOResult">
+        select * from sc_product_declare
+        where sku_id = #{skuId}
+        and consumption_duty_rate is not NULL
+        and added_value_tax_rate is not NULL
+        and (gross_weight is not NULL or net_weight is not null)
+        and is_delete = 0
+        limit 1
+    </select>
+
+    <select id="getWaitDeclareSkuInfo" parameterType="java.util.Map" resultMap="productDeclareDOResult">
+        select t.sku_id, sku.barcode as bar_code, t.declare_name from sc_product_declare t, sc_sku sku
+        where t.sku_id = sku.id
+        and sku.is_delete = 0
+        and t.is_delete = 0
+        and t.port_id = #{portId}
+        and t.declare_mode = #{declareMode}
+        and t.state = #{state}
+        and t.sku_id in
+        <foreach collection="skuIdList" item="skuId" index="index" open="(" separator="," close=")">
+            #{skuId}
+        </foreach>
+    </select>
+
+    <select id="getDOByDeclareNameLike" parameterType="java.util.Map" resultMap="productDeclareDOResult">
+        select t.* from sc_product_declare t, sc_sku sku
+        where t.sku_id = sku.id
+        and sku.is_delete = 0
+        and t.is_delete = 0
+        and t.port_id = #{portId}
+        and ( t.declare_name LIKE concat('%', #{declareName}, '%') OR  sku.name LIKE concat('%', #{declareName}, '%')  )
+    </select>
+
+    <select id="getValidLineListByWarehouseId" parameterType="java.lang.Long" resultMap="productDeclareDOResult">
+        <include refid="productDeclareDO_selector"/>
+        where is_delete = 0
+        and port_id != 0
+    </select>
+
+    <select id="queryDeclareSkuTaxRateBySkuIdAndLineId" parameterType="java.util.Map"
+            resultMap="productDeclareDOResult">
+        select
+        sc_product_declare.state,
+        sc_product_declare.attributes,
+        sc_product_declare.sku_id,
+        sc_product_declare.port_id,
+        sc_product_declare.record_no,
+        sc_product_declare.remark,
+        sc_product_declare.finish_time,
+        sc_product_declare.declare_name,
+        sc_product_declare.post_tax_no,
+        sc_product_declare.category_name,
+        sc_product_declare.bar_code,
+        sc_product_declare.brand,
+        sc_product_declare.origin,
+        sc_product_declare.category_id,
+        sc_product_declare.submit_time,
+        sc_product_declare.price_rmb,
+        sc_product_declare.product_id,
+        sc_product_declare.net_weight,
+        sc_product_declare.gross_weight,
+        sc_product_declare.hs_code,
+        sc_product_declare.tax_rate,
+        sc_product_declare.consumption_duty_rate,
+        sc_product_declare.added_value_tax_rate,
+        sc_product_declare.tariff_rate,
+        sc_product_declare.declare_mode,
+        sc_product_declare.start_collect_time,
+        sc_product_declare.finish_collect_time,
+        sc_product_declare.measuring_unit,
+        sc_product_declare.create_user,
+        sc_product_declare.data_collect_user,
+        sc_product_declare.filing_user,
+        sc_product_declare.provider_name,
+        sc_product_declare.purchase_mode,
+        sc_product_declare.id,
+        sc_product_declare.gmt_create,
+        sc_product_declare.gmt_modified,
+        sc_product_declare.first_measuringUnit,
+        sc_product_declare.first_weight,
+        sc_product_declare.second_measuringUnit,
+        sc_product_declare.second_weight
+        from sc_product_declare
+        LEFT JOIN sc_logistics_line
+        ON sc_product_declare.port_id = sc_logistics_line.port_id
+        AND sc_product_declare.declare_mode = sc_logistics_line.line_type
+        WHERE
+        sc_product_declare.is_delete = 0
+        AND sc_logistics_line.is_delete = 0
+        AND sc_product_declare.state = 'DECLARE_PASS'
+        AND sc_product_declare.sku_id = #{skuId}
+        AND sc_logistics_line.id = #{lineId}
+    </select>
+    <select id="getProductDeclareBySkuId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select sku_id from sc_product_declare
+        where sku_id = #{skuId}
+        and is_delete = 0
+    </select>
+</mapper>

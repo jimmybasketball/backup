@@ -95,6 +95,15 @@
 		<property name="version" value="${dubbo.export.version}" />
 		<property name="timeout" value="${dubbo.export.timeout}" />
 	</bean>
+	<bean id="productDeclareProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.exposed.sku.api.ProductDeclareService" />
+		<property name="ref" ref="productDeclareService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
 	<!-- 商品end -->
 	
 	<!-- 开放平台相关接口 start -->

@@ -90,7 +90,7 @@ public class OpenWmsTradeOrderItem implements Serializable {
     public OpenWmsTradeConsigneeItem consigneeInfo;
 
     /**
-     * @see java.lang.Object#toString()
+     * @see Object#toString()
      */
     @Override
     public String toString() {

@@ -40,7 +40,7 @@ public class OpenWmsTradeGoodsItem implements Serializable {
 	public String batchNo;
 	
     /** 
-     * @see java.lang.Object#toString()
+     * @see Object#toString()
      */
     @Override
     public String toString() {
