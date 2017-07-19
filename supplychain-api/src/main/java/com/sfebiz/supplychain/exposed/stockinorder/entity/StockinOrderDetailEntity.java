@@ -66,10 +66,6 @@ public class StockinOrderDetailEntity implements Serializable {
      * 入库日期
      */
     public Date stockinDate;
-    /**
-     * 批次生成规则
-     */
-    private String batchMakePlan;
 
     @Override
     public String toString() {
@@ -89,7 +85,6 @@ public class StockinOrderDetailEntity implements Serializable {
                 ", productionDate=" + productionDate +
                 ", expirationDate=" + expirationDate +
                 ", stockinDate=" + stockinDate +
-                ", batchMakePlan='" + batchMakePlan + '\'' +
                 '}';
     }
 
@@ -211,13 +206,5 @@ public class StockinOrderDetailEntity implements Serializable {
 
     public void setStockinDate(Date stockinDate) {
         this.stockinDate = stockinDate;
-    }
-
-    public String getBatchMakePlan() {
-        return batchMakePlan;
-    }
-
-    public void setBatchMakePlan(String batchMakePlan) {
-        this.batchMakePlan = batchMakePlan;
     }
 }

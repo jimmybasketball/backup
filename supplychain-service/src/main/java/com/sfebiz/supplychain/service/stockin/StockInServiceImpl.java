@@ -12,12 +12,12 @@ import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
 import com.sfebiz.supplychain.config.SystemConstants;
 import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
+import com.sfebiz.supplychain.exposed.common.enums.BatchGeneratePlanType;
 import com.sfebiz.supplychain.exposed.sku.api.SkuService;
 import com.sfebiz.supplychain.exposed.sku.entity.SkuEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderDetailEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderEntity;
-import com.sfebiz.supplychain.exposed.stockinorder.enums.BatchMakePlan;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderState;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderType;
 import com.sfebiz.supplychain.lock.DistributedLock;
@@ -30,6 +30,7 @@ import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderManag
 import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderStateLogManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
+import com.sfebiz.supplychain.service.statemachine.BpmConstants;
 import com.sfebiz.supplychain.service.statemachine.EngineService;
 import com.sfebiz.supplychain.service.statemachine.Operator;
 import com.sfebiz.supplychain.service.stockin.modle.StockinOrderActionType;
@@ -44,6 +45,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -53,6 +56,7 @@ import java.util.*;
  * Created by zhangyajing on 2017/7/17.
  */
 @Service("stockInService")
+@Transactional(rollbackFor = Exception.class)
 public class StockInServiceImpl implements StockInService{
     private static Logger logger = LoggerFactory.getLogger(StockInServiceImpl.class);
     private static final HaitaoTraceLogger traceLogger = HaitaoTraceLoggerFactory.getTraceLogger("stockinorder");
@@ -118,12 +122,18 @@ public class StockInServiceImpl implements StockInService{
         try {
             StockinOrderDO stockinOrderDO = modelMapper.map(stockinOrderEntity, StockinOrderDO.class);
             stockinOrderDO.setStockinId(UniqueNumberGenerator.getUniqueNo("RK"));
+            stockinOrderDO.setState(BpmConstants.NULL_STATE);
             stockinOrderManager.insert(stockinOrderDO);
             stockinOrderId = stockinOrderDO.getId();
 
             //更新入库单明细
-            updateStockinOrderDetails(stockinOrderId, stockinOrderEntity.getDetailEntities(), userId, userName);
-
+            CommonRet<List<Long>> detailResult = updateStockinOrderDetails(stockinOrderId, stockinOrderEntity.getDetailEntities(), userId, userName);
+            if (detailResult.getRetCode() == SCReturnCode.COMMON_FAIL.getCode()) {
+                throw new ServiceException(SCReturnCode.STOCKIN_ORDER_INNER_EXCEPTION,"入库单明细更新失败");
+            }
+            if (CollectionUtils.isNotEmpty(detailResult.getResult())) {
+                commonRet.setResult(detailResult.getResult());
+            }
             //启动状态机引擎
             StockinOrderRequest stockinOrderRequest = StockinOrderRequestFactory.generateStockinOrderRequest(
                     StockinOrderActionType.STOCKIN_TO_CREATE, stockinOrderDO, null, Operator.valueOf(userId, userName));
@@ -138,10 +148,12 @@ public class StockInServiceImpl implements StockInService{
                     .addParm("入库单信息", stockinOrderEntity)
                     .addParm("操作者", userName)
                     .log();
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             commonRet.setRetCode(SCReturnCode._C_COMMON_FAIL);
-            commonRet.setRetMsg(e.getMsg());
+            commonRet.setRetMsg(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
+        commonRet.setRetMsg(SCReturnCode.COMMON_SUCCESS.getDesc());
         return commonRet;
     }
 
@@ -198,6 +210,8 @@ public class StockInServiceImpl implements StockInService{
                 commonRet.setRetCode(SCReturnCode._C_COMMON_FAIL);
                 commonRet.setRetMsg(e.getMessage());
                 return commonRet;
+            } finally {
+                distributedLock.realease(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId);
             }
         }
         commonRet.setRetCode(SCReturnCode._C_COMMON_SUCCESS);
@@ -241,14 +255,15 @@ public class StockInServiceImpl implements StockInService{
 
         //校验sku
         List<Long> skuList = new ArrayList<Long>();
+        List<StockinOrderDetailEntity> detailAfterMerge = new ArrayList<StockinOrderDetailEntity>();
         for (StockinOrderDetailEntity stockinOrderDetailEntity : stockinOrderDetailEntities) {
-            skuList = checkStockinOrderDetails(skuEntityMap, stockinOrderDetailEntity).getResult();
+            checkStockinOrderDetails(skuEntityMap, stockinOrderDetailEntity,detailAfterMerge, skuList);
         }
 
         /**
          * 创建新增 更新已有
          */
-        for (StockinOrderDetailEntity stockinOrderDetailEntity : stockinOrderDetailEntities) {
+        for (StockinOrderDetailEntity stockinOrderDetailEntity : detailAfterMerge) {
             try {
                 if (null == stockinOrderDetailEntity.id || stockinOrderDetailEntity.id.equals(0L)) {
                     List<StockinOrderDetailEntity> tmp = new ArrayList<StockinOrderDetailEntity>();
@@ -262,21 +277,18 @@ public class StockInServiceImpl implements StockInService{
                 throw new Exception("更新入库单明细：" + stockinOrderDetailEntity.skuId + "信息失败，原因" + e.getMessage());
             }
         }
-
         return skuList;
     }
 
     /**
      * 目前只考虑采购入库单，若有新类型入库单，请更新注释
-     * @param skuEntityMap
-     * @param stockinOrderDetailEntity
-     * @return 入库单明细中重复的商品
+     * @param skuEntityMap 检查后的商品信息列表
+     * @param stockinOrderDetailEntity 待检查的入库单明细
+     * @param detailAfterMerge 检查后的入库单明细列表
+     * @param repeatSku 检查后重复的skuid集合
      * @throws ServiceException
      */
-    protected CommonRet<List<Long>> checkStockinOrderDetails(Map<String, SkuEntity> skuEntityMap, StockinOrderDetailEntity stockinOrderDetailEntity) throws ServiceException {
-        CommonRet<List<Long>> commonRet = new CommonRet<List<Long>>();
-        List<Long> skuList = new ArrayList<Long>();
-        commonRet.setRetCode(SCReturnCode._C_COMMON_SUCCESS);
+    protected void checkStockinOrderDetails(Map<String, SkuEntity> skuEntityMap, StockinOrderDetailEntity stockinOrderDetailEntity, List<StockinOrderDetailEntity> detailAfterMerge, List<Long> repeatSku) throws ServiceException {
         if (null == stockinOrderDetailEntity) {
             throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR, "入库单明细为空");
         }
@@ -284,49 +296,58 @@ public class StockInServiceImpl implements StockInService{
             throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR, "入库单的商品" + stockinOrderDetailEntity.skuName + "id为空");
         }
         Long skuId = stockinOrderDetailEntity.skuId;
-        SkuEntity skuEntity = skuService.getSkuOnlySkuInfo(skuId).getResult();
+        CommonRet<SkuEntity> commonRet = new CommonRet<SkuEntity>();
+        commonRet = skuService.getSkuOnlySkuInfo(skuId);
+        if (commonRet.getRetCode().equals(SCReturnCode._C_COMMON_FAIL)) {
+            throw new ServiceException(SCReturnCode.STOCKIN_ORDER_INNER_EXCEPTION, "调用商品查询接口异常" + commonRet.getRetMsg());
+        }
+        SkuEntity skuEntity = commonRet.getResult();
         if (null == skuEntity) {
             throw new ServiceException(SCReturnCode.STOCKIN_ORDER_INNER_EXCEPTION, "商品(" + skuId + ")不存在");
         }
         if (skuEntityMap.containsKey(skuId+"")) {
-            commonRet.setRetMsg("存在重复商品");
-            commonRet.setRetCode(SCReturnCode._C_COMMON_FAIL);
-            skuList.add(skuId);
-            commonRet.setResult(skuList);
+            repeatSku.add(skuId);
         } else {
             skuEntityMap.put(skuId+"", skuEntity);
+            detailAfterMerge.add(stockinOrderDetailEntity);
         }
-        return commonRet;
     }
 
     private void insertStockinOrderDetails(StockinOrderDO stockinOrderDO, Map<String, SkuEntity> skuEntityMap, List<StockinOrderDetailEntity> skus) throws Exception {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        for (StockinOrderDetailEntity stockinOrderDetailEntity : skus) {
-            Long skuId = stockinOrderDetailEntity.skuId;
-            SkuEntity skuEntity = skuEntityMap.get(skuId + "");
-            boolean isSaleStockIn = false;//判断是否未采购入库单
-            if (StockinOrderType.SALES_STOCK_IN.getValue() == stockinOrderDO.getType()) {
-                isSaleStockIn = true;
-            }
-
-            StockinOrderDetailDO stockinOrderDetailDO = modelMapper.map(stockinOrderDetailEntity, StockinOrderDetailDO.class);
-            if (isSaleStockIn) {
-
-                String ymd = simpleDateFormat.format(new Date());
-                String skuBatch = ymd + "-" + SystemConstants.CUSTOMER_CODE + "-" + stockinOrderDO.getMerchantProviderId();
-                if (BatchMakePlan.EXP_SAME.getValue().equals(skuEntity.batchGeneratePlan)) {
-                    skuBatch += "-EXP" + UniqueCodeGenerator.getUniquCode();
-                } else {
-                    skuBatch += "-STOCKIN" + UniqueCodeGenerator.getUniquCode();
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+            for (StockinOrderDetailEntity stockinOrderDetailEntity : skus) {
+                Long skuId = stockinOrderDetailEntity.skuId;
+                SkuEntity skuEntity = skuEntityMap.get(skuId + "");
+                boolean isSaleStockIn = false;//判断是否未采购入库单
+                if (StockinOrderType.SALES_STOCK_IN.getValue() == stockinOrderDO.getType()) {
+                    isSaleStockIn = true;
                 }
+
+                StockinOrderDetailDO stockinOrderDetailDO = modelMapper.map(stockinOrderDetailEntity, StockinOrderDetailDO.class);
+                stockinOrderDetailDO.setStockinOrderId(stockinOrderDO.getId());
+                if (isSaleStockIn) {
+                    String ymd = simpleDateFormat.format(new Date());
+                    String skuBatch = ymd + "-" + SystemConstants.CUSTOMER_CODE + "-" + stockinOrderDO.getMerchantProviderId();
+                    if (BatchGeneratePlanType.EXPIRE_SAME.getValue().equals(skuEntity.batchGeneratePlan)) {
+                        skuBatch += "-EXP" + UniqueCodeGenerator.getUniquCode();
+                        stockinOrderDetailDO.setBatchGeneratePlan(BatchGeneratePlanType.EXPIRE_SAME.getValue());
+                    } else {
+                        skuBatch += "-STOCKIN" + UniqueCodeGenerator.getUniquCode();
+                        stockinOrderDetailDO.setBatchGeneratePlan(BatchGeneratePlanType.STOCKIN_SAME.getValue());
+                    }
+                    stockinOrderDetailDO.setSkuBatch(skuBatch);
+                }
+                if (StringUtils.isEmpty(skuEntity.batchGeneratePlan)) {
+                    skuEntity.setBatchGeneratePlan(BatchGeneratePlanType.STOCKIN_SAME.getValue());
+                }
+                if (StringUtils.isNotBlank(stockinOrderDetailDO.getSkuBatch())) {
+                    stockinOrderDetailDO.setSkuBatch(stockinOrderDetailDO.getSkuBatch().trim().replaceAll("\r\n", ""));
+                }
+                stockinOrderDetailManager.insert(stockinOrderDetailDO);
             }
-            if (StringUtils.isEmpty(skuEntity.batchGeneratePlan)) {
-                skuEntity.setBatchGeneratePlan(BatchMakePlan.STOCKIN_SAME.getValue());
-            }
-            if (StringUtils.isNotBlank(stockinOrderDetailDO.getSkuBatch())) {
-                stockinOrderDetailDO.setSkuBatch(stockinOrderDetailDO.getSkuBatch().trim().replaceAll("\r\n", ""));
-            }
-            stockinOrderDetailManager.insert(stockinOrderDetailDO);
+        } catch (Exception e) {
+            throw new ServiceException(SCReturnCode.STOCKIN_ORDER_INNER_EXCEPTION,"更新入库单" + stockinOrderDO.getId() + "明细失败," + "失败原因" + e.getMessage());
         }
     }
 }

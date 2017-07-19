@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<bpm code="statemachine.define.StockInOrderStateMachine" name="StockInOrderStateMachine" type="stateMachine" description="StockInOrderStateMachine">
+<bpm code="statemachine.StockInOrderStateMachine" name="StockInOrderStateMachine" type="stateMachine" description="StockInOrderStateMachine">
   <var name="request" description="入库单请求参数" dataType="com.sfebiz.logistics.service.stockinorder.model.StockinOrderRequest" inOutType="param"/>
   <var name="result" description="返回结果" dataType="com.sfebiz.logistics.entity.BaseResult" defaultValue="new BaseResult()" inOutType="return"/>
   <start id="0" name="开始" tag="START" g="312,-1,40,40">

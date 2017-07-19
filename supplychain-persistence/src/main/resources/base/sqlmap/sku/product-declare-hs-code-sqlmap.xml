@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.sku.dao.ProductDeclareHsCodeDao">
+
+<resultMap id="productDeclareHsCodeDOResult" type="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareHsCodeDO">
+    <result column="type" property="type"/>
+    <result column="hs_code" property="hsCode"/>
+    <result column="added_value_tax_rate" property="addedValueTaxRate"/>
+    <result column="consumption_duty_rate" property="consumptionDutyRate"/>
+    <result column="tax_rate" property="taxRate"/>
+    <result column="tariff_rate" property="tariffRate"/>
+    <result column="id" property="id"/>
+    <result column="gmt_modified" property="gmtModified"/>
+    <result column="gmt_create" property="gmtCreate"/>
+</resultMap>
+
+<sql id="productDeclareHsCodeDO_columns">
+    type,
+    hs_code,
+    added_value_tax_rate,
+    consumption_duty_rate,
+    tax_rate,
+    tariff_rate,
+    id,
+    gmt_modified,
+    gmt_create
+</sql>
+
+<sql id="productDeclareHsCodeDO_sqlForInsert">
+    type,
+    hs_code,
+    added_value_tax_rate,
+    consumption_duty_rate,
+    tax_rate,
+    tariff_rate,
+    id,
+    gmt_modified,
+    gmt_create
+</sql>
+
+<sql id="productDeclareHsCodeDO_columnsForInsert">
+    #{type},
+    #{hsCode},
+    #{addedValueTaxRate},
+    #{consumptionDutyRate},
+    #{taxRate},
+    #{tariffRate},
+    #{id},
+    now(),
+    now()
+</sql>
+
+<sql id="productDeclareHsCodeDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="type != null">
+            type = #{type},
+        </if>
+        <if test="hsCode != null">
+            hs_code = #{hsCode},
+        </if>
+        <if test="addedValueTaxRate != null">
+            added_value_tax_rate = #{addedValueTaxRate},
+        </if>
+        <if test="consumptionDutyRate != null">
+            consumption_duty_rate = #{consumptionDutyRate},
+        </if>
+        <if test="taxRate != null">
+            tax_rate = #{taxRate},
+        </if>
+        <if test="tariffRate != null">
+            tariff_rate = #{tariffRate},
+        </if>
+    </set>
+</sql>
+
+<sql id="productDeclareHsCodeDO_selector">
+    select
+    <include refid="productDeclareHsCodeDO_columns"/>
+    from sc_product_declare_hs_code
+</sql>
+
+<sql id="productDeclareHsCodeDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.type != null">
+            AND type = #{data.type}
+        </if>
+        <if test="data.hsCode != null">
+            AND hs_code = #{data.hsCode}
+        </if>
+        <if test="data.addedValueTaxRate != null">
+            AND added_value_tax_rate = #{data.addedValueTaxRate}
+        </if>
+        <if test="data.consumptionDutyRate != null">
+            AND consumption_duty_rate = #{data.consumptionDutyRate}
+        </if>
+        <if test="data.taxRate != null">
+            AND tax_rate = #{data.taxRate}
+        </if>
+        <if test="data.tariffRate != null">
+            AND tariff_rate = #{data.tariffRate}
+        </if>
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareHsCodeDO">
+    insert into sc_product_declare_hs_code
+    (
+        <include refid="productDeclareHsCodeDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="productDeclareHsCodeDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareHsCodeDO">
+    update sc_product_declare_hs_code
+    <include refid="productDeclareHsCodeDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareHsCodeDO">
+    update sc_product_declare_hs_code
+    <set>
+        gmt_modified = now(),
+        <if test="update.type != null">
+            type = #{update.type},
+        </if>
+        <if test="update.hsCode != null">
+            hs_code = #{update.hsCode},
+        </if>
+        <if test="update.addedValueTaxRate != null">
+            added_value_tax_rate = #{update.addedValueTaxRate},
+        </if>
+        <if test="update.consumptionDutyRate != null">
+            consumption_duty_rate = #{update.consumptionDutyRate},
+        </if>
+        <if test="update.taxRate != null">
+            tax_rate = #{update.taxRate},
+        </if>
+        <if test="update.tariffRate != null">
+            tariff_rate = #{update.tariffRate},
+        </if>
+    </set>
+    <include refid="productDeclareHsCodeDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareHsCodeDO">
+    insert into sc_product_declare_hs_code
+    (
+        <include refid="productDeclareHsCodeDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="productDeclareHsCodeDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="type != null">
+        ,type = #{type}
+    </if>
+    <if test="hsCode != null">
+        ,hs_code = #{hsCode}
+    </if>
+    <if test="addedValueTaxRate != null">
+        ,added_value_tax_rate = #{addedValueTaxRate}
+    </if>
+    <if test="consumptionDutyRate != null">
+        ,consumption_duty_rate = #{consumptionDutyRate}
+    </if>
+    <if test="taxRate != null">
+        ,tax_rate = #{taxRate}
+    </if>
+    <if test="tariffRate != null">
+        ,tariff_rate = #{tariffRate}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_product_declare_hs_code
+    set is_delete = 1, gmt_modified = now()
+    <include refid="productDeclareHsCodeDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_product_declare_hs_code
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="productDeclareHsCodeDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="productDeclareHsCodeDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="productDeclareHsCodeDOResult" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareHsCodeDO">
+    <include refid="productDeclareHsCodeDO_selector"/>
+    <include refid="productDeclareHsCodeDO_query_segment"/>
+    <include refid="productDeclareHsCodeDO_groupBy"/>
+    <include refid="productDeclareHsCodeDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="productDeclareHsCodeDOResult" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareHsCodeDO">
+    <include refid="productDeclareHsCodeDO_selector"/>
+    <include refid="productDeclareHsCodeDO_query_segment"/>
+    <include refid="productDeclareHsCodeDO_groupBy"/>
+    <include refid="productDeclareHsCodeDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_product_declare_hs_code
+    <include refid="productDeclareHsCodeDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="productDeclareHsCodeDOResult">
+    <include refid="productDeclareHsCodeDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+    <select id="getByHsCode" resultMap="productDeclareHsCodeDOResult">
+        <include refid="productDeclareHsCodeDO_selector"/>
+        where hs_code = #{hsCode}
+        and is_delete = 0
+    </select>
+
+<select id="getByIdForUpdate" resultMap="productDeclareHsCodeDOResult">
+    <include refid="productDeclareHsCodeDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>

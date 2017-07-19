@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.sku.dao.ProductDeclareNbDirectmailDao">
+
+    <resultMap id="productDeclareNbDirectmailDOResult"
+               type="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareNbDirectmailDO">
+        <result column="product_declare_id" property="productDeclareId"/>
+        <result column="warehouse_enterprise_code" property="warehouseEnterpriseCode"/>
+        <result column="sku_foreign_name" property="skuForeignName"/>
+        <result column="third_sku_id" property="thirdSkuId"/>
+        <result column="purpose" property="purpose"/>
+        <result column="ingredient" property="ingredient"/>
+        <result column="features" property="features"/>
+        <result column="description" property="description"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="id" property="id"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+    </resultMap>
+
+    <sql id="productDeclareNbDirectmailDO_columns">
+        product_declare_id,
+        warehouse_enterprise_code,
+        sku_foreign_name,
+        third_sku_id,
+        purpose,
+        ingredient,
+        features,
+        description,
+        img_url,
+        id,
+        gmt_create,
+        gmt_modified
+    </sql>
+
+    <sql id="productDeclareNbDirectmailDO_sqlForInsert">
+        product_declare_id,
+        warehouse_enterprise_code,
+        sku_foreign_name,
+        third_sku_id,
+        purpose,
+        ingredient,
+        features,
+        description,
+        img_url,
+        hs_code,
+        hs_number,
+        id,
+        gmt_create,
+        gmt_modified
+    </sql>
+
+    <sql id="productDeclareNbDirectmailDO_columnsForInsert">
+        #{productDeclareId},
+        #{warehouseEnterpriseCode},
+        #{skuForeignName},
+        #{thirdSkuId},
+        #{purpose},
+        #{ingredient},
+        #{features},
+        #{description},
+        #{imgUrl},
+        #{hsCode},
+        #{hsNumber},
+        #{id},
+        now(),
+        now()
+    </sql>
+
+    <sql id="productDeclareNbDirectmailDO_setterForUpdate">
+        <set>
+            gmt_modified = now(),
+            <if test="productDeclareId != null">
+                product_declare_id = #{productDeclareId},
+            </if>
+            <if test="warehouseEnterpriseCode != null">
+                warehouse_enterprise_code = #{warehouseEnterpriseCode},
+            </if>
+            <if test="skuForeignName != null">
+                sku_foreign_name = #{skuForeignName},
+            </if>
+            <if test="thirdSkuId != null">
+                third_sku_id = #{thirdSkuId},
+            </if>
+            <if test="purpose != null">
+                purpose = #{purpose},
+            </if>
+            <if test="ingredient != null">
+                ingredient = #{ingredient},
+            </if>
+            <if test="features != null">
+                features = #{features},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="imgUrl != null">
+                img_url = #{imgUrl},
+            </if>
+            <if test="hsCode != null">
+                hs_code = #{hsCode},
+            </if>
+            <if test="hsNumber != null">
+                hs_number = #{hsNumber},
+            </if>
+        </set>
+    </sql>
+
+    <sql id="productDeclareNbDirectmailDO_selector">
+        select
+        <include refid="productDeclareNbDirectmailDO_columns"/>
+        from sc_product_declare_nb_directmail
+    </sql>
+
+    <sql id="productDeclareNbDirectmailDO_query_segment">
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="data.productDeclareId != null">
+                AND product_declare_id = #{data.productDeclareId}
+            </if>
+            <if test="data.warehouseEnterpriseCode != null">
+                AND warehouse_enterprise_code = #{data.warehouseEnterpriseCode}
+            </if>
+            <if test="data.skuForeignName != null">
+                AND sku_foreign_name = #{data.skuForeignName}
+            </if>
+            <if test="data.thirdSkuId != null">
+                AND third_sku_id = #{data.thirdSkuId}
+            </if>
+            <if test="data.purpose != null">
+                AND purpose = #{data.purpose}
+            </if>
+            <if test="data.ingredient != null">
+                AND ingredient = #{data.ingredient}
+            </if>
+            <if test="data.features != null">
+                AND features = #{data.features}
+            </if>
+            <if test="data.description != null">
+                AND description = #{data.description}
+            </if>
+            <if test="data.imgUrl != null">
+                AND img_url = #{data.imgUrl}
+            </if>
+            <if test="data.id != null">
+                AND id = #{data.id}
+            </if>
+            <if test="data.gmtCreate != null">
+                AND gmt_create = #{data.gmtCreate}
+            </if>
+            <if test="data.gmtModified != null">
+                AND gmt_modified = #{data.gmtModified}
+            </if>
+            <if test="ins != null and ins != ''">
+                AND
+                <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                    ${item.column} in
+                    <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </foreach>
+            </if>
+            <if test="notIns != null and notIns != ''">
+                AND
+                <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                    ${item.column} not in
+                    <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </foreach>
+            </if>
+            <if test="equals != null and equals != ''">
+                AND
+                <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                    ${item.column} = #{item.value}
+                </foreach>
+            </if>
+            <if test="notEquals != null and notEquals != ''">
+                AND
+                <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                    ${item.column} = #{item.value}
+                </foreach>
+            </if>
+            <if test="lts != null and lts != ''">
+                AND
+                <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ < ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="gts != null and gts != ''">
+                AND
+                <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ > ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="likes != null and likes != ''">
+                AND
+                <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                    ${item.column} like concat('%', #{item.value}, '%')
+                </foreach>
+            </if>
+            <if test="ltes != null and ltes != ''">
+                AND
+                <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ <= ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="gtes != null and gtes != ''">
+                AND
+                <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ >= ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="ranges != null and ranges != ''">
+                AND
+                <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+                </foreach>
+            </if>
+            AND is_delete = 0
+        </trim>
+    </sql>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareNbDirectmailDO">
+        insert into sc_product_declare_nb_directmail
+        (
+        <include refid="productDeclareNbDirectmailDO_sqlForInsert"/>
+        ,is_delete
+        )
+        values
+        (
+        <include refid="productDeclareNbDirectmailDO_columnsForInsert"/>
+        ,0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareNbDirectmailDO">
+        update sc_product_declare_nb_directmail
+        <include refid="productDeclareNbDirectmailDO_setterForUpdate"/>
+        where id = #{id}
+        and is_delete = 0
+    </update>
+
+
+    <update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareNbDirectmailDO">
+        update sc_product_declare_nb_directmail
+        <set>
+            gmt_modified = now(),
+            <if test="update.productDeclareId != null">
+                product_declare_id = #{update.productDeclareId},
+            </if>
+            <if test="update.warehouseEnterpriseCode != null">
+                warehouse_enterprise_code = #{update.warehouseEnterpriseCode},
+            </if>
+            <if test="update.skuForeignName != null">
+                sku_foreign_name = #{update.skuForeignName},
+            </if>
+            <if test="update.thirdSkuId != null">
+                third_sku_id = #{update.thirdSkuId},
+            </if>
+            <if test="update.purpose != null">
+                purpose = #{update.purpose},
+            </if>
+            <if test="update.ingredient != null">
+                ingredient = #{update.ingredient},
+            </if>
+            <if test="update.features != null">
+                features = #{update.features},
+            </if>
+            <if test="update.description != null">
+                description = #{update.description},
+            </if>
+            <if test="update.imgUrl != null">
+                img_url = #{update.imgUrl},
+            </if>
+        </set>
+        <include refid="productDeclareNbDirectmailDO_query_segment"/>
+    </update>
+
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareNbDirectmailDO">
+        insert into sc_product_declare_nb_directmail
+        (
+        <include refid="productDeclareNbDirectmailDO_sqlForInsert"/>
+        ,is_delete
+        )
+        values
+        (
+        <include refid="productDeclareNbDirectmailDO_columnsForInsert"/>
+        ,0
+        )
+        on duplicate key update
+        gmt_modified = now()
+        ,is_delete = 0
+        <if test="productDeclareId != null">
+            ,product_declare_id = #{productDeclareId}
+        </if>
+        <if test="warehouseEnterpriseCode != null">
+            ,warehouse_enterprise_code = #{warehouseEnterpriseCode}
+        </if>
+        <if test="skuForeignName != null">
+            ,sku_foreign_name = #{skuForeignName}
+        </if>
+        <if test="thirdSkuId != null">
+            ,third_sku_id = #{thirdSkuId}
+        </if>
+        <if test="purpose != null">
+            ,purpose = #{purpose}
+        </if>
+        <if test="ingredient != null">
+            ,ingredient = #{ingredient}
+        </if>
+        <if test="features != null">
+            ,features = #{features}
+        </if>
+        <if test="description != null">
+            ,description = #{description}
+        </if>
+        <if test="imgUrl != null">
+            ,img_url = #{imgUrl}
+        </if>
+    </insert>
+
+    <!-- Delete -->
+    <update id="delete">
+        update sc_product_declare_nb_directmail
+        set is_delete = 1, gmt_modified = now()
+        <include refid="productDeclareNbDirectmailDO_query_segment"/>
+    </update>
+
+    <update id="deleteById">
+        update sc_product_declare_nb_directmail
+        set is_delete = 1, gmt_modified = now()
+        where id = #{id}
+    </update>
+
+    <!-- query class -->
+    <sql id="productDeclareNbDirectmailDO_groupBy">
+        <if test="groupBys != null and groupBys != ''">
+            group by
+            <foreach collection="groupBys" item="item" open="" separator="," close="">
+                #{item}
+            </foreach>
+        </if>
+    </sql>
+
+    <sql id="productDeclareNbDirectmailDO_orderby">
+        <if test="orderBys != null and orderBys != ''">
+            order by
+            <foreach collection="orderBys" item="item" open="" separator="," close="">
+                ${item.column} ${item.direction}
+            </foreach>
+        </if>
+    </sql>
+
+
+    <select id="query" resultMap="productDeclareNbDirectmailDOResult"
+            parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareNbDirectmailDO">
+        <include refid="productDeclareNbDirectmailDO_selector"/>
+        <include refid="productDeclareNbDirectmailDO_query_segment"/>
+        <include refid="productDeclareNbDirectmailDO_groupBy"/>
+        <include refid="productDeclareNbDirectmailDO_orderby"/>
+    </select>
+
+    <select id="query4Page" resultMap="productDeclareNbDirectmailDOResult"
+            parameterType="com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareNbDirectmailDO">
+        <include refid="productDeclareNbDirectmailDO_selector"/>
+        <include refid="productDeclareNbDirectmailDO_query_segment"/>
+        <include refid="productDeclareNbDirectmailDO_groupBy"/>
+        <include refid="productDeclareNbDirectmailDO_orderby"/>
+        limit ${startRowForMysql}, ${pageSize}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM sc_product_declare_nb_directmail
+        <include refid="productDeclareNbDirectmailDO_query_segment"/>
+    </select>
+
+    <select id="getById" resultMap="productDeclareNbDirectmailDOResult">
+        <include refid="productDeclareNbDirectmailDO_selector"/>
+        where id = #{id}
+        and is_delete = 0
+    </select>
+
+    <select id="getByIdForUpdate" resultMap="productDeclareNbDirectmailDOResult">
+        <include refid="productDeclareNbDirectmailDO_selector"/>
+        where id = #{id}
+        and is_delete = 0
+        for update
+    </select>
+
+    <select id="getByProductDeclareId" resultMap="productDeclareNbDirectmailDOResult" parameterType="java.lang.Long">
+        <include refid="productDeclareNbDirectmailDO_selector"/>
+        where product_declare_id = #{productDeclareId}
+        and is_delete = 0
+    </select>
+</mapper>

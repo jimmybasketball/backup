@@ -4,6 +4,7 @@
 
 <resultMap id="stockinOrderDetailDOResult" type="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDetailDO">
     <result column="stockin_order_id" property="stockinOrderId"/>
+    <result column="batch_generate_plan" property="batchGeneratePlan"/>
     <result column="sku_foreign_name" property="skuForeignName"/>
     <result column="sku_specification" property="skuSpecification"/>
     <result column="bad_return_count" property="badReturnCount"/>
@@ -12,7 +13,6 @@
     <result column="sku_id" property="skuId"/>
     <result column="sku_name" property="skuName"/>
     <result column="sku_batch" property="skuBatch"/>
-    <result column="batch_make_plan" property="batchMakePlan"/>
     <result column="origin_batch" property="originBatch"/>
     <result column="sku_barcode" property="skuBarcode"/>
     <result column="count" property="count"/>
@@ -30,6 +30,7 @@
 
 <sql id="stockinOrderDetailDO_columns">
     stockin_order_id,
+    batch_generate_plan,
     sku_foreign_name,
     sku_specification,
     bad_return_count,
@@ -38,7 +39,6 @@
     sku_id,
     sku_name,
     sku_batch,
-    batch_make_plan,
     origin_batch,
     sku_barcode,
     count,
@@ -56,6 +56,7 @@
 
 <sql id="stockinOrderDetailDO_sqlForInsert">
     stockin_order_id,
+    batch_generate_plan,
     sku_foreign_name,
     sku_specification,
     bad_return_count,
@@ -64,7 +65,6 @@
     sku_id,
     sku_name,
     sku_batch,
-    batch_make_plan,
     origin_batch,
     sku_barcode,
     count,
@@ -82,6 +82,7 @@
 
 <sql id="stockinOrderDetailDO_columnsForInsert">
     #{stockinOrderId},
+    #{batchGeneratePlan},
     #{skuForeignName},
     #{skuSpecification},
     #{badReturnCount},
@@ -90,7 +91,6 @@
     #{skuId},
     #{skuName},
     #{skuBatch},
-    #{batchMakePlan},
     #{originBatch},
     #{skuBarcode},
     #{count},
@@ -111,6 +111,9 @@
         gmt_modified = now(),
         <if test="stockinOrderId != null">
             stockin_order_id = #{stockinOrderId},
+        </if>
+        <if test="batchGeneratePlan != null">
+            batch_generate_plan = #{batchGeneratePlan},
         </if>
         <if test="skuForeignName != null">
             sku_foreign_name = #{skuForeignName},
@@ -135,9 +138,6 @@
         </if>
         <if test="skuBatch != null">
             sku_batch = #{skuBatch},
-        </if>
-        <if test="batchMakePlan != null">
-            batch_make_plan = #{batchMakePlan},
         </if>
         <if test="originBatch != null">
             origin_batch = #{originBatch},
@@ -183,6 +183,9 @@
         <if test="data.stockinOrderId != null">
             AND stockin_order_id = #{data.stockinOrderId}
         </if>
+        <if test="data.batchGeneratePlan != null">
+            AND batch_generate_plan = #{data.batchGeneratePlan}
+        </if>
         <if test="data.skuForeignName != null">
             AND sku_foreign_name = #{data.skuForeignName}
         </if>
@@ -206,9 +209,6 @@
         </if>
         <if test="data.skuBatch != null">
             AND sku_batch = #{data.skuBatch}
-        </if>
-        <if test="data.batchMakePlan != null">
-            AND batch_make_plan = #{data.batchMakePlan}
         </if>
         <if test="data.originBatch != null">
             AND origin_batch = #{data.originBatch}
@@ -348,6 +348,9 @@
         <if test="update.stockinOrderId != null">
             stockin_order_id = #{update.stockinOrderId},
         </if>
+        <if test="update.batchGeneratePlan != null">
+            batch_generate_plan = #{update.batchGeneratePlan},
+        </if>
         <if test="update.skuForeignName != null">
             sku_foreign_name = #{update.skuForeignName},
         </if>
@@ -371,9 +374,6 @@
         </if>
         <if test="update.skuBatch != null">
             sku_batch = #{update.skuBatch},
-        </if>
-        <if test="update.batchMakePlan != null">
-            batch_make_plan = #{update.batchMakePlan},
         </if>
         <if test="update.originBatch != null">
             origin_batch = #{update.originBatch},
@@ -427,6 +427,9 @@
     <if test="stockinOrderId != null">
         ,stockin_order_id = #{stockinOrderId}
     </if>
+    <if test="batchGeneratePlan != null">
+        ,batch_generate_plan = #{batchGeneratePlan}
+    </if>
     <if test="skuForeignName != null">
         ,sku_foreign_name = #{skuForeignName}
     </if>
@@ -450,9 +453,6 @@
     </if>
     <if test="skuBatch != null">
         ,sku_batch = #{skuBatch}
-    </if>
-    <if test="batchMakePlan != null">
-        ,batch_make_plan = #{batchMakePlan}
     </if>
     <if test="originBatch != null">
         ,origin_batch = #{originBatch}

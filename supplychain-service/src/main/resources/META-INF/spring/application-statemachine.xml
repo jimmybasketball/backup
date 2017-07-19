@@ -79,7 +79,7 @@
         <constructor-arg>
             <map>
                 <!-- 入库单 -->
-                <entry key="STOCKIN_ORDER" value="statemachine.define.StockInOrderStateMachine"/>
+                <entry key="STOCKIN_ORDER" value="statemachine.StockInOrderStateMachine"/>
             </map>
         </constructor-arg>
     </bean>
