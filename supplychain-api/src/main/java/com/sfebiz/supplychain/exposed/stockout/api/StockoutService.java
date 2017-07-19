@@ -3,9 +3,11 @@
  */
 package com.sfebiz.supplychain.exposed.stockout.api;
 
-import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
+import java.util.Date;
 
-import net.pocrd.entity.ServiceException;
+import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
+import com.sfebiz.supplychain.exposed.common.entity.Void;
+
 
 /**
  * <p>
@@ -23,7 +25,16 @@ public interface StockoutService {
      * @param id
      * @param userId
      * @param userName
-     * @throws ServiceException
      */
     CommonRet<Void> executeStockoutExceptionTaskByHandle(Long id, Long userId, String userName);
+    
+    /**
+     * 更新异常任务的重试时间
+     *
+     * @param id
+     * @param executeTime
+     * @param userId
+     * @param userName
+     */
+    CommonRet<Void> updateStockoutExceptionTaskExecuteTime(Long id, Date executeTime, Long userId, String userName);
 }
