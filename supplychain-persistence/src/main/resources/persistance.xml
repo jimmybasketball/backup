@@ -62,20 +62,5 @@
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
-    <bean id="stockinOrderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-        <property name="mapperInterface" value="com.sfebiz.supplychain.persistence.base.stockin.dao.StockinOrderDao"/>
-    </bean>
-
-    <bean id="stockinOrderDetailDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-        <property name="mapperInterface" value="com.sfebiz.supplychain.persistence.base.stockin.dao.StockinOrderDetailDao"/>
-    </bean>
-
-    <bean id="stockinOrderStateLogDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-        <property name="mapperInterface" value="com.sfebiz.supplychain.persistence.base.stockin.dao.StockinOrderStateLogDao"/>
-    </bean>
-
     <tx:annotation-driven transaction-manager="transactionManager"/>
 </beans>
