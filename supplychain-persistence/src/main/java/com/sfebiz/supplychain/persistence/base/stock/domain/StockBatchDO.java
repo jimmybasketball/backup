@@ -38,7 +38,7 @@ public class StockBatchDO extends BaseDO {
     /**
      * 货主批次号
      */
-    private Long merchantBatchNo;
+    private String merchantBatchNo;
     /**
      * 批次号
      */
@@ -139,11 +139,11 @@ public class StockBatchDO extends BaseDO {
         this.merchantProviderId = merchantProviderId;
     }
 
-    public Long getMerchantBatchNo() {
+    public String getMerchantBatchNo() {
         return merchantBatchNo;
     }
 
-    public void setMerchantBatchNo(Long merchantBatchNo) {
+    public void setMerchantBatchNo(String merchantBatchNo) {
         this.merchantBatchNo = merchantBatchNo;
     }
 

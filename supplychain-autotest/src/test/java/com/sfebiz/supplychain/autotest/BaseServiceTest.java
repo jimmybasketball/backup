@@ -22,7 +22,9 @@ import javax.annotation.Resource;
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @ContextConfiguration(locations = {
         "classpath*:/META-INF/spring/application-context.xml",
-        "classpath*:/META-INF/spring/application-aop.xml"})
+        "classpath*:/META-INF/spring/application-aop.xml",
+        "classpath*:/META-INF/spring/application-task.xml"
+})
 @Ignore
 public class BaseServiceTest {
 
