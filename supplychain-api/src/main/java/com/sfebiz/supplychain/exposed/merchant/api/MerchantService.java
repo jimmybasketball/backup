@@ -3,6 +3,7 @@ package com.sfebiz.supplychain.exposed.merchant.api;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
+import com.sfebiz.supplychain.exposed.merchant.entity.MerchantPayDeclareEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderLineEntity;
 
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public interface MerchantService {
 
-    /*  货主 begin   */
+    /* ------------ 货主 begin ------------  */
 
     /**
      * 创建货主
@@ -48,11 +49,11 @@ public interface MerchantService {
      */
     public CommonRet<Void> changeMerchantState(String operator, Long id, String state);
 
-    /*  货主 end   */
+    /* ------------ 货主 end  ------------ */
 
 
 
-    /*  货主供应商 begin   */
+    /* ------------ 货主供应商 begin  ------------ */
 
     /**
      * 创建货主供应商
@@ -84,7 +85,7 @@ public interface MerchantService {
      */
     public CommonRet<Void> changeMerchantProviderState(String operator, Long id, String state);
 
-    /*  货主供应商 end   */
+    /* ------------ 货主供应商 end  ------------ */
 
 
 
@@ -92,7 +93,7 @@ public interface MerchantService {
 
 
 
-    /*  货主供应商线路配置 beigin   */
+    /* ------------ 货主供应商线路配置 beigin  ------------ */
 
     /**
      * 添加供应商线路
@@ -124,7 +125,45 @@ public interface MerchantService {
     public CommonRet<Void> changeMerchantProviderLineState(String operator, Long id, String state);
 
 
-    /*  货主供应商线路配置 end   */
+    /* ------------ 货主供应商线路配置 end  ------------ */
+
+
+
+
+
+    /*  ------------  货主申报方式配置  beigin  ------------  */
+
+    /**
+     * 配置货主申报方式
+     *
+     * @param merchantId                   货主ID
+     * @param payType                      支付方式
+     * @param merchantPayDeclareEntityList 货主申报实体集合
+     * @return void
+     */
+    public CommonRet<Void> setMerchantPayDeclare(Long merchantId, String payType, List<MerchantPayDeclareEntity> merchantPayDeclareEntityList);
+
+
+    /**
+     * 修改货主申报信息  不会修改货主、口岸、支付方式
+     *
+     * @param id             主键ID
+     * @param declarePayType 申报支付类型
+     * @param declareAccount 申报账号
+     * @return
+     */
+    public CommonRet<Void> updateMerchantPayDeclare(Long id, String declarePayType, String declareAccount);
+
+    /**
+     * 删除货主申报方式
+     *
+     * @param id 主键ID
+     * @return void
+     */
+    public CommonRet<Void> deleteMerchantPayDeclare(Long id);
+
+
+    /*  ------------  货主申报方式配置  end  ------------  */
 
 
 }

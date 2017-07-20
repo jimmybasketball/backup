@@ -1,16 +1,5 @@
 package com.sfebiz.supplychain.service.merchant;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.aop.annotation.MethodParamValidate;
@@ -20,6 +9,7 @@ import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.merchant.api.MerchantService;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
+import com.sfebiz.supplychain.exposed.merchant.entity.MerchantPayDeclareEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderEntity;
 import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderLineEntity;
 import com.sfebiz.supplychain.exposed.merchant.enums.MerchantProviderLineStateType;
@@ -27,15 +17,25 @@ import com.sfebiz.supplychain.exposed.merchant.enums.MerchantProviderStateType;
 import com.sfebiz.supplychain.exposed.merchant.enums.MerchantStateType;
 import com.sfebiz.supplychain.lock.Lock;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO;
+import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderLineDO;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantManager;
+import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantPayDeclareManager;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderLineManager;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderManager;
-
 import net.sf.oval.ConstraintViolation;
 import net.sf.oval.Validator;
-import retrofit.http.HEAD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 物流平台货主服务实现
@@ -60,11 +60,16 @@ public class MerchantServiceImpl implements MerchantService {
     @Resource
     private MerchantProviderLineManager merchantProviderLineManager;
 
+    @Resource
+    private MerchantPayDeclareManager merchantPayDeclareManager;
+
     private static final String INSERT_KEY = MerchantServiceImpl.class + "INSERT_KEY";
 
     private static final String UPDATE_KEY = MerchantServiceImpl.class + "UPDATE_KEY";
 
     private static final String CHANGE_STATE_KEY = MerchantServiceImpl.class + "CHANGE_STATE_KEY";
+
+    private static final String SET_PAY_DECLARE_KE = MerchantServiceImpl.class + "SET_PAY_DECLARE_KE";
 
     /**
      * 创建货主
@@ -101,8 +106,8 @@ public class MerchantServiceImpl implements MerchantService {
                         BeanCopier.create(MerchantEntity.class, MerchantDO.class, false);
                 beanCopier.copy(merchantEntity, merchantDO, null);
 
-                //初始化状态为启用
-                merchantDO.setState(MerchantStateType.ENABLE.getValue());
+                //初始化状态为禁用，需要配置货主供应商、货主包材、货主申报方式 后才能启用
+                merchantDO.setState(MerchantStateType.DISABLE.getValue());
                 merchantDO.setCreateBy(operator);
                 merchantManager.insert(merchantDO);
                 commonRet.setResult(merchantDO.getId());
@@ -280,6 +285,12 @@ public class MerchantServiceImpl implements MerchantService {
                     return commonRet;
                 }
 
+                if (MerchantStateType.ENABLE.getValue().equals(state)) {
+                    //TODO
+                    //启用货主需要判断  是否配置了供应商、包材、申报方式
+                    //需要逐个查表判断，货主DO的开关属性只做展示
+                }
+
                 MerchantDO updateDO = new MerchantDO();
                 updateDO.setId(id);
                 updateDO.setModifiedBy(operator);
@@ -344,6 +355,7 @@ public class MerchantServiceImpl implements MerchantService {
                         .log();
                 commonRet.setRetCode(MerchantReturnCode.MERCHANT_NOT_EXIST.getCode());
                 commonRet.setRetMsg("货主不存在");
+                return commonRet;
             }
 
             MerchantProviderDO merchantProviderDO = new MerchantProviderDO();
@@ -407,6 +419,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .log();
                     commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_NOT_EXIST.getCode());
                     commonRet.setRetMsg("货主供应商不存在");
+                    return commonRet;
                 }
 
                 //检查货主是否存在
@@ -419,6 +432,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .log();
                     commonRet.setRetCode(MerchantReturnCode.MERCHANT_NOT_EXIST.getCode());
                     commonRet.setRetMsg("货主不存在");
+                    return commonRet;
                 }
 
                 MerchantProviderDO merchantProviderDO = new MerchantProviderDO();
@@ -560,6 +574,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     /**
      * 添加供应商线路
+     *
      * @param operator                       操作人
      * @param merchantProviderLineEntityList 供应商线路集合
      * @return
@@ -752,6 +767,176 @@ public class MerchantServiceImpl implements MerchantService {
                     .log();
             commonRet.setRetCode(MerchantReturnCode.MERCHANT_CONCURRENT_EXCEPTION.getCode());
             commonRet.setRetMsg("并发异常");
+            return commonRet;
+        }
+    }
+
+    /**
+     * 配置货主申报方式
+     *
+     * @param merchantId                   货主ID
+     * @param payType                      支付方式
+     * @param merchantPayDeclareEntityList 货主申报实体集合
+     * @return
+     */
+    @Override
+    @Transactional
+    @MethodParamValidate
+    public CommonRet<Void> setMerchantPayDeclare(
+            @ParamNotBlank Long merchantId,
+            @ParamNotBlank String payType,
+            @ParamNotBlank List<MerchantPayDeclareEntity> merchantPayDeclareEntityList) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        //逐个校验实体
+        Validator validator = new Validator();
+        for (MerchantPayDeclareEntity merchantPayDeclareEntity : merchantPayDeclareEntityList) {
+            List<ConstraintViolation> violations = validator.validate(merchantPayDeclareEntity);
+            if (violations != null && violations.size() > 0) {
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.ERROR)
+                        .setErrorMsg("[物流平台货主-配置货主申报方式] 实体校验失败！")
+                        .addParm("merchantProviderLineEntity", merchantPayDeclareEntity)
+                        .addParm("merchantId", merchantId)
+                        .addParm("payType", payType)
+                        .addParm("失败信息", violations.toString())
+                        .log();
+                commonRet.reSet();
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL.getCode());
+                commonRet.setRetMsg(MerchantReturnCode.MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL.getDesc());
+                return commonRet;
+            }
+        }
+
+        //获取分布式乐观锁
+        String key = SET_PAY_DECLARE_KE + merchantId + "_" + payType;
+        if (distributedLock.fetch(key)) {
+            try {
+                BeanCopier beanCopier =
+                        BeanCopier.create(MerchantPayDeclareEntity.class, MerchantPayDeclareDO.class, false);
+                //添加新的申报配置
+                List<MerchantPayDeclareDO> setSuccessList = new ArrayList<MerchantPayDeclareDO>();
+                for (MerchantPayDeclareEntity merchantPayDeclareEntity : merchantPayDeclareEntityList) {
+                    MerchantPayDeclareDO merchantPayDeclareDO = new MerchantPayDeclareDO();
+                    beanCopier.copy(merchantPayDeclareEntity, merchantPayDeclareDO, null);
+                    merchantPayDeclareDO.setPayType(payType);
+                    merchantPayDeclareDO.setMerchantId(merchantId);
+
+                    //如果申报配置已存在则跳过
+                    if (merchantPayDeclareManager.checkMerchantPayDeclareIsExist(merchantId, payType, merchantPayDeclareEntity.portId)) {
+                        continue;
+                    }
+                    merchantPayDeclareManager.insertOrUpdate(merchantPayDeclareDO);
+                    setSuccessList.add(merchantPayDeclareDO);
+                }
+
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.INFO)
+                        .setMsg("[物流平台货主-配置货主申报方式] 成功")
+                        .addParm("merchantId", merchantId)
+                        .addParm("payType", payType)
+                        .addParm("成功数量", setSuccessList.size())
+                        .addParm("merchantPayDeclareDOList", setSuccessList)
+                        .log();
+                return commonRet;
+            } catch (Exception e) {
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.ERROR)
+                        .setErrorMsg("[物流平台货主-配置货主申报方式] 异常")
+                        .setException(e)
+                        .log();
+                commonRet.reSet();
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_PAY_DECLARE_UNKNOWN_ERROR.getCode());
+                commonRet.setRetMsg(e.getMessage());
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return commonRet;
+            } finally {
+                distributedLock.realease(key);
+            }
+        } else {
+            LogBetter.instance(LOGGER).
+                    setLevel(LogLevel.ERROR).
+                    setMsg("[物流平台货主-配置货主申报方式] 并发异常")
+                    .log();
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_CONCURRENT_EXCEPTION.getCode());
+            commonRet.setRetMsg("并发异常");
+            return commonRet;
+        }
+    }
+
+    /**
+     * 修改货主申报信息，不会修改货主、口岸、支付方式
+     *
+     * @param id             主键ID
+     * @param declarePayType 申报支付类型
+     * @param declareAccount 申报账号
+     * @return
+     */
+    @Override
+    @MethodParamValidate
+    public CommonRet<Void> updateMerchantPayDeclare(
+            @ParamNotBlank Long id,
+            @ParamNotBlank String declarePayType,
+            @ParamNotBlank String declareAccount) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+
+        try {
+
+            MerchantPayDeclareDO merchantPayDeclareDO = new MerchantPayDeclareDO();
+            //货主、口岸、支付方式置空，这不能被修改
+            merchantPayDeclareDO.setDeclarePayType(declarePayType);
+            merchantPayDeclareDO.setDeclareAccount(declareAccount);
+            merchantPayDeclareDO.setId(id);
+            merchantPayDeclareManager.update(merchantPayDeclareDO);
+
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.INFO)
+                    .setMsg("[物流平台货主-修改货主申报信息] 成功")
+                    .addParm("id", id)
+                    .addParm("declarePayType", declarePayType)
+                    .addParm("declareAccount", declareAccount)
+                    .log();
+            return commonRet;
+        } catch (Exception e) {
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.ERROR)
+                    .setErrorMsg("[物流平台货主-修改货主申报信息] 异常")
+                    .setException(e)
+                    .log();
+            commonRet.reSet();
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_PAY_DECLARE_UNKNOWN_ERROR.getCode());
+            commonRet.setRetMsg(e.getMessage());
+            return commonRet;
+        }
+    }
+
+
+    /**
+     * 删除货主申报方式
+     *
+     * @param id 主键ID
+     * @return void
+     */
+    @Override
+    @MethodParamValidate
+    public CommonRet<Void> deleteMerchantPayDeclare(@ParamNotBlank Long id) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        try {
+            merchantPayDeclareManager.deleteById(id);
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.INFO)
+                    .setMsg("[物流平台货主-删除货主申报方式] 成功")
+                    .addParm("ID", id)
+                    .log();
+            return commonRet;
+        } catch (Exception e) {
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.ERROR)
+                    .setErrorMsg("[物流平台货主-删除货主申报方式] 异常")
+                    .setException(e)
+                    .log();
+            commonRet.reSet();
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_PAY_DECLARE_UNKNOWN_ERROR.getCode());
+            commonRet.setRetMsg(e.getMessage());
             return commonRet;
         }
     }

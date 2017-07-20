@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.merchant.dao.MerchantPayDeclareDao">
+
+<resultMap id="merchantPayDeclareDOResult" type="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO">
+    <result column="id" property="id"/>
+    <result column="merchant_id" property="merchantId"/>
+    <result column="pay_type" property="payType"/>
+    <result column="declare_pay_type" property="declarePayType"/>
+    <result column="port_id" property="portId"/>
+    <result column="declare_account" property="declareAccount"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="gmt_modified" property="gmtModified"/>
+</resultMap>
+
+<sql id="merchantPayDeclareDO_columns">
+    id,
+    merchant_id,
+    pay_type,
+    declare_pay_type,
+    port_id,
+    declare_account,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="merchantPayDeclareDO_sqlForInsert">
+    id,
+    merchant_id,
+    pay_type,
+    declare_pay_type,
+    port_id,
+    declare_account,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="merchantPayDeclareDO_columnsForInsert">
+    #{id},
+    #{merchantId},
+    #{payType},
+    #{declarePayType},
+    #{portId},
+    #{declareAccount},
+    now(),
+    now()
+</sql>
+
+<sql id="merchantPayDeclareDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
+        </if>
+        <if test="payType != null">
+            pay_type = #{payType},
+        </if>
+        <if test="declarePayType != null">
+            declare_pay_type = #{declarePayType},
+        </if>
+        <if test="portId != null">
+            port_id = #{portId},
+        </if>
+        <if test="declareAccount != null">
+            declare_account = #{declareAccount},
+        </if>
+    </set>
+</sql>
+
+<sql id="merchantPayDeclareDO_selector">
+    select
+    <include refid="merchantPayDeclareDO_columns"/>
+    from sc_merchant_pay_declare
+</sql>
+
+<sql id="merchantPayDeclareDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="data.payType != null">
+            AND pay_type = #{data.payType}
+        </if>
+        <if test="data.declarePayType != null">
+            AND declare_pay_type = #{data.declarePayType}
+        </if>
+        <if test="data.portId != null">
+            AND port_id = #{data.portId}
+        </if>
+        <if test="data.declareAccount != null">
+            AND declare_account = #{data.declareAccount}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} != #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO">
+    insert into sc_merchant_pay_declare
+    (
+        <include refid="merchantPayDeclareDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="merchantPayDeclareDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO">
+    update sc_merchant_pay_declare
+    <include refid="merchantPayDeclareDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO">
+    update sc_merchant_pay_declare
+    <set>
+        gmt_modified = now(),
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
+        </if>
+        <if test="update.payType != null">
+            pay_type = #{update.payType},
+        </if>
+        <if test="update.declarePayType != null">
+            declare_pay_type = #{update.declarePayType},
+        </if>
+        <if test="update.portId != null">
+            port_id = #{update.portId},
+        </if>
+        <if test="update.declareAccount != null">
+            declare_account = #{update.declareAccount},
+        </if>
+    </set>
+    <include refid="merchantPayDeclareDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO">
+    insert into sc_merchant_pay_declare
+    (
+        <include refid="merchantPayDeclareDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="merchantPayDeclareDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
+    </if>
+    <if test="payType != null">
+        ,pay_type = #{payType}
+    </if>
+    <if test="declarePayType != null">
+        ,declare_pay_type = #{declarePayType}
+    </if>
+    <if test="portId != null">
+        ,port_id = #{portId}
+    </if>
+    <if test="declareAccount != null">
+        ,declare_account = #{declareAccount}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_merchant_pay_declare
+    set is_delete = 1, gmt_modified = now()
+    <include refid="merchantPayDeclareDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_merchant_pay_declare
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="merchantPayDeclareDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="merchantPayDeclareDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="merchantPayDeclareDOResult" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO">
+    <include refid="merchantPayDeclareDO_selector"/>
+    <include refid="merchantPayDeclareDO_query_segment"/>
+    <include refid="merchantPayDeclareDO_groupBy"/>
+    <include refid="merchantPayDeclareDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="merchantPayDeclareDOResult" parameterType="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO">
+    <include refid="merchantPayDeclareDO_selector"/>
+    <include refid="merchantPayDeclareDO_query_segment"/>
+    <include refid="merchantPayDeclareDO_groupBy"/>
+    <include refid="merchantPayDeclareDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_merchant_pay_declare
+    <include refid="merchantPayDeclareDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="merchantPayDeclareDOResult">
+    <include refid="merchantPayDeclareDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="merchantPayDeclareDOResult">
+    <include refid="merchantPayDeclareDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>

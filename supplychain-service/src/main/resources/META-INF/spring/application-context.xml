@@ -54,4 +54,14 @@
         <constructor-arg name="redisTestOnBorrow" value="${com.sfebiz.supplychian.redisproxy.testOnBorrow}"/>
         <constructor-arg name="redisTimeout" value="${com.sfebiz.supplychian.redisproxy.timeout}"/>
     </bean>
+    
+    <bean id="exceptionHandlerMap" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="STOCKOUT_CREATE_EXCEPTION" value-ref="stockoutCreateExceptionHandler"/>
+                <entry key="STOCKOUT_SEND_EXCEPTION"  value-ref="stockoutSendExceptionHandler"/>
+                <entry key="STOCKOUT_EXCEPTION"  value-ref="stockoutStockExceptionHandler"/>
+            </map>
+        </constructor-arg>
+    </bean>
 </beans>

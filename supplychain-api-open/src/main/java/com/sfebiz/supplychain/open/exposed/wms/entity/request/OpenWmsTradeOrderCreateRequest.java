@@ -26,7 +26,7 @@ public class OpenWmsTradeOrderCreateRequest implements Serializable {
     public OpenWmsTradeOrderItem order;
 
     /** 
-     * @see java.lang.Object#toString()
+     * @see Object#toString()
      */
     @Override
     public String toString() {

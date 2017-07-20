@@ -24,7 +24,9 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations = {
         "classpath*:/META-INF/spring/application-context.xml",
         "classpath*:/META-INF/spring/application-statemachine.xml",
-        "classpath*:/META-INF/spring/application-aop.xml"})
+        "classpath*:/META-INF/spring/application-aop.xml",
+        "classpath*:/META-INF/spring/application-task.xml"
+})
 @Ignore
 public class BaseServiceTest {
 
