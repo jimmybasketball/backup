@@ -81,4 +81,16 @@ public class MerchantReturnCode extends SCReturnCode{
     public final static MerchantReturnCode MERCHANT_PAY_DECLARE_ALREADY_EXISTS =  new MerchantReturnCode("货主申报方式配置已存在",_C_MERCHANT_PAY_DECLARE_ALREADY_EXISTS);
     public final static MerchantReturnCode MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL =  new MerchantReturnCode("货主申报方式实体校验失败",_C_MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL);
 
+
+    /**
+     *
+     * 货主包材配置相关 [1024000 - 1025000)
+     *
+     */
+    public final static int _C_MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR = 1024001;
+    public final static int _C_MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS = 1024002;
+
+    public final static MerchantReturnCode MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR =  new MerchantReturnCode("货主包材配置未知异常",_C_MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR);
+    public final static MerchantReturnCode MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS =  new MerchantReturnCode("货主包材配置已存在",_C_MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS);
+
 }

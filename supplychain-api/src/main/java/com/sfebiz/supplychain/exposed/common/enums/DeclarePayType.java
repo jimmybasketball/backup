@@ -17,6 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DeclarePayType extends Enumerable4StringValue{
     private static final Logger log = LoggerFactory.getLogger(Enumerable4StringValue.class);
     private static final Lock lock = new ReentrantLock();
+    private static final long serialVersionUID = 5513951343695134810L;
 
     private static volatile transient Map<String, DeclarePayType> allbyvalue = new HashMap<String, DeclarePayType>();
 

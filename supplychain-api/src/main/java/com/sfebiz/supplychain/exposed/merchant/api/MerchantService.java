@@ -2,10 +2,7 @@ package com.sfebiz.supplychain.exposed.merchant.api;
 
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantPayDeclareEntity;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderEntity;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderLineEntity;
+import com.sfebiz.supplychain.exposed.merchant.entity.*;
 
 import java.util.List;
 
@@ -164,6 +161,42 @@ public interface MerchantService {
 
 
     /*  ------------  货主申报方式配置  end  ------------  */
+
+
+
+
+
+
+
+    /*  ------------  货主包材配置  beigin  ------------  */
+
+    /**
+     * 创建货主包材配置
+     *
+     * @param merchantPackageMaterialEntity 实体
+     * @return id
+     */
+    public CommonRet<Long> createMerchantPackageMaterial(MerchantPackageMaterialEntity merchantPackageMaterialEntity);
+
+    /**
+     * 修改货主包材配置
+     *
+     * @param id                            主键ID
+     * @param merchantPackageMaterialEntity 实体
+     * @return void
+     */
+    public CommonRet<Void> updateMerchantPackageMaterial(Long id, MerchantPackageMaterialEntity merchantPackageMaterialEntity);
+
+    /**
+     * 删除货主包材配置
+     *
+     * @param id 主键ID
+     * @return void
+     */
+    public CommonRet<Void> deleteMerchantPackageMaterial(Long id);
+
+
+    /*  ------------  货主包材配置  end  ------------  */
 
 
 }

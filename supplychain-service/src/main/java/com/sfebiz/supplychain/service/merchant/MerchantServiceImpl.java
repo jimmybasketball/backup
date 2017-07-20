@@ -8,22 +8,13 @@ import com.sfebiz.supplychain.exposed.common.code.MerchantReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.merchant.api.MerchantService;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantEntity;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantPayDeclareEntity;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderEntity;
-import com.sfebiz.supplychain.exposed.merchant.entity.MerchantProviderLineEntity;
+import com.sfebiz.supplychain.exposed.merchant.entity.*;
 import com.sfebiz.supplychain.exposed.merchant.enums.MerchantProviderLineStateType;
 import com.sfebiz.supplychain.exposed.merchant.enums.MerchantProviderStateType;
 import com.sfebiz.supplychain.exposed.merchant.enums.MerchantStateType;
 import com.sfebiz.supplychain.lock.Lock;
-import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO;
-import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO;
-import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO;
-import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderLineDO;
-import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantManager;
-import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantPayDeclareManager;
-import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderLineManager;
-import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderManager;
+import com.sfebiz.supplychain.persistence.base.merchant.domain.*;
+import com.sfebiz.supplychain.persistence.base.merchant.manager.*;
 import net.sf.oval.ConstraintViolation;
 import net.sf.oval.Validator;
 import org.slf4j.Logger;
@@ -35,6 +26,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,6 +54,9 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Resource
     private MerchantPayDeclareManager merchantPayDeclareManager;
+
+    @Resource
+    private MerchantPackageMaterialManager merchantPackageMaterialManager;
 
     private static final String INSERT_KEY = MerchantServiceImpl.class + "INSERT_KEY";
 
@@ -936,6 +931,148 @@ public class MerchantServiceImpl implements MerchantService {
                     .log();
             commonRet.reSet();
             commonRet.setRetCode(MerchantReturnCode.MERCHANT_PAY_DECLARE_UNKNOWN_ERROR.getCode());
+            commonRet.setRetMsg(e.getMessage());
+            return commonRet;
+        }
+    }
+
+
+    /**
+     * 创建货主包材配置
+     *
+     * @param merchantPackageMaterialEntity 实体
+     * @return id
+     */
+    @Override
+    @MethodParamValidate
+    public CommonRet<Long> createMerchantPackageMaterial(@ParamNotBlank MerchantPackageMaterialEntity merchantPackageMaterialEntity) {
+        CommonRet<Long> commonRet = new CommonRet<Long>();
+        try {
+            //货主包材配置是否已存在
+            if (merchantPackageMaterialManager
+                    .checkMerchantPackageMaterialIsExist(null, merchantPackageMaterialEntity.merchantId, merchantPackageMaterialEntity.orderSource)) {
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.ERROR)
+                        .setErrorMsg("[物流平台货主-创建货主包材配置] 货主包材配置已存在")
+                        .addParm("merchantId", merchantPackageMaterialEntity.merchantId)
+                        .addParm("orderSource", merchantPackageMaterialEntity.orderSource)
+                        .log();
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS.getCode());
+                commonRet.setRetMsg(MerchantReturnCode.MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS.getDesc());
+                return commonRet;
+            }
+            MerchantPackageMaterialDO merchantPackageMaterialDO = new MerchantPackageMaterialDO();
+            BeanCopier beanCopier =
+                    BeanCopier.create(MerchantPackageMaterialEntity.class, MerchantPackageMaterialDO.class, false);
+            beanCopier.copy(merchantPackageMaterialEntity, merchantPackageMaterialDO, null);
+
+
+            merchantPackageMaterialDO.setGmtCreate(new Date());
+            merchantPackageMaterialManager.insertOrUpdate(merchantPackageMaterialDO);
+
+            commonRet.setResult(merchantPackageMaterialDO.getId());
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.INFO)
+                    .setMsg("[物流平台货主-创建货主包材配置] 成功")
+                    .addParm("merchantPackageMaterialDO", merchantPackageMaterialDO)
+                    .log();
+            return commonRet;
+        } catch (Exception e) {
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.ERROR)
+                    .setErrorMsg("[物流平台货主-创建货主包材配置] 异常")
+                    .setException(e)
+                    .log();
+            commonRet.reSet();
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR.getCode());
+            commonRet.setRetMsg(e.getMessage());
+            return commonRet;
+        }
+    }
+
+    /**
+     * 修改货主包材配置
+     *
+     * @param id                            主键ID
+     * @param merchantPackageMaterialEntity 实体
+     * @return void
+     */
+    @Override
+    @MethodParamValidate
+    public CommonRet<Void> updateMerchantPackageMaterial(
+            @ParamNotBlank Long id,
+            @ParamNotBlank MerchantPackageMaterialEntity merchantPackageMaterialEntity) {
+
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        try {
+            //货主包材配置是否已存在
+            if (merchantPackageMaterialManager
+                    .checkMerchantPackageMaterialIsExist(id, merchantPackageMaterialEntity.merchantId, merchantPackageMaterialEntity.orderSource)) {
+                LogBetter.instance(LOGGER)
+                        .setLevel(LogLevel.ERROR)
+                        .setErrorMsg("[物流平台货主-修改货主包材配置] 货主包材配置已存在")
+                        .addParm("merchantId", merchantPackageMaterialEntity.merchantId)
+                        .addParm("orderSource", merchantPackageMaterialEntity.orderSource)
+                        .log();
+                commonRet.setRetCode(MerchantReturnCode.MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS.getCode());
+                commonRet.setRetMsg(MerchantReturnCode.MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS.getDesc());
+                return commonRet;
+            }
+
+            MerchantPackageMaterialDO merchantPackageMaterialDO = new MerchantPackageMaterialDO();
+            BeanCopier beanCopier =
+                    BeanCopier.create(MerchantPackageMaterialEntity.class, MerchantPackageMaterialDO.class, false);
+            beanCopier.copy(merchantPackageMaterialEntity, merchantPackageMaterialDO, null);
+
+            merchantPackageMaterialDO.setId(id);
+            merchantPackageMaterialManager.update(merchantPackageMaterialDO);
+
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.INFO)
+                    .setMsg("[物流平台货主-修改货主包材配置] 成功")
+                    .addParm("merchantPackageMaterialDO", merchantPackageMaterialDO)
+                    .log();
+            return commonRet;
+        } catch (Exception e) {
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.ERROR)
+                    .setErrorMsg("[物流平台货主-修改货主包材配置] 异常")
+                    .setException(e)
+                    .log();
+            commonRet.reSet();
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR.getCode());
+            commonRet.setRetMsg(e.getMessage());
+            return commonRet;
+        }
+    }
+
+    /**
+     * 删除货主包材配置
+     *
+     * @param id 主键ID
+     * @return
+     */
+    @Override
+    @MethodParamValidate
+    public CommonRet<Void> deleteMerchantPackageMaterial(@ParamNotBlank Long id) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        try {
+            merchantPackageMaterialManager.deleteById(id);
+
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.INFO)
+                    .setMsg("[物流平台货主-删除货主包材配置] 成功")
+                    .addParm("id", id)
+                    .log();
+            return commonRet;
+        } catch (Exception e) {
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.ERROR)
+                    .setErrorMsg("[物流平台货主-删除货主包材配置] 异常")
+                    .setException(e)
+                    .log();
+            commonRet.reSet();
+            commonRet.setRetCode(MerchantReturnCode.MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR.getCode());
             commonRet.setRetMsg(e.getMessage());
             return commonRet;
         }
