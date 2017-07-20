@@ -28,7 +28,7 @@ public interface OpenWmsGoodsService {
 	@HttpApi(name = "wmsTradeOpenApi.OrderSkuSync", desc = "仓库开放平台-商品信息同步 \nen-us:sync sku", security = SecurityType.Integrated, owner = "wuyun", needVerify = true)
 	@DesignedErrorCode({ SCOpenReturnCode._C_COMMON_PARAMS_ILLEGAL})
 	public WmsTradeOrderResponse wmsTradeOrderSkuSync(
-        @ApiParameter(required = true, name = "request", desc = "请求 \nen-us Request") WmsTradeOrderSkuSyncRequest request)
+            @ApiParameter(required = true, name = "request", desc = "请求 \nen-us Request") WmsTradeOrderSkuSyncRequest request)
 					throws ServiceException;
 	
 	/**
@@ -39,6 +39,6 @@ public interface OpenWmsGoodsService {
 	@HttpApi(name = "wmsTradeOpenApi.OrderSkuSearch", desc = "仓库开放平台-商品信息查询 \nen-us:sku search", security = SecurityType.Integrated, owner = "wuyun", needVerify = true)
 	@DesignedErrorCode({ SCOpenReturnCode._C_COMMON_PARAMS_ILLEGAL})
 	public WmsTradeOrderResponse wmsTradeOrderSkuSearch(
-        @ApiParameter(required = true, name = "request", desc = "请求 \nen-us Request") WmsTradeOrderSkuSearchRequest request)
+            @ApiParameter(required = true, name = "request", desc = "请求 \nen-us Request") WmsTradeOrderSkuSearchRequest request)
 					throws ServiceException;
 }

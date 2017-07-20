@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.stock.dao.StockBatchDao">
+
+<resultMap id="stockBatchDOResult" type="com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO">
+    <result column="id" property="id"/>
+    <result column="state" property="state"/>
+    <result column="stock_physical_id" property="stockPhysicalId"/>
+    <result column="warehouse_id" property="warehouseId"/>
+    <result column="merchant_provider_id" property="merchantProviderId"/>
+    <result column="merchant_batch_no" property="merchantBatchNo"/>
+    <result column="available_count" property="availableCount"/>
+    <result column="damaged_count" property="damagedCount"/>
+    <result column="freeze_count" property="freezeCount"/>
+    <result column="stockin_order_id" property="stockinOrderId"/>
+    <result column="stockin_date" property="stockinDate"/>
+    <result column="production_date" property="productionDate"/>
+    <result column="expiration_date" property="expirationDate"/>
+    <result column="gmt_modified" property="gmtModified"/>
+    <result column="sku_id" property="skuId"/>
+    <result column="merchant_id" property="merchantId"/>
+    <result column="batch_no" property="batchNo"/>
+    <result column="gmt_create" property="gmtCreate"/>
+</resultMap>
+
+<sql id="stockBatchDO_columns">
+    id,
+    state,
+    stock_physical_id,
+    warehouse_id,
+    merchant_provider_id,
+    merchant_batch_no,
+    available_count,
+    damaged_count,
+    freeze_count,
+    stockin_order_id,
+    stockin_date,
+    production_date,
+    expiration_date,
+    gmt_modified,
+    sku_id,
+    merchant_id,
+    batch_no,
+    gmt_create
+</sql>
+
+<sql id="stockBatchDO_sqlForInsert">
+    id,
+    state,
+    stock_physical_id,
+    warehouse_id,
+    merchant_provider_id,
+    merchant_batch_no,
+    available_count,
+    damaged_count,
+    freeze_count,
+    stockin_order_id,
+    stockin_date,
+    production_date,
+    expiration_date,
+    gmt_modified,
+    sku_id,
+    merchant_id,
+    batch_no,
+    gmt_create
+</sql>
+
+<sql id="stockBatchDO_columnsForInsert">
+    #{id},
+    #{state},
+    #{stockPhysicalId},
+    #{warehouseId},
+    #{merchantProviderId},
+    #{merchantBatchNo},
+    #{availableCount},
+    #{damagedCount},
+    #{freezeCount},
+    #{stockinOrderId},
+    #{stockinDate},
+    #{productionDate},
+    #{expirationDate},
+    now(),
+    #{skuId},
+    #{merchantId},
+    #{batchNo},
+    now()
+</sql>
+
+<sql id="stockBatchDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="state != null">
+            state = #{state},
+        </if>
+        <if test="stockPhysicalId != null">
+            stock_physical_id = #{stockPhysicalId},
+        </if>
+        <if test="warehouseId != null">
+            warehouse_id = #{warehouseId},
+        </if>
+        <if test="merchantProviderId != null">
+            merchant_provider_id = #{merchantProviderId},
+        </if>
+        <if test="merchantBatchNo != null">
+            merchant_batch_no = #{merchantBatchNo},
+        </if>
+        <if test="availableCount != null">
+            available_count = #{availableCount},
+        </if>
+        <if test="damagedCount != null">
+            damaged_count = #{damagedCount},
+        </if>
+        <if test="freezeCount != null">
+            freeze_count = #{freezeCount},
+        </if>
+        <if test="stockinOrderId != null">
+            stockin_order_id = #{stockinOrderId},
+        </if>
+        <if test="stockinDate != null">
+            stockin_date = #{stockinDate},
+        </if>
+        <if test="productionDate != null">
+            production_date = #{productionDate},
+        </if>
+        <if test="expirationDate != null">
+            expiration_date = #{expirationDate},
+        </if>
+        <if test="skuId != null">
+            sku_id = #{skuId},
+        </if>
+        <if test="merchantId != null">
+            merchant_id = #{merchantId},
+        </if>
+        <if test="batchNo != null">
+            batch_no = #{batchNo},
+        </if>
+    </set>
+</sql>
+
+<sql id="stockBatchDO_selector">
+    select
+    <include refid="stockBatchDO_columns"/>
+    from sc_stock_batch
+</sql>
+
+<sql id="stockBatchDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.state != null">
+            AND state = #{data.state}
+        </if>
+        <if test="data.stockPhysicalId != null">
+            AND stock_physical_id = #{data.stockPhysicalId}
+        </if>
+        <if test="data.warehouseId != null">
+            AND warehouse_id = #{data.warehouseId}
+        </if>
+        <if test="data.merchantProviderId != null">
+            AND merchant_provider_id = #{data.merchantProviderId}
+        </if>
+        <if test="data.merchantBatchNo != null">
+            AND merchant_batch_no = #{data.merchantBatchNo}
+        </if>
+        <if test="data.availableCount != null">
+            AND available_count = #{data.availableCount}
+        </if>
+        <if test="data.damagedCount != null">
+            AND damaged_count = #{data.damagedCount}
+        </if>
+        <if test="data.freezeCount != null">
+            AND freeze_count = #{data.freezeCount}
+        </if>
+        <if test="data.stockinOrderId != null">
+            AND stockin_order_id = #{data.stockinOrderId}
+        </if>
+        <if test="data.stockinDate != null">
+            AND stockin_date = #{data.stockinDate}
+        </if>
+        <if test="data.productionDate != null">
+            AND production_date = #{data.productionDate}
+        </if>
+        <if test="data.expirationDate != null">
+            AND expiration_date = #{data.expirationDate}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="data.skuId != null">
+            AND sku_id = #{data.skuId}
+        </if>
+        <if test="data.merchantId != null">
+            AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="data.batchNo != null">
+            AND batch_no = #{data.batchNo}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO">
+    insert into sc_stock_batch
+    (
+        <include refid="stockBatchDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockBatchDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO">
+    update sc_stock_batch
+    <include refid="stockBatchDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO">
+    update sc_stock_batch
+    <set>
+        gmt_modified = now(),
+        <if test="update.state != null">
+            state = #{update.state},
+        </if>
+        <if test="update.stockPhysicalId != null">
+            stock_physical_id = #{update.stockPhysicalId},
+        </if>
+        <if test="update.warehouseId != null">
+            warehouse_id = #{update.warehouseId},
+        </if>
+        <if test="update.merchantProviderId != null">
+            merchant_provider_id = #{update.merchantProviderId},
+        </if>
+        <if test="update.merchantBatchNo != null">
+            merchant_batch_no = #{update.merchantBatchNo},
+        </if>
+        <if test="update.availableCount != null">
+            available_count = #{update.availableCount},
+        </if>
+        <if test="update.damagedCount != null">
+            damaged_count = #{update.damagedCount},
+        </if>
+        <if test="update.freezeCount != null">
+            freeze_count = #{update.freezeCount},
+        </if>
+        <if test="update.stockinOrderId != null">
+            stockin_order_id = #{update.stockinOrderId},
+        </if>
+        <if test="update.stockinDate != null">
+            stockin_date = #{update.stockinDate},
+        </if>
+        <if test="update.productionDate != null">
+            production_date = #{update.productionDate},
+        </if>
+        <if test="update.expirationDate != null">
+            expiration_date = #{update.expirationDate},
+        </if>
+        <if test="update.skuId != null">
+            sku_id = #{update.skuId},
+        </if>
+        <if test="update.merchantId != null">
+            merchant_id = #{update.merchantId},
+        </if>
+        <if test="update.batchNo != null">
+            batch_no = #{update.batchNo},
+        </if>
+    </set>
+    <include refid="stockBatchDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO">
+    insert into sc_stock_batch
+    (
+        <include refid="stockBatchDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="stockBatchDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="state != null">
+        ,state = #{state}
+    </if>
+    <if test="stockPhysicalId != null">
+        ,stock_physical_id = #{stockPhysicalId}
+    </if>
+    <if test="warehouseId != null">
+        ,warehouse_id = #{warehouseId}
+    </if>
+    <if test="merchantProviderId != null">
+        ,merchant_provider_id = #{merchantProviderId}
+    </if>
+    <if test="merchantBatchNo != null">
+        ,merchant_batch_no = #{merchantBatchNo}
+    </if>
+    <if test="availableCount != null">
+        ,available_count = #{availableCount}
+    </if>
+    <if test="damagedCount != null">
+        ,damaged_count = #{damagedCount}
+    </if>
+    <if test="freezeCount != null">
+        ,freeze_count = #{freezeCount}
+    </if>
+    <if test="stockinOrderId != null">
+        ,stockin_order_id = #{stockinOrderId}
+    </if>
+    <if test="stockinDate != null">
+        ,stockin_date = #{stockinDate}
+    </if>
+    <if test="productionDate != null">
+        ,production_date = #{productionDate}
+    </if>
+    <if test="expirationDate != null">
+        ,expiration_date = #{expirationDate}
+    </if>
+    <if test="skuId != null">
+        ,sku_id = #{skuId}
+    </if>
+    <if test="merchantId != null">
+        ,merchant_id = #{merchantId}
+    </if>
+    <if test="batchNo != null">
+        ,batch_no = #{batchNo}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_stock_batch
+    set is_delete = 1, gmt_modified = now()
+    <include refid="stockBatchDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_stock_batch
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="stockBatchDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="stockBatchDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="stockBatchDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO">
+    <include refid="stockBatchDO_selector"/>
+    <include refid="stockBatchDO_query_segment"/>
+    <include refid="stockBatchDO_groupBy"/>
+    <include refid="stockBatchDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="stockBatchDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO">
+    <include refid="stockBatchDO_selector"/>
+    <include refid="stockBatchDO_query_segment"/>
+    <include refid="stockBatchDO_groupBy"/>
+    <include refid="stockBatchDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_stock_batch
+    <include refid="stockBatchDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="stockBatchDOResult">
+    <include refid="stockBatchDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="stockBatchDOResult">
+    <include refid="stockBatchDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>

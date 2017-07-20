@@ -53,7 +53,20 @@
 		<property name="timeout" value="${dubbo.export.timeout}" />
 	</bean>
 	<!-- 仓库相关接口 end -->
-
+	
+	<!-- 出库相关接口start -->
+	<bean id="stockoutServiceExport" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.exposed.stockout.api.StockoutService" />
+		<property name="ref" ref="stockoutService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
+	<!-- 出库相关接口end -->
+	
+	
 	<!-- 商户(货主)账户 -->
 	<bean id="MerchantProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
 		<property name="interface" value="com.sfebiz.supplychain.exposed.merchant.api.MerchantService" />
@@ -89,6 +102,15 @@
 	<bean id="skuMerchantProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
 		<property name="interface" value="com.sfebiz.supplychain.exposed.sku.api.SkuMerchantService" />
 		<property name="ref" ref="skuMerchantService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
+	<bean id="productDeclareProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.exposed.sku.api.ProductDeclareService" />
+		<property name="ref" ref="productDeclareService" />
 		<property name="application" ref="dubboApplicationConfig" />
 		<property name="registry" ref="dubboRegistryConfig" />
 		<property name="protocol" ref="dubboProtocolConfig" />

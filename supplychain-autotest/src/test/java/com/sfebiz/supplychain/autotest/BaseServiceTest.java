@@ -1,6 +1,7 @@
 package com.sfebiz.supplychain.autotest;
 
 import com.sfebiz.supplychain.exposed.demo.api.DemoApi;
+import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,12 +24,15 @@ import javax.annotation.Resource;
 @ContextConfiguration(locations = {
         "classpath*:/META-INF/spring/application-context.xml",
         "classpath*:/META-INF/spring/application-statemachine.xml",
-        "classpath*:/META-INF/spring/application-aop.xml"})
+        "classpath*:/META-INF/spring/application-aop.xml",
+        "classpath*:/META-INF/spring/application-task.xml"
+})
 @Ignore
 public class BaseServiceTest {
 
     @Resource
     protected DemoApi demoApi;
 
-
+    @Resource
+    protected StockInService stockInService;
 }
