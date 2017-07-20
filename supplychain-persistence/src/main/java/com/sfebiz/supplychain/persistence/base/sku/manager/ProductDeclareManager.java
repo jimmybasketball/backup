@@ -129,7 +129,7 @@ public class ProductDeclareManager extends BaseManager<ProductDeclareDO> {
         condition.put("skuIdList", skuIdList);
         condition.put("portId", portId);
         condition.put("declareMode", declareMode);
-        condition.put("state", SkuDeclareStateType.DECLARE_WAIT.getValue());
+        condition.put("state", SkuDeclareStateType.WAIT_DECLARE.getValue());
         return productDeclareDao.getWaitDeclareSkuInfo(condition);
     }
 
