@@ -36,7 +36,7 @@ public class StockinOrderStateLogManager extends BaseManager<StockinOrderStateLo
         stockinOrderStateLogDO.setState(state);
         stockinOrderStateLogDO.setUserId(userId);
         stockinOrderStateLogDO.setUserName(userName);
-        insertOrUpdate(stockinOrderStateLogDO);
+        insert(stockinOrderStateLogDO);
     }
 
     public static void main(String[] args){

@@ -22,6 +22,7 @@ public class StockinOrderState extends Enumerable4StringValue {
     public static StockinOrderState TO_BE_SUBMITED = StockinOrderState.valueOf("TO_BE_SUBMITED", "待提交");
     public static StockinOrderState WAREHOUSING = StockinOrderState.valueOf("WAREHOUSING", "干线运输中");
     public static StockinOrderState STOCKIN_FINISH = StockinOrderState.valueOf("STOCKIN_FINISH", "收货完成");
+    public static StockinOrderState STOCKIN_CANCLE = StockinOrderState.valueOf("STOCKIN_CANCLE", "已取消");
 
     public StockinOrderState(String value, String name) {
         super(value, name);

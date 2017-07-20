@@ -24,7 +24,6 @@ public class StockinOrderTest extends BaseServiceTest{
         stockinOrderDetailEntity.setSkuId(1132011L);
         stockinOrderDetailEntity.setSkuBarcode("B12037");
         stockinOrderDetailEntity.setSkuName("三鹿奶粉");
-//        stockinOrderDetailEntity.setBatchMakePlan(BatchMakePlan.EXP_SAME.getValue());
         stockinOrderDetailEntity.setCount(100);
         stockinOrderDetailEntityList.add(stockinOrderDetailEntity);
         stockinOrderDetailEntityList.add(stockinOrderDetailEntity);
@@ -42,5 +41,10 @@ public class StockinOrderTest extends BaseServiceTest{
         stockinOrderEntity.setLogisticsCompany("圆通");
 
         stockInService.createStockinOrder(stockinOrderEntity, 1L, "张雅静");
+    }
+
+    @Test
+    public void submitWarehouseTest(){
+        stockInService.submitStockinOrder(29519L, 1L ,"张雅静");
     }
 }

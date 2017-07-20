@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+       default-lazy-init="false">
+    <context:annotation-config/>
+
+    <!-- 供应链与外部系统交互的命令配置 -->
+    <bean id="commandConfig" class="com.sfebiz.supplychain.provider.command.common.CommandConfig">
+        <property name="apiUrl" value="${com.sfebiz.supplychian.apiurl}"/>
+        <property name="fileUrl" value="${com.sfebiz.supplychian.fileurl}"/>
+        <property name="printPath" value="${com.sfebiz.supplychian.printpath}"/>
+        <property name="lpcMapping">
+            <map>
+                <entry key="0">
+                    <map>
+                        <entry key="supplychain.event.wms.skustockin">
+                            <map>
+                                <entry key="service_name" value="supplychain.event.wms.skustockin"/>
+                                <entry key="msg_type" value="LOGISTICS_SKU_STOCKIN_INFO"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.wms.common.WmsSkuStockInCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

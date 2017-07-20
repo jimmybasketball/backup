@@ -4,7 +4,7 @@ import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.common.utils.log.TraceLogEntity;
 import com.sfebiz.supplychain.config.SystemConstants;
-import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
+import com.sfebiz.supplychain.exposed.common.code.StatemationReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
 import com.taobao.tbbpm.statemachine.StateMachineEngineFactory;
 import com.taobao.tbbpm.statemachine.persistence.IStateMachineStateService;
@@ -45,7 +45,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
 
         try {
             if (null == stateMachineStateServiceMaps || !stateMachineStateServiceMaps.containsKey(request.getEngineType().getValue())) {
-                throw new ServiceException(SCReturnCode.LOGISTICS_STATE_MACHINE_INTERNAL_EXCEPTION,
+                throw new ServiceException(StatemationReturnCode.LOGISTICS_STATE_MACHINE_INTERNAL_EXCEPTION,
                         "[供应链-状态机流程创建异常]: 未找到对应的状态机服务"
                                 + "[实例信息: " + request
                                 + ", 实例类型: " + request.getEngineType().getDescription()
@@ -53,7 +53,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
             }
 
             if (null == stateMachineTemplateCodeMaps || !stateMachineTemplateCodeMaps.containsKey(request.getEngineType().getValue())) {
-                throw new ServiceException(SCReturnCode.LOGISTICS_STATE_MACHINE_INTERNAL_EXCEPTION,
+                throw new ServiceException(StatemationReturnCode.LOGISTICS_STATE_MACHINE_INTERNAL_EXCEPTION,
                         "[供应链-状态机流程创建异常]: 未找到对应的状态机模板"
                                 + "[实例信息: " + request
                                 + ", 实例类型: " + request.getEngineType().getDescription()
@@ -90,7 +90,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
                     .addParm("实例信息", request)
                     .addParm("实例类型", request.getEngineType().getDescription())
                     .log();
-            throw new ServiceException(SCReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
+            throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
                     "[供应链-状态机流程创建异常]: " + e.getMessage()
                             + "[实例信息: " + request
                             + ", 实例类型: " + request.getEngineType().getDescription()
@@ -113,8 +113,8 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
         try {
 
             if (request == null || request.getId() == null) {
-                throw new ServiceException(SCReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE,
-                        "[供应链-状态机流程执行异常]: " + SCReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE.getDesc()
+                throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE,
+                        "[供应链-状态机流程执行异常]: " + StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE.getDesc()
                                 + "[触发原因: " + request.getAction().getDescription()
                                 + ", 操作者: " + request.getOperator()
                                 + ", 请求参数: " + request
@@ -172,7 +172,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
                     .addParm("操作者", request.getOperator())
                     .addParm("请求参数", request)
                     .log();
-            throw new ServiceException(SCReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
+            throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
                     "[供应链-状态机流程执行异常]: " + e.getMessage()
                             + "[触发原因: " + request.getAction().getDescription()
                             + ", 操作者: " + request.getOperator()
@@ -195,8 +195,8 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
         try {
 
             if (request == null || request.getId() == null) {
-                throw new ServiceException(SCReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE,
-                        "[供应链-状态机节点执行异常]: " + SCReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE.getDesc()
+                throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE,
+                        "[供应链-状态机节点执行异常]: " + StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE.getDesc()
                                 + "[触发原因: " + request.getAction().getDescription()
                                 + ", 操作者: " + request.getOperator()
                                 + ", 请求参数: " + request
@@ -259,7 +259,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
                     .addParm("操作者", request.getOperator())
                     .addParm("请求参数", request)
                     .log();
-            throw new ServiceException(SCReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
+            throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
                     "[供应链-状态机节点执行异常]: " + e.getMessage()
                             + "[触发原因: " + request.getAction().getDescription()
                             + ", 操作者: " + request.getOperator()
