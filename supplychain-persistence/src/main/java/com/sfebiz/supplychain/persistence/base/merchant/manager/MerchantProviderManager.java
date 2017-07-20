@@ -1,8 +1,10 @@
 package com.sfebiz.supplychain.persistence.base.merchant.manager;
 
 import com.sfebiz.common.dao.BaseDao;
+import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
+import com.sfebiz.supplychain.exposed.merchant.enums.MerchantProviderStateType;
 import com.sfebiz.supplychain.persistence.base.merchant.dao.MerchantProviderDao;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO;
 import org.springframework.stereotype.Component;
@@ -33,5 +35,26 @@ public class MerchantProviderManager extends BaseManager<MerchantProviderDO>{
                 MerchantProviderDao.class,
                 MerchantProviderDO.class,
                 "sc_merchant_provider");
+    }
+
+
+    /**
+     * 检查货主是否配置了供应商
+     * @param merchantId  货主ID
+     * @return
+     */
+    public boolean isMerchantSetProvider(Long merchantId) {
+
+        if (merchantId == null) {
+            return false;
+        }
+
+        MerchantProviderDO queryDO = new MerchantProviderDO();
+        queryDO.setMerchantId(merchantId);
+        queryDO.setState(MerchantProviderStateType.ENABLE.value);
+
+        BaseQuery<MerchantProviderDO> baseQuery = new BaseQuery<MerchantProviderDO>(queryDO);
+
+        return merchantProviderDao.count(baseQuery) > 0;
     }
 }

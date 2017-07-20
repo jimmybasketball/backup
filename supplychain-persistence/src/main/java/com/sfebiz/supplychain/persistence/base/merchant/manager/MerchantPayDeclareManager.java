@@ -4,8 +4,10 @@ import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
+import com.sfebiz.supplychain.exposed.merchant.enums.MerchantProviderStateType;
 import com.sfebiz.supplychain.persistence.base.merchant.dao.MerchantPayDeclareDao;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPayDeclareDO;
+import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderDO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -63,5 +65,23 @@ public class MerchantPayDeclareManager extends BaseManager<MerchantPayDeclareDO>
         BaseQuery<MerchantPayDeclareDO> query = new BaseQuery<MerchantPayDeclareDO>(queryDO);
         long count = merchantPayDeclareDao.count(query);
         return count > 0;
+    }
+
+    /**
+     * 检查货主是否配置申报方式
+     * @param merchantId  货主ID
+     * @return
+     */
+    public boolean isMerchantSetPayDeclare(Long merchantId) {
+
+        if (merchantId == null) {
+            return false;
+        }
+
+        MerchantPayDeclareDO queryDO = new MerchantPayDeclareDO();
+        queryDO.setMerchantId(merchantId);
+        BaseQuery<MerchantPayDeclareDO> baseQuery = new BaseQuery<MerchantPayDeclareDO>(queryDO);
+
+        return merchantPayDeclareDao.count(baseQuery) > 0;
     }
 }

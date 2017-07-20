@@ -50,6 +50,23 @@ public class MerchantPackageMaterialManager extends BaseManager<MerchantPackageM
         return count > 0;
     }
 
+    /**
+     * 检查货主是否配置包材
+     * @param merchantId  货主ID
+     * @return
+     */
+    public boolean isMerchantSetPackageMaterial(Long merchantId) {
+
+        if (merchantId == null) {
+            return false;
+        }
+
+        MerchantPackageMaterialDO queryDO = new MerchantPackageMaterialDO();
+        queryDO.setMerchantId(merchantId);
+        BaseQuery<MerchantPackageMaterialDO> baseQuery = new BaseQuery<MerchantPackageMaterialDO>(queryDO);
+
+        return merchantPackageMaterialDao.count(baseQuery) > 0;
+    }
 
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("/Users/liujunchi/git_projects/" +

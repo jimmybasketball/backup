@@ -281,9 +281,39 @@ public class MerchantServiceImpl implements MerchantService {
                 }
 
                 if (MerchantStateType.ENABLE.getValue().equals(state)) {
-                    //TODO
-                    //启用货主需要判断  是否配置了供应商、包材、申报方式
-                    //需要逐个查表判断，货主DO的开关属性只做展示
+                    StringBuilder badMsg = new StringBuilder("货主启用失败:");
+                    boolean canEnable = true;//是否能恢复状态为启用
+
+                    //检查货主是否配置了供应商
+                    if (!merchantProviderManager.isMerchantSetProvider(id)) {
+                        canEnable = false;
+                        badMsg.append("  未配置供应商  ");
+                    }
+
+                    //检查货主是否配置了支付方式
+                    if (!merchantPayDeclareManager.isMerchantSetPayDeclare(id)) {
+                        canEnable = false;
+                        badMsg.append("  未配置申报方式  ");
+                    }
+
+                    //检查货主是否配置了包材
+                    if (!merchantPackageMaterialManager.isMerchantSetPackageMaterial(id)){
+                        canEnable = false;
+                        badMsg.append("  未配置包材  ");
+                    }
+
+                    if (!canEnable) {
+                        LogBetter.instance(LOGGER)
+                                .setLevel(LogLevel.ERROR)
+                                .setMsg("[物流平台货主-修改货主状态] 启用货主失败 缺少必要配置")
+                                .addParm("失败信息", badMsg.toString())
+                                .addParm("货主当前状态", merchantDO.getState())
+                                .addParm("目的状态", state)
+                                .log();
+                        commonRet.setRetCode(MerchantReturnCode.MERCHANT_ALREADY_START_USING_ERROR.getCode());
+                        commonRet.setRetMsg(badMsg.toString());
+                        return commonRet;
+                    }
                 }
 
                 MerchantDO updateDO = new MerchantDO();
