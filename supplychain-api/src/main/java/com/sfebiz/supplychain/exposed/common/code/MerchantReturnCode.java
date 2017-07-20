@@ -67,4 +67,18 @@ public class MerchantReturnCode extends SCReturnCode{
     public final static MerchantReturnCode MERCHANT_PROVIDER_LINE_NOT_EXIST =  new MerchantReturnCode("货主供应商线路不存在",_C_MERCHANT_PROVIDER_LINE_NOT_EXIST);
     public final static MerchantReturnCode MERCHANT_PROVIDER_LINE_ALREADY_CHANGE_STATE =  new MerchantReturnCode("货主供应商线路状态已被修改",_C_MERCHANT_PROVIDER_LINE_ALREADY_CHANGE_STATE);
 
+
+    /**
+     *
+     * 货主申报方式相关 [1023000 - 1024000)
+     *
+     */
+    public final static int _C_MERCHANT_PAY_DECLARE_UNKNOWN_ERROR = 1023001;
+    public final static int _C_MERCHANT_PAY_DECLARE_ALREADY_EXISTS = 1023002;
+    public final static int _C_MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL = 1023003;
+
+    public final static MerchantReturnCode MERCHANT_PAY_DECLARE_UNKNOWN_ERROR =  new MerchantReturnCode("货主申报方式配置未知异常",_C_MERCHANT_PAY_DECLARE_UNKNOWN_ERROR);
+    public final static MerchantReturnCode MERCHANT_PAY_DECLARE_ALREADY_EXISTS =  new MerchantReturnCode("货主申报方式配置已存在",_C_MERCHANT_PAY_DECLARE_ALREADY_EXISTS);
+    public final static MerchantReturnCode MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL =  new MerchantReturnCode("货主申报方式实体校验失败",_C_MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL);
+
 }
