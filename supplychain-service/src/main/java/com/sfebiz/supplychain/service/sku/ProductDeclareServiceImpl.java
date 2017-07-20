@@ -7,6 +7,7 @@ package com.sfebiz.supplychain.service.sku;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.sfebiz.common.dao.domain.BaseQuery;
+import com.sfebiz.common.dao.exception.DataAccessException;
 import com.sfebiz.common.tracelog.HaitaoTraceLogger;
 import com.sfebiz.common.tracelog.HaitaoTraceLoggerFactory;
 import com.sfebiz.common.utils.log.LogBetter;
@@ -55,8 +56,7 @@ import java.util.*;
 @Component("productDeclareService")
 public class ProductDeclareServiceImpl implements ProductDeclareService {
 
-    private static final HaitaoTraceLogger traceLogger =
-            HaitaoTraceLoggerFactory.getTraceLogger("skurecord");
+    private static final HaitaoTraceLogger traceLogger = HaitaoTraceLoggerFactory.getTraceLogger("skurecord");
 
     private final static Logger logger = LoggerFactory.getLogger(ProductDeclareServiceImpl.class);
 
@@ -130,7 +130,7 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
     private ProductDeclareJnDirectmailManager productDeclareJnDirectmailManager;
 
     @Resource
-    private ProductDeclareXmDirectmailManager productDeclareXMDirectmailManager;
+    private ProductDeclareXmDirectmailManager productDeclareXmDirectmailManager;
 
 //    @Resource
 //    private ProductDeclareFinishCollectProcessor productDeclareFinishCollectProcessor;
@@ -199,8 +199,7 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long createDeclareSku(Long skuId, Long portId, String declareMode, Long userId,
-            String operator) throws ServiceException {
+    public Long createDeclareSku(Long skuId, Long portId, String declareMode, Long userId, String operator) throws ServiceException {
         return createDeclareSku(0L, skuId, portId, declareMode, userId, operator);
     }
 
@@ -272,11 +271,11 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
                 productDeclareDO.setSkuId(skuId);
                 productDeclareDO.setPortId(portId);
                 productDeclareDO.setDeclareMode(declareMode);
-                productDeclareDO.setState(SkuDeclareStateType.DECLARE_WAIT.getValue());
+                productDeclareDO.setState(SkuDeclareStateType.WAIT_DECLARE.getValue());
                 productDeclareDO.setDeclareName(skuDO.getName());
                 productDeclareDO.setAttributes(skuDO.getAttributesDesc());
                 productDeclareDO.setMeasuringUnit(skuDO.getMeasuringUnit());
-                // productDeclareDO.setBarCode(skuDO.getBarcode()); FIXME
+                // productDeclareDO.setBarCode(skuDO.getBarcode());
                 productDeclareDO.setBrand(skuDO.getBrandName());
                 // productDeclareDO.setOrigin(skuDO.getOrigin());
                 // productDeclareDO.setCategoryName(skuDO.getCategoryName());
@@ -291,7 +290,7 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
 
                 productDeclareManager.insertOrUpdate(productDeclareDO);
                 productDeclareId = productDeclareDO.getId();
-                // 启动状态机引擎 FIXME
+                // 启动状态机引擎
                 // ProductDeclareRequest productDeclareRequest = ProductDeclareRequestFactory
                 // .generateProductDeclareRequest(
                 // ProductDeclareActionType.DECLARE_TO_CREATE, productDeclareDO, null,
@@ -364,7 +363,7 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
                     xmDirectmailDO.setCreateUser(operator); // 备案任务创建人
                     xmDirectmailDO.setProviderName(providerName); // 供应商名称
                     xmDirectmailDO.setPurchaseMode(purchaseMode); // 采买模式
-                    productDeclareXMDirectmailManager.insertOrUpdate(xmDirectmailDO);
+                    productDeclareXmDirectmailManager.insertOrUpdate(xmDirectmailDO);
                 } else if (portId == PortNid.PINGTAN.getValue()
                         && LineType.BONDED.getValue().equals(declareMode)) {
                     ProductDeclarePtDirectmailDO ptDirectmailDO =
@@ -405,11 +404,11 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
                     qdDirectmailDO.setPurchaseMode(purchaseMode); // 采买模式
                     productDeclareQdDirectmailManager.insertOrUpdate(qdDirectmailDO);
                 }
-                LogBetter.instance(logger).setLevel(LogLevel.INFO)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareId,
-                                "supplychain"))
-                        .setMsg("[供应链-创建备案商品]:成功").addParm("商品ID", skuId).addParm("口岸ID", portId)
-                        .addParm("备案模式", declareMode).addParm("操作人", operator).log();
+//                LogBetter.instance(logger).setLevel(LogLevel.INFO)
+//                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareId,
+//                                "supplychain"))
+//                        .setMsg("[供应链-创建备案商品]:成功").addParm("商品ID", skuId).addParm("口岸ID", portId)
+//                        .addParm("备案模式", declareMode).addParm("操作人", operator).log();
             } catch (Exception e) {
                 LogBetter.instance(logger).setLevel(LogLevel.ERROR).setException(e)
                         .setErrorMsg("[供应链-创建备案商品异常]:异常").addParm("商品ID", skuId)
@@ -522,27 +521,28 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean finishCollect(final SkuDeclareEntity skuDeclareEntity, final Long userId,
-            final String operator) throws ServiceException {
-        LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("[商品备案资料收集完毕导入]:开始")
-                .addParm("商品备案信息", skuDeclareEntity).addParm("操作人", operator).log();
+    public boolean finishCollect(final SkuDeclareEntity skuDeclareEntity, final Long userId, final String operator) throws ServiceException {
+        LogBetter.instance(logger)
+                 .setLevel(LogLevel.INFO)
+                 .setMsg("[商品备案资料收集完毕导入]:开始")
+                 .addParm("商品备案信息", skuDeclareEntity)
+                 .addParm("操作人", operator).log();
 
         // 判断是否已存在备案商品
-        ProductDeclareDO productDeclareDO = productDeclareManager.queryDeclaredSku(
-                skuDeclareEntity.skuId, skuDeclareEntity.portId, skuDeclareEntity.declareMode);
+        ProductDeclareDO productDeclareDO = productDeclareManager.queryDeclaredSku(skuDeclareEntity.skuId, skuDeclareEntity.portId, skuDeclareEntity.declareMode);
 
         // 如果不存在则初始化一条
         if (null == productDeclareDO) {
-            LogBetter.instance(logger).setLevel(LogLevel.WARN)
-                    .setMsg("[商品备案资料收集完毕导入]:备案商品不存在, 初始化一条").addParm("商品备案信息", skuDeclareEntity)
+            LogBetter.instance(logger)
+                    .setLevel(LogLevel.WARN)
+                    .setMsg("[商品备案资料收集完毕导入]:备案商品不存在, 初始化一条")
+                    .addParm("商品备案信息", skuDeclareEntity)
                     .addParm("操作人", operator).log();
             try {
                 springTransactionTemplate.execute(new ITransactionCallbackWithoutResult() {
                     @Override
                     public void doInTransaction(ITransactionStatus status) throws Exception {
-                        Long productDeclareId =
-                                createDeclareSku(skuDeclareEntity.skuId, skuDeclareEntity.portId,
-                                        skuDeclareEntity.declareMode, userId, operator);
+                        Long productDeclareId = createDeclareSku(skuDeclareEntity.skuId, skuDeclareEntity.portId, skuDeclareEntity.declareMode, userId, operator);
                         startCollect(productDeclareId, userId, operator);
                     }
                 });
@@ -559,78 +559,87 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
 
         // productDeclareDO不存在，才需要重新查找
         if (null == productDeclareDO) {
-            productDeclareDO = productDeclareManager.queryDeclaredSku(skuDeclareEntity.skuId,
-                    skuDeclareEntity.portId, skuDeclareEntity.declareMode);
+            productDeclareDO = productDeclareManager.queryDeclaredSku(skuDeclareEntity.skuId, skuDeclareEntity.portId, skuDeclareEntity.declareMode);
         }
 
-        // // 状态判断(资料收集完毕状态,如果有的资料信息错误,也支持再次导入去修正)
-        // if (ProductDeclareState.WAIT_DECLARE.getValue().equals(productDeclareDO.getState())) {
-        // LogBetter.instance(logger).setLevel(LogLevel.WARN)
-        // .setMsg("[商品备案资料收集完毕导入]:待备案状态无法操作资料收集完毕导入")
-        // .addParm("商品备案信息", skuDeclareEntity)
-        // .addParm("操作人", operator).log();
-        // throw new
-        // ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_FINISHED_COLLECTING_STATE_ERROR,
-        // LogisticsReturnCode.PRODUCT_DECLARE_FINISHED_COLLECTING_STATE_ERROR.getDesc());
-        // }
-        //
-        // // 控制并发
-        // if (distributedLock.fetch(FINISH_COLLECT_DECLARE_SKU_KEY + productDeclareDO.getId())) {
-        // try {
-        // ProductDeclareRequest productDeclareRequest = ProductDeclareRequestFactory
-        // .generateProductDeclareRequest(
-        // ProductDeclareActionType.DECLARE_TO_FINISH_COLLECT, productDeclareDO, null,
-        // Operator.valueOf(userId, operator));
-        // productDeclareRequest.setSkuDeclareEntity(skuDeclareEntity);
-        // // 如果是资料收集中状态,则走流程引擎
-        // if (ProductDeclareState.COLLECTING.getValue().equals(productDeclareDO.getState())) {
-        // engineService.executeStateMachineEngine(productDeclareRequest, false);
-        // } else if
-        // (ProductDeclareState.FINISHED_COLLECTING.getValue().equals(productDeclareDO.getState()))
-        // {
-        // // 如果是资料收集完成状态, 则更新备案信息, 不走流程引擎，直接调用process处理
-        // engineService
-        // .executeStateMachineProcessor(productDeclareFinishCollectProcessor,
-        // productDeclareRequest,
-        // false);
-        // } else if (ProductDeclareState.DECLARING.getValue().equals(productDeclareDO.getState()))
-        // {
-        // // 如果是备案中状态, 则更新备案信息, 不走流程引擎，直接调用process处理
-        // engineService
-        // .executeStateMachineProcessor(productDeclareDeclaringProcessor,
-        // productDeclareRequest,
-        // false);
-        // } else {
-        // // 如果是备案完成状态, 则更新备案信息, 不走流程引擎，直接调用process处理
-        // engineService
-        // .executeStateMachineProcessor(productDeclarePassProcessor,
-        // productDeclareRequest,
-        // false);
-        // }
-        // } catch (ServiceException e) {
-        // throw e;
-        // } catch (Exception e) {
-        // LogBetter.instance(logger).setLevel(LogLevel.ERROR).setException(e).setMsg("[商品备案资料收集完毕导入]:异常")
-        // .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareDO.getId(),
-        // SystemConstants.TRACE_APP))
-        // .addParm("商品备案信息", skuDeclareEntity)
-        // .addParm("操作人", operator).log();
-        // throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION,
-        // "[商品备案资料收集完毕导入]:" + e.getMessage());
-        // } finally {
-        // distributedLock.realease(FINISH_COLLECT_DECLARE_SKU_KEY + productDeclareDO.getId());
-        // }
-        // } else {
-        // LogBetter.instance(logger).setLevel(LogLevel.ERROR)
-        // .setTraceLogger(
-        // TraceLogEntity
-        // .instance(traceLogger, productDeclareDO.getId(), SystemConstants.TRACE_APP))
-        // .setErrorMsg("[商品备案资料收集完毕导入]:并发异常")
-        // .addParm("商品备案信息", skuDeclareEntity)
-        // .addParm("操作人", operator).log();
-        // throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION,
-        // "[商品备案资料收集完毕导入]:并发异常");
-        // }
+        // 状态判断(资料收集完毕状态,如果有的资料信息错误,也支持再次导入去修正)
+//        if (ProductDeclareState.WAIT_DECLARE.getValue().equals(productDeclareDO.getState())) {
+//            LogBetter.instance(logger).setLevel(LogLevel.WARN)
+//                    .setMsg("[商品备案资料收集完毕导入]:待备案状态无法操作资料收集完毕导入")
+//                    .addParm("商品备案信息", skuDeclareEntity)
+//                    .addParm("操作人", operator).log();
+//            throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_FINISHED_COLLECTING_STATE_ERROR,
+//                    LogisticsReturnCode.PRODUCT_DECLARE_FINISHED_COLLECTING_STATE_ERROR.getDesc());
+//        }
+
+        if (StringUtils.isNotBlank(skuDeclareEntity.getHsCode())) {
+            ProductDeclareHsCodeDO productDeclareHsCodeDO = productDeclareHsCodeManager.getByHsCode(skuDeclareEntity.getHsCode());
+            skuDeclareEntity.setConsumptionDutyRate(productDeclareHsCodeDO.getConsumptionDutyRate());
+            skuDeclareEntity.setTariffRate(productDeclareHsCodeDO.getTariffRate());
+            skuDeclareEntity.setAddedValueTaxRate(productDeclareHsCodeDO.getAddedValueTaxRate());
+            skuDeclareEntity.setMeasuringUnit(productDeclareHsCodeDO.getMeasuringUnit());
+            skuDeclareEntity.setSecondaryMeasuringUnit(productDeclareHsCodeDO.getSecondMeasuringUnit());
+        }
+        if (StringUtils.isNotBlank(skuDeclareEntity.getPostTaxNo())) {
+            ProductDeclareHsCodeDO productDeclareHsCodeDO = productDeclareHsCodeManager.getByHsCode(skuDeclareEntity.getPostTaxNo());
+            skuDeclareEntity.setTaxRate(productDeclareHsCodeDO.getTaxRate());
+        }
+
+        // 控制并发
+        if (distributedLock.fetch(FINISH_COLLECT_DECLARE_SKU_KEY + productDeclareDO.getId())) {
+            try {
+//                ProductDeclareRequest productDeclareRequest = ProductDeclareRequestFactory
+//                        .generateProductDeclareRequest(
+//                                ProductDeclareActionType.DECLARE_TO_FINISH_COLLECT, productDeclareDO, null,
+//                                Operator.valueOf(userId, operator));
+//                productDeclareRequest.setSkuDeclareEntity(skuDeclareEntity);
+//                // 如果是资料收集中状态,则走流程引擎
+//                if (ProductDeclareState.COLLECTING.getValue().equals(productDeclareDO.getState())) {
+//                    engineService.executeStateMachineEngine(productDeclareRequest, false);
+//                } else if (ProductDeclareState.FINISHED_COLLECTING.getValue().equals(productDeclareDO.getState())) {
+//                    // 如果是资料收集完成状态, 则更新备案信息, 不走流程引擎，直接调用process处理
+//                    engineService
+//                            .executeStateMachineProcessor(productDeclareFinishCollectProcessor,
+//                                    productDeclareRequest,
+//                                    false);
+//                } else if (ProductDeclareState.DECLARING.getValue().equals(productDeclareDO.getState())) {
+//                    // 如果是备案中状态, 则更新备案信息, 不走流程引擎，直接调用process处理
+//                    engineService
+//                            .executeStateMachineProcessor(productDeclareDeclaringProcessor,
+//                                    productDeclareRequest,
+//                                    false);
+//                } else {
+//                    // 如果是备案完成状态, 则更新备案信息, 不走流程引擎，直接调用process处理
+//                    engineService
+//                            .executeStateMachineProcessor(productDeclarePassProcessor,
+//                                    productDeclareRequest,
+//                                    false);
+//                }
+                // 调用备案通过的方法，代替以前的状态机处理
+                process(productDeclareDO, skuDeclareEntity, operator);
+            } catch (ServiceException e) {
+                throw e;
+            } catch (Exception e) {
+//                LogBetter.instance(logger).setLevel(LogLevel.ERROR).setException(e).setMsg("[商品备案资料收集完毕导入]:异常")
+//                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareDO.getId(),
+//                                SystemConstants.TRACE_APP))
+//                        .addParm("商品备案信息", skuDeclareEntity)
+//                        .addParm("操作人", operator).log();
+                throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION, "[商品备案资料收集完毕导入]:" + e.getMessage());
+            } finally {
+                distributedLock.realease(FINISH_COLLECT_DECLARE_SKU_KEY + productDeclareDO.getId());
+            }
+        } else {
+//            LogBetter.instance(logger).setLevel(LogLevel.ERROR)
+//                    .setTraceLogger(
+//                            TraceLogEntity
+//                                    .instance(traceLogger, productDeclareDO.getId(), SystemConstants.TRACE_APP))
+//                    .setErrorMsg("[商品备案资料收集完毕导入]:并发异常")
+//                    .addParm("商品备案信息", skuDeclareEntity)
+//                    .addParm("操作人", operator).log();
+            throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION,
+                    "[商品备案资料收集完毕导入]:并发异常");
+        }
         return true;
     }
 
@@ -752,11 +761,15 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean declareNotPass(Long productDeclareId, String reason, Long userId,
-            String operator) throws ServiceException {
-        LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("[供应链-商品备案不通过]")
-                .addParm("备案ID", productDeclareId).addParm("备案不通过原因", reason)
-                .addParm("用户ID", userId).addParm("操作人", operator).log();
+    public boolean declareNotPass(Long productDeclareId, String reason, Long userId, String operator) throws ServiceException {
+        LogBetter.instance(logger)
+                .setLevel(LogLevel.INFO)
+                .setMsg("[供应链-商品备案不通过]")
+                .addParm("备案ID", productDeclareId)
+                .addParm("备案不通过原因", reason)
+                .addParm("用户ID", userId)
+                .addParm("操作人", operator)
+                .log();
 
         ProductDeclareDO productDeclareDO = productDeclareManager.getById(productDeclareId);
         if (null == productDeclareDO) {
@@ -766,43 +779,52 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
         if (distributedLock.fetch(NOT_PASS_DECLARE_SKU_KEY + productDeclareId)) {
             try {
                 productDeclareDO.setRemark(reason);
+
+                productDeclareDO = new ProductDeclareDO();
+                productDeclareDO.setId(productDeclareId);
+                productDeclareDO.setState(SkuDeclareStateType.DECLARE_NOT_PASS.getValue());
+                productDeclareDO.setRemark(reason);
+                productDeclareManager.update(productDeclareDO);
                 // ProductDeclareRequest productDeclareRequest = ProductDeclareRequestFactory
                 // .generateProductDeclareRequest(ProductDeclareActionType.DECLARE_TO_NOT_PASS,
                 // productDeclareDO, null, Operator.valueOf(operator));
                 // engineService.executeStateMachineEngine(productDeclareRequest, false);
 
-                LogBetter.instance(logger).setLevel(LogLevel.INFO)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareId,
-                                "supplychain"))
-                        .setMsg("[供应链-商品备案不通过操作]:成功").addParm("备案ID", productDeclareId)
-                        .addParm("备案不通过原因", reason).addParm("用户ID", userId).addParm("操作人", operator)
-                        .log();
+//                LogBetter.instance(logger)
+//                        .setLevel(LogLevel.INFO)
+//                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareId, "supplychain"))
+//                        .setMsg("[供应链-商品备案不通过操作]:成功").addParm("备案ID", productDeclareId)
+//                        .addParm("备案不通过原因", reason).addParm("用户ID", userId).addParm("操作人", operator)
+//                        .log();
             } catch (Exception e) {
-                LogBetter.instance(logger).setLevel(LogLevel.ERROR).setException(e)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareId,
-                                "supplychain"))
-                        .setErrorMsg("[供应链-商品备案不通过操作]:流程引擎执行异常").addParm("备案ID", productDeclareId)
-                        .addParm("备案不通过原因", reason).addParm("用户ID", userId).addParm("操作人", operator)
-                        .log();
+//                LogBetter.instance(logger).setLevel(LogLevel.ERROR).setException(e)
+//                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareId,
+//                                "supplychain"))
+//                        .setErrorMsg("[供应链-商品备案不通过操作]:流程引擎执行异常").addParm("备案ID", productDeclareId)
+//                        .addParm("备案不通过原因", reason).addParm("用户ID", userId).addParm("操作人", operator)
+//                        .log();
                 logger.error("[供应链-商品备案不通过操作] 异常：productDeclareId={}，e={}", productDeclareId, e);
-                throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION,
-                        LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION.getDesc());
+                throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION, LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION.getDesc());
             } finally {
                 distributedLock.realease(NOT_PASS_DECLARE_SKU_KEY + productDeclareId);
             }
         } else {
-            LogBetter.instance(logger).setLevel(LogLevel.ERROR)
-                    .setTraceLogger(
-                            TraceLogEntity.instance(traceLogger, productDeclareId, "supplychain"))
-                    .setErrorMsg("[供应链-商品备案不通过操作]:并发异常").addParm("备案ID", productDeclareId)
-                    .addParm("备案不通过原因", reason).addParm("用户ID", userId).addParm("操作人", operator)
-                    .log();
-            throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION,
-                    "[供应链-商品备案不通过操作]: 并发异常" + "[备案ID: " + productDeclareId + "]");
+//            LogBetter.instance(logger).setLevel(LogLevel.ERROR)
+//                    .setTraceLogger(
+//                            TraceLogEntity.instance(traceLogger, productDeclareId, "supplychain"))
+//                    .setErrorMsg("[供应链-商品备案不通过操作]:并发异常").addParm("备案ID", productDeclareId)
+//                    .addParm("备案不通过原因", reason).addParm("用户ID", userId).addParm("操作人", operator)
+//                    .log();
+            throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION, "[供应链-商品备案不通过操作]: 并发异常" + "[备案ID: " + productDeclareId + "]");
         }
-        LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("[供应链-商品备案不通过操作]:结束")
-                .addParm("备案ID", productDeclareId).addParm("备案不通过原因", reason)
-                .addParm("用户ID", userId).addParm("操作人", operator).log();
+        LogBetter.instance(logger)
+                .setLevel(LogLevel.INFO)
+                .setMsg("[供应链-商品备案不通过操作]:结束")
+                .addParm("备案ID", productDeclareId)
+                .addParm("备案不通过原因", reason)
+                .addParm("用户ID", userId)
+                .addParm("操作人", operator)
+                .log();
         return true;
     }
 
@@ -895,6 +917,15 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
         return productDeclareDO.getId() != null;
     }
 
+
+    /**
+     * 删除商品备案-废弃 FIXME
+     *
+     * @param skuId  商品ID
+     * @param portId 口岸ID
+     * @return
+     * @throws ServiceException
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeDeclareSku(Long skuId, Long portId) throws ServiceException {
@@ -902,11 +933,9 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
         ProductDeclareDO productDeclareDO = new ProductDeclareDO();
         productDeclareDO.setSkuId(skuId);
         productDeclareDO.setPortId(portId);
-        List<ProductDeclareDO> productDeclareDOs =
-                productDeclareManager.query(BaseQuery.getInstance(productDeclareDO));
+        List<ProductDeclareDO> productDeclareDOs =productDeclareManager.query(BaseQuery.getInstance(productDeclareDO));
         if (productDeclareDOs != null && productDeclareDOs.size() > 0) {
-            if (SkuDeclareStateType.DECLARE_WAIT.getValue()
-                    .equalsIgnoreCase(productDeclareDOs.get(0).getState())) {
+            if (SkuDeclareStateType.WAIT_DECLARE.getValue().equalsIgnoreCase(productDeclareDOs.get(0).getState())) {
                 productDeclareManager.delete(BaseQuery.getInstance(productDeclareDO));
                 return true;
             } else {
@@ -921,6 +950,7 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
 
     /**
      * 批量删除备案商品(删除待备案或是资料收集中的商品，不删除商品备案数据，只删除广州、杭州、宁波备案数据)
+     * 批量删除备案商品(删除待备案的商品，不删除商品备案数据，只删除广州、杭州、宁波备案数据)
      *
      * @param productDeclareIds 商品备案表IDs
      * @param portId 口岸ID
@@ -932,77 +962,79 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean removeBatchDeclareSku(String productDeclareIds, Long portId, String declareMode,
-            Long userId, String operator) throws ServiceException {
+    public boolean removeBatchDeclareSku(String productDeclareIds, Long portId, String declareMode, Long userId, String operator) throws ServiceException {
         String[] productDeclareIdArr = productDeclareIds.split(",");
-        // for (String productDeclareId : productDeclareIdArr) {
-        // ProductDeclareDO productDeclareDO =
-        // productDeclareManager.getById(Long.valueOf(productDeclareId));
-        // if (productDeclareDO != null) {
-        // if
-        // (ProductDeclareState.WAIT_DECLARE.getValue().equalsIgnoreCase(productDeclareDO.getState())
-        // ||
-        // ProductDeclareState.COLLECTING.getValue().equalsIgnoreCase(productDeclareDO.getState()))
-        // {
-        // try {
-        // if (distributedLock.fetch(DELETE_DECLARE_SKU_KEY + productDeclareId + "-" + portId + "-"
-        // + declareMode)) {
-        // if (portId.compareTo(2L) == 0 && "BONDED".equals(declareMode)) { // 广州保税
-        // ProductDeclareGzBondedDO gz_bondedDO = new ProductDeclareGzBondedDO();
-        // gz_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareGzBondedManager.delete(BaseQuery.getInstance(gz_bondedDO));
-        // } else if (portId.compareTo(2L) == 0 && "DIRECTMAIL".equals(declareMode)) { //广州直邮
-        // ProductDeclareGzDirectmailDO gz_dirsctmailDO = new ProductDeclareGzDirectmailDO();
-        // gz_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareGzDirectmailManager.delete(BaseQuery.getInstance(gz_dirsctmailDO));
-        // } else if (portId.compareTo(1L) == 0 && "BONDED".equals(declareMode)) { //杭州保税
-        // ProductDeclareHzBondedDO hz_bondedDO = new ProductDeclareHzBondedDO();
-        // hz_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareHzBondedManager.delete(BaseQuery.getInstance(hz_bondedDO));
-        // } else if (portId.compareTo(1L) == 0 && "DIRECTMAIL".equals(declareMode)) { //杭州直邮
-        // ProductDeclareHzDirectmailDO hz_dirsctmailDO = new ProductDeclareHzDirectmailDO();
-        // hz_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareHzDirectmailManager.delete(BaseQuery.getInstance(hz_dirsctmailDO));
-        // } else if (portId.compareTo(3L) == 0 && "BONDED".equals(declareMode)) { //宁波保税
-        // ProductDeclareNbBondedDO nb_bondedDO = new ProductDeclareNbBondedDO();
-        // nb_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareNbBondedManager.delete(BaseQuery.getInstance(nb_bondedDO));
-        // } else if (portId.compareTo(3L) == 0 && "DIRECTMAIL".equals(declareMode)) { //宁波保税
-        // ProductDeclareNbDirectmailDO nb_directmailDO = new ProductDeclareNbDirectmailDO();
-        // nb_directmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareNbDirectmailManager.delete(BaseQuery.getInstance(nb_directmailDO));
-        // } else if (portId.compareTo(5L) == 0 && "DIRECTMAIL".equals(declareMode)) { //济南直邮
-        // ProductDeclareJnDirectmailDO jn_dirsctmailDO = new ProductDeclareJnDirectmailDO();
-        // jn_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareJnDirectmailManager.delete(BaseQuery.getInstance(jn_dirsctmailDO));
-        // } else if (portId.compareTo(6L) == 0 && "DIRECTMAIL".equals(declareMode)) { //厦门直邮
-        // ProductDeclareXmDirectmailDO xm_dirsctmailDO = new ProductDeclareXmDirectmailDO();
-        // xm_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareXMDirectmailManager.delete(BaseQuery.getInstance(xm_dirsctmailDO));
-        // } else if (portId.compareTo(9L) == 0 && "BONDED".equals(declareMode)) { //重庆保税
-        // ProductDeclareCqBondedDO cq_bondedDO = new ProductDeclareCqBondedDO();
-        // cq_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareCqBondedManager.delete(BaseQuery.getInstance(cq_bondedDO));
-        // } else if (portId.compareTo(10L) == 0 && "DIRECTMAIL".equals(declareMode)) { //青岛直邮
-        // ProductDeclareQdDirectmailDO qd_declareDO = new ProductDeclareQdDirectmailDO();
-        // qd_declareDO.setProductDeclareId(Long.valueOf(productDeclareId));
-        // productDeclareQdDirectmailManager.delete(BaseQuery.getInstance(qd_declareDO));
-        // }
-        //
-        //
-        // // 删除备案商品主表
-        // productDeclareManager.deleteById(Long.valueOf(productDeclareId));
-        // }
-        // } finally {
-        // distributedLock.realease(DELETE_DECLARE_SKU_KEY + productDeclareId + "-" + portId + "-" +
-        // declareMode);
-        // }
-        // } else {
-        // throw new ServiceException(LogisticsReturnCode.SKU_DECLARE_NOT_ALLOW_DELETE,
-        // LogisticsReturnCode.SKU_DECLARE_NOT_ALLOW_DELETE.getDesc());
-        // }
-        // }
-        // }
+        for (String productDeclareId : productDeclareIdArr) {
+            ProductDeclareDO productDeclareDO =productDeclareManager.getById(Long.valueOf(productDeclareId));
+            if (productDeclareDO != null) {
+                // 删除待备案的商品
+                if (SkuDeclareStateType.WAIT_DECLARE.getValue().equalsIgnoreCase(productDeclareDO.getState())) {
+                    try {
+                        if (distributedLock.fetch(DELETE_DECLARE_SKU_KEY + productDeclareId + "-" + portId + "-" + declareMode)) {
+                            if (portId.compareTo(2L) == 0 && "BONDED".equals(declareMode)) { // 广州保税
+                                ProductDeclareGzBondedDO gz_bondedDO =new ProductDeclareGzBondedDO();
+                                gz_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareGzBondedManager.delete(BaseQuery.getInstance(gz_bondedDO));
+                            } else if (portId.compareTo(2L) == 0&& "DIRECTMAIL".equals(declareMode)) { // 广州直邮
+                                ProductDeclareGzDirectmailDO gz_dirsctmailDO = new ProductDeclareGzDirectmailDO();
+                                gz_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareGzDirectmailManager.delete(BaseQuery.getInstance(gz_dirsctmailDO));
+                            } else if (portId.compareTo(1L) == 0 && "BONDED".equals(declareMode)) { // 杭州保税
+                                ProductDeclareHzBondedDO hz_bondedDO = new ProductDeclareHzBondedDO();
+                                hz_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareHzBondedManager.delete(BaseQuery.getInstance(hz_bondedDO));
+                            } else if (portId.compareTo(1L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 杭州直邮
+                                ProductDeclareHzDirectmailDO hz_dirsctmailDO =new ProductDeclareHzDirectmailDO();
+                                hz_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareHzDirectmailManager.delete(BaseQuery.getInstance(hz_dirsctmailDO));
+                            } else if (portId.compareTo(3L) == 0 && "BONDED".equals(declareMode)) { // 宁波保税
+                                ProductDeclareNbBondedDO nb_bondedDO = new ProductDeclareNbBondedDO();
+                                nb_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareNbBondedManager.delete(BaseQuery.getInstance(nb_bondedDO));
+                            } else if (portId.compareTo(3L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 宁波保税
+                                ProductDeclareNbDirectmailDO nb_directmailDO = new ProductDeclareNbDirectmailDO();
+                                nb_directmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareNbDirectmailManager.delete(BaseQuery.getInstance(nb_directmailDO));
+                            } else if (portId.compareTo(5L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 济南直邮
+                                ProductDeclareJnDirectmailDO jn_dirsctmailDO = new ProductDeclareJnDirectmailDO();
+                                jn_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareJnDirectmailManager
+                                        .delete(BaseQuery.getInstance(jn_dirsctmailDO));
+                            } else if (portId.compareTo(6L) == 0
+                                    && "DIRECTMAIL".equals(declareMode)) { // 厦门直邮
+                                ProductDeclareXmDirectmailDO xm_dirsctmailDO =
+                                        new ProductDeclareXmDirectmailDO();
+                                xm_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareXmDirectmailManager
+                                        .delete(BaseQuery.getInstance(xm_dirsctmailDO));
+                            } else if (portId.compareTo(9L) == 0 && "BONDED".equals(declareMode)) { // 重庆保税
+                                ProductDeclareCqBondedDO cq_bondedDO =
+                                        new ProductDeclareCqBondedDO();
+                                cq_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareCqBondedManager
+                                        .delete(BaseQuery.getInstance(cq_bondedDO));
+                            } else if (portId.compareTo(10L) == 0
+                                    && "DIRECTMAIL".equals(declareMode)) { // 青岛直邮
+                                ProductDeclareQdDirectmailDO qd_declareDO =
+                                        new ProductDeclareQdDirectmailDO();
+                                qd_declareDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                                productDeclareQdDirectmailManager
+                                        .delete(BaseQuery.getInstance(qd_declareDO));
+                            }
+
+                            // 删除备案商品主表
+                            productDeclareManager.deleteById(Long.valueOf(productDeclareId));
+                        }
+                    } finally {
+                        distributedLock.realease(DELETE_DECLARE_SKU_KEY + productDeclareId + "-"
+                                + portId + "-" + declareMode);
+                    }
+                } else {
+                    throw new ServiceException(LogisticsReturnCode.SKU_DECLARE_NOT_ALLOW_DELETE,
+                            LogisticsReturnCode.SKU_DECLARE_NOT_ALLOW_DELETE.getDesc());
+                }
+            }
+        }
         return true;
     }
 
@@ -1231,12 +1263,12 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
                 productDeclareManager.insertOrUpdate(productDeclareDO);
                 productDeclareId = productDeclareDO.getId();
 
-                LogBetter.instance(logger).setLevel(LogLevel.INFO)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareId,
-                                "supplychain"))
-                        .setMsg("[供应链-创建空口岸备案商品]:备案成功").addParm("商品ID", skuId)
-                        .addParm("口岸ID", portId).addParm("备案模式", declareMode)
-                        .addParm("操作人", operator).log();
+//                LogBetter.instance(logger).setLevel(LogLevel.INFO)
+//                        .setTraceLogger(TraceLogEntity.instance(traceLogger, productDeclareId,
+//                                "supplychain"))
+//                        .setMsg("[供应链-创建空口岸备案商品]:备案成功").addParm("商品ID", skuId)
+//                        .addParm("口岸ID", portId).addParm("备案模式", declareMode)
+//                        .addParm("操作人", operator).log();
 
                 result.setSuccess(true);
 
@@ -1576,5 +1608,494 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
 //        logger.info("获取到的skuTaxDO信息为：" + skuTaxDO.toString());
 //        lineService.addOrUpdateSkuLineCostModel(skuTaxDO, lineDO, warehouseName, supplyCost);
         return result;
+    }
+
+// ======================================================
+    private BaseResult process(ProductDeclareDO productDeclareDO, SkuDeclareEntity skuDeclareEntity, String operator) throws ServiceException {
+
+        Long productDeclareId = productDeclareDO.getId();
+        setOperatorUser(operator);
+        try {
+            // 更新商品备案主表信息
+            updateProductDeclare(productDeclareId, skuDeclareEntity);
+            // 更新商品备案附表信息
+            if (skuDeclareEntity.portId == PortNid.GUANGZHOU.getValue() && LineType.BONDED.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareGzBonded(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.GUANGZHOU.getValue() && LineType.DIRECTMAIL.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareGzDirectmail(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.HANGZHOU.getValue() && LineType.BONDED.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareHzBonded(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.HANGZHOU.getValue() && LineType.DIRECTMAIL.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareHzDirectmail(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.NINGBO.getValue() && LineType.BONDED.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareNbBonded(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.NINGBO.getValue() && LineType.DIRECTMAIL.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareNbDirectmail(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.JINAN.getValue() && LineType.DIRECTMAIL.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareJnDirectmail(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.XIAMEN.getValue() && LineType.DIRECTMAIL.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareXmDirectmail(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.PINGTAN.getValue() && LineType.BONDED.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclarePtDirectmail(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.SHATIAN.getValue() && LineType.DIRECTMAIL.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareStDirectmail(productDeclareId, skuDeclareEntity);
+            } else if (skuDeclareEntity.portId == PortNid.CHONGQING.getValue() && LineType.BONDED.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareCqBonded(productDeclareId, skuDeclareEntity);
+            }else if (skuDeclareEntity.portId == PortNid.QINGDAO.getValue() && LineType.DIRECTMAIL.getValue()
+                    .equals(skuDeclareEntity.declareMode)) {
+                updateProductDeclareQdDirectmail(productDeclareId, skuDeclareEntity);
+            }
+        } catch (DataAccessException e) {
+            throw new ServiceException(
+                    LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION,
+                    "[供应链-备案流程操作失败]: " + LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION.getDesc() + " "
+                            + "[请求参数: " + productDeclareDO
+                            + "]"
+            );
+        }
+
+        return BaseResult.SUCCESS_RESULT;
+    }
+
+    private void updateProductDeclare(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareDO updateProductDeclare = new ProductDeclareDO();
+        updateProductDeclare.setId(productDeclareId);
+        updateProductDeclare.setDeclareName(skuDeclareEntity.declareName);
+        updateProductDeclare.setHsNumber(skuDeclareEntity.hsNumber);
+        updateProductDeclare.setProviderAddress(skuDeclareEntity.providerAddress);
+        updateProductDeclare.setAttributes(skuDeclareEntity.attributes);
+        updateProductDeclare.setNetWeight(skuDeclareEntity.netWeight);
+        updateProductDeclare.setGrossWeight(skuDeclareEntity.grossWeight);
+        updateProductDeclare.setOrigin(skuDeclareEntity.origin);
+        updateProductDeclare.setBrand(skuDeclareEntity.brandName);
+        updateProductDeclare.setMeasuringUnit(skuDeclareEntity.measuringUnit);
+        updateProductDeclare.setBarCode(skuDeclareEntity.barcode);
+        updateProductDeclare.setCategoryName(skuDeclareEntity.categoryName);
+        updateProductDeclare.setProviderName(skuDeclareEntity.providerName);
+        updateProductDeclare.setRemark(skuDeclareEntity.remark);
+        updateProductDeclare.setProductId(skuDeclareEntity.productId);
+        updateProductDeclare.setRecordNo(skuDeclareEntity.recordNo);
+        updateProductDeclare.setHsCode(skuDeclareEntity.hsCode);
+        updateProductDeclare.setTaxRate(skuDeclareEntity.taxRate);
+        updateProductDeclare.setConsumptionDutyRate(skuDeclareEntity.consumptionDutyRate);
+        updateProductDeclare.setAddedValueTaxRate(skuDeclareEntity.addedValueTaxRate);
+        updateProductDeclare.setTariffRate(skuDeclareEntity.tariffRate);
+        updateProductDeclare.setPostTaxNo(skuDeclareEntity.postTaxNo);
+        updateProductDeclare.setFirstMeasuringUnit(skuDeclareEntity.firstMeasuringUnit);
+        updateProductDeclare.setFirstWeight(skuDeclareEntity.firstWeight);
+        updateProductDeclare.setSecondMeasuringUnit(skuDeclareEntity.secondaryMeasuringUnit);
+        updateProductDeclare.setSecondWeight(skuDeclareEntity.secondWeight);
+
+        updateProductDeclare.setState(SkuDeclareStateType.DECLARE_PASS.getValue());
+
+        // 根据操作类型更新相应的时间
+        if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+            updateProductDeclare.setFinishCollectTime(new Date());
+            updateProductDeclare.setDataCollectUser(getOperatorUser()); //资料收集完毕导入人
+        } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+            updateProductDeclare.setFinishTime(new Date());
+            updateProductDeclare.setFilingUser(getOperatorUser()); //备案完成导入人
+        }
+
+        // 备案价格, 需转换成分
+        if (skuDeclareEntity.price != null) {
+            BigDecimal tmp = new BigDecimal(skuDeclareEntity.price.toString()).multiply(new BigDecimal("100"));
+            updateProductDeclare.setPriceRmb(tmp.longValue());
+        }
+        productDeclareManager.update(updateProductDeclare);
+    }
+
+    private void updateProductDeclareNbBonded(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareNbBondedDO nbBondedDO = productDeclareNbBondedManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (nbBondedDO == null) {
+            nbBondedDO = new ProductDeclareNbBondedDO();
+            nbBondedDO.setProductDeclareId(productDeclareId);
+            nbBondedDO.setCustomsDeclarationElement(skuDeclareEntity.customsDeclarationElement);
+            nbBondedDO.setNbbsSkuId(skuDeclareEntity.nbbsSkuId);
+            nbBondedDO.setCreateUser(getOperatorUser());
+            nbBondedDO.setDataCollectUser(getOperatorUser());
+            nbBondedDO.setFilingUser(getOperatorUser());
+            productDeclareNbBondedManager.insert(nbBondedDO);
+        } else {
+            ProductDeclareNbBondedDO updateNbBonded = new ProductDeclareNbBondedDO();
+            updateNbBonded.setId(nbBondedDO.getId());
+            updateNbBonded.setNbbsSkuId(skuDeclareEntity.nbbsSkuId);
+            updateNbBonded.setCustomsDeclarationElement(skuDeclareEntity.customsDeclarationElement);
+            if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+                updateNbBonded.setDataCollectUser(getOperatorUser()); //资料收集完毕导入人
+            } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+                updateNbBonded.setFilingUser(getOperatorUser()); //备案完成导入人
+            }
+            productDeclareNbBondedManager.update(updateNbBonded);
+        }
+    }
+
+    private void updateProductDeclareHzDirectmail(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareHzDirectmailDO hzDirectmailDO = productDeclareHzDirectmailManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (hzDirectmailDO == null) {
+            hzDirectmailDO = new ProductDeclareHzDirectmailDO();
+            hzDirectmailDO.setProductDeclareId(productDeclareId);
+            hzDirectmailDO.setManufacturer(skuDeclareEntity.manufacturer);
+            hzDirectmailDO.setCreateUser(getOperatorUser());
+            hzDirectmailDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            hzDirectmailDO.setFilingUser(getOperatorUser());
+            productDeclareHzDirectmailManager.insert(hzDirectmailDO);
+        } else {
+            ProductDeclareHzDirectmailDO updateHzDirectmail = new ProductDeclareHzDirectmailDO();
+            updateHzDirectmail.setId(hzDirectmailDO.getId());
+            updateHzDirectmail.setManufacturer(skuDeclareEntity.manufacturer);
+            updateHzDirectmail.setCategoryName(skuDeclareEntity.categoryName);
+            updateHzDirectmail.setProviderAddress(skuDeclareEntity.providerAddress);
+            updateHzDirectmail.setIsHaveCertificate(skuDeclareEntity.isHaveCertificate);
+            updateHzDirectmail.setIsRelateCertificate(skuDeclareEntity.isRelateCertificate);
+            updateHzDirectmail.setIngredient(skuDeclareEntity.ingredient);
+            updateHzDirectmail.setFeatures(skuDeclareEntity.features);
+            if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+                updateHzDirectmail.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+                updateHzDirectmail.setFilingUser(getOperatorUser()); //备案完成导入人
+            }
+            productDeclareHzDirectmailManager.update(updateHzDirectmail);
+        }
+    }
+
+    private void updateProductDeclareHzBonded(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareHzBondedDO hzBondedDO = productDeclareHzBondedManager
+                .getByProductDeclareId(productDeclareId);
+        if (hzBondedDO == null) {
+            hzBondedDO = buildProductDeclareHzBondedDO(skuDeclareEntity);
+            hzBondedDO.setProductDeclareId(productDeclareId);
+            hzBondedDO.setCreateUser(getOperatorUser());
+            productDeclareHzBondedManager.insert(hzBondedDO);
+        } else {
+            ProductDeclareHzBondedDO updateHzBonded = buildProductDeclareHzBondedDO(skuDeclareEntity);
+            updateHzBonded.setId(hzBondedDO.getId());
+            productDeclareHzBondedManager.update(updateHzBonded);
+        }
+    }
+
+    private ProductDeclareHzBondedDO buildProductDeclareHzBondedDO(SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareHzBondedDO hzBonded = new ProductDeclareHzBondedDO();
+        hzBonded.setSpecificationDeclare(skuDeclareEntity.specificationDeclare);
+        hzBonded.setUnitPrice(skuDeclareEntity.unitPrice);
+        hzBonded.setTotalPrice(skuDeclareEntity.totalPrice);
+        hzBonded.setTradeCount(skuDeclareEntity.tradeCount);
+        hzBonded.setFeatures(skuDeclareEntity.features);
+        hzBonded.setSecondaryMeasuringUnit(skuDeclareEntity.secondaryMeasuringUnit);
+        hzBonded.setCurrency(skuDeclareEntity.currency);
+        if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+            hzBonded.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+        } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+            hzBonded.setFilingUser(getOperatorUser()); //备案完成导入人
+        }
+        return hzBonded;
+    }
+
+    private void updateProductDeclareJnDirectmail(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareJnDirectmailDO jnDirectmailDO = productDeclareJnDirectmailManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (jnDirectmailDO == null) {
+            jnDirectmailDO = new ProductDeclareJnDirectmailDO();
+            jnDirectmailDO.setProductDeclareId(productDeclareId);
+            jnDirectmailDO.setManufacturer(skuDeclareEntity.manufacturer);
+            jnDirectmailDO.setCreateUser(getOperatorUser());
+            jnDirectmailDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            jnDirectmailDO.setFilingUser(getOperatorUser());
+            productDeclareJnDirectmailManager.insert(jnDirectmailDO);
+        } else {
+            ProductDeclareJnDirectmailDO updateJnDirectmail = new ProductDeclareJnDirectmailDO();
+            updateJnDirectmail.setId(jnDirectmailDO.getId());
+            updateJnDirectmail.setManufacturer(skuDeclareEntity.manufacturer);
+            updateJnDirectmail.setCategoryName(skuDeclareEntity.categoryName);
+            updateJnDirectmail.setProviderAddress(skuDeclareEntity.providerAddress);
+            updateJnDirectmail.setIsHaveCertificate(skuDeclareEntity.isHaveCertificate);
+            updateJnDirectmail.setIsRelateCertificate(skuDeclareEntity.isRelateCertificate);
+            updateJnDirectmail.setIngredient(skuDeclareEntity.ingredient);
+            updateJnDirectmail.setFeatures(skuDeclareEntity.features);
+            if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+                updateJnDirectmail.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+                updateJnDirectmail.setFilingUser(getOperatorUser()); //备案完成导入人
+            }
+            productDeclareJnDirectmailManager.update(updateJnDirectmail);
+        }
+    }
+
+    private void updateProductDeclareCqBonded(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareCqBondedDO cqBondedDO = productDeclareCqBondedManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (cqBondedDO == null) {
+            cqBondedDO = new ProductDeclareCqBondedDO();
+            cqBondedDO.setProductDeclareId(productDeclareId);
+            cqBondedDO.setCreateUser(getOperatorUser());
+            cqBondedDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            cqBondedDO.setFilingUser(getOperatorUser());
+            productDeclareCqBondedManager.insert(cqBondedDO);
+        } else {
+            ProductDeclareCqBondedDO updateCqBonded = new ProductDeclareCqBondedDO();
+            updateCqBonded.setId(cqBondedDO.getId());
+            updateCqBonded.setCustomsDeclarationElement(skuDeclareEntity.customsDeclarationElement);
+            updateCqBonded.setHsCode(skuDeclareEntity.hsCode);
+            if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+                updateCqBonded.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+                updateCqBonded.setFilingUser(getOperatorUser()); //备案完成导入人
+            }
+            productDeclareCqBondedManager.update(updateCqBonded);
+        }
+    }
+
+    private void updateProductDeclareXmDirectmail(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareXmDirectmailDO xmDirectmailDO = productDeclareXmDirectmailManager.getByProductDeclareId(productDeclareId);
+
+        if (xmDirectmailDO == null) {
+            xmDirectmailDO = new ProductDeclareXmDirectmailDO();
+            xmDirectmailDO.setProductDeclareId(productDeclareId);
+            xmDirectmailDO.setManufacturer(skuDeclareEntity.manufacturer);
+            xmDirectmailDO.setCreateUser(getOperatorUser());
+            xmDirectmailDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            xmDirectmailDO.setFilingUser(getOperatorUser());
+            productDeclareXmDirectmailManager.insert(xmDirectmailDO);
+        } else {
+            ProductDeclareXmDirectmailDO updateXmDirectmail = new ProductDeclareXmDirectmailDO();
+            updateXmDirectmail.setId(xmDirectmailDO.getId());
+            updateXmDirectmail.setManufacturer(skuDeclareEntity.manufacturer);
+            updateXmDirectmail.setCategoryName(skuDeclareEntity.categoryName);
+            updateXmDirectmail.setProviderAddress(skuDeclareEntity.providerAddress);
+            updateXmDirectmail.setIsHaveCertificate(skuDeclareEntity.isHaveCertificate);
+            updateXmDirectmail.setIsRelateCertificate(skuDeclareEntity.isRelateCertificate);
+            updateXmDirectmail.setIngredient(skuDeclareEntity.ingredient);
+            updateXmDirectmail.setFeatures(skuDeclareEntity.features);
+            if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+                updateXmDirectmail.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+                updateXmDirectmail.setFilingUser(getOperatorUser()); //备案完成导入人
+            }
+            productDeclareXmDirectmailManager.update(updateXmDirectmail);
+        }
+    }
+
+    private void updateProductDeclarePtDirectmail(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclarePtDirectmailDO ptDirectmailDO = productDeclarePtDirectmailManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (ptDirectmailDO == null) {
+            ptDirectmailDO = new ProductDeclarePtDirectmailDO();
+            ptDirectmailDO.setProductDeclareId(productDeclareId);
+            ptDirectmailDO.setManufacturer(skuDeclareEntity.manufacturer);
+            ptDirectmailDO.setCreateUser(getOperatorUser());
+            ptDirectmailDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            ptDirectmailDO.setFilingUser(getOperatorUser());
+            ptDirectmailDO.setProductCode(skuDeclareEntity.productCode);
+            ptDirectmailDO.setCustomsDeclarationElement(skuDeclareEntity.customsDeclarationElement);
+            productDeclarePtDirectmailManager.insert(ptDirectmailDO);
+        } else {
+            ProductDeclarePtDirectmailDO updatePtDirectmail = new ProductDeclarePtDirectmailDO();
+            updatePtDirectmail.setId(ptDirectmailDO.getId());
+            updatePtDirectmail.setManufacturer(skuDeclareEntity.manufacturer);
+            updatePtDirectmail.setCategoryName(skuDeclareEntity.categoryName);
+            updatePtDirectmail.setProviderAddress(skuDeclareEntity.providerAddress);
+            updatePtDirectmail.setIsHaveCertificate(skuDeclareEntity.isHaveCertificate);
+            updatePtDirectmail.setIsRelateCertificate(skuDeclareEntity.isRelateCertificate);
+            updatePtDirectmail.setIngredient(skuDeclareEntity.ingredient);
+            updatePtDirectmail.setFeatures(skuDeclareEntity.features);
+            updatePtDirectmail.setProductCode(skuDeclareEntity.productCode);
+            updatePtDirectmail.setCustomsDeclarationElement(skuDeclareEntity.customsDeclarationElement);
+            if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+                updatePtDirectmail.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+                updatePtDirectmail.setFilingUser(getOperatorUser()); //备案完成导入人
+            }
+            productDeclarePtDirectmailManager.update(updatePtDirectmail);
+        }
+    }
+
+    private void updateProductDeclareStDirectmail(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareStDirectmailDO stDirectmailDO = productDeclareStDirectmailManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (stDirectmailDO == null) {
+            stDirectmailDO = new ProductDeclareStDirectmailDO();
+            stDirectmailDO.setProductDeclareId(productDeclareId);
+            stDirectmailDO.setManufacturer(skuDeclareEntity.manufacturer);
+            stDirectmailDO.setCreateUser(getOperatorUser());
+            stDirectmailDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            stDirectmailDO.setFilingUser(getOperatorUser());
+            stDirectmailDO.setProductCode(skuDeclareEntity.productCode);
+            stDirectmailDO.setCustomsDeclarationElement(skuDeclareEntity.customsDeclarationElement);
+            productDeclareStDirectmailManager.insert(stDirectmailDO);
+        } else {
+            ProductDeclareStDirectmailDO updateStDirectmail = new ProductDeclareStDirectmailDO();
+            updateStDirectmail.setId(stDirectmailDO.getId());
+            updateStDirectmail.setManufacturer(skuDeclareEntity.manufacturer);
+            updateStDirectmail.setCategoryName(skuDeclareEntity.categoryName);
+            updateStDirectmail.setProviderAddress(skuDeclareEntity.providerAddress);
+            updateStDirectmail.setIsHaveCertificate(skuDeclareEntity.isHaveCertificate);
+            updateStDirectmail.setIsRelateCertificate(skuDeclareEntity.isRelateCertificate);
+            updateStDirectmail.setIngredient(skuDeclareEntity.ingredient);
+            updateStDirectmail.setFeatures(skuDeclareEntity.features);
+            updateStDirectmail.setProductCode(skuDeclareEntity.productCode);
+            updateStDirectmail.setCustomsDeclarationElement(skuDeclareEntity.customsDeclarationElement);
+            if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+                updateStDirectmail.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+            } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+                updateStDirectmail.setFilingUser(getOperatorUser()); //备案完成导入人
+            }
+            productDeclareStDirectmailManager.update(updateStDirectmail);
+        }
+    }
+
+    private void updateProductDeclareGzDirectmail(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareGzDirectmailDO gzDirectmailDO = productDeclareGzDirectmailManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (gzDirectmailDO == null) {
+            gzDirectmailDO = buildProductDeclareGzDirectmailDO(skuDeclareEntity);
+            gzDirectmailDO.setProductDeclareId(productDeclareId);
+            gzDirectmailDO.setCreateUser(getOperatorUser());
+            productDeclareGzDirectmailManager.insert(gzDirectmailDO);
+        } else {
+            ProductDeclareGzDirectmailDO updateGzDirectmail = buildProductDeclareGzDirectmailDO(skuDeclareEntity);
+            updateGzDirectmail.setId(gzDirectmailDO.getId());
+            productDeclareGzDirectmailManager.update(updateGzDirectmail);
+        }
+    }
+
+    private void updateProductDeclareQdDirectmail(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareQdDirectmailDO qdDirectmailDO = productDeclareQdDirectmailManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (qdDirectmailDO == null) {
+            qdDirectmailDO = buildProductDeclareQdDirectmailDO(skuDeclareEntity);
+            qdDirectmailDO.setProductDeclareId(productDeclareId);
+            qdDirectmailDO.setCreateUser(getOperatorUser());
+            productDeclareQdDirectmailManager.insert(qdDirectmailDO);
+        } else {
+            ProductDeclareQdDirectmailDO updateQdDirectmail = buildProductDeclareQdDirectmailDO(skuDeclareEntity);
+            updateQdDirectmail.setId(qdDirectmailDO.getId());
+            productDeclareQdDirectmailManager.update(updateQdDirectmail);
+        }
+    }
+
+    private ProductDeclareGzDirectmailDO buildProductDeclareGzDirectmailDO(SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareGzDirectmailDO gzDirectmailDO = new ProductDeclareGzDirectmailDO();
+        gzDirectmailDO.setThirdSkuId(skuDeclareEntity.thirdSkuId);
+        gzDirectmailDO.setManufacturer(skuDeclareEntity.manufacturer);
+        gzDirectmailDO.setSkuQuality(skuDeclareEntity.skuQuality);
+        gzDirectmailDO.setSecondaryMeasuringUnit(skuDeclareEntity.secondaryMeasuringUnit);
+        if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+            gzDirectmailDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+        } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+            gzDirectmailDO.setFilingUser(getOperatorUser()); //备案完成导入人
+        }
+        return gzDirectmailDO;
+    }
+
+    private ProductDeclareQdDirectmailDO buildProductDeclareQdDirectmailDO(SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareQdDirectmailDO qdDirectmailDO = new ProductDeclareQdDirectmailDO();
+        qdDirectmailDO.setThirdSkuId(skuDeclareEntity.thirdSkuId);
+        qdDirectmailDO.setManufacturer(skuDeclareEntity.manufacturer);
+        qdDirectmailDO.setSkuQuality(skuDeclareEntity.skuQuality);
+        qdDirectmailDO.setSecondaryMeasuringUnit(skuDeclareEntity.secondaryMeasuringUnit);
+        if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+            qdDirectmailDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+        } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+            qdDirectmailDO.setFilingUser(getOperatorUser()); //备案完成导入人
+        }
+        return qdDirectmailDO;
+    }
+
+    private void updateProductDeclareGzBonded(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareGzBondedDO gzBondedDO = productDeclareGzBondedManager
+                .getByProductDeclareId(productDeclareId);
+
+        if (gzBondedDO == null) {
+            // 如果没有则初始化一条数据
+            gzBondedDO = buildProductDeclareGzBondedDO(skuDeclareEntity);
+            gzBondedDO.setProductDeclareId(productDeclareId);
+            gzBondedDO.setCreateUser(getOperatorUser());
+            productDeclareGzBondedManager.insert(gzBondedDO);
+        } else {
+            ProductDeclareGzBondedDO updateGzBonded = buildProductDeclareGzBondedDO(skuDeclareEntity);
+            updateGzBonded.setId(gzBondedDO.getId());
+            productDeclareGzBondedManager.update(updateGzBonded);
+        }
+    }
+
+    private ProductDeclareGzBondedDO buildProductDeclareGzBondedDO(SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareGzBondedDO gzBondedDO = new ProductDeclareGzBondedDO();
+        gzBondedDO.setThirdSkuId(skuDeclareEntity.thirdSkuId);
+        gzBondedDO.setCustomsDeclarationElement(skuDeclareEntity.customsDeclarationElement);
+        gzBondedDO.setManufacturer(skuDeclareEntity.manufacturer);
+        gzBondedDO.setImportUnitPriceRmb(skuDeclareEntity.importUnitPriceRmb);
+        gzBondedDO.setRetailPriceRmb(skuDeclareEntity.retailPriceRmb);
+        gzBondedDO.setSalesChannel(skuDeclareEntity.salesChannel);
+        if ("finish_collect".equals(skuDeclareEntity.operateType)) {
+            gzBondedDO.setDataCollectUser(getOperatorUser());//资料收集完毕导入人
+        } else if ("declare_pass".equals(skuDeclareEntity.operateType)) {
+            gzBondedDO.setFilingUser(getOperatorUser()); //备案完成导入人
+        }
+
+        if (skuDeclareEntity.price != null) {
+            BigDecimal tmp = new BigDecimal(skuDeclareEntity.price.toString()).multiply(new BigDecimal("100"));
+            gzBondedDO.setDeclarePriceRmb(tmp);
+        }
+        return gzBondedDO;
+    }
+
+    private void updateProductDeclareNbDirectmail(Long productDeclareId, SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareNbDirectmailDO nbDirectmailDO = productDeclareNbDirectmailManager.getByProductDeclareId(productDeclareId);
+
+        if (nbDirectmailDO == null) {
+            // 如果没有则初始化一条数据
+            nbDirectmailDO = buildProductDeclareNbDirectmailDO(skuDeclareEntity);
+            nbDirectmailDO.setProductDeclareId(productDeclareId);
+            productDeclareNbDirectmailManager.insert(nbDirectmailDO);
+        } else {
+            ProductDeclareNbDirectmailDO updateNbDirectmail = buildProductDeclareNbDirectmailDO(skuDeclareEntity);
+            updateNbDirectmail.setId(nbDirectmailDO.getId());
+            productDeclareNbDirectmailManager.update(updateNbDirectmail);
+        }
+
+    }
+
+    private ProductDeclareNbDirectmailDO buildProductDeclareNbDirectmailDO(SkuDeclareEntity skuDeclareEntity) {
+        ProductDeclareNbDirectmailDO nbDirectmailDO = new ProductDeclareNbDirectmailDO();
+        nbDirectmailDO.setWarehouseEnterpriseCode(skuDeclareEntity.getWarehouseEnterpriseCode());
+        nbDirectmailDO.setThirdSkuId(skuDeclareEntity.getThirdSkuId());
+        nbDirectmailDO.setPurpose(skuDeclareEntity.getPurpose());
+        nbDirectmailDO.setIngredient(skuDeclareEntity.getIngredient());
+        nbDirectmailDO.setHsNumber(skuDeclareEntity.getHsNumber());
+        nbDirectmailDO.setFeatures(skuDeclareEntity.getFeatures());
+        nbDirectmailDO.setDescription(skuDeclareEntity.getDescription());
+        nbDirectmailDO.setImgUrl(skuDeclareEntity.getImgUrl());
+        return nbDirectmailDO;
+    }
+
+    private ThreadLocal<String> operatorUser = new ThreadLocal<String>();
+
+    private String getOperatorUser() {
+        return this.operatorUser.get();
+    }
+
+    private void setOperatorUser(String operatorUser) {
+        this.operatorUser.set(operatorUser);
     }
 }

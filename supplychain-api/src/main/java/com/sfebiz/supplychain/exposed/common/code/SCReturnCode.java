@@ -55,18 +55,14 @@ public class SCReturnCode extends AbstractReturnCode {
 	    _C_PARAM_ILLEGAL_ERR);
 
     /**
-     * 入库单
-     * 错误码范围 1060000 - 1070000
+     * command相关
+     * 错误范围 1000200 -- 1000300
      */
-    public final static SCReturnCode STOCKIN_ORDER_NOT_EXIST = new SCReturnCode("入库单不存在", 1060000);
-    public final static SCReturnCode STOCKIN_ORDER_INNER_EXCEPTION = new SCReturnCode("入库单系统内部异常", 1060001);
+    public final static int _C_VERSION_ERR = 1000200;
+    public final static int _C_KEY_ERR = 1000201;
+    public final static int _C_COMMAND_INNER_EXCEPTION = 1000202;
 
-    /**
-     * 流程引擎
-     * 错误码范围 1070000 - 1080000
-     */
-    public final static SCReturnCode LOGISTICS_STATE_MACHINE_INTERNAL_EXCEPTION = new SCReturnCode("状态机内部异常", 1070000);
-    public final static SCReturnCode STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION = new SCReturnCode("单据状态流转异常", 1070001);
-    public final static SCReturnCode STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE = new SCReturnCode("状态流转参数不合法，缺少ID", 1070002);
-
+    public final static SCReturnCode VERSION_ERR = new SCReturnCode("version未找到，或version与key不匹配", _C_VERSION_ERR);
+    public final static SCReturnCode KEY_ERROR = new SCReturnCode("根据key未找到对应class", _C_KEY_ERR);
+    public final static SCReturnCode COMMAND_INNER_EXCEPTION = new SCReturnCode("创建command内部异常", _C_COMMAND_INNER_EXCEPTION);
 }

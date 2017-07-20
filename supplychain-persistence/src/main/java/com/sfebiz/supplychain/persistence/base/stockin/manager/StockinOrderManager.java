@@ -23,6 +23,10 @@ public class StockinOrderManager extends BaseManager<StockinOrderDO>{
         return stockinOrderDao;
     }
 
+    public StockinOrderDO getByStockinId(String stockinId) {
+        return stockinOrderDao.getByStockinId(stockinId);
+    }
+
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("E:\\work\\cqfqht\\haitao-b2b-supplychain\\supplychain-persistence\\src\\main\\resources\\base\\sqlmap\\stockin/sc_stockin_order.xml",
                 StockinOrderDao.class,

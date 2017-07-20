@@ -571,5 +571,9 @@
     and is_delete = 0
     for update
 </select>
-
+    <select id="getByStockinId"  parameterType="string" resultMap="stockinOrderDOResult">
+        <include refid="stockinOrderDO_selector"/>
+        where stockin_id = #{stockinId}
+        and is_delete = 0
+    </select>
 </mapper>
