@@ -12,6 +12,7 @@
                                   location="classpath:config.properties"/>
 
     <import resource="classpath*:persistance.xml"/>
+    <import resource="command-config.xml"/>
     <!--<import resource="classpath*:/META-INF/spring/application-statemachine.xml"/>-->
 
 

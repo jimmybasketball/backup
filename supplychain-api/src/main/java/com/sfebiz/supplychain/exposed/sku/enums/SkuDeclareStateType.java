@@ -26,7 +26,7 @@ public class SkuDeclareStateType extends Enumerable4StringValue {
 
     private static volatile transient Map<String, SkuDeclareStateType> allbyname = new HashMap<String, SkuDeclareStateType>();
 
-    public static SkuDeclareStateType DECLARE_WAIT = valueOf("DECLARE_WAIT", "待备案");
+    public static SkuDeclareStateType WAIT_DECLARE = valueOf("WAIT_DECLARE", "待备案");
     public static SkuDeclareStateType DECLARE_PASS = valueOf("DECLARE_PASS", "备案通过");
     public static SkuDeclareStateType DECLARE_NOT_PASS = valueOf("DECLARE_NOT_PASS", "备案不通过");
 

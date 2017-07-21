@@ -97,8 +97,4 @@ public class SkuServiceImpl implements SkuService {
         return null;
     }
 
-    @Override
-    public CommonRet<SkuEntity> getSkuOnlySkuInfo(long id) {
-        return null;
-    }
 }

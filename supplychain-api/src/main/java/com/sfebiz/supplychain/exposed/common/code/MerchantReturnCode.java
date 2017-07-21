@@ -25,6 +25,7 @@ public class MerchantReturnCode extends SCReturnCode{
     public final static int _C_MERCHANT_UNKNOWN_ERROR = 1020003;
     public final static int _C_MERCHANT_WRONG_STATE = 1020004;
     public final static int _C_MERCHANT_ALREADY_CHANGE_STATE = 1020005;
+    public final static int _C_MERCHANT_ALREADY_START_USING_ERROR = 1020006;
 
     public final static MerchantReturnCode MERCHANT_CONCURRENT_EXCEPTION =  new MerchantReturnCode("并发异常",_C_MERCHANT_CONCURRENT_EXCEPTION);
     public final static MerchantReturnCode MERCHANT_ACCOUNT_ID_ALREADY_EXISTS =  new MerchantReturnCode("货主账户ID已存在",_C_MERCHANT_ACCOUNT_ID_ALREADY_EXISTS);
@@ -32,6 +33,7 @@ public class MerchantReturnCode extends SCReturnCode{
     public final static MerchantReturnCode MERCHANT_UNKNOWN_ERROR =  new MerchantReturnCode("货主服务未知异常",_C_MERCHANT_UNKNOWN_ERROR);
     public final static MerchantReturnCode MERCHANT_WRONG_STATE =  new MerchantReturnCode("货主状态值不合法",_C_MERCHANT_WRONG_STATE);
     public final static MerchantReturnCode MERCHANT_ALREADY_CHANGE_STATE =  new MerchantReturnCode("货主状态已被修改",_C_MERCHANT_ALREADY_CHANGE_STATE);
+    public final static MerchantReturnCode MERCHANT_ALREADY_START_USING_ERROR =  new MerchantReturnCode("货主启用失败",_C_MERCHANT_ALREADY_START_USING_ERROR);
 
     /**
      *
@@ -80,5 +82,17 @@ public class MerchantReturnCode extends SCReturnCode{
     public final static MerchantReturnCode MERCHANT_PAY_DECLARE_UNKNOWN_ERROR =  new MerchantReturnCode("货主申报方式配置未知异常",_C_MERCHANT_PAY_DECLARE_UNKNOWN_ERROR);
     public final static MerchantReturnCode MERCHANT_PAY_DECLARE_ALREADY_EXISTS =  new MerchantReturnCode("货主申报方式配置已存在",_C_MERCHANT_PAY_DECLARE_ALREADY_EXISTS);
     public final static MerchantReturnCode MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL =  new MerchantReturnCode("货主申报方式实体校验失败",_C_MERCHANT_PAY_DECLARE_ENTITY_VALIDATE_FAIL);
+
+
+    /**
+     *
+     * 货主包材配置相关 [1024000 - 1025000)
+     *
+     */
+    public final static int _C_MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR = 1024001;
+    public final static int _C_MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS = 1024002;
+
+    public final static MerchantReturnCode MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR =  new MerchantReturnCode("货主包材配置未知异常",_C_MERCHANT_PACKAGE_MATERIAL_UNKNOWN_ERROR);
+    public final static MerchantReturnCode MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS =  new MerchantReturnCode("货主包材配置已存在",_C_MERCHANT_PACKAGE_MATERIAL_ALREADY_EXISTS);
 
 }
