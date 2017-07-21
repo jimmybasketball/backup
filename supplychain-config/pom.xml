@@ -20,6 +20,10 @@
             <artifactId>supplychain-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.sfebiz.supplychain</groupId>
+            <artifactId>supplychain-api-open</artifactId>
+        </dependency>
+        <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
         </dependency>
@@ -74,11 +78,6 @@
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
         <!--日志相关end-->
-
-        <dependency>
-            <groupId>com.sfebiz.supplychain</groupId>
-            <artifactId>supplychain-util</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
