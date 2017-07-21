@@ -63,4 +63,15 @@
             </map>
         </constructor-arg>
     </bean>
+    
+    <bean id="autotask" class="com.sfebiz.supplychain.service.AutoTaskContainer" depends-on="distributedLock">
+        <!-- <property name="msgProducerMap">
+            <map>
+                <entry key="SUPPLY_CHAIN_EVENT" value-ref="supplyChainMessageProducer"/>
+                <entry key="ORDEREVENT" value-ref="logisticsMessageProducer"/>
+                <entry key="SUPPLY_CHAIN_ROUTE_EVENT" value-ref="supplyChainRouteMessageProducer"/>
+                <entry key="SC_EFFICIENCY_ALARM" value-ref="supplyChainEfficiencyAlarmProducer"/>
+            </map>
+        </property> -->
+    </bean>
 </beans>
