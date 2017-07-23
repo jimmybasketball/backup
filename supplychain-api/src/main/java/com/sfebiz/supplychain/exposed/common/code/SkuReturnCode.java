@@ -32,7 +32,8 @@ public class SkuReturnCode extends SCReturnCode {
     public final static SkuReturnCode DECLARE_INNER_EXCEPTION = new SkuReturnCode("备案服务内部异常", 1044002);
     public final static SkuReturnCode DECLARE_CONCURRENT_EXCEPTION = new SkuReturnCode("备案服务并发异常", 1044003);
     public final static SkuReturnCode DECLARE_EXIST = new SkuReturnCode("备案商品已存在", 1044006);
-    public final static SkuReturnCode DECLARE_NOT_ALLOW_DELETE = new SkuReturnCode("备案商品不允许删除", 1044007);
+    public final static SkuReturnCode DECLARE_WAIT_NOT_ALLOW_DELETE = new SkuReturnCode("非备案商品不允许删除", 1044007);
+    public final static SkuReturnCode DECLARE_NOT_FOUND = new SkuReturnCode("未找到商品备案记录", 1044008);
 
 
 }

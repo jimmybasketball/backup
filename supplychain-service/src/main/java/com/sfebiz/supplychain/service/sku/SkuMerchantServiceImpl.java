@@ -12,6 +12,9 @@ import com.sfebiz.supplychain.persistence.base.sku.domain.SkuMerchantDO;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuBarcodeManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuMerchantManager;
+import com.taobao.tbbpm.common.persistence.ITransactionCallback;
+import com.taobao.tbbpm.common.persistence.ITransactionStatus;
+import com.taobao.tbbpm.common.persistence.SpringTransactionTemplate;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
 
@@ -35,45 +38,54 @@ public class SkuMerchantServiceImpl implements SkuMerchantService {
     @Resource
     SkuBarcodeManager skuBarcodeManager;
 
+    @Resource
+    private SpringTransactionTemplate springTransactionTemplate;
+
     @Override
-    public CommonRet<Long> createSkuMerchant(String operator, SkuMerchantEntity skuMerchantEntity) {
+    public CommonRet<Long> createSkuMerchant(final String operator,final SkuMerchantEntity skuMerchantEntity) {
         CommonRet<Long> commonRet = new CommonRet<Long>();
         try {
-            // skuId不存在的情况
-            if (skuMerchantEntity.getSkuId() == null || skuMerchantEntity.getSkuId() == 0) {
-                SkuDO skuDO = new SkuDO();
-                BeanCopier beanCopier = BeanCopier.create(SkuEntity.class, SkuDO.class, false);
-                beanCopier.copy(skuMerchantEntity.getSkuEntity(), skuDO, null);
-                skuDO.setCreateBy(operator);
-                skuDO.setModifiedBy(operator);
-                skuManager.insert(skuDO);
+            Long skuMerchantId = 0L; //货主商品ID
+            skuMerchantId = (Long) springTransactionTemplate.execute(new ITransactionCallback() {
+                @Override
+                public Object doInTransaction(ITransactionStatus status) throws Exception {
+                    // skuId不存在的情况
+                    if (skuMerchantEntity.getSkuId() == null || skuMerchantEntity.getSkuId() == 0) {
+                        SkuDO skuDO = new SkuDO();
+                        BeanCopier beanCopier = BeanCopier.create(SkuEntity.class, SkuDO.class, false);
+                        beanCopier.copy(skuMerchantEntity.getSkuEntity(), skuDO, null);
+                        skuDO.setCreateBy(operator);
+                        skuDO.setModifiedBy(operator);
+                        skuManager.insert(skuDO);
 
-                for (SkuBarcodeEntity barcodeEntity : skuMerchantEntity.getSkuEntity().getSkuBarcodeList()) {
-                    SkuBarcodeDO barcodeDO = new SkuBarcodeDO();
-                    beanCopier = BeanCopier.create(SkuBarcodeEntity.class, SkuBarcodeDO.class, false);
-                    beanCopier.copy(barcodeEntity, barcodeDO, null);
-                    barcodeDO.setSkuId(skuDO.getId());
-                    skuBarcodeManager.insert(barcodeDO);
+                        for (SkuBarcodeEntity barcodeEntity : skuMerchantEntity.getSkuEntity().getSkuBarcodeList()) {
+                            SkuBarcodeDO barcodeDO = new SkuBarcodeDO();
+                            beanCopier = BeanCopier.create(SkuBarcodeEntity.class, SkuBarcodeDO.class, false);
+                            beanCopier.copy(barcodeEntity, barcodeDO, null);
+                            barcodeDO.setSkuId(skuDO.getId());
+                            skuBarcodeManager.insert(barcodeDO);
+                        }
+                        SkuMerchantDO skuMerchantDO = new SkuMerchantDO();
+                        beanCopier = BeanCopier.create(SkuMerchantEntity.class, SkuMerchantDO.class, false);
+                        beanCopier.copy(skuMerchantEntity, skuMerchantDO, null);
+                        skuMerchantDO.setSkuId(skuDO.getId());
+                        skuMerchantDO.setCreateBy(operator);
+                        skuMerchantDO.setModifiedBy(operator);
+                        skuMerchantManager.insert(skuMerchantDO);
+                        return skuMerchantDO.getId();
+                    // skuId存在的情况
+                    } else {
+                        SkuMerchantDO skuMerchantDO = new SkuMerchantDO();
+                        BeanCopier beanCopier = BeanCopier.create(SkuMerchantEntity.class, SkuMerchantDO.class, false);
+                        beanCopier.copy(skuMerchantEntity, skuMerchantDO, null);
+                        skuMerchantDO.setCreateBy(operator);
+                        skuMerchantDO.setModifiedBy(operator);
+                        skuMerchantManager.insert(skuMerchantDO);
+                        return skuMerchantDO.getId();
+                    }
                 }
-                SkuMerchantDO skuMerchantDO = new SkuMerchantDO();
-                beanCopier = BeanCopier.create(SkuMerchantEntity.class, SkuMerchantDO.class, false);
-                beanCopier.copy(skuMerchantEntity, skuMerchantDO, null);
-                skuMerchantDO.setSkuId(skuDO.getId());
-                skuMerchantDO.setCreateBy(operator);
-                skuMerchantDO.setModifiedBy(operator);
-                skuMerchantManager.insert(skuMerchantDO);
-                commonRet.setResult(skuMerchantDO.getId());
-            // skuId存在的情况
-            } else {
-                SkuMerchantDO skuMerchantDO = new SkuMerchantDO();
-                BeanCopier beanCopier = BeanCopier.create(SkuMerchantEntity.class, SkuMerchantDO.class, false);
-                beanCopier.copy(skuMerchantEntity, skuMerchantDO, null);
-                skuMerchantDO.setCreateBy(operator);
-                skuMerchantDO.setModifiedBy(operator);
-                skuMerchantManager.insert(skuMerchantDO);
-                commonRet.setResult(skuMerchantDO.getId());
-            }
-
+            });
+            commonRet.setResult(skuMerchantId);
         } catch (Exception e) {
             commonRet.reSet();
             commonRet.setRetCode(SCReturnCode.COMMON_FAIL.getCode());

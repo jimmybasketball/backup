@@ -489,8 +489,8 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
      * @throws ServiceException
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean declareNotPass(Long productDeclareId, String reason, Long userId, String operator) throws ServiceException {
+    public CommonRet<Void> declareNotPass(Long productDeclareId, String reason, Long userId, String operator) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setMsg("[供应链-商品备案不通过]")
@@ -502,13 +502,14 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
 
         ProductDeclareDO productDeclareDO = productDeclareManager.getById(productDeclareId);
         if (null == productDeclareDO) {
-            throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_NOT_FOUND_ERROR);
+            commonRet.setRetCode(SkuReturnCode.DECLARE_NOT_FOUND.getCode());
+            commonRet.setRetMsg(SkuReturnCode.DECLARE_NOT_FOUND.getDesc());
+            return commonRet;
         }
 
         if (distributedLock.fetch(NOT_PASS_DECLARE_SKU_KEY + productDeclareId)) {
             try {
                 productDeclareDO.setRemark(reason);
-
                 productDeclareDO = new ProductDeclareDO();
                 productDeclareDO.setId(productDeclareId);
                 productDeclareDO.setState(SkuDeclareStateType.DECLARE_NOT_PASS.getValue());
@@ -516,12 +517,16 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
                 productDeclareManager.update(productDeclareDO);
             } catch (Exception e) {
                 logger.error("[供应链-商品备案不通过操作] 异常：productDeclareId={}，e={}", productDeclareId, e);
-                throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION, LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION.getDesc());
+                commonRet.setRetCode(SkuReturnCode.DECLARE_UNKNOWN_ERROR.getCode());
+                commonRet.setRetMsg(SkuReturnCode.DECLARE_UNKNOWN_ERROR.getDesc());
+                return commonRet;
             } finally {
                 distributedLock.realease(NOT_PASS_DECLARE_SKU_KEY + productDeclareId);
             }
         } else {
-            throw new ServiceException(LogisticsReturnCode.PRODUCT_DECLARE_INNER_EXCEPTION, "[供应链-商品备案不通过操作]: 并发异常" + "[备案ID: " + productDeclareId + "]");
+            commonRet.setRetCode(SkuReturnCode.DECLARE_CONCURRENT_EXCEPTION.getCode());
+            commonRet.setRetMsg(SkuReturnCode.DECLARE_CONCURRENT_EXCEPTION.getDesc());
+            return commonRet;
         }
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
@@ -531,7 +536,7 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
                 .addParm("用户ID", userId)
                 .addParm("操作人", operator)
                 .log();
-        return true;
+        return commonRet;
     }
 
     /**
@@ -546,81 +551,82 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
      * @throws ServiceException
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean removeBatchDeclareSku(String productDeclareIds, Long portId, String declareMode, Long userId, String operator) throws ServiceException {
-        String[] productDeclareIdArr = productDeclareIds.split(",");
-        for (String productDeclareId : productDeclareIdArr) {
-            ProductDeclareDO productDeclareDO =productDeclareManager.getById(Long.valueOf(productDeclareId));
-            if (productDeclareDO != null) {
-                // 删除待备案的商品
-                if (SkuDeclareStateType.WAIT_DECLARE.getValue().equalsIgnoreCase(productDeclareDO.getState())) {
-                    try {
-                        if (distributedLock.fetch(DELETE_DECLARE_SKU_KEY + productDeclareId + "-" + portId + "-" + declareMode)) {
-                            if (portId.compareTo(2L) == 0 && "BONDED".equals(declareMode)) { // 广州保税
-                                ProductDeclareGzBondedDO gz_bondedDO =new ProductDeclareGzBondedDO();
-                                gz_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareGzBondedManager.delete(BaseQuery.getInstance(gz_bondedDO));
-                            } else if (portId.compareTo(2L) == 0&& "DIRECTMAIL".equals(declareMode)) { // 广州直邮
-                                ProductDeclareGzDirectmailDO gz_dirsctmailDO = new ProductDeclareGzDirectmailDO();
-                                gz_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareGzDirectmailManager.delete(BaseQuery.getInstance(gz_dirsctmailDO));
-                            } else if (portId.compareTo(1L) == 0 && "BONDED".equals(declareMode)) { // 杭州保税
-                                ProductDeclareHzBondedDO hz_bondedDO = new ProductDeclareHzBondedDO();
-                                hz_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareHzBondedManager.delete(BaseQuery.getInstance(hz_bondedDO));
-                            } else if (portId.compareTo(1L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 杭州直邮
-                                ProductDeclareHzDirectmailDO hz_dirsctmailDO =new ProductDeclareHzDirectmailDO();
-                                hz_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareHzDirectmailManager.delete(BaseQuery.getInstance(hz_dirsctmailDO));
-                            } else if (portId.compareTo(3L) == 0 && "BONDED".equals(declareMode)) { // 宁波保税
-                                ProductDeclareNbBondedDO nb_bondedDO = new ProductDeclareNbBondedDO();
-                                nb_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareNbBondedManager.delete(BaseQuery.getInstance(nb_bondedDO));
-                            } else if (portId.compareTo(3L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 宁波保税
-                                ProductDeclareNbDirectmailDO nb_directmailDO = new ProductDeclareNbDirectmailDO();
-                                nb_directmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareNbDirectmailManager.delete(BaseQuery.getInstance(nb_directmailDO));
-                            } else if (portId.compareTo(5L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 济南直邮
-                                ProductDeclareJnDirectmailDO jn_dirsctmailDO = new ProductDeclareJnDirectmailDO();
-                                jn_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareJnDirectmailManager
-                                        .delete(BaseQuery.getInstance(jn_dirsctmailDO));
-                            } else if (portId.compareTo(6L) == 0
-                                    && "DIRECTMAIL".equals(declareMode)) { // 厦门直邮
-                                ProductDeclareXmDirectmailDO xm_dirsctmailDO =
-                                        new ProductDeclareXmDirectmailDO();
-                                xm_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareXmDirectmailManager
-                                        .delete(BaseQuery.getInstance(xm_dirsctmailDO));
-                            } else if (portId.compareTo(9L) == 0 && "BONDED".equals(declareMode)) { // 重庆保税
-                                ProductDeclareCqBondedDO cq_bondedDO =
-                                        new ProductDeclareCqBondedDO();
-                                cq_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareCqBondedManager
-                                        .delete(BaseQuery.getInstance(cq_bondedDO));
-                            } else if (portId.compareTo(10L) == 0
-                                    && "DIRECTMAIL".equals(declareMode)) { // 青岛直邮
-                                ProductDeclareQdDirectmailDO qd_declareDO =
-                                        new ProductDeclareQdDirectmailDO();
-                                qd_declareDO.setProductDeclareId(Long.valueOf(productDeclareId));
-                                productDeclareQdDirectmailManager
-                                        .delete(BaseQuery.getInstance(qd_declareDO));
-                            }
-
-                            // 删除备案商品主表
-                            productDeclareManager.deleteById(Long.valueOf(productDeclareId));
+    public CommonRet<Void> removeBatchDeclareSku(String productDeclareIds, final Long portId, final String declareMode, Long userId, String operator) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        final String[] productDeclareIdArr = productDeclareIds.split(",");
+        try {
+            commonRet = (CommonRet<Void>) springTransactionTemplate.execute(new ITransactionCallback() {
+                @Override
+                public Object doInTransaction(ITransactionStatus status) throws Exception {
+                    CommonRet<Void> commonRet = new CommonRet<Void>();
+                    for (String productDeclareId : productDeclareIdArr) {
+                        ProductDeclareDO productDeclareDO = productDeclareManager.getById(Long.valueOf(productDeclareId));
+                        if (productDeclareDO == null) {
+                            commonRet.setRetCode(SkuReturnCode.DECLARE_NOT_FOUND.getCode());
+                            commonRet.setRetMsg(SkuReturnCode.DECLARE_NOT_FOUND.getDesc());
+                            return commonRet;
                         }
-                    } finally {
-                        distributedLock.realease(DELETE_DECLARE_SKU_KEY + productDeclareId + "-"
-                                + portId + "-" + declareMode);
+                        if (!SkuDeclareStateType.WAIT_DECLARE.getValue().equalsIgnoreCase(productDeclareDO.getState())) {
+                            commonRet.setRetCode(SkuReturnCode.DECLARE_WAIT_NOT_ALLOW_DELETE.getCode());
+                            commonRet.setRetMsg(SkuReturnCode.DECLARE_WAIT_NOT_ALLOW_DELETE.getDesc());
+                            return commonRet;
+                        }
                     }
-                } else {
-                    throw new ServiceException(LogisticsReturnCode.SKU_DECLARE_NOT_ALLOW_DELETE,
-                            LogisticsReturnCode.SKU_DECLARE_NOT_ALLOW_DELETE.getDesc());
+                    for (String productDeclareId : productDeclareIdArr) {
+                        if (portId.compareTo(2L) == 0 && "BONDED".equals(declareMode)) { // 广州保税
+                            ProductDeclareGzBondedDO gz_bondedDO = new ProductDeclareGzBondedDO();
+                            gz_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareGzBondedManager.delete(BaseQuery.getInstance(gz_bondedDO));
+                        } else if (portId.compareTo(2L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 广州直邮
+                            ProductDeclareGzDirectmailDO gz_dirsctmailDO = new ProductDeclareGzDirectmailDO();
+                            gz_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareGzDirectmailManager.delete(BaseQuery.getInstance(gz_dirsctmailDO));
+                        } else if (portId.compareTo(1L) == 0 && "BONDED".equals(declareMode)) { // 杭州保税
+                            ProductDeclareHzBondedDO hz_bondedDO = new ProductDeclareHzBondedDO();
+                            hz_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareHzBondedManager.delete(BaseQuery.getInstance(hz_bondedDO));
+                        } else if (portId.compareTo(1L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 杭州直邮
+                            ProductDeclareHzDirectmailDO hz_dirsctmailDO = new ProductDeclareHzDirectmailDO();
+                            hz_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareHzDirectmailManager.delete(BaseQuery.getInstance(hz_dirsctmailDO));
+                        } else if (portId.compareTo(3L) == 0 && "BONDED".equals(declareMode)) { // 宁波保税
+                            ProductDeclareNbBondedDO nb_bondedDO = new ProductDeclareNbBondedDO();
+                            nb_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareNbBondedManager.delete(BaseQuery.getInstance(nb_bondedDO));
+                        } else if (portId.compareTo(3L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 宁波保税
+                            ProductDeclareNbDirectmailDO nb_directmailDO = new ProductDeclareNbDirectmailDO();
+                            nb_directmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareNbDirectmailManager.delete(BaseQuery.getInstance(nb_directmailDO));
+                        } else if (portId.compareTo(5L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 济南直邮
+                            ProductDeclareJnDirectmailDO jn_dirsctmailDO = new ProductDeclareJnDirectmailDO();
+                            jn_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareJnDirectmailManager.delete(BaseQuery.getInstance(jn_dirsctmailDO));
+                        } else if (portId.compareTo(6L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 厦门直邮
+                            ProductDeclareXmDirectmailDO xm_dirsctmailDO = new ProductDeclareXmDirectmailDO();
+                            xm_dirsctmailDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareXmDirectmailManager.delete(BaseQuery.getInstance(xm_dirsctmailDO));
+                        } else if (portId.compareTo(9L) == 0 && "BONDED".equals(declareMode)) { // 重庆保税
+                            ProductDeclareCqBondedDO cq_bondedDO = new ProductDeclareCqBondedDO();
+                            cq_bondedDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareCqBondedManager.delete(BaseQuery.getInstance(cq_bondedDO));
+                        } else if (portId.compareTo(10L) == 0 && "DIRECTMAIL".equals(declareMode)) { // 青岛直邮
+                            ProductDeclareQdDirectmailDO qd_declareDO = new ProductDeclareQdDirectmailDO();
+                            qd_declareDO.setProductDeclareId(Long.valueOf(productDeclareId));
+                            productDeclareQdDirectmailManager.delete(BaseQuery.getInstance(qd_declareDO));
+                        }
+                        // 删除备案商品主表
+                        productDeclareManager.deleteById(Long.valueOf(productDeclareId));
+                    }
+                    return commonRet;
                 }
-            }
+            });
+        } catch (Exception e) {
+            logger.error("[供应链-批量删除备案商品] 异常：，e={}", e);
+            commonRet.setRetCode(SkuReturnCode.DECLARE_UNKNOWN_ERROR.getCode());
+            commonRet.setRetMsg(SkuReturnCode.DECLARE_UNKNOWN_ERROR.getDesc());
+            return commonRet;
         }
-        return true;
+        return commonRet;
     }
 
     /**

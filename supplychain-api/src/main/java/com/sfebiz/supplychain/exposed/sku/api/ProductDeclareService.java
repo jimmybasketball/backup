@@ -80,8 +80,7 @@ public interface ProductDeclareService {
      * @return
      * @throws ServiceException
      */
-    boolean declareNotPass(Long productDeclareId, String reason, Long userId, String operator)
-            throws ServiceException;
+    CommonRet<Void> declareNotPass(Long productDeclareId, String reason, Long userId, String operator);
 
     /**
      * 批量删除备案商品(删除待备案或是资料收集中的商品，不删除商品备案数据，只删除广州、杭州、宁波备案数据)
@@ -91,10 +90,9 @@ public interface ProductDeclareService {
      * @param declareMode       备案模式
      * @param userId            用户ID
      * @param operator          用户名
-     * @return
-     * @throws ServiceException
+     * @return CommonRet<Void>
      */
-    boolean removeBatchDeclareSku(String productDeclareIds, Long portId, String declareMode, Long userId, String operator) throws ServiceException;
+    CommonRet<Void> removeBatchDeclareSku(String productDeclareIds, Long portId, String declareMode, Long userId, String operator);
 
     /**
      * 创建空口岸的备案记录
