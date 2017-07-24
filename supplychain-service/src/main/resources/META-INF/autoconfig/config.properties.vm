@@ -2,17 +2,6 @@ com.sfebiz.supplychian.datasource.url=${com.sfebiz.supplychian.datasource.url}
 com.sfebiz.supplychian.datasource.username=${com.sfebiz.supplychian.datasource.username}
 com.sfebiz.supplychian.datasource.password=${com.sfebiz.supplychian.datasource.password}
 
-com.sfebiz.supplychian.datasource.readonly.url=${com.sfebiz.supplychian.datasource.readonly.url}
-com.sfebiz.supplychian.datasource.readonly.username=${com.sfebiz.supplychian.datasource.readonly.username}
-com.sfebiz.supplychian.datasource.readonly.password=${com.sfebiz.supplychian.datasource.readonly.password}
-
-com.sfebiz.supplychian.birwdataSource.url=${com.sfebiz.supplychian.birwdataSource.url}
-com.sfebiz.supplychian.birwdataSource.username=${com.sfebiz.supplychian.birwdataSource.username}
-com.sfebiz.supplychian.birwdataSource.password=${com.sfebiz.supplychian.birwdataSource.password}
-
-com.sfebiz.supplychian.bidatasource.postgresql.url=${com.sfebiz.supplychian.bidatasource.postgresql.url}
-com.sfebiz.supplychian.bidatasource.postgresql.username=${com.sfebiz.supplychian.bidatasource.postgresql.username}
-com.sfebiz.supplychian.bidatasource.postgresql.password=${com.sfebiz.supplychian.bidatasource.postgresql.password}
 
 com.sfebiz.supplychian.log.home=${com.sfebiz.supplychian.log.home}
 com.sfebiz.supplychian.apiurl=${com.sfebiz.supplychian.apiurl}
@@ -20,37 +9,8 @@ com.sfebiz.supplychian.fileurl=${com.sfebiz.supplychian.fileurl}
 com.sfebiz.supplychian.printfile=${com.sfebiz.supplychian.printfile}
 com.sfebiz.supplychian.tmpfile.home =${com.sfebiz.supplychian.tmpfile.home}
 com.sfebiz.supplychian.printpath=${com.sfebiz.supplychian.printpath}
-com.aliyun.openservices.oss.keyid =${com.aliyun.openservices.oss.keyid}
-com.aliyun.openservices.oss.keyvalue =${com.aliyun.openservices.oss.keyvalue}
-com.aliyun.openservices.oss.bucketname.private =${com.aliyun.openservices.oss.bucketname.private}
-
-com.aliyun.openservices.oss.ossBucketName =${com.aliyun.openservices.oss.ossBucketName}
-com.aliyun.openservices.oss.ossEndpoint =${com.aliyun.openservices.oss.ossEndpoint}
-
-
 com.sfebiz.env =${com.sfebiz.env}
-
-com.sfebiz.queue.accessKey=${com.sfebiz.queue.accessKey}
-com.sfebiz.queue.secretKey=${com.sfebiz.queue.secretKey}
-com.sfebiz.queue.orderEventMessageProducerId = ${com.sfebiz.queue.orderEventMessageProducerId}
-
-com.sfebiz.queue.supplychainEventMessageProducerId = ${com.sfebiz.queue.supplychainEventMessageProducerId}
-com.sfebiz.queue.supplychainEventMessageConsumerId = ${com.sfebiz.queue.supplychainEventMessageConsumerId}
-
-com.sfebiz.queue.supplychainEventRouteMessageProducerId = ${com.sfebiz.queue.supplychainEventRouteMessageProducerId}
-com.sfebiz.queue.supplychainEventRouteMessageConsumerId = ${com.sfebiz.queue.supplychainEventRouteMessageConsumerId}
-
-com.sfebiz.queue.supplychainEfficiencyAlarmProducerId = ${com.sfebiz.queue.supplychainEfficiencyAlarmProducerId}
-
-com.sfebiz.queue.orderEventMessageConsumerId=${com.sfebiz.queue.orderEventMessageConsumerId}
-
-com.sfebiz.queue.openWmsEventMessageProducerId = ${com.sfebiz.queue.openWmsEventMessageProducerId}
-com.sfebiz.queue.openWmsEventMessageConsumerId = ${com.sfebiz.queue.openWmsEventMessageConsumerId}
-
-com.sfebiz.queue.openWmsRouteEventMessageProducerId = ${com.sfebiz.queue.openWmsRouteEventMessageProducerId}
-com.sfebiz.queue.openWmsRouteEventMessageConsumerId = ${com.sfebiz.queue.openWmsRouteEventMessageConsumerId}
-
-com.sfebiz.queue.scfMessageProducerId = ${com.sfebiz.queue.scfMessageProducerId}
+ttf.path=${ttf.path}
 
 
 dubbo.registry.url=${dubbo.registry.url}
@@ -58,22 +18,3 @@ dubbo.reference.version=${dubbo.reference.version}
 dubbo.export.version=${dubbo.export.version}
 dubbo.export.timeout=${dubbo.export.timeout}
 dubbo.export.host=${dubbo.export.host}
-
-ttf.path=${ttf.path}
-com.sfebiz.supplychian.oss.accessImageUrl=${com.sfebiz.supplychian.oss.accessImageUrl}
-com.sfebiz.supplychian.oss.warter.watermarkUrl=${com.sfebiz.supplychian.oss.warter.watermarkUrl}
-com.sfebiz.supplychian.oss.warter.position=${com.sfebiz.supplychian.oss.warter.position}
-com.sfebiz.supplychian.oss.warter.transparency=${com.sfebiz.supplychian.oss.warter.transparency}
-com.sfebiz.supplychian.oss.warter.xAxis=${com.sfebiz.supplychian.oss.warter.xAxis}
-com.sfebiz.supplychian.oss.warter.yAxis=${com.sfebiz.supplychian.oss.warter.yAxis}
-#redis-proxy-db
-com.sfebiz.supplychian.redisproxy.server.host=${com.sfebiz.supplychian.redisproxy.server.host}
-com.sfebiz.supplychian.redisproxy.server.port=${com.sfebiz.supplychian.redisproxy.server.port}
-com.sfebiz.supplychian.redisproxy.server.password=${com.sfebiz.supplychian.redisproxy.server.password}
-com.sfebiz.supplychian.redisproxy.maxIdle=${com.sfebiz.supplychian.redisproxy.maxIdle}
-com.sfebiz.supplychian.redisproxy.maxTotal=${com.sfebiz.supplychian.redisproxy.maxTotal}
-com.sfebiz.supplychian.redisproxy.maxWaitTime=${com.sfebiz.supplychian.redisproxy.maxWaitTime}
-com.sfebiz.supplychian.redisproxy.testOnBorrow=${com.sfebiz.supplychian.redisproxy.testOnBorrow}
-com.sfebiz.supplychian.redisproxy.minIdle=${com.sfebiz.supplychian.redisproxy.minIdle}
-com.sfebiz.supplychian.redisproxy.timeout=${com.sfebiz.supplychian.redisproxy.timeout}
-
