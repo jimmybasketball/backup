@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.service.customs.biz;
+package com.sfebiz.supplychain.service.port.biz;
 
 import cn.gov.zjport.newyork.ws.bo.HzPortBusinessType;
 import com.sfebiz.common.dao.domain.BaseQuery;
@@ -15,12 +15,12 @@ import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 import com.sfebiz.supplychain.protocol.ceb.order.callback.CEB312Message;
 import com.sfebiz.supplychain.protocol.ceb.order.callback.OrderReturnType;
 import com.sfebiz.supplychain.protocol.common.DeclareType;
-import com.sfebiz.supplychain.service.customs.ftpclient.gz.GZFTPClientPool;
-import com.sfebiz.supplychain.service.customs.ftpclient.gz.GZFTPConfig;
-import com.sfebiz.supplychain.service.customs.ftpclient.hz.HZFTPClientPool;
-import com.sfebiz.supplychain.service.customs.ftpclient.hz.HZFTPConfig;
-import com.sfebiz.supplychain.service.customs.ftpclient.pt.PTFTPClientPool;
-import com.sfebiz.supplychain.service.customs.ftpclient.pt.PTFTPConfig;
+import com.sfebiz.supplychain.service.port.ftpclient.gz.GZFTPClientPool;
+import com.sfebiz.supplychain.service.port.ftpclient.gz.GZFTPConfig;
+import com.sfebiz.supplychain.service.port.ftpclient.hz.HZFTPClientPool;
+import com.sfebiz.supplychain.service.port.ftpclient.hz.HZFTPConfig;
+import com.sfebiz.supplychain.service.port.ftpclient.pt.PTFTPClientPool;
+import com.sfebiz.supplychain.service.port.ftpclient.pt.PTFTPConfig;
 import com.sfebiz.supplychain.util.XMLUtil;
 import net.pocrd.entity.ServiceException;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +28,6 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
@@ -41,15 +40,14 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * <p></p>
- * User: <a href="mailto:yanmingming1989@163.com">严明明</a>
- * Date: 16/3/31
- * Time: 下午7:06
- */
-@Component("customsOfficeService")
-public class CustomsOfficeService {
+ * 口岸业务处理
+ *
+ * @author liujc [liujunchi@ifunq.com]
+ * @date 2017-07-24 18:10
+ **/
+public class PortBizService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomsOfficeService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PortBizService.class);
 
     @Resource
     private PTFTPClientPool ptftpClientPool;
@@ -309,6 +307,5 @@ public class CustomsOfficeService {
         portBillDeclareManager.insert(portBillDeclareDO);
         return portBillDeclareDO.getId() != null;
     }
-
 
 }

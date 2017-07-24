@@ -1,6 +1,6 @@
-package com.sfebiz.supplychain.service.customs.ftpclient.gz;
+package com.sfebiz.supplychain.service.port.ftpclient.gz;
 
-import com.sfebiz.supplychain.service.customs.ftpclient.FTPClientException;
+import com.sfebiz.supplychain.service.port.ftpclient.FTPClientException;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.pool2.BasePooledObjectFactory;

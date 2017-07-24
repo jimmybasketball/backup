@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.service.customs.ftpclient.pt;
+package com.sfebiz.supplychain.service.port.ftpclient.gz;
 
 import com.sfebiz.supplychain.config.port.PortConfig;
 import com.sfebiz.supplychain.exposed.common.enums.PortNid;
@@ -13,12 +13,12 @@ import java.util.Map;
  * Date: 16/3/31
  * Time: 下午2:37
  */
-public class PTFTPConfig {
+public class GZFTPConfig {
 
     private static int port = 21;
-    private static int clientTimeout = 10000;
-    private static int dataTimeout = 30000;
-    private static int defaultTimeout = 30000;
+    private static int clientTimeout = 30000;
+    private static int dataTimeout = 60000;
+    private static int defaultTimeout = 60000;
 
 
     /**
@@ -27,7 +27,7 @@ public class PTFTPConfig {
      * @return
      */
     public static String getRemoteHostIp() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.GUANGZHOU.getNid());
         String remoteHostIp = properties.get("remote_host_ip");
         if (StringUtils.isBlank(remoteHostIp)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "remote_host_ip"));
@@ -45,7 +45,7 @@ public class PTFTPConfig {
      * @return
      */
     public static String getAccount() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.GUANGZHOU.getNid());
         String account = properties.get("remote_host_account");
         if (StringUtils.isBlank(account)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "remote_host_account"));
@@ -54,7 +54,7 @@ public class PTFTPConfig {
     }
 
     public static String getPassword() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.GUANGZHOU.getNid());
         String password = properties.get("remote_host_password");
         if (StringUtils.isBlank(password)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "remote_host_password"));
@@ -68,7 +68,7 @@ public class PTFTPConfig {
      * @return
      */
     public static String getSendFilePath() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.GUANGZHOU.getNid());
         String sendFilePath = properties.get("send_file_path");
         if (StringUtils.isBlank(sendFilePath)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "tmp_file_path"));
@@ -82,7 +82,7 @@ public class PTFTPConfig {
      * @return
      */
     public static String getReadFilePath() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.GUANGZHOU.getNid());
         String readFilePath = properties.get("read_file_path");
         if (StringUtils.isBlank(readFilePath)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "read_file_path"));
@@ -96,7 +96,7 @@ public class PTFTPConfig {
      * @return
      */
     public static String getTmpFilePath() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.GUANGZHOU.getNid());
         String tmpFilePath = properties.get("tmp_file_path");
         if (StringUtils.isBlank(tmpFilePath)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "tmp_file_path"));
@@ -105,7 +105,7 @@ public class PTFTPConfig {
     }
 
     public static String getBackFilePath() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.GUANGZHOU.getNid());
         String backFilePath = properties.get("back_file_path");
 //        if (StringUtils.isBlank(backFilePath)) {
 //            throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "back_file_path"));

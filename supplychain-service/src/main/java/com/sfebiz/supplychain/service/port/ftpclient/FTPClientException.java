@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.service.customs.ftpclient;
+package com.sfebiz.supplychain.service.port.ftpclient;
 
 /**
  * <p></p>

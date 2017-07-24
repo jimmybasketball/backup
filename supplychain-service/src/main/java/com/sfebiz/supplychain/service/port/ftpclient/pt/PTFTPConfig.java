@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.service.customs.ftpclient.hz;
+package com.sfebiz.supplychain.service.port.ftpclient.pt;
 
 import com.sfebiz.supplychain.config.port.PortConfig;
 import com.sfebiz.supplychain.exposed.common.enums.PortNid;
@@ -13,7 +13,7 @@ import java.util.Map;
  * Date: 16/3/31
  * Time: 下午2:37
  */
-public class HZFTPConfig {
+public class PTFTPConfig {
 
     private static int port = 21;
     private static int clientTimeout = 10000;
@@ -27,7 +27,7 @@ public class HZFTPConfig {
      * @return
      */
     public static String getRemoteHostIp() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.HANGZHOU.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
         String remoteHostIp = properties.get("remote_host_ip");
         if (StringUtils.isBlank(remoteHostIp)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "remote_host_ip"));
@@ -45,7 +45,7 @@ public class HZFTPConfig {
      * @return
      */
     public static String getAccount() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.HANGZHOU.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
         String account = properties.get("remote_host_account");
         if (StringUtils.isBlank(account)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "remote_host_account"));
@@ -54,7 +54,7 @@ public class HZFTPConfig {
     }
 
     public static String getPassword() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.HANGZHOU.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
         String password = properties.get("remote_host_password");
         if (StringUtils.isBlank(password)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "remote_host_password"));
@@ -68,7 +68,7 @@ public class HZFTPConfig {
      * @return
      */
     public static String getSendFilePath() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.HANGZHOU.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
         String sendFilePath = properties.get("send_file_path");
         if (StringUtils.isBlank(sendFilePath)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "tmp_file_path"));
@@ -82,7 +82,7 @@ public class HZFTPConfig {
      * @return
      */
     public static String getReadFilePath() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.HANGZHOU.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
         String readFilePath = properties.get("read_file_path");
         if (StringUtils.isBlank(readFilePath)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "read_file_path"));
@@ -96,7 +96,7 @@ public class HZFTPConfig {
      * @return
      */
     public static String getTmpFilePath() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.HANGZHOU.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
         String tmpFilePath = properties.get("tmp_file_path");
         if (StringUtils.isBlank(tmpFilePath)) {
             throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "tmp_file_path"));
@@ -105,7 +105,7 @@ public class HZFTPConfig {
     }
 
     public static String getBackFilePath() {
-        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.HANGZHOU.getNid());
+        Map<String, String> properties = PortConfig.getPortPropertiesByPortNid(PortNid.PINGTAN.getNid());
         String backFilePath = properties.get("back_file_path");
 //        if (StringUtils.isBlank(backFilePath)) {
 //            throw new IllegalArgumentException(String.format("FTP交互参数%s不能为空", "back_file_path"));

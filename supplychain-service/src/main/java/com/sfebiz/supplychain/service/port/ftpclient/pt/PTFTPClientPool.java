@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.service.customs.ftpclient.hz;
+package com.sfebiz.supplychain.service.port.ftpclient.pt;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.ObjectPool;
@@ -18,42 +18,42 @@ import java.util.concurrent.TimeUnit;
  * Date: 16/3/31
  * Time: 下午5:21
  */
-@Component("hzftpClientPool")
-public class HZFTPClientPool implements ObjectPool<FTPClient> {
+@Component("ftpClientPool")
+public class PTFTPClientPool implements ObjectPool<FTPClient> {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(HZFTPClientPool.class);
+    private static final Logger logger = LoggerFactory.getLogger(PTFTPClientPool.class);
 
     private static final int DEFAULT_POOL_SIZE = 8;
     private final BlockingQueue<FTPClient> pool;
-    private final HZFTPClientFactory hzftpClientFactory;
+    private final PTFTPClientFactory factory;
 
     /**
      * 初始化连接池
      *
      * @throws Exception
      */
-    public HZFTPClientPool() throws Exception {
-        this(DEFAULT_POOL_SIZE, new HZFTPClientFactory());
+    public PTFTPClientPool() throws Exception {
+        this(DEFAULT_POOL_SIZE, new PTFTPClientFactory());
     }
 
     /**
      * 初始化连接池，需要注入一个工厂来提供FTPClient实例
      *
-     * @param hzftpClientFactory
+     * @param factory
      * @throws Exception
      */
-    public HZFTPClientPool(HZFTPClientFactory hzftpClientFactory) throws Exception {
-        this(DEFAULT_POOL_SIZE, hzftpClientFactory);
+    public PTFTPClientPool(PTFTPClientFactory factory) throws Exception {
+        this(DEFAULT_POOL_SIZE, factory);
     }
 
     /**
      * @param poolSize
-     * @param hzftpClientFactory
+     * @param factory
      * @throws Exception
      */
-    public HZFTPClientPool(int poolSize, HZFTPClientFactory hzftpClientFactory) throws Exception {
-        this.hzftpClientFactory = hzftpClientFactory;
+    public PTFTPClientPool(int poolSize, PTFTPClientFactory factory) throws Exception {
+        this.factory = factory;
         pool = new ArrayBlockingQueue<FTPClient>(poolSize * 2);
         initPool(poolSize);
     }
@@ -80,13 +80,13 @@ public class HZFTPClientPool implements ObjectPool<FTPClient> {
     public FTPClient borrowObject() throws Exception {
         FTPClient client = pool.take();
         if (client == null) {
-            PooledObject<FTPClient> pooledObject = hzftpClientFactory.makeObject();
+            PooledObject<FTPClient> pooledObject = factory.makeObject();
             client = pooledObject.getObject();
-        } else if (!hzftpClientFactory.validateObject(new DefaultPooledObject<FTPClient>(client))) {
+        } else if (!factory.validateObject(new DefaultPooledObject<FTPClient>(client))) {
             //使对象在池中失效
             invalidateObject(client);
             //制造并添加新对象到池中
-            client = hzftpClientFactory.makeObject().getObject();
+            client = factory.makeObject().getObject();
             addObject();
         }
 
@@ -102,7 +102,7 @@ public class HZFTPClientPool implements ObjectPool<FTPClient> {
      */
     public void returnObject(FTPClient client) throws Exception {
         if ((client != null) && !pool.offer(client, 3, TimeUnit.SECONDS)) {
-            hzftpClientFactory.destroyObject(new DefaultPooledObject<FTPClient>(client));
+            factory.destroyObject(new DefaultPooledObject<FTPClient>(client));
         }
     }
 
@@ -112,7 +112,7 @@ public class HZFTPClientPool implements ObjectPool<FTPClient> {
     }
 
     public void addObject() throws Exception {
-        pool.offer(hzftpClientFactory.makeObject().getObject(), 3, TimeUnit.SECONDS);
+        pool.offer(factory.makeObject().getObject(), 3, TimeUnit.SECONDS);
     }
 
     public int getNumIdle() throws UnsupportedOperationException {
@@ -131,7 +131,7 @@ public class HZFTPClientPool implements ObjectPool<FTPClient> {
         try {
             while (pool.iterator().hasNext()) {
                 FTPClient ftpClient = pool.take();
-                hzftpClientFactory.destroyObject(new DefaultPooledObject<FTPClient>(ftpClient));
+                factory.destroyObject(new DefaultPooledObject<FTPClient>(ftpClient));
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.service.customs.ftpclient.gz;
+package com.sfebiz.supplychain.service.port.ftpclient.hz;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.ObjectPool;
@@ -13,43 +13,47 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ztc on 2016/11/28.
+ * <p></p>
+ * User: <a href="mailto:yanmingming1989@163.com">严明明</a>
+ * Date: 16/3/31
+ * Time: 下午5:21
  */
-@Component("gzftpClientPool")
-public class GZFTPClientPool implements ObjectPool<FTPClient> {
+@Component("hzftpClientPool")
+public class HZFTPClientPool implements ObjectPool<FTPClient> {
 
-    private static final Logger logger = LoggerFactory.getLogger(GZFTPClientPool.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(HZFTPClientPool.class);
 
     private static final int DEFAULT_POOL_SIZE = 8;
     private final BlockingQueue<FTPClient> pool;
-    private final GZFTPClientFactory gzftpClientFactory;
+    private final HZFTPClientFactory hzftpClientFactory;
 
     /**
      * 初始化连接池
      *
      * @throws Exception
      */
-    public GZFTPClientPool() throws Exception {
-        this(DEFAULT_POOL_SIZE, new GZFTPClientFactory());
+    public HZFTPClientPool() throws Exception {
+        this(DEFAULT_POOL_SIZE, new HZFTPClientFactory());
     }
 
     /**
      * 初始化连接池，需要注入一个工厂来提供FTPClient实例
      *
-     * @param gzftpClientFactory
+     * @param hzftpClientFactory
      * @throws Exception
      */
-    public GZFTPClientPool(GZFTPClientFactory gzftpClientFactory) throws Exception {
-        this(DEFAULT_POOL_SIZE, gzftpClientFactory);
+    public HZFTPClientPool(HZFTPClientFactory hzftpClientFactory) throws Exception {
+        this(DEFAULT_POOL_SIZE, hzftpClientFactory);
     }
 
     /**
      * @param poolSize
-     * @param gzftpClientFactory
+     * @param hzftpClientFactory
      * @throws Exception
      */
-    public GZFTPClientPool(int poolSize, GZFTPClientFactory gzftpClientFactory) throws Exception {
-        this.gzftpClientFactory = gzftpClientFactory;
+    public HZFTPClientPool(int poolSize, HZFTPClientFactory hzftpClientFactory) throws Exception {
+        this.hzftpClientFactory = hzftpClientFactory;
         pool = new ArrayBlockingQueue<FTPClient>(poolSize * 2);
         initPool(poolSize);
     }
@@ -76,13 +80,13 @@ public class GZFTPClientPool implements ObjectPool<FTPClient> {
     public FTPClient borrowObject() throws Exception {
         FTPClient client = pool.take();
         if (client == null) {
-            PooledObject<FTPClient> pooledObject = gzftpClientFactory.makeObject();
+            PooledObject<FTPClient> pooledObject = hzftpClientFactory.makeObject();
             client = pooledObject.getObject();
-        } else if (!gzftpClientFactory.validateObject(new DefaultPooledObject<FTPClient>(client))) {
+        } else if (!hzftpClientFactory.validateObject(new DefaultPooledObject<FTPClient>(client))) {
             //使对象在池中失效
             invalidateObject(client);
             //制造并添加新对象到池中
-            client = gzftpClientFactory.makeObject().getObject();
+            client = hzftpClientFactory.makeObject().getObject();
             addObject();
         }
 
@@ -98,7 +102,7 @@ public class GZFTPClientPool implements ObjectPool<FTPClient> {
      */
     public void returnObject(FTPClient client) throws Exception {
         if ((client != null) && !pool.offer(client, 3, TimeUnit.SECONDS)) {
-            gzftpClientFactory.destroyObject(new DefaultPooledObject<FTPClient>(client));
+            hzftpClientFactory.destroyObject(new DefaultPooledObject<FTPClient>(client));
         }
     }
 
@@ -108,7 +112,7 @@ public class GZFTPClientPool implements ObjectPool<FTPClient> {
     }
 
     public void addObject() throws Exception {
-        pool.offer(gzftpClientFactory.makeObject().getObject(), 3, TimeUnit.SECONDS);
+        pool.offer(hzftpClientFactory.makeObject().getObject(), 3, TimeUnit.SECONDS);
     }
 
     public int getNumIdle() throws UnsupportedOperationException {
@@ -127,10 +131,11 @@ public class GZFTPClientPool implements ObjectPool<FTPClient> {
         try {
             while (pool.iterator().hasNext()) {
                 FTPClient ftpClient = pool.take();
-                gzftpClientFactory.destroyObject(new DefaultPooledObject<FTPClient>(ftpClient));
+                hzftpClientFactory.destroyObject(new DefaultPooledObject<FTPClient>(ftpClient));
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
+
 }

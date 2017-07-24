@@ -1,6 +1,6 @@
-package com.sfebiz.supplychain.service.customs.ftpclient.hz;
+package com.sfebiz.supplychain.service.port.ftpclient.pt;
 
-import com.sfebiz.supplychain.service.customs.ftpclient.FTPClientException;
+import com.sfebiz.supplychain.service.port.ftpclient.FTPClientException;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.pool2.BasePooledObjectFactory;
@@ -17,35 +17,35 @@ import java.io.IOException;
  * Date: 16/3/31
  * Time: 下午5:23
  */
-public class HZFTPClientFactory extends BasePooledObjectFactory<FTPClient> {
+public class PTFTPClientFactory extends BasePooledObjectFactory<FTPClient> {
 
-    private static final Logger logger = LoggerFactory.getLogger(HZFTPClientFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(PTFTPClientFactory.class);
 
     @Override
     public FTPClient create() throws Exception {
         FTPClient ftpClient = new FTPClient();
         //地址链接超时，暂时不使用，注释该内容
         
-        ftpClient.setDefaultTimeout(HZFTPConfig.getDefaultTimeout());
-        ftpClient.setConnectTimeout(HZFTPConfig.getClientTimeout());
-        ftpClient.setDataTimeout(HZFTPConfig.getDataTimeout());
+        ftpClient.setDefaultTimeout(PTFTPConfig.getDefaultTimeout());
+        ftpClient.setConnectTimeout(PTFTPConfig.getClientTimeout());
+        ftpClient.setDataTimeout(PTFTPConfig.getDataTimeout());
         try {
-            ftpClient.connect(HZFTPConfig.getRemoteHostIp(), HZFTPConfig.getPort());
+            ftpClient.connect(PTFTPConfig.getRemoteHostIp(), PTFTPConfig.getPort());
             int reply = ftpClient.getReplyCode();
             if (!FTPReply.isPositiveCompletion(reply)) {
                 ftpClient.disconnect();
                 logger.warn("FTPServer Refused Connection");
                 return null;
             }
-            boolean result = ftpClient.login(HZFTPConfig.getAccount(), HZFTPConfig.getPassword());
+            boolean result = ftpClient.login(PTFTPConfig.getAccount(), PTFTPConfig.getPassword());
             if (!result) {
-                throw new FTPClientException("FTP Client Login Failure, account:" + HZFTPConfig.getAccount());
+                throw new FTPClientException("FTP Client Login Failure, account:" + PTFTPConfig.getAccount());
             }
-            ftpClient.setFileType(HZFTPConfig.getTransferFileType());
+            ftpClient.setFileType(PTFTPConfig.getTransferFileType());
             ftpClient.setBufferSize(1024);
             ftpClient.enterLocalPassiveMode();
         } catch (IOException e) {
-            logger.error("FTP连接失败：" + HZFTPConfig.getRemoteHostIp() + ",端口：" + HZFTPConfig.getPort());
+            logger.error("FTP连接失败：" + PTFTPConfig.getRemoteHostIp() + ",端口：" + PTFTPConfig.getPort());
             logger.error(e.getMessage(), e);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
