@@ -15,7 +15,7 @@
         <property name="com.sfebiz.supplychian.printpath" description="文件打印地址" required="true"/>
 
         <property name="com.sfebiz.env" description="环境变量" required="true"/>
-        <property name="ttf.path" description="TTP字体文件位置" required="true"/>
+        <property name="ttf.path" description="TTP字体文件位置" required="false"/>
 
         <property name="dubbo.registry.url" description="Dubbo服务注册地址" required="true"/>
         <property name="dubbo.reference.version" description="Dubbo服务引用版本号" required="true"/>
