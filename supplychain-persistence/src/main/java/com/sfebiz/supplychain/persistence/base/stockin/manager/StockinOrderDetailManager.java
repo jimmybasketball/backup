@@ -23,8 +23,12 @@ public class StockinOrderDetailManager extends BaseManager<StockinOrderDetailDO>
         return stockinOrderDetailDao;
     }
 
+    public void updateByBarcodeAndSkuId(StockinOrderDetailDO stockinOrderDetailDO) {
+        stockinOrderDetailDao.updateByBarcodeAndSkuId(stockinOrderDetailDO);
+    }
+
     public static void main(String[] args){
-        DaoHelper.genXMLWithFeature("E:\\work\\cqcode\\haitao-b2b-supplychain\\supplychain-persistence\\src\\main\\resources\\base\\sqlmap\\stockin\\sc_stockin_order_detail.xml"
+        DaoHelper.genXMLWithFeature("E:\\work\\cqcode\\haitao-b2b-supplychain\\supplychain-persistence\\src\\main\\resources\\base\\sqlmap\\stockin\\sc_stockin_order_detail_sqlmap.xml"
         ,StockinOrderDetailDao.class
         ,StockinOrderDetailDO.class
         ,"sc_stockin_order_detail");

@@ -4,10 +4,9 @@ import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
-import com.sfebiz.supplychain.exposed.stock.entity.StockBatchEntity;
 import com.sfebiz.supplychain.persistence.base.stock.dao.StockBatchDao;
 import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;
-import com.sun.xml.internal.rngom.parse.host.Base;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -28,6 +27,21 @@ public class StockBatchManager extends BaseManager<StockBatchDO> {
         return stockBatchDao;
     }
 
+    public StockBatchDO getBySkuIdAndWarehouseIdAndBatchNo(Long skuId, Long warehouseId, String batchNo) {
+        if (null == skuId || 0 == skuId || null == warehouseId || 0 == warehouseId) {
+            return null;
+        }
+        StockBatchDO queryDO = new StockBatchDO();
+        queryDO.setSkuId(skuId);
+        queryDO.setWarehouseId(warehouseId);
+        queryDO.setBatchNo(batchNo);
+        BaseQuery<StockBatchDO> qy = new BaseQuery<StockBatchDO>(queryDO);
+        List<StockBatchDO> result = stockBatchDao.query(qy);
+        if (CollectionUtils.isNotEmpty(result)) {
+            return result.get(0);
+        }
+        return null;
+    }
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("E:/NewIdeaProject/haitao-b2b-supplychain/supplychain-persistence" +
                         "/src/main/resources/base/sqlmap/stock/sc_stock_batch_sqlmap.xml",

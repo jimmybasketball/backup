@@ -15,12 +15,15 @@ import java.util.List;
  */
 public class StockinOrderRequestFactory {
 
-    public static StockinOrderRequest generateStockinOrderRequest(Enumerable4StringValue actionType, StockinOrderDO stockinOrderDO, Date processDateTime, Operator operator) {
+    public static StockinOrderRequest generateStockinOrderRequest(Enumerable4StringValue actionType, StockinOrderDO stockinOrderDO, List<StockinOrderDetailEntity> stockinOrderDetailEntityList, Date processDateTime, Operator operator) {
         if (null != stockinOrderDO) {
             StockinOrderRequest stockinOrderRequest = new StockinOrderRequest();
             stockinOrderRequest.setId(stockinOrderDO.getId());
             stockinOrderRequest.setStockinOrderDO(stockinOrderDO);
             stockinOrderRequest.setAction(actionType);
+            if (null != stockinOrderDetailEntityList) {
+                stockinOrderRequest.setStockinOrderDetailEntities(stockinOrderDetailEntityList);
+            }
             if (null != processDateTime) {
                 stockinOrderRequest.setProcessDateTime(processDateTime);
             } else {
@@ -35,24 +38,4 @@ public class StockinOrderRequestFactory {
         return null;
     }
 
-    public static StockinOrderRequest generateStockinOrderFinishRequest(StockinOrderDO stockinOrderDO, List<StockinOrderDetailEntity> stockinOrderDetailEntities, Date processDateTime, Operator operator) {
-        if (null != stockinOrderDO) {
-            StockinOrderRequest stockinOrderRequest = new StockinOrderRequest();
-            stockinOrderRequest.setId(stockinOrderDO.getId());
-            stockinOrderRequest.setStockinOrderDO(stockinOrderDO);
-            stockinOrderRequest.setAction(StockinOrderActionType.STOCKIN_TO_FINISH);
-            stockinOrderRequest.setStockinOrderDetailEntities(stockinOrderDetailEntities);
-            if (null != processDateTime) {
-                stockinOrderRequest.setProcessDateTime(processDateTime);
-            } else {
-                stockinOrderRequest.setProcessDateTime(new Date());
-            }
-            if (null != operator) {
-                stockinOrderRequest.setOperator(operator);
-            }
-
-            return stockinOrderRequest;
-        }
-        return null;
-    }
 }

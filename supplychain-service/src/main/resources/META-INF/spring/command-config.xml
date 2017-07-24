@@ -9,7 +9,7 @@
        default-lazy-init="false">
     <context:annotation-config/>
 
-    <!-- 供应链与外部系统交互的命令配置 -->
+    <!-- 物流平台与外部系统交互的命令配置 -->
     <bean id="commandConfig" class="com.sfebiz.supplychain.provider.command.common.CommandConfig">
         <property name="apiUrl" value="${com.sfebiz.supplychian.apiurl}"/>
         <property name="fileUrl" value="${com.sfebiz.supplychian.fileurl}"/>

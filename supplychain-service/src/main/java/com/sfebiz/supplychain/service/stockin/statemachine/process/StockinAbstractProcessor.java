@@ -16,7 +16,7 @@ public abstract class StockinAbstractProcessor implements EngineProcessor<Stocki
                 || null == stockinOrderRequest.getOperator()) {
             throw new ServiceException(
                     SCReturnCode.PARAM_ILLEGAL_ERR,
-                    "[供应链-入库单流程操作失败]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc() + " "
+                    "[物流平台-入库单流程操作失败]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc() + " "
                             + "[请求参数: " + stockinOrderRequest
                             + "]"
             );

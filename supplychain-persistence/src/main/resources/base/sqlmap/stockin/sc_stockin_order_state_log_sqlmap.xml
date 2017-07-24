@@ -4,10 +4,10 @@
 
 <resultMap id="stockinOrderStateLogDOResult" type="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderStateLogDO">
     <result column="state" property="state"/>
-    <result column="stockin_order_id" property="stockinOrderId"/>
-    <result column="user_id" property="userId"/>
     <result column="user_name" property="userName"/>
+    <result column="user_id" property="userId"/>
     <result column="extend" property="extend"/>
+    <result column="stockin_order_id" property="stockinOrderId"/>
     <result column="id" property="id"/>
     <result column="gmt_create" property="gmtCreate"/>
     <result column="gmt_modified" property="gmtModified"/>
@@ -15,10 +15,10 @@
 
 <sql id="stockinOrderStateLogDO_columns">
     state,
-    stockin_order_id,
-    user_id,
     user_name,
+    user_id,
     extend,
+    stockin_order_id,
     id,
     gmt_create,
     gmt_modified
@@ -26,10 +26,10 @@
 
 <sql id="stockinOrderStateLogDO_sqlForInsert">
     state,
-    stockin_order_id,
-    user_id,
     user_name,
+    user_id,
     extend,
+    stockin_order_id,
     id,
     gmt_create,
     gmt_modified
@@ -37,10 +37,10 @@
 
 <sql id="stockinOrderStateLogDO_columnsForInsert">
     #{state},
-    #{stockinOrderId},
-    #{userId},
     #{userName},
+    #{userId},
     #{extend},
+    #{stockinOrderId},
     #{id},
     now(),
     now()
@@ -52,17 +52,17 @@
         <if test="state != null">
             state = #{state},
         </if>
-        <if test="stockinOrderId != null">
-            stockin_order_id = #{stockinOrderId},
+        <if test="userName != null">
+            user_name = #{userName},
         </if>
         <if test="userId != null">
             user_id = #{userId},
         </if>
-        <if test="userName != null">
-            user_name = #{userName},
-        </if>
         <if test="extend != null">
             extend = #{extend},
+        </if>
+        <if test="stockinOrderId != null">
+            stockin_order_id = #{stockinOrderId},
         </if>
     </set>
 </sql>
@@ -78,17 +78,17 @@
         <if test="data.state != null">
             AND state = #{data.state}
         </if>
-        <if test="data.stockinOrderId != null">
-            AND stockin_order_id = #{data.stockinOrderId}
+        <if test="data.userName != null">
+            AND user_name = #{data.userName}
         </if>
         <if test="data.userId != null">
             AND user_id = #{data.userId}
         </if>
-        <if test="data.userName != null">
-            AND user_name = #{data.userName}
-        </if>
         <if test="data.extend != null">
             AND extend = #{data.extend}
+        </if>
+        <if test="data.stockinOrderId != null">
+            AND stockin_order_id = #{data.stockinOrderId}
         </if>
         <if test="data.id != null">
             AND id = #{data.id}
@@ -198,17 +198,17 @@
         <if test="update.state != null">
             state = #{update.state},
         </if>
-        <if test="update.stockinOrderId != null">
-            stockin_order_id = #{update.stockinOrderId},
+        <if test="update.userName != null">
+            user_name = #{update.userName},
         </if>
         <if test="update.userId != null">
             user_id = #{update.userId},
         </if>
-        <if test="update.userName != null">
-            user_name = #{update.userName},
-        </if>
         <if test="update.extend != null">
             extend = #{update.extend},
+        </if>
+        <if test="update.stockinOrderId != null">
+            stockin_order_id = #{update.stockinOrderId},
         </if>
     </set>
     <include refid="stockinOrderStateLogDO_query_segment"/>
@@ -232,17 +232,17 @@
     <if test="state != null">
         ,state = #{state}
     </if>
-    <if test="stockinOrderId != null">
-        ,stockin_order_id = #{stockinOrderId}
+    <if test="userName != null">
+        ,user_name = #{userName}
     </if>
     <if test="userId != null">
         ,user_id = #{userId}
     </if>
-    <if test="userName != null">
-        ,user_name = #{userName}
-    </if>
     <if test="extend != null">
         ,extend = #{extend}
+    </if>
+    <if test="stockinOrderId != null">
+        ,stockin_order_id = #{stockinOrderId}
     </if>
 </insert>
 
