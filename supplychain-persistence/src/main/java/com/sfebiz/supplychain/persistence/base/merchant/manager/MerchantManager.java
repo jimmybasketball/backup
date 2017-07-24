@@ -1,15 +1,19 @@
 package com.sfebiz.supplychain.persistence.base.merchant.manager;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.merchant.dao.MerchantDao;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * 物流平台货主Manager
@@ -28,16 +32,12 @@ public class MerchantManager extends BaseManager<MerchantDO> {
         return merchantDao;
     }
 
-
     public static void main(String[] args) {
-        DaoHelper.genXMLWithFeature("/Users/liujunchi/git_projects/" +
-                        "supplychain/supplychain-persistence/" +
-                        "src/main/resources/base/sqlmap/merchant/sc_merchant_sqlmap.xml",
-                MerchantDao.class,
-                MerchantDO.class,
-                "sc_merchant");
+        DaoHelper.genXMLWithFeature(
+            "/Users/liujunchi/git_projects/" + "supplychain/supplychain-persistence/"
+                    + "src/main/resources/base/sqlmap/merchant/sc_merchant_sqlmap.xml",
+            MerchantDao.class, MerchantDO.class, "sc_merchant");
     }
-
 
     /**
      * 判断货主账户ID是否已存在
@@ -45,7 +45,7 @@ public class MerchantManager extends BaseManager<MerchantDO> {
      * @param merchantAccountId    货主账户ID
      * @return
      */
-    public boolean checkMerchantAccountIdIsExist(Long id, String merchantAccountId){
+    public boolean checkMerchantAccountIdIsExist(Long id, String merchantAccountId) {
         if (StringUtils.isBlank(merchantAccountId)) {
             return false;
         }
@@ -79,4 +79,25 @@ public class MerchantManager extends BaseManager<MerchantDO> {
         return count > 0;
     }
 
+    /**
+     * 根据货主账户标识，获取货主实体信息
+     * 
+     * @param merchantAccountId
+     * @return
+     */
+    public MerchantDO getMerchantByMerchantAccountId(String merchantAccountId) {
+
+        if (StringUtils.isBlank(merchantAccountId)) {
+            return null;
+        }
+        MerchantDO queryDO = new MerchantDO();
+        queryDO.setMerchantAccountId(merchantAccountId);
+        BaseQuery<MerchantDO> query = new BaseQuery<MerchantDO>(queryDO);
+        List<MerchantDO> merchantDOList = merchantDao.query(query);
+        if (CollectionUtils.isNotEmpty(merchantDOList)) {
+            return merchantDOList.get(0);
+        }
+
+        return null;
+    }
 }

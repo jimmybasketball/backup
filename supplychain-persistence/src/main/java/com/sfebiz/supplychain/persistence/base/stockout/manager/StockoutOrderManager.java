@@ -1,10 +1,13 @@
 package com.sfebiz.supplychain.persistence.base.stockout.manager;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
 import com.sfebiz.common.dao.BaseDao;
+import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderDao;
@@ -26,6 +29,27 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
     @Override
     public BaseDao<StockoutOrderDO> getDao() {
         return stockoutOrderDao;
+    }
+
+    /**
+     * 通过商户订单号和商户编码查询订单信息
+     * 
+     * @param merchantOrderNo 商户订单号
+     * @param merchantId 货主ID
+     * @return
+     */
+    public StockoutOrderDO queryByMerchantOrderNoAndMerchantId(String merchantOrderNo,
+                                                               Long merchantId) {
+        StockoutOrderDO stockoutOrderDO = new StockoutOrderDO();
+        stockoutOrderDO.setMerchantOrderNo(merchantOrderNo);
+        stockoutOrderDO.setMerchantId(merchantId);
+        BaseQuery<StockoutOrderDO> baseQuery = new BaseQuery<StockoutOrderDO>(stockoutOrderDO);
+        List<StockoutOrderDO> stockoutOrderDOs = stockoutOrderDao.query(baseQuery);
+        if (stockoutOrderDOs == null || stockoutOrderDOs.size() == 0) {
+            return null;
+        } else {
+            return stockoutOrderDOs.get(0);
+        }
     }
 
     public static void main(String[] args) {
