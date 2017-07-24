@@ -77,6 +77,15 @@ public interface StockInService {
      */
     CommonRet<Void> saveSkusInfo(Long stockinOrderId, List<StockinOrderDetailEntity> stockinOrderDetailEntityList, Long userId, String userName);
 
+    /**
+     * 完成入库单
+     * @param stockinOrderId
+     * @param warehouseId
+     * @param stockinOrderDetailEntities
+     * @param userId
+     * @param userName
+     * @return
+     */
     CommonRet<Void> finishStockinOrder(Long stockinOrderId, Long warehouseId, List<StockinOrderDetailEntity> stockinOrderDetailEntities, Long userId, String userName);
 
     /**
