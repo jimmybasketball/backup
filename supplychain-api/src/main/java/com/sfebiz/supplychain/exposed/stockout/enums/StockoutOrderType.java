@@ -109,4 +109,17 @@ public class StockoutOrderType extends Enumerable4IntValue {
     public static StockoutOrderType[] values() {
         return allbyvalue.values().toArray(new StockoutOrderType[0]);
     }
+
+    /**
+     * 获取枚举的字符串列表
+     * 
+     * @return name:value;name:value;...
+     */
+    public static String getCodeListStr() {
+        StringBuilder sb = new StringBuilder();
+        for (StockoutOrderType each : values()) {
+            sb.append(each.name).append(":").append(each.value).append(",");
+        }
+        return sb.toString();
+    }
 }

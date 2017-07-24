@@ -1,135 +1,156 @@
-package com.sfebiz.supplychain.persistence.base.stockout.domain;
+package com.sfebiz.supplychain.service.stockout.biz.model;
 
 import java.util.Date;
+import java.util.List;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import com.sfebiz.common.dao.domain.BaseDO;
+import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
 
 /**
- * 
  * <p>出库单实体</p>
- *
+ * 
  * @author matt
- * @Date 2017年7月17日 下午2:26:57
+ * @Date 2017年7月20日 上午9:30:09
  */
-public class StockoutOrderDO extends BaseDO {
+public class StockoutOrderBO extends BaseBO {
 
     /** 序号 */
-    private static final long serialVersionUID = 1775963648231189487L;
+    private static final long           serialVersionUID = -3315207108821015315L;
 
     /** 业务订单ID */
-    private String            bizId;
+    private String                      bizId;
 
     /** 货主、商户订单号 */
-    private String            merchantOrderNo;
+    private String                      merchantOrderNo;
 
     /** 出库单流程状态 */
-    private String            orderState;
+    private String                      orderState;
 
     /** 出库单类型 */
-    private Integer           orderType;
+    private Integer                     orderType;
 
     /** 订单来源，预留给商户的字段，便于商户跟踪订单 */
-    private String            orderSource;
+    private String                      orderSource;
 
     /** 服务类型 */
-    private Integer           serviceType;
+    private Integer                     serviceType;
+
+    /** 货主账户ID标识 */
+    private String                      merchantAccountId;
 
     /** 货主ID */
-    private Long              merchantId;
+    private Long                        merchantId;
 
     /** 货主供应商ID */
-    private Long              merchantProviderId;
+    private Long                        merchantProviderId;
 
     /** 仓库ID */
-    private Long              warehouseId;
+    private Long                        warehouseId;
+
+    /** 仓库Nid */
+    private String                      warehouseNid;
 
     /** 线路ID */
-    private Long              lineId;
+    private Long                        lineId;
 
     /** 大头笔 */
-    private String            destcode;
+    private String                      destcode;
 
     /** 波次号，供应商后台批量导出面单时提供区分 */
-    private String            waveNo;
+    private String                      waveNo;
 
     /** Y-大包，N-小包 */
     // TODO
-    private String            needCheck;
+    private String                      needCheck;
 
     /** 提货方式(TAKE_THEIR:自提, EXPRESS:快递) */
-    private String            deliveryMode;
+    private String                      deliveryMode;
 
     /** 国际承运商编码 */
-    private String            intlCarrierCode;
+    private String                      intlCarrierCode;
 
     /** 国际运单号 */
-    private String            intlMailNo;
+    private String                      intlMailNo;
 
     /** 国内承运商编码 */
-    private String            intrCarrierCode;
+    private String                      intrCarrierCode;
 
     /** 国内运单号 */
-    private String            intrMailNo;
+    private String                      intrMailNo;
 
     /** 包裹体积，长，单位cm */
-    private Integer           pkgLength;
+    private Integer                     pkgLength;
 
     /** 包裹体积，宽，单位cm */
-    private Integer           pkgWidth;
+    private Integer                     pkgWidth;
 
     /** 包裹体积，高，单位cm */
-    private Integer           pkgHeight;
+    private Integer                     pkgHeight;
 
     /** 计算重量，单位 g */
-    private Integer           calWeight;
+    private Integer                     calWeight;
 
     /** 实际重量，单位 g */
-    private Integer           actualWeight;
+    private Integer                     actualWeight;
 
     /** 商户支付方式（默认：merchant_pay） */
-    private String            merchantPayType;
+    private String                      merchantPayType;
 
     /** 商户支付流水 */
-    private String            merchantPayNo;
+    private String                      merchantPayNo;
 
     /** 支付申报的支付类型 */
-    private String            declarePayType;
+    private String                      declarePayType;
 
     /** 支付申报支付流水 */
-    private String            declarePayNo;
+    private String                      declarePayNo;
 
     /** 支付申报人姓名 */
-    private String            declarePayerName;
+    private String                      declarePayerName;
 
     /** 支付人申报证件号码 */
-    private String            declarePayerCertNo;
+    private String                      declarePayerCertNo;
 
     /** 支付人申报类型 */
-    private String            declarePayerCertType;
+    private String                      declarePayerCertType;
 
     /** 用户商品总金额 */
-    private String            userGoodsPrice;
+    private String                      userGoodsPrice;
 
     /** 用户折扣金额 */
-    private String            userDiscountPrice;
+    private String                      userDiscountPrice;
 
     /** 用户运费金额，单位分 */
-    private Integer           userFreightFee;
+    private Integer                     userFreightFee;
 
     /** 结算运费，单位分 */
-    private Integer           settleFreightFee;
+    private Integer                     settleFreightFee;
 
     /** 包裹根据线路计算所得的运费，单位分 */
-    private Integer           calFreightFee;
+    private Integer                     calFreightFee;
 
     /** 预计发货时间 */
-    private Date              estimatedShippingTime;
+    private Date                        estimatedShippingTime;
 
     /** 备注 */
-    private String            remarks;
+    private String                      remarks;
+
+    /** 出库单购买人信息 */
+    private StockoutOrderBuyerBO        buyerBO;
+
+    /** 出库单下发轨迹记录信息 */
+    private StockoutOrderRecordBO       recordBO;
+
+    /** 出库单明细 */
+    private List<StockoutOrderDetailBO> detailBOs;
+
+    /** 出库单任务信息 */
+    private List<StockoutOrderTaskBO>   taskBO;
+
+    /** 出库单申报金额信息 */
+    private StockoutOrderDeclarePriceBO declarePriceBO;
+
+    /** 出库单线路实体 */
+    private LogisticsLineBO             lineBO;
 
     public String getBizId() {
         return bizId;
@@ -179,6 +200,14 @@ public class StockoutOrderDO extends BaseDO {
         this.serviceType = serviceType;
     }
 
+    public String getMerchantAccountId() {
+        return merchantAccountId;
+    }
+
+    public void setMerchantAccountId(String merchantAccountId) {
+        this.merchantAccountId = merchantAccountId;
+    }
+
     public Long getMerchantId() {
         return merchantId;
     }
@@ -201,6 +230,14 @@ public class StockoutOrderDO extends BaseDO {
 
     public void setWarehouseId(Long warehouseId) {
         this.warehouseId = warehouseId;
+    }
+
+    public String getWarehouseNid() {
+        return warehouseNid;
+    }
+
+    public void setWarehouseNid(String warehouseNid) {
+        this.warehouseNid = warehouseNid;
     }
 
     public Long getLineId() {
@@ -427,11 +464,52 @@ public class StockoutOrderDO extends BaseDO {
         this.remarks = remarks;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    public StockoutOrderBuyerBO getBuyerBO() {
+        return buyerBO;
     }
+
+    public void setBuyerBO(StockoutOrderBuyerBO buyerBO) {
+        this.buyerBO = buyerBO;
+    }
+
+    public StockoutOrderRecordBO getRecordBO() {
+        return recordBO;
+    }
+
+    public void setRecordBO(StockoutOrderRecordBO recordBO) {
+        this.recordBO = recordBO;
+    }
+
+    public List<StockoutOrderDetailBO> getDetailBOs() {
+        return detailBOs;
+    }
+
+    public void setDetailBOs(List<StockoutOrderDetailBO> detailBOs) {
+        this.detailBOs = detailBOs;
+    }
+
+    public List<StockoutOrderTaskBO> getTaskBO() {
+        return taskBO;
+    }
+
+    public void setTaskBO(List<StockoutOrderTaskBO> taskBO) {
+        this.taskBO = taskBO;
+    }
+
+    public StockoutOrderDeclarePriceBO getDeclarePriceBO() {
+        return declarePriceBO;
+    }
+
+    public void setDeclarePriceBO(StockoutOrderDeclarePriceBO declarePriceBO) {
+        this.declarePriceBO = declarePriceBO;
+    }
+
+    public LogisticsLineBO getLineBO() {
+        return lineBO;
+    }
+
+    public void setLineBO(LogisticsLineBO lineBO) {
+        this.lineBO = lineBO;
+    }
+
 }

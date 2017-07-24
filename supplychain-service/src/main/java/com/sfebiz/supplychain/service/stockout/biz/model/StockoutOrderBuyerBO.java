@@ -1,11 +1,9 @@
-package com.sfebiz.supplychain.persistence.base.stockout.domain;
+package com.sfebiz.supplychain.service.stockout.biz.model;
 
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import com.sfebiz.common.dao.domain.BaseDO;
 
 /**
  * 
@@ -14,10 +12,10 @@ import com.sfebiz.common.dao.domain.BaseDO;
  * @author matt
  * @Date 2017年7月17日 下午11:53:33
  */
-public class StockoutOrderBuyerDO extends BaseDO {
+public class StockoutOrderBuyerBO extends BaseBO {
 
     /** 序号 */
-    private static final long serialVersionUID = -6271746725911574315L;
+    private static final long serialVersionUID = 2818532164741125131L;
 
     /** 出库单主键ID */
     private Long              stockoutOrderId;
