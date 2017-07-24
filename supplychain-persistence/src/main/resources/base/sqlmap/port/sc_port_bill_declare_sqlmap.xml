@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.port.dao.PortBillDeclareDao">
+
+    <resultMap id="portBillDeclareDOResult" type="com.sfebiz.supplychain.persistence.base.port.domain.PortBillDeclareDO">
+        <result column="state" property="state"/>
+        <result column="comment" property="comment"/>
+        <result column="bill_id" property="billId"/>
+        <result column="business_no" property="businessNo"/>
+        <result column="port_id" property="portId"/>
+        <result column="bill_name" property="billName"/>
+        <result column="bill_type" property="billType"/>
+        <result column="business_type" property="businessType"/>
+        <result column="declare_type" property="declareType"/>
+        <result column="bill_business_state" property="billBusinessState"/>
+        <result column="bill_send_time" property="billSendTime"/>
+        <result column="port_accept_time" property="portAcceptTime"/>
+        <result column="port_process_time" property="portProcessTime"/>
+        <result column="note" property="note"/>
+        <result column="result" property="result"/>
+        <result column="id" property="id"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+    </resultMap>
+
+    <sql id="portBillDeclareDO_columns">
+    state,
+    comment,
+    bill_id,
+    business_no,
+    port_id,
+    bill_name,
+    bill_type,
+    business_type,
+    declare_type,
+    bill_business_state,
+    bill_send_time,
+    port_accept_time,
+    port_process_time,
+    note,
+    result,
+    id,
+    gmt_create,
+    gmt_modified
+</sql>
+
+    <sql id="portBillDeclareDO_sqlForInsert">
+    state,
+    comment,
+    bill_id,
+    business_no,
+    port_id,
+    bill_name,
+    bill_type,
+    business_type,
+    declare_type,
+    bill_business_state,
+    bill_send_time,
+    port_accept_time,
+    port_process_time,
+    note,
+    result,
+    gmt_create,
+    gmt_modified
+</sql>
+
+    <sql id="portBillDeclareDO_columnsForInsert">
+    #{state},
+    #{comment},
+    #{billId},
+    #{businessNo},
+    #{portId},
+    #{billName},
+    #{billType},
+    #{businessType},
+    #{declareType},
+    #{billBusinessState},
+    #{billSendTime},
+    #{portAcceptTime},
+    #{portProcessTime},
+    #{note},
+    #{result},
+    now(),
+    now()
+</sql>
+
+    <sql id="portBillDeclareDO_setterForUpdate">
+        <set>
+            gmt_modified = now(),
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="comment != null">
+                comment = #{comment},
+            </if>
+            <if test="billId != null">
+                bill_id = #{billId},
+            </if>
+            <if test="businessNo != null">
+                business_no = #{businessNo},
+            </if>
+            <if test="portId != null">
+                port_id = #{portId},
+            </if>
+            <if test="billName != null">
+                bill_name = #{billName},
+            </if>
+            <if test="billType != null">
+                bill_type = #{billType},
+            </if>
+            <if test="businessType != null">
+                business_type = #{businessType},
+            </if>
+            <if test="declareType != null">
+                declare_type = #{declareType},
+            </if>
+            <if test="billBusinessState != null">
+                bill_business_state = #{billBusinessState},
+            </if>
+            <if test="billSendTime != null">
+                bill_send_time = #{billSendTime},
+            </if>
+            <if test="portAcceptTime != null">
+                port_accept_time = #{portAcceptTime},
+            </if>
+            <if test="portProcessTime != null">
+                port_process_time = #{portProcessTime},
+            </if>
+            <if test="note != null">
+                note = #{note},
+            </if>
+            <if test="result != null">
+                result = #{result},
+            </if>
+            <if test="id != null">
+                id = #{id},
+            </if>
+        </set>
+    </sql>
+
+    <sql id="portBillDeclareDO_selector">
+        select
+        <include refid="portBillDeclareDO_columns"/>
+        from sc_port_bill_declare
+    </sql>
+
+    <sql id="portBillDeclareDO_query_segment">
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="data.state != null">
+                AND state = #{data.state}
+            </if>
+            <if test="data.comment != null">
+                AND comment = #{data.comment}
+            </if>
+            <if test="data.billId != null">
+                AND bill_id = #{data.billId}
+            </if>
+            <if test="data.businessNo != null">
+                AND business_no = #{data.businessNo}
+            </if>
+            <if test="data.portId != null">
+                AND port_id = #{data.portId}
+            </if>
+            <if test="data.billName != null">
+                AND bill_name = #{data.billName}
+            </if>
+            <if test="data.billType != null">
+                AND bill_type = #{data.billType}
+            </if>
+            <if test="data.businessType != null">
+                AND business_type = #{data.businessType}
+            </if>
+            <if test="data.declareType != null">
+                AND declare_type = #{data.declareType}
+            </if>
+            <if test="data.billBusinessState != null">
+                AND bill_business_state = #{data.billBusinessState}
+            </if>
+            <if test="data.billSendTime != null">
+                AND bill_send_time = #{data.billSendTime}
+            </if>
+            <if test="data.portAcceptTime != null">
+                AND port_accept_time = #{data.portAcceptTime}
+            </if>
+            <if test="data.portProcessTime != null">
+                AND port_process_time = #{data.portProcessTime}
+            </if>
+            <if test="data.note != null">
+                AND note = #{data.note}
+            </if>
+            <if test="data.result != null">
+                AND result = #{data.result}
+            </if>
+            <if test="data.id != null">
+                AND id = #{data.id}
+            </if>
+            <if test="data.gmtCreate != null">
+                AND gmt_create = #{data.gmtCreate}
+            </if>
+            <if test="data.gmtModified != null">
+                AND gmt_modified = #{data.gmtModified}
+            </if>
+            <if test="ins != null and ins != ''">
+                AND
+                <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                    ${item.column} in
+                    <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </foreach>
+            </if>
+            <if test="notIns != null and notIns != ''">
+                AND
+                <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                    ${item.column} not in
+                    <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </foreach>
+            </if>
+            <if test="equals != null and equals != ''">
+                AND
+                <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                    ${item.column} = #{item.value}
+                </foreach>
+            </if>
+            <if test="notEquals != null and notEquals != ''">
+                AND
+                <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                    ${item.column} = #{item.value}
+                </foreach>
+            </if>
+            <if test="lts != null and lts != ''">
+                AND
+                <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ < ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="gts != null and gts != ''">
+                AND
+                <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ > ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="likes != null and likes != ''">
+                AND
+                <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                    ${item.column} like concat('%', #{item.value}, '%')
+                </foreach>
+            </if>
+            <if test="ltes != null and ltes != ''">
+                AND
+                <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ <= ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="gtes != null and gtes != ''">
+                AND
+                <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ >= ]]> #{item.value}
+                </foreach>
+            </if>
+            <if test="ranges != null and ranges != ''">
+                AND
+                <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                    ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+                </foreach>
+            </if>
+            AND is_delete = 0
+        </trim>
+    </sql>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.sfebiz.logistics.persistence.domain.PortBillDeclareDO">
+        insert into sc_port_bill_declare
+        (
+        <include refid="portBillDeclareDO_sqlForInsert"/>
+        ,is_delete
+        )
+        values
+        (
+        <include refid="portBillDeclareDO_columnsForInsert"/>
+        ,0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.sfebiz.logistics.persistence.domain.PortBillDeclareDO">
+        update sc_port_bill_declare
+        <include refid="portBillDeclareDO_setterForUpdate"/>
+        where id = #{id}
+        and is_delete = 0
+    </update>
+
+
+    <update id="updateByQuery" parameterType="com.sfebiz.logistics.persistence.domain.PortBillDeclareDO">
+        update sc_port_bill_declare
+        <set>
+            gmt_modified = now(),
+            <if test="update.state != null">
+                state = #{update.state},
+            </if>
+            <if test="update.comment != null">
+                comment = #{update.comment},
+            </if>
+            <if test="update.billId != null">
+                bill_id = #{update.billId},
+            </if>
+            <if test="update.businessNo != null">
+                business_no = #{update.businessNo},
+            </if>
+            <if test="update.portId != null">
+                port_id = #{update.portId},
+            </if>
+            <if test="update.billName != null">
+                bill_name = #{update.billName},
+            </if>
+            <if test="update.billType != null">
+                bill_type = #{update.billType},
+            </if>
+            <if test="update.businessType != null">
+                business_type = #{update.businessType},
+            </if>
+            <if test="update.declareType != null">
+                declare_type = #{update.declareType},
+            </if>
+            <if test="update.billBusinessState != null">
+                bill_business_state = #{update.billBusinessState},
+            </if>
+            <if test="update.billSendTime != null">
+                bill_send_time = #{update.billSendTime},
+            </if>
+            <if test="update.portAcceptTime != null">
+                port_accept_time = #{update.portAcceptTime},
+            </if>
+            <if test="update.portProcessTime != null">
+                port_process_time = #{update.portProcessTime},
+            </if>
+            <if test="update.note != null">
+                note = #{update.note},
+            </if>
+            <if test="update.result != null">
+                result = #{update.result},
+            </if>
+            <if test="update.id != null">
+                id = #{update.id},
+            </if>
+        </set>
+        <include refid="portBillDeclareDO_query_segment"/>
+    </update>
+
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.sfebiz.logistics.persistence.domain.PortBillDeclareDO">
+        insert into sc_port_bill_declare
+        (
+        <include refid="portBillDeclareDO_sqlForInsert"/>
+        ,is_delete
+        )
+        values
+        (
+        <include refid="portBillDeclareDO_columnsForInsert"/>
+        ,0
+        )
+        on duplicate key update
+        gmt_modified = now()
+        <if test="state != null">
+            ,state = #{state}
+        </if>
+        <if test="comment != null">
+            ,comment = #{comment}
+        </if>
+        <if test="billId != null">
+            ,bill_id = #{billId}
+        </if>
+        <if test="businessNo != null">
+            ,business_no = #{businessNo}
+        </if>
+        <if test="portId != null">
+            ,port_id = #{portId}
+        </if>
+        <if test="billName != null">
+            ,bill_name = #{billName}
+        </if>
+        <if test="billType != null">
+            ,bill_type = #{billType}
+        </if>
+        <if test="businessType != null">
+            ,business_type = #{businessType}
+        </if>
+        <if test="declareType != null">
+            ,declare_type = #{declareType}
+        </if>
+        <if test="billBusinessState != null">
+            ,bill_business_state = #{billBusinessState}
+        </if>
+        <if test="billSendTime != null">
+            ,bill_send_time = #{billSendTime}
+        </if>
+        <if test="portAcceptTime != null">
+            ,port_accept_time = #{portAcceptTime}
+        </if>
+        <if test="portProcessTime != null">
+            ,port_process_time = #{portProcessTime}
+        </if>
+        <if test="note != null">
+            ,note = #{note}
+        </if>
+        <if test="result != null">
+            ,result = #{result}
+        </if>
+        <if test="id != null">
+            ,id = #{id}
+        </if>
+    </insert>
+
+    <!-- Delete -->
+    <update id="delete">
+        update sc_port_bill_declare
+        set is_delete = 1, gmt_modified = now()
+        <include refid="portBillDeclareDO_query_segment"/>
+    </update>
+    <update id="deleteById">
+    update sc_port_bill_declare
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+    <!-- query class -->
+    <sql id="portBillDeclareDO_groupBy">
+        <if test="groupBys != null and groupBys != ''">
+            group by
+            <foreach collection="groupBys" item="item" open="" separator="," close="">
+                #{item}
+            </foreach>
+        </if>
+    </sql>
+
+    <sql id="portBillDeclareDO_orderby">
+        <if test="orderBys != null and orderBys != ''">
+            order by
+            <foreach collection="orderBys" item="item" open="" separator="," close="">
+                ${item.column} ${item.direction}
+            </foreach>
+        </if>
+    </sql>
+
+
+    <select id="query" resultMap="portBillDeclareDOResult"
+            parameterType="com.sfebiz.logistics.persistence.domain.PortBillDeclareDO">
+        <include refid="portBillDeclareDO_selector"/>
+        <include refid="portBillDeclareDO_query_segment"/>
+        <include refid="portBillDeclareDO_groupBy"/>
+        <include refid="portBillDeclareDO_orderby"/>
+    </select>
+
+    <select id="query4Page" resultMap="portBillDeclareDOResult"
+            parameterType="com.sfebiz.logistics.persistence.domain.PortBillDeclareDO">
+        <include refid="portBillDeclareDO_selector"/>
+        <include refid="portBillDeclareDO_query_segment"/>
+        <include refid="portBillDeclareDO_groupBy"/>
+        <include refid="portBillDeclareDO_orderby"/>
+        limit ${startRowForMysql}, ${pageSize}
+    </select>
+
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM sc_port_bill_declare
+        <include refid="portBillDeclareDO_query_segment"/>
+    </select>
+
+    <select id="getById" resultMap="portBillDeclareDOResult">
+        <include refid="portBillDeclareDO_selector"/>
+        where id = #{id}
+        and is_delete = 0
+    </select>
+
+    <select id="getByIdForUpdate" resultMap="portBillDeclareDOResult">
+        <include refid="portBillDeclareDO_selector"/>
+        where id = #{id}
+        and is_delete = 0
+        for update
+    </select>
+
+    <select id="getWaitSendWayBillList" resultMap="portBillDeclareDOResult">
+    SELECT sc_port_bill_declare.* FROM sc_port_bill_declare , sc_stockout_order
+    WHERE  sc_port_bill_declare.bill_id = sc_stockout_order.id
+    AND sc_port_bill_declare.bill_type = "WAY_BILL"
+    AND sc_stockout_order.mail_no IS NOT NULL
+    AND sc_port_bill_declare.state IN ('WAIT_SEND','SEND_EXCEPTION')
+    AND sc_port_bill_declare.is_delete = 0 AND sc_stockout_order.is_delete = 0
+    </select>
+
+
+</mapper>
