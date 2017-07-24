@@ -11,9 +11,9 @@
 
     <!-- 物流平台与外部系统交互的命令配置 -->
     <bean id="commandConfig" class="com.sfebiz.supplychain.provider.command.common.CommandConfig">
-        <property name="apiUrl" value="${com.sfebiz.supplychian.apiurl}"/>
-        <property name="fileUrl" value="${com.sfebiz.supplychian.fileurl}"/>
-        <property name="printPath" value="${com.sfebiz.supplychian.printpath}"/>
+        <property name="apiUrl" value="${com.sfebiz.supplychain.apiurl}"/>
+        <property name="fileUrl" value="${com.sfebiz.supplychain.fileurl}"/>
+        <property name="printPath" value="${com.sfebiz.supplychain.printpath}"/>
         <property name="lpcMapping">
             <map>
                 <entry key="0">
