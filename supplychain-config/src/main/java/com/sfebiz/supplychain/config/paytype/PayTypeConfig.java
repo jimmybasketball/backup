@@ -25,14 +25,10 @@ public class PayTypeConfig {
      */
     private final static Logger logger = LoggerFactory.getLogger(DynamicConfig.class);
 
-    private static PayTypeConfig payTypeConfig = new PayTypeConfig();
-
-    private static volatile List<PayType> payTypes;
-
     /**
      * 监听
      */
-    private ManagerListener dynamicConfigListener = new ManagerListener() {
+    private static ManagerListener dynamicConfigListener = new ManagerListener() {
 
         public void receiveConfigInfo(String configInfo) {
             configInfo = StringUtils.strip(configInfo);
@@ -51,12 +47,7 @@ public class PayTypeConfig {
         }
     };
 
-
-    public static List<PayType> getPayTypes() {
-        return new ArrayList<PayType>(payTypes);
-    }
-
-    private PayTypeConfig() {
+    static {
         try {
             String groupId = "HAITAO";
             String dataId = "com.sfebiz.config.haitao-b2b-supplychain.payTypeConfig";
@@ -68,5 +59,15 @@ public class PayTypeConfig {
             e.printStackTrace();
             logger.error("初始化DynamicConfig失败,失败信息如下：" + e);
         }
+    }
+
+    private static volatile List<PayType> payTypes;
+
+    public static List<PayType> getPayTypes() {
+        return new ArrayList<PayType>(payTypes);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getPayTypes());
     }
 }
