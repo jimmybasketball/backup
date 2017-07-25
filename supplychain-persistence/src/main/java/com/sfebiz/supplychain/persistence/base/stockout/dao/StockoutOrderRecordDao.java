@@ -4,7 +4,6 @@ import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderRecordDO;
 
 /**
- * 
  * <p>出库单记录Dao</p>
  *
  * @author matt
@@ -12,4 +11,10 @@ import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderReco
  */
 public interface StockoutOrderRecordDao extends BaseDao<StockoutOrderRecordDO> {
 
+    /**
+     * 修改出库单口岸下单状态
+     *
+     * @param stockoutOrderRecordDO
+     */
+    int updatePortState(StockoutOrderRecordDO stockoutOrderRecordDO);
 }

@@ -1,9 +1,10 @@
 package com.sfebiz.supplychain.service.stockout.biz.model;
 
+import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
+import com.sfebiz.supplychain.service.merchant.Model.MerchantPackageMaterialBO;
+
 import java.util.Date;
 import java.util.List;
-
-import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
 
 /**
  * <p>出库单实体</p>
@@ -113,6 +114,9 @@ public class StockoutOrderBO extends BaseBO {
     /** 支付人申报类型 */
     private String                      declarePayerCertType;
 
+    /** 用户ID */
+    private Long                        userId;
+
     /** 用户商品总金额 */
     private String                      userGoodsPrice;
 
@@ -151,6 +155,9 @@ public class StockoutOrderBO extends BaseBO {
 
     /** 出库单线路实体 */
     private LogisticsLineBO             lineBO;
+
+    /** 货主包材实体 */
+    private MerchantPackageMaterialBO merchantPackageMaterialBO;
 
     public String getBizId() {
         return bizId;
@@ -512,4 +519,19 @@ public class StockoutOrderBO extends BaseBO {
         this.lineBO = lineBO;
     }
 
+    public MerchantPackageMaterialBO getMerchantPackageMaterialBO() {
+        return merchantPackageMaterialBO;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setMerchantPackageMaterialBO(MerchantPackageMaterialBO merchantPackageMaterialBO) {
+        this.merchantPackageMaterialBO = merchantPackageMaterialBO;
+    }
 }

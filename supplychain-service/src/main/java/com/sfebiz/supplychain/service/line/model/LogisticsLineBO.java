@@ -1,16 +1,15 @@
 package com.sfebiz.supplychain.service.line.model;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineOperateStateType;
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineServiceType;
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineStateType;
 import com.sfebiz.supplychain.service.lp.model.LogisticsProviderBO;
 import com.sfebiz.supplychain.service.port.model.LogisticsPortBO;
 import com.sfebiz.supplychain.service.warehouse.model.WarehouseBO;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.io.Serializable;
 
 /**
  * 
@@ -386,6 +385,11 @@ public class LogisticsLineBO implements Serializable {
 
     public void setAdditionalWeightCostRmb(Integer additionalWeightCostRmb) {
         this.additionalWeightCostRmb = additionalWeightCostRmb;
+    }
+
+    //获取线路类型， 根据服务类型获取
+    public String getLineType() {
+        return null;
     }
 
     /**

@@ -182,20 +182,20 @@ public class PayConfig {
      * @param lineType
      * @return
      */
-//    private static String getPayBillDeclareProviderNidByPayType(String portNid, String payType, String lineType) {
-//        if (StringUtils.isBlank(portNid) || StringUtils.isBlank(payType) || StringUtils.isBlank(lineType)) {
-//            return null;
-//        }
-//        payType = payType.trim();
-//        portNid = portNid.trim();
-//        lineType = lineType.trim();
-//        String payProviderNid = LogisticsDynamicConfig.getPay().getRule(payType.toLowerCase(), portNid.toUpperCase(), lineType.toLowerCase());
-//        if (StringUtils.isBlank(payProviderNid)) {
-//            return null;
-//        } else {
-//            return payProviderNid.trim();
-//        }
-//    }
+    private static String getPayBillDeclareProviderNidByPayType(String portNid, String payType, String lineType) {
+        if (StringUtils.isBlank(portNid) || StringUtils.isBlank(payType) || StringUtils.isBlank(lineType)) {
+            return null;
+        }
+        payType = payType.trim();
+        portNid = portNid.trim();
+        lineType = lineType.trim();
+        String payProviderNid = LogisticsDynamicConfig.getPay().getRule(payType.toLowerCase(), portNid.toUpperCase(), lineType.toLowerCase());
+        if (StringUtils.isBlank(payProviderNid)) {
+            return null;
+        } else {
+            return payProviderNid.trim();
+        }
+    }
 
     /**
      * 获取 支付单申报 的企业编码，如果不存在，则返回null

@@ -1,6 +1,7 @@
 package com.sfebiz.supplychain.config.port;
 
 import com.sfebiz.supplychain.config.LogisticsDynamicConfig;
+import com.sfebiz.supplychain.exposed.common.code.StockoutReturnCode;
 import com.sfebiz.supplychain.util.JSONUtil;
 import net.pocrd.entity.ServiceException;
 import org.apache.commons.lang.StringUtils;
@@ -104,17 +105,17 @@ public class PortConfig {
      * @throws ServiceException
      */
     @SuppressWarnings("unchecked")
-//    public static Integer getPortBillMoneyLimit(Map<String, Object> portMeta) throws ServiceException {
-//        if (null == portMeta || portMeta.size() <= 0) {
-//            throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION, "口岸[meta]未配置");
-//        }
-//        String portLimitBillMoneyStr = (String) portMeta.get(BILL_MONEY_LIMIT_BY_CNY);
-//        if (StringUtils.isBlank(portLimitBillMoneyStr)) {
-//            throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
-//                    "口岸申报订单金额限额[" + BILL_MONEY_LIMIT_BY_CNY + "]未配置");
-//        }
-//        return Integer.valueOf(portLimitBillMoneyStr);
-//    }
+    public static Integer getPortBillMoneyLimit(Map<String, Object> portMeta) throws ServiceException {
+        if (null == portMeta || portMeta.size() <= 0) {
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION, "口岸[meta]未配置");
+        }
+        String portLimitBillMoneyStr = (String) portMeta.get(BILL_MONEY_LIMIT_BY_CNY);
+        if (StringUtils.isBlank(portLimitBillMoneyStr)) {
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
+                    "口岸申报订单金额限额[" + BILL_MONEY_LIMIT_BY_CNY + "]未配置");
+        }
+        return Integer.valueOf(portLimitBillMoneyStr);
+    }
 
     /**
      * 获取口岸第一单申报商品数限制
@@ -124,23 +125,23 @@ public class PortConfig {
      * @return
      * @throws ServiceException
      */
-//    public static Integer getPortFirstBillSkuLimt(Map<String, Object> portMeta) throws ServiceException {
-//        if (null == portMeta || portMeta.size() <= 0) {
-//            throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION, "口岸[meta]未配置");
-//        }
-//        String portFirstBillSkuLimtCfg = (String) portMeta.get(FIRST_BILL_SKU_LIMT);
-//        if (StringUtils.isBlank(portFirstBillSkuLimtCfg)) {
-//            throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
-//                    "口岸申报订单金额限额[" + FIRST_BILL_SKU_LIMT + "]未配置");
-//        }
-//        Integer portFirstBillSkuLimt = 0;
-//        if (NO_LIMIT.equals(portFirstBillSkuLimtCfg)) {
-//            portFirstBillSkuLimt = Integer.MAX_VALUE;
-//        } else {
-//            portFirstBillSkuLimt = Integer.valueOf(portFirstBillSkuLimtCfg);
-//        }
-//        return portFirstBillSkuLimt;
-//    }
+    public static Integer getPortFirstBillSkuLimt(Map<String, Object> portMeta) throws ServiceException {
+        if (null == portMeta || portMeta.size() <= 0) {
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION, "口岸[meta]未配置");
+        }
+        String portFirstBillSkuLimtCfg = (String) portMeta.get(FIRST_BILL_SKU_LIMT);
+        if (StringUtils.isBlank(portFirstBillSkuLimtCfg)) {
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
+                    "口岸申报订单金额限额[" + FIRST_BILL_SKU_LIMT + "]未配置");
+        }
+        Integer portFirstBillSkuLimt = 0;
+        if (NO_LIMIT.equals(portFirstBillSkuLimtCfg)) {
+            portFirstBillSkuLimt = Integer.MAX_VALUE;
+        } else {
+            portFirstBillSkuLimt = Integer.valueOf(portFirstBillSkuLimtCfg);
+        }
+        return portFirstBillSkuLimt;
+    }
 
     /**
      * 获取口岸第一单申报商品数限制
@@ -152,24 +153,24 @@ public class PortConfig {
      */
     public static String getPortBillCountLimt(Map<String, Object> portMeta) throws ServiceException {
         if (null == portMeta || portMeta.size() <= 0) {
-            //throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION, "口岸[meta]未配置");
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION, "口岸[meta]未配置");
         }
         String billCountLimtCfg = (String) portMeta.get(BILL_COUNTLIMT);
         if (StringUtils.isBlank(billCountLimtCfg)) {
-//            throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
-//                    "口岸申报订单数限额[" + BILL_COUNTLIMT + "]未配置");
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
+                    "口岸申报订单数限额[" + BILL_COUNTLIMT + "]未配置");
         }
         return billCountLimtCfg;
     }
 
     public static String getPortTaxLimt(Map<String, Object> portMeta) throws ServiceException {
         if (null == portMeta || portMeta.size() <= 0) {
-//            throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION, "口岸[meta]未配置");
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION, "口岸[meta]未配置");
         }
         String portTaxLimt = (String) portMeta.get(TAX_FEE_LIMIT_BY_CNY);
         if (StringUtils.isBlank(portTaxLimt)) {
-//            throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
-//                    "口岸申报订税额限制[" + TAX_FEE_LIMIT_BY_CNY + "]未配置");
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
+                    "口岸申报订税额限制[" + TAX_FEE_LIMIT_BY_CNY + "]未配置");
         }
         return portTaxLimt;
     }
@@ -184,8 +185,8 @@ public class PortConfig {
     public static String getPortDecalredTimeFm(Map<String, Object> portMeta) throws ServiceException {
         String timeFm = (String) portMeta.get(DECLARE_TIME_FM);
         if (StringUtils.isBlank(timeFm)) {
-//            throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
-//                    "口岸开始申报时间[" + DECLARE_TIME_FM + "]未配置");
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CONFIG_EXCEPTION,
+                    "口岸开始申报时间[" + DECLARE_TIME_FM + "]未配置");
         }
         return timeFm;
     }
@@ -202,101 +203,6 @@ public class PortConfig {
         }
         return NO_LIMIT.equals(cfg);
     }
-
-
-    /**
-     * 获取电商企业在海关的企业备案编码
-     *
-     * @return
-     */
-//    public static String getCustomsCode(LineEntity lineEntity) throws IllegalArgumentException {
-//        if (lineEntity == null || lineEntity.portEntity == null) {
-//            throw new IllegalArgumentException("参数不能为空");
-//        }
-//
-//
-//        Map<String,Object> portMeta = JSONUtil.parseJSONMessage(lineEntity.portEntity.meta);
-//
-//        if(portMeta.containsKey("isConpanyJson") && (Boolean)portMeta.get("isConpanyJson")){
-//            Map<String,Object> portCompanyCode  = JSONUtil.parseJSONMessage(lineEntity.portEntity.companyCode);
-//            if(portCompanyCode.containsKey(String.valueOf(lineEntity.warehouseEntity.warehouseId))){
-//                return (String)portCompanyCode.get(String.valueOf(lineEntity.warehouseEntity.warehouseId));
-//            }else{
-//                return  (String)portCompanyCode.get("DEFAULT");
-//            }
-//        }
-//
-//        if (PortNid.GUANGZHOU.getNid().equalsIgnoreCase(lineEntity.portEntity.portNid)) {
-//            //广州口岸由于使用了丰趣主体&顺丰主体，所以进行了两次企业备案；
-//                if (lineEntity.clearanceProviderEntity == null || StringUtils.isBlank(lineEntity.clearanceProviderEntity.logisticsProviderNid)) {
-//                    throw new IllegalArgumentException("广州口岸企业编码不符合规范");
-//                }
-//
-//                String[] companyCodeArray = lineEntity.portEntity.companyCode.split(",");
-//                if (companyCodeArray == null || companyCodeArray.length < 2) {
-//                    throw new IllegalArgumentException("广州口岸企业编码不符合规范");
-//                }
-//
-//                //如果配置了多个企业编码，则默认第一个表示丰趣主体、第二个为顺丰主体
-//                if (lineEntity.clearanceProviderEntity.logisticsProviderNid.startsWith("bsp")) {
-//                    return companyCodeArray[1].trim();
-//                } else if (lineEntity.clearanceProviderEntity.logisticsProviderNid.startsWith("gaojie")) {
-//                    return companyCodeArray[0].trim();
-//                } else if (lineEntity.clearanceProviderEntity.logisticsProviderNid.startsWith("hwt")) {
-//                    return companyCodeArray[0].trim();
-//                } else {
-//                    throw new IllegalArgumentException("广州口岸企业编码不符合规范");
-//                }
-//            } else {
-//                return lineEntity.portEntity.companyCode;
-//            }
-//
-//
-//    }
-
-
-    /**
-     * 获取电商企业在海关的企业备案名称
-     *
-     * @return
-     */
-//    public static String getCustomsName(LineEntity lineEntity) throws IllegalArgumentException {
-//        if (lineEntity == null || lineEntity.portEntity == null) {
-//            throw new IllegalArgumentException("参数不能为空");
-//        }
-//
-//        Map<String,Object> portMeta = JSONUtil.parseJSONMessage(lineEntity.portEntity.meta);
-//        if(portMeta.containsKey("isConpanyJson") && (Boolean)portMeta.get("isConpanyJson")){
-//            Map<String,Object> portCompanyName  = JSONUtil.parseJSONMessage(lineEntity.portEntity.companyName);
-//            if(portCompanyName.containsKey(String.valueOf(lineEntity.warehouseEntity.warehouseId))){
-//                return (String)portCompanyName.get(String.valueOf(lineEntity.warehouseEntity.warehouseId));
-//            }else{
-//                return  (String)portCompanyName.get("DEFAULT");
-//            }
-//        }
-//
-//        if (PortNid.GUANGZHOU.getNid().equalsIgnoreCase(lineEntity.portEntity.portNid)) {
-//            String[] companyNameArray = lineEntity.portEntity.companyName.split(",");
-//            if (companyNameArray == null || companyNameArray.length < 2) {
-//                throw new IllegalArgumentException("广州口岸企业名称不符合规范");
-//            }
-//
-//            //如果配置了多个企业编码，则默认第一个表示丰趣主体、第二个为顺丰主体
-//            if (lineEntity.clearanceProviderEntity.logisticsProviderNid.startsWith("bsp")) {
-//                return companyNameArray[1].trim();
-//            } else if (lineEntity.clearanceProviderEntity.logisticsProviderNid.startsWith("gaojie")) {
-//                return companyNameArray[0].trim();
-//            } else if (lineEntity.clearanceProviderEntity.logisticsProviderNid.startsWith("hwt")) {
-//                return companyNameArray[0].trim();
-//            } else {
-//                throw new IllegalArgumentException("广州口岸企业名称不符合规范");
-//            }
-//
-//        }else{
-//            return  lineEntity.portEntity.companyName;
-//        }
-//    }
-
 
     /**
      * 根据口岸、承运商编码获取在海关的备案编号

@@ -4,6 +4,7 @@ import cn.gov.zjport.newyork.ws.bo.HzPortBusinessType;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
+import com.sfebiz.supplychain.exposed.common.code.StockoutReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
 import com.sfebiz.supplychain.exposed.common.enums.BillType;
 import com.sfebiz.supplychain.exposed.common.enums.LogisticsReturnCode;
@@ -11,6 +12,7 @@ import com.sfebiz.supplychain.exposed.common.enums.PortBillState;
 import com.sfebiz.supplychain.exposed.common.enums.PortNid;
 import com.sfebiz.supplychain.persistence.base.port.domain.PortBillDeclareDO;
 import com.sfebiz.supplychain.persistence.base.port.manager.PortBillDeclareManager;
+import com.sfebiz.supplychain.persistence.base.port.manager.PortParamManager;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 import com.sfebiz.supplychain.protocol.ceb.order.callback.CEB312Message;
 import com.sfebiz.supplychain.protocol.ceb.order.callback.OrderReturnType;
@@ -28,6 +30,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
@@ -45,6 +48,7 @@ import java.util.UUID;
  * @author liujc [liujunchi@ifunq.com]
  * @date 2017-07-24 18:10
  **/
+@Component("portBizService")
 public class PortBizService {
 
     private static final Logger logger = LoggerFactory.getLogger(PortBizService.class);
@@ -62,6 +66,8 @@ public class PortBizService {
     private PortBillDeclareManager portBillDeclareManager;
 
 
+    @Resource
+    private PortParamManager portParamManager;
 
 
     /**
@@ -74,7 +80,7 @@ public class PortBizService {
     public void sendMessageToRemoteMQ(String messageContent, String remoteFileName , String port) throws ServiceException {
         if (StringUtils.isBlank(messageContent)) {
             //订单下发海关总署，参数不合法
-            //throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_ILLEGAL);
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_ILLEGAL);
         }
 
         FTPClient ftpClient = null;
@@ -90,12 +96,12 @@ public class PortBizService {
                 boolean storeFileResult = ftpClient.storeFile(remoteFileName, inputStream);
                 if (!storeFileResult) {
                     //订单下发海关总署，发送异常
-                    //throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR, LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR + "，Ftp 上传报文文件 失败");
+                    throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR, LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR + "，Ftp 上传报文文件 失败");
                 }
                 boolean renameResult = ftpClient.rename(remoteFileName, "../" + HZFTPConfig.getSendFilePath() + "/" + remoteFileName);
                 if (!renameResult) {
                     //订单下发海关总署，发送异常
-                    //throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR, LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR + "，FtpClient rename 失败");
+                    throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR, LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR + "，FtpClient rename 失败");
                 }
 
             }else if(PortNid.PINGTAN.getNid().equals(port)){
@@ -114,7 +120,7 @@ public class PortBizService {
                 boolean storeFileResult = ftpClient.storeFile("/"+GZFTPConfig.getSendFilePath()+remoteFileName, inputStream);
                 if (!storeFileResult) {
                     //订单下发海关总署，发送异常
-                    //throw new ServiceException(LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR, LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR + "，Ftp 上传报文文件 失败");
+                    throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR, LogisticsReturnCode.STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR + "，Ftp 上传报文文件 失败");
                 }
             }
 
@@ -308,4 +314,11 @@ public class PortBizService {
         return portBillDeclareDO.getId() != null;
     }
 
+
+
+    public String getPortParamCode(Long portId, int type, String value,
+                                   boolean usingDefault) {
+        return portParamManager.getPortParamCode(portId, type, value,
+                usingDefault);
+    }
 }
