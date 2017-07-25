@@ -23,7 +23,7 @@ public enum PortNid {
 
     public static final String typeExceptionDesc = "类型异常";
 
-    private int value;
+    private long value;
 
     private String nid;
 
@@ -35,11 +35,11 @@ public enum PortNid {
         this.description = description;
     }
 
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(long value) {
         this.value = value;
     }
 
@@ -82,8 +82,8 @@ public enum PortNid {
     }
 
 
-    public static Integer getCodeByNid(String nid) {
-        Integer portId = EMPTY.getValue();
+    public static Long getCodeByNid(String nid) {
+        Long portId = EMPTY.getValue();
         if (StringUtils.isNotBlank(nid)) {
             if (nid.equals(PortNid.GUANGZHOU.getNid())) {
                 portId = PortNid.GUANGZHOU.getValue();

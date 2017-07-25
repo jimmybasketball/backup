@@ -18,3 +18,14 @@ dubbo.reference.version=${dubbo.reference.version}
 dubbo.export.version=${dubbo.export.version}
 dubbo.export.timeout=${dubbo.export.timeout}
 dubbo.export.host=${dubbo.export.host}
+
+#redis-proxy-db
+com.sfebiz.supplychain.redisproxy.server.host=${com.sfebiz.supplychain.redisproxy.server.host}
+com.sfebiz.supplychain.redisproxy.server.port=${com.sfebiz.supplychain.redisproxy.server.port}
+com.sfebiz.supplychain.redisproxy.server.password=${com.sfebiz.supplychain.redisproxy.server.password}
+com.sfebiz.supplychain.redisproxy.maxIdle=${com.sfebiz.supplychain.redisproxy.maxIdle}
+com.sfebiz.supplychain.redisproxy.maxTotal=${com.sfebiz.supplychain.redisproxy.maxTotal}
+com.sfebiz.supplychain.redisproxy.maxWaitTime=${com.sfebiz.supplychain.redisproxy.maxWaitTime}
+com.sfebiz.supplychain.redisproxy.testOnBorrow=${com.sfebiz.supplychain.redisproxy.testOnBorrow}
+com.sfebiz.supplychain.redisproxy.minIdle=${com.sfebiz.supplychain.redisproxy.minIdle}
+com.sfebiz.supplychain.redisproxy.timeout=${com.sfebiz.supplychain.redisproxy.timeout}
