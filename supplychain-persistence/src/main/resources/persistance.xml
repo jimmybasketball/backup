@@ -11,9 +11,9 @@
         <property name="poolProperties">
             <bean class="org.apache.tomcat.jdbc.pool.PoolProperties">
                 <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="${com.sfebiz.supplychian.datasource.url}"/>
-                <property name="username" value="${com.sfebiz.supplychian.datasource.username}"/>
-                <property name="password" value="${com.sfebiz.supplychian.datasource.password}"/>
+                <property name="url" value="${com.sfebiz.supplychain.datasource.url}"/>
+                <property name="username" value="${com.sfebiz.supplychain.datasource.username}"/>
+                <property name="password" value="${com.sfebiz.supplychain.datasource.password}"/>
                 <property name="jmxEnabled" value="false"/>
                 <property name="testWhileIdle" value="false"/>
                 <property name="initialSize" value="10"/>

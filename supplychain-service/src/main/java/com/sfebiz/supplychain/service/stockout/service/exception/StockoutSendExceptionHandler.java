@@ -1,11 +1,5 @@
 package com.sfebiz.supplychain.service.stockout.service.exception;
 
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sfebiz.common.utils.log.LogBetter;
@@ -16,8 +10,12 @@ import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderTaskDO;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
-
 import net.pocrd.entity.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * User: <a href="mailto:lenolix@163.com">李星</a>
@@ -48,7 +46,7 @@ public class StockoutSendExceptionHandler extends AbstractExceptionHandler {
                 }
 //                isHandleSuccess = stockoutBizService.executeStockoutSendProcesses(stockoutOrderTaskDO.getStockoutOrderId(), "again", currentProcessorTag);|
                 //对接出库工作流后干掉
-                throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR, "[供应链-立即重试异常任务]: ");
+                throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR, "[物流平台-立即重试异常任务]: ");
             } catch (ServiceException se) {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.WARN)

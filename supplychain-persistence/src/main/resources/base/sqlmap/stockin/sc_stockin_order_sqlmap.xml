@@ -5,11 +5,9 @@
 <resultMap id="stockinOrderDOResult" type="com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO">
     <result column="state" property="state"/>
     <result column="type" property="type"/>
-    <result column="warehouse_id" property="warehouseId"/>
     <result column="biz_id" property="bizId"/>
+    <result column="warehouse_id" property="warehouseId"/>
     <result column="stockin_id" property="stockinId"/>
-    <result column="contact_name" property="contactName"/>
-    <result column="contact_phone" property="contactPhone"/>
     <result column="logistics_company" property="logisticsCompany"/>
     <result column="merchant_provider_id" property="merchantProviderId"/>
     <result column="asn_success_time" property="asnSuccessTime"/>
@@ -20,6 +18,8 @@
     <result column="stockin_finish_time" property="stockinFinishTime"/>
     <result column="warehouse_confirm_start" property="warehouseConfirmStart"/>
     <result column="warehouse_confirm_end" property="warehouseConfirmEnd"/>
+    <result column="contact_name" property="contactName"/>
+    <result column="contact_phone" property="contactPhone"/>
     <result column="mail_no" property="mailNo"/>
     <result column="plate_number" property="plateNumber"/>
     <result column="merchant_id" property="merchantId"/>
@@ -32,11 +32,9 @@
 <sql id="stockinOrderDO_columns">
     state,
     type,
-    warehouse_id,
     biz_id,
+    warehouse_id,
     stockin_id,
-    contact_name,
-    contact_phone,
     logistics_company,
     merchant_provider_id,
     asn_success_time,
@@ -47,6 +45,8 @@
     stockin_finish_time,
     warehouse_confirm_start,
     warehouse_confirm_end,
+    contact_name,
+    contact_phone,
     mail_no,
     plate_number,
     merchant_id,
@@ -59,11 +59,9 @@
 <sql id="stockinOrderDO_sqlForInsert">
     state,
     type,
-    warehouse_id,
     biz_id,
+    warehouse_id,
     stockin_id,
-    contact_name,
-    contact_phone,
     logistics_company,
     merchant_provider_id,
     asn_success_time,
@@ -74,6 +72,8 @@
     stockin_finish_time,
     warehouse_confirm_start,
     warehouse_confirm_end,
+    contact_name,
+    contact_phone,
     mail_no,
     plate_number,
     merchant_id,
@@ -86,11 +86,9 @@
 <sql id="stockinOrderDO_columnsForInsert">
     #{state},
     #{type},
-    #{warehouseId},
     #{bizId},
+    #{warehouseId},
     #{stockinId},
-    #{contactName},
-    #{contactPhone},
     #{logisticsCompany},
     #{merchantProviderId},
     #{asnSuccessTime},
@@ -101,6 +99,8 @@
     #{stockinFinishTime},
     #{warehouseConfirmStart},
     #{warehouseConfirmEnd},
+    #{contactName},
+    #{contactPhone},
     #{mailNo},
     #{plateNumber},
     #{merchantId},
@@ -119,20 +119,14 @@
         <if test="type != null">
             type = #{type},
         </if>
-        <if test="warehouseId != null">
-            warehouse_id = #{warehouseId},
-        </if>
         <if test="bizId != null">
             biz_id = #{bizId},
         </if>
+        <if test="warehouseId != null">
+            warehouse_id = #{warehouseId},
+        </if>
         <if test="stockinId != null">
             stockin_id = #{stockinId},
-        </if>
-        <if test="contactName != null">
-            contact_name = #{contactName},
-        </if>
-        <if test="contactPhone != null">
-            contact_phone = #{contactPhone},
         </if>
         <if test="logisticsCompany != null">
             logistics_company = #{logisticsCompany},
@@ -164,6 +158,12 @@
         <if test="warehouseConfirmEnd != null">
             warehouse_confirm_end = #{warehouseConfirmEnd},
         </if>
+        <if test="contactName != null">
+            contact_name = #{contactName},
+        </if>
+        <if test="contactPhone != null">
+            contact_phone = #{contactPhone},
+        </if>
         <if test="mailNo != null">
             mail_no = #{mailNo},
         </if>
@@ -193,20 +193,14 @@
         <if test="data.type != null">
             AND type = #{data.type}
         </if>
-        <if test="data.warehouseId != null">
-            AND warehouse_id = #{data.warehouseId}
-        </if>
         <if test="data.bizId != null">
             AND biz_id = #{data.bizId}
         </if>
+        <if test="data.warehouseId != null">
+            AND warehouse_id = #{data.warehouseId}
+        </if>
         <if test="data.stockinId != null">
             AND stockin_id = #{data.stockinId}
-        </if>
-        <if test="data.contactName != null">
-            AND contact_name = #{data.contactName}
-        </if>
-        <if test="data.contactPhone != null">
-            AND contact_phone = #{data.contactPhone}
         </if>
         <if test="data.logisticsCompany != null">
             AND logistics_company = #{data.logisticsCompany}
@@ -237,6 +231,12 @@
         </if>
         <if test="data.warehouseConfirmEnd != null">
             AND warehouse_confirm_end = #{data.warehouseConfirmEnd}
+        </if>
+        <if test="data.contactName != null">
+            AND contact_name = #{data.contactName}
+        </if>
+        <if test="data.contactPhone != null">
+            AND contact_phone = #{data.contactPhone}
         </if>
         <if test="data.mailNo != null">
             AND mail_no = #{data.mailNo}
@@ -361,20 +361,14 @@
         <if test="update.type != null">
             type = #{update.type},
         </if>
-        <if test="update.warehouseId != null">
-            warehouse_id = #{update.warehouseId},
-        </if>
         <if test="update.bizId != null">
             biz_id = #{update.bizId},
         </if>
+        <if test="update.warehouseId != null">
+            warehouse_id = #{update.warehouseId},
+        </if>
         <if test="update.stockinId != null">
             stockin_id = #{update.stockinId},
-        </if>
-        <if test="update.contactName != null">
-            contact_name = #{update.contactName},
-        </if>
-        <if test="update.contactPhone != null">
-            contact_phone = #{update.contactPhone},
         </if>
         <if test="update.logisticsCompany != null">
             logistics_company = #{update.logisticsCompany},
@@ -405,6 +399,12 @@
         </if>
         <if test="update.warehouseConfirmEnd != null">
             warehouse_confirm_end = #{update.warehouseConfirmEnd},
+        </if>
+        <if test="update.contactName != null">
+            contact_name = #{update.contactName},
+        </if>
+        <if test="update.contactPhone != null">
+            contact_phone = #{update.contactPhone},
         </if>
         <if test="update.mailNo != null">
             mail_no = #{update.mailNo},
@@ -443,20 +443,14 @@
     <if test="type != null">
         ,type = #{type}
     </if>
-    <if test="warehouseId != null">
-        ,warehouse_id = #{warehouseId}
-    </if>
     <if test="bizId != null">
         ,biz_id = #{bizId}
     </if>
+    <if test="warehouseId != null">
+        ,warehouse_id = #{warehouseId}
+    </if>
     <if test="stockinId != null">
         ,stockin_id = #{stockinId}
-    </if>
-    <if test="contactName != null">
-        ,contact_name = #{contactName}
-    </if>
-    <if test="contactPhone != null">
-        ,contact_phone = #{contactPhone}
     </if>
     <if test="logisticsCompany != null">
         ,logistics_company = #{logisticsCompany}
@@ -487,6 +481,12 @@
     </if>
     <if test="warehouseConfirmEnd != null">
         ,warehouse_confirm_end = #{warehouseConfirmEnd}
+    </if>
+    <if test="contactName != null">
+        ,contact_name = #{contactName}
+    </if>
+    <if test="contactPhone != null">
+        ,contact_phone = #{contactPhone}
     </if>
     <if test="mailNo != null">
         ,mail_no = #{mailNo}

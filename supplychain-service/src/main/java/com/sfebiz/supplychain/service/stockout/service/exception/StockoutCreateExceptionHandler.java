@@ -60,7 +60,7 @@ public class StockoutCreateExceptionHandler extends AbstractExceptionHandler {
 //                                .executeStockoutCreateProcesses(stockoutOrderDO, "again", currentProcessorTag);
                     }
                     //对接出库工作流后干掉
-                    throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR, "[供应链-立即重试异常任务]: ");
+                    throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR, "[物流平台-立即重试异常任务]: ");
                 } catch (ServiceException se) {
                     LogBetter.instance(logger)
                             .setLevel(LogLevel.WARN)

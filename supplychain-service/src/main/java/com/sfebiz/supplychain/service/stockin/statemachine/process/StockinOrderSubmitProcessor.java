@@ -65,7 +65,7 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
         LogBetter.instance(logger)
                 .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
                 .setLevel(LogLevel.INFO)
-                .setMsg("[供应链-提交入库单]: 仓库的入库方式是接口入库,需要下发报文")
+                .setMsg("[物流平台-提交入库单]: 仓库的入库方式是接口入库,需要下发报文")
                 .addParm("入库单ID", request.getId())
                 .log();
 
@@ -76,7 +76,7 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
         if (null == stockinOrderDetailDOs || 0 == stockinOrderDetailDOs.size()) {
             throw new ServiceException(
                     SCReturnCode.PARAM_ILLEGAL_ERR,
-                    "[供应链-提交入库单失败]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc() + " "
+                    "[物流平台-提交入库单失败]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc() + " "
                             + "[入库单ID: " + request.getId()
                             + "]");
         }
@@ -86,7 +86,7 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
             if (null == detailDO.getCount() || 0 == detailDO.getCount()) {
                 throw new ServiceException(
                         SCReturnCode.PARAM_ILLEGAL_ERR,
-                        "[供应链-提交入库单失败]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc() + " "
+                        "[物流平台-提交入库单失败]: " + SCReturnCode.PARAM_ILLEGAL_ERR.getDesc() + " "
                                 + "[入库单ID: " + request.getId()
                                 + "]");
             }
@@ -105,7 +105,7 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
         String stockinId = request.getStockinOrderDO().getStockinId();
         StockinOrderDO stockInorderDo = stockinOrderManager.getByStockinId(stockinId);
         if(stockInorderDo == null) {
-            throw new ServiceException(StockInReturnCode.LOGISTICS_STOCKINID_ERR,"[供应链-提交入库单] 入库单异常：" + stockinId);
+            throw new ServiceException(StockInReturnCode.LOGISTICS_STOCKINID_ERR,"[物流平台-提交入库单] 入库单异常：" + stockinId);
         }
         stockInorderDo.setAsnSuccessTime(new Date());
         stockinOrderManager.update(stockInorderDo);

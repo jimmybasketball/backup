@@ -11,6 +11,9 @@ import com.sfebiz.supplychain.persistence.base.sku.domain.SkuBarcodeDO;
 import com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuBarcodeManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuManager;
+import com.taobao.tbbpm.common.persistence.ITransactionCallbackWithoutResult;
+import com.taobao.tbbpm.common.persistence.ITransactionStatus;
+import com.taobao.tbbpm.common.persistence.SpringTransactionTemplate;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,9 @@ public class SkuServiceImpl implements SkuService {
     @Resource
     SkuBarcodeManager skuBarcodeManager;
 
+    @Resource
+    private SpringTransactionTemplate springTransactionTemplate;
+
 
     @Override
     public CommonRet<Long> createSku(String operator, SkuEntity skuEntity) {
@@ -39,36 +45,53 @@ public class SkuServiceImpl implements SkuService {
     }
 
     @Override
-    public CommonRet<Void> updateSku(String operator, SkuEntity skuEntity) {
+    public CommonRet<Void> updateSku(final String operator, final SkuEntity skuEntity) {
         CommonRet<Void> commonRet = new CommonRet<Void>();
-            try {
-            SkuDO skuDO = new SkuDO();
-            BeanCopier beanCopier = BeanCopier.create(SkuEntity.class, SkuDO.class, false);
-            beanCopier.copy(skuEntity, skuDO, null);
-            skuDO.setModifiedBy(operator);
-            skuManager.update(skuDO);
+        try {
+            springTransactionTemplate.execute(new ITransactionCallbackWithoutResult() {
+                @Override
+                public void doInTransaction(ITransactionStatus status) throws Exception {
+                    SkuDO skuDO = new SkuDO();
+                    BeanCopier beanCopier = BeanCopier.create(SkuEntity.class, SkuDO.class, false);
+                    beanCopier.copy(skuEntity, skuDO, null);
+                    skuDO.setModifiedBy(operator);
+                    skuManager.update(skuDO);
 
-            SkuBarcodeDO skuBarcodeDO = new SkuBarcodeDO();
-            skuBarcodeDO.setSkuId(skuEntity.getId());
-            BaseQuery<SkuBarcodeDO> baseQuery = BaseQuery.getInstance(skuBarcodeDO);
-            skuBarcodeManager.delete(baseQuery);
+//                    SkuBarcodeDO skuBarcodeDO = new SkuBarcodeDO();
+//                    skuBarcodeDO.setSkuId(skuEntity.getId());
+//                    BaseQuery<SkuBarcodeDO> baseQuery = BaseQuery.getInstance(skuBarcodeDO);
+//                    skuBarcodeManager.delete(baseQuery);
+//
+//                    for (SkuBarcodeEntity barcodeEntity : skuEntity.getSkuBarcodeList()) {
+//                        skuBarcodeDO = new SkuBarcodeDO();
+//                        skuBarcodeDO.setSkuId(skuEntity.getId());
+//                        skuBarcodeDO.setBarcode(barcodeEntity.getBarcode());
+//                        skuBarcodeManager.insertOrUpdate(skuBarcodeDO);
+//                    }
 
-            for (SkuBarcodeEntity barcodeEntity : skuEntity.getSkuBarcodeList()) {
-                skuBarcodeDO.setSkuId(skuEntity.getId());
-                skuBarcodeDO.setBarcode(barcodeEntity.getBarcode());
-                baseQuery = BaseQuery.getInstance(skuBarcodeDO);
-                SkuBarcodeDO delBarcodeDO = new SkuBarcodeDO();
-                delBarcodeDO.setIsDelete(0);
-                UpdateByQuery<SkuBarcodeDO> updateQuery = new UpdateByQuery<SkuBarcodeDO>( baseQuery, delBarcodeDO);
-                skuBarcodeManager.updateByQuery(updateQuery);
-                if(skuBarcodeManager.count(baseQuery) > 0) {
-                } else {
-                    SkuBarcodeDO barcodeDO = new SkuBarcodeDO();
-                    beanCopier = BeanCopier.create(SkuBarcodeEntity.class, SkuBarcodeDO.class, false);
-                    beanCopier.copy(barcodeEntity, barcodeDO, null);
-                    skuBarcodeManager.insert(barcodeDO);
+                    SkuBarcodeDO skuBarcodeDO = new SkuBarcodeDO();
+                    skuBarcodeDO.setSkuId(skuEntity.getId());
+                    BaseQuery<SkuBarcodeDO> baseQuery = BaseQuery.getInstance(skuBarcodeDO);
+                    skuBarcodeManager.delete(baseQuery);
+
+                    for (SkuBarcodeEntity barcodeEntity : skuEntity.getSkuBarcodeList()) {
+                        skuBarcodeDO.setSkuId(skuEntity.getId());
+                        skuBarcodeDO.setBarcode(barcodeEntity.getBarcode());
+                        baseQuery = BaseQuery.getInstance(skuBarcodeDO);
+                        SkuBarcodeDO delBarcodeDO = new SkuBarcodeDO();
+                        delBarcodeDO.setIsDelete(0);
+                        UpdateByQuery<SkuBarcodeDO> updateQuery = new UpdateByQuery<SkuBarcodeDO>( baseQuery, delBarcodeDO);
+                        skuBarcodeManager.updateByQuery(updateQuery);
+                        if(skuBarcodeManager.count(baseQuery) > 0) {
+                        } else {
+                            SkuBarcodeDO barcodeDO = new SkuBarcodeDO();
+                            beanCopier = BeanCopier.create(SkuBarcodeEntity.class, SkuBarcodeDO.class, false);
+                            beanCopier.copy(barcodeEntity, barcodeDO, null);
+                            skuBarcodeManager.insert(barcodeDO);
+                        }
+                    }
                 }
-            }
+            });
         } catch (Exception e) {
                 commonRet.reSet();
                 commonRet.setRetCode(SCReturnCode.COMMON_FAIL.getCode());

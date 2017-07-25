@@ -34,7 +34,7 @@ public abstract class WmsOrderSkuStockInCommand extends AbstractCommand {
         CommonRet<Void> commonRet = sendStockInCommandToWarehouse();
         if (commonRet.getRetCode().equals(SCReturnCode.COMMON_FAIL)) {
             throw new ServiceException(StockInReturnCode.STOCKIN_ORDER_SENDSTOCK_FAIL,
-                    "[供应链-提交入库单给仓库失败]: " + commonRet.getRetMsg() + " "
+                    "[物流平台-提交入库单给仓库失败]: " + commonRet.getRetMsg() + " "
                             + "[入库单ID: " + getStockinOrderDO().getId() + "]"
                             + "[调用URL:" + ""+ "]"
                             + "[调用KEY:" + ""+ "]"
@@ -52,12 +52,12 @@ public abstract class WmsOrderSkuStockInCommand extends AbstractCommand {
     protected void checkStateIsCanStockin() throws ServiceException {
         if (null == getStockinOrderDO()) {
             throw new ServiceException(StockInReturnCode.STOCKIN_ORDER_NOT_EXIST,
-                    "[供应链-提交入库单异常]: " + StockInReturnCode.STOCKIN_ORDER_NOT_EXIST.getDesc());
+                    "[物流平台-提交入库单异常]: " + StockInReturnCode.STOCKIN_ORDER_NOT_EXIST.getDesc());
         }
         //只有待提交的入库单可提交入库
         if (!StockinOrderState.TO_BE_SUBMITED.getValue().equals(getStockinOrderDO().getState())) {
             throw new ServiceException(StockInReturnCode.STOCKIN_ORDER_NOT_ALLOW_SUBMIT,
-                    "[供应链-提交入库单异常]: " + StockInReturnCode.STOCKIN_ORDER_NOT_ALLOW_SUBMIT.getDesc() + " "
+                    "[物流平台-提交入库单异常]: " + StockInReturnCode.STOCKIN_ORDER_NOT_ALLOW_SUBMIT.getDesc() + " "
                             + "[入库单ID: " + getStockinOrderDO().getId()
                             + ", 入库单状态: " + getStockinOrderDO().getState()
                             + ", 仓库回传时间: " + getStockinOrderDO().getWarehouseStockinTime()
