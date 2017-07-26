@@ -7,13 +7,12 @@ import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;
 import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDailyDO;
 import com.sfebiz.supplychain.persistence.base.stock.manager.StockBatchDailyManager;
 import com.sfebiz.supplychain.persistence.base.stock.manager.StockBatchManager;
+import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderDetailManager;
 import com.sfebiz.supplychain.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.Log;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +29,8 @@ public class CalcStockBatchDailyTask {
     private StockBatchManager stockBatchManager;
     @Resource
     private StockBatchDailyManager stockBatchDailyManager;
+    @Resource
+    private StockinOrderDetailManager stockinOrderDetailManager;
 
 
     public void excute() {
@@ -59,6 +60,8 @@ public class CalcStockBatchDailyTask {
                     stockBatchDailyDO.setMerchantId(stockBatchDO.getMerchantId());
                     stockBatchDailyDO.setMerchantProviderId(stockBatchDO.getMerchantProviderId());
                     //TODO 查询【采购入库正品】和【采购入库坏品】数量
+                    stockinOrderDetailManager.getStockinOrderDetailByStockinDateAndSkuBatch(stockBatchDO.getBatchNo(),new Date());
+
                     stockBatchDailyDO.setPurchaseStockinAvailableCount(0);
                     stockBatchDailyDO.setPurchaseStockoutDamagedCount(0);
                     //TODO 查询【调拨入库正品】 和【调拨入库坏品】数量
