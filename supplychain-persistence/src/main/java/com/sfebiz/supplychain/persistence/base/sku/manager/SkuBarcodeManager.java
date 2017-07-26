@@ -1,15 +1,17 @@
 package com.sfebiz.supplychain.persistence.base.sku.manager;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
+
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.sku.dao.SkuBarcodeDao;
 import com.sfebiz.supplychain.persistence.base.sku.domain.SkuBarcodeDO;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * 基本商品条码Manager
@@ -37,6 +39,17 @@ public class SkuBarcodeManager extends BaseManager<SkuBarcodeDO> {
              return null;
         } else {
             return skuBarcodeDOList.get(0);
+        }
+    }
+
+    public List<SkuBarcodeDO> getSkuBySkuId(Long skuId) {
+        SkuBarcodeDO skuBarcodeDO = new SkuBarcodeDO();
+        skuBarcodeDO.setSkuId(skuId);
+        List<SkuBarcodeDO> skuBarcodeDOList = query(BaseQuery.getInstance(skuBarcodeDO));
+        if (null == skuBarcodeDOList || 0 == skuBarcodeDOList.size()) {
+            return null;
+        } else {
+            return skuBarcodeDOList;
         }
     }
 

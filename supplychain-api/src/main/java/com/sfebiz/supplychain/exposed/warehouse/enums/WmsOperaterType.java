@@ -1,13 +1,14 @@
 package com.sfebiz.supplychain.exposed.warehouse.enums;
 
-import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
 
 /**
  * 仓库操作类型
@@ -17,21 +18,22 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class WmsOperaterType extends Enumerable4StringValue {
 
-    /** 新增 */
-    public static WmsOperaterType ADD = WmsOperaterType.valueOf("NEW","新增");
-    /** 修改 */
-    public static WmsOperaterType UPDATE = WmsOperaterType.valueOf("SAVE", "修改");
-    
-    /** 序号 */
-    private static final long serialVersionUID = -8236642457747480538L;
+    private static volatile transient Map<String, WmsOperaterType> allbyvalue = new HashMap<String, WmsOperaterType>();
+
+    private static volatile transient Map<String, WmsOperaterType> allbyname = new HashMap<String, WmsOperaterType>();
 
     private static final Logger log = LoggerFactory.getLogger(WmsOperaterType.class);
 
     private static final Lock lock = new ReentrantLock();
 
-    private static volatile transient Map<String, WmsOperaterType> allbyvalue = new HashMap<String, WmsOperaterType>();
+    /** 序号 */
+    private static final long serialVersionUID = -8236642457747480538L;
 
-    private static volatile transient Map<String, WmsOperaterType> allbyname = new HashMap<String, WmsOperaterType>();
+    /** 新增 */
+    public static WmsOperaterType ADD = WmsOperaterType.valueOf("NEW","新增");
+
+    /** 修改 */
+    public static WmsOperaterType UPDATE = WmsOperaterType.valueOf("SAVE", "修改");
 
     public WmsOperaterType(String value, String name) {
         super(value, name);

@@ -1,5 +1,14 @@
 package com.sfebiz.supplychain.persistence.base.sku.manager;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.springframework.stereotype.Component;
+
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
@@ -7,13 +16,6 @@ import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.exposed.sku.enums.SkuWarehouseSyncStateType;
 import com.sfebiz.supplychain.persistence.base.sku.dao.SkuWarehouseSyncDao;
 import com.sfebiz.supplychain.persistence.base.sku.domain.SkuWarehouseSyncDO;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by wang_cl on 2015/1/22.
@@ -37,7 +39,7 @@ public class SkuWarehouseSyncManager extends BaseManager<SkuWarehouseSyncDO> {
         return skuWarehouseSyncDOList;
     }
 
-    public SkuWarehouseSyncDO getBySkuIdAndStorehouseId(long skuId,long warehouseId){
+    public SkuWarehouseSyncDO getBySkuIdAndWarehouseId(long skuId,long warehouseId){
         SkuWarehouseSyncDO skuWarehouseSyncDO = new SkuWarehouseSyncDO();
         skuWarehouseSyncDO.setSkuId(skuId);
         skuWarehouseSyncDO.setWarehouseId(warehouseId);
@@ -77,7 +79,7 @@ public class SkuWarehouseSyncManager extends BaseManager<SkuWarehouseSyncDO> {
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("D:/development/IDEA/ifunq-supplychain/haitao-b2b-supplychain/" +
                         "supplychain-persistence/src/main/resources/base/sqlmap/sku/sku-warehouse-sync-sqlmap.xml",
-                SkuWarehouseSyncDao.class, SkuWarehouseSyncDO.class, "sc_sku_warehouse_syc");
+                SkuWarehouseSyncDao.class, SkuWarehouseSyncDO.class, "sc_sku_warehouse_sync");
     }
 
     public List<SkuWarehouseSyncDO> getAllUnSyncDataByWarehouseId(long warehouseId) {
