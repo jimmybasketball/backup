@@ -6,12 +6,16 @@ import cn.gov.zjport.newyork.ws.CheckReceivedResponse;
 import cn.gov.zjport.newyork.ws.bo.*;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
+import com.sfebiz.supplychain.exposed.sku.enums.SkuDeclareStateType;
+import com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO;
 import com.sfebiz.supplychain.protocol.common.DeclareType;
+import com.sfebiz.supplychain.provider.biz.SkuSyncBizService;
 import com.sfebiz.supplychain.provider.command.send.port.PortProductDeclareCommand;
 import com.sfebiz.supplychain.provider.entity.ResponseState;
 import com.sfebiz.supplychain.service.port.model.LogisticsPortBO;
 import com.sfebiz.supplychain.service.sku.model.SkuDeclareBO;
 import com.sfebiz.supplychain.util.XMLUtil;
+import org.springframework.cglib.beans.BeanCopier;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -164,37 +168,46 @@ public class HzPortProductDeclareCommand extends PortProductDeclareCommand {
     }
 
 
-//    /**
-//     * 提交成功
-//     *
-//     * @return
-//     */
-//    private boolean submitSuccess(String remark) {
-//        LogBetter.instance(logger).setLevel(LogLevel.INFO)
-//                .setMsg("商品备案提交成功")
-//                .setParms(responseString)
-//                .log();
-//        skuDeclareBO.setRemark(remark);
-//        skuDeclareBO.setState(ProductDeclareState.COLLECTING.getValue());
-//        skuDeclareBO.setSubmitTime(new Date());
-//        ProductBO.getInstance().saveProductDeclareRecord(this.getProductDeclareDO());
-//        return true;
-//    }
-//
-//    /**
-//     * 提交失败
-//     *
-//     * @return
-//     */
-//    private void submitFailure(String remark) {
-//        LogBetter.instance(logger).setLevel(LogLevel.INFO)
-//                .setMsg("商品备案提交失败")
-//                .setParms(responseString)
-//                .log();
-//        skuDeclareBO.setRemark(remark);
-//        skuDeclareBO.setState(ProductDeclareState.FINISHED_COLLECTING.getValue());
-//        skuDeclareBO.setSubmitTime(new Date());
-//        ProductBO.getInstance().saveProductDeclareRecord(this.getProductDeclareDO());
-//    }
+    /**
+     * 提交成功
+     *
+     * @return
+     */
+    private boolean submitSuccess(String remark) {
+        LogBetter.instance(logger).setLevel(LogLevel.INFO)
+                .setMsg("商品备案提交成功")
+                .setParms(responseString)
+                .log();
+        skuDeclareBO.setRemark(remark);
+        skuDeclareBO.setState(SkuDeclareStateType.WAIT_DECLARE.getValue());
+        skuDeclareBO.setSubmitTime(new Date());
+
+        ProductDeclareDO productDeclareDO = new ProductDeclareDO();
+        BeanCopier beanCopier =
+                BeanCopier.create(SkuDeclareBO.class, ProductDeclareDO.class, false);
+        beanCopier.copy(skuDeclareBO, productDeclareDO, null);
+        SkuSyncBizService.getInstance().saveProductDeclareRecord(productDeclareDO);
+        return true;
+    }
+
+    /**
+     * 提交失败
+     *
+     * @return
+     */
+    private void submitFailure(String remark) {
+        LogBetter.instance(logger).setLevel(LogLevel.INFO)
+                .setMsg("商品备案提交失败")
+                .setParms(responseString)
+                .log();
+        skuDeclareBO.setRemark(remark);
+        skuDeclareBO.setState(SkuDeclareStateType.DECLARE_NOT_PASS.getValue());
+        skuDeclareBO.setSubmitTime(new Date());
+        ProductDeclareDO productDeclareDO = new ProductDeclareDO();
+        BeanCopier beanCopier =
+                BeanCopier.create(SkuDeclareBO.class, ProductDeclareDO.class, false);
+        beanCopier.copy(skuDeclareBO, productDeclareDO, null);
+        SkuSyncBizService.getInstance().saveProductDeclareRecord(productDeclareDO);
+    }
 
 }
