@@ -37,7 +37,12 @@ public class PortBillDeclareManager extends BaseManager<PortBillDeclareDO> {
     }
 
     public static void main(String[] args) {
-        DaoHelper.genXMLWithFeature("/Users/xinyuan/work/sf-gitlab/logistics/logistics-persistence/src/main/resources/sqlmap/portEntity-bill-declare-sqlmap.xml", PortBillDeclareDao.class, PortBillDeclareDO.class, "sc_port_bill_declare");
+        DaoHelper.genXMLWithFeature("/Users/liujunchi/git_projects/" +
+                        "supplychain/supplychain-persistence/" +
+                        "src/main/resources/base/sqlmap/port/sc_port_bill_declare_sqlmap.xml",
+                PortBillDeclareDao.class,
+                PortBillDeclareDO.class,
+                "sc_port_bill_declare");
     }
 
 }

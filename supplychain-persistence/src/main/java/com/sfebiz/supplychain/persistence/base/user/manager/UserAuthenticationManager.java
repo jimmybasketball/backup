@@ -1,21 +1,17 @@
 package com.sfebiz.supplychain.persistence.base.user.manager;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Component;
-
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.exception.DataAccessException;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
-import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderBuyerDao;
-import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO;
 import com.sfebiz.supplychain.persistence.base.user.dao.UserAuthenticationDao;
 import com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 
@@ -38,8 +34,9 @@ public class UserAuthenticationManager extends BaseManager<UserAuthenticationDO>
     }
 
     public static void main(String[] args) {
-        DaoHelper.genXMLWithFeature("C:/base_user_authentication-sqlmap.xml",
-            StockoutOrderBuyerDao.class, StockoutOrderBuyerDO.class, "base_user_authentication");
+        DaoHelper.genXMLWithFeature("/Users/liujunchi/git_projects/" + "supplychain/supplychain-persistence/"
+                        + "src/main/resources/base/sqlmap/user/base_user_authentication-sqlmap.xml",
+                UserAuthenticationDao.class, UserAuthenticationDO.class, "base_user_authentication");
     }
 
     /**

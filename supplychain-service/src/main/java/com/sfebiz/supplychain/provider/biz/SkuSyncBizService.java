@@ -1,9 +1,8 @@
-package com.sfebiz.supplychain.provider.bo;
+package com.sfebiz.supplychain.provider.biz;
 
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
-import com.sfebiz.supplychain.exception.CommandException;
 import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
 import com.sfebiz.supplychain.exposed.common.enums.LogisticsReturnCode;
 import com.sfebiz.supplychain.exposed.common.enums.PortNid;
