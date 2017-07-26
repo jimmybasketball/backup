@@ -4,7 +4,6 @@ import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuBatchStockOperaterEntity;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuStockOperaterEntity;
 import com.sfebiz.supplychain.exposed.stock.entity.StockBatchEntity;
-import com.sfebiz.supplychain.exposed.stock.entity.StockPhysicalEntity;
 import net.pocrd.entity.ServiceException;
 
 import java.util.List;
@@ -30,7 +29,7 @@ public interface StockService {
      * @return
      * @throws ServiceException
      */
-    Map<String, List<SkuBatchStockOperaterEntity>> freezeStockBatch(List<SkuStockOperaterEntity> skuStockOperaterEntityList) throws ServiceException;
+    Map<String, List<SkuBatchStockOperaterEntity>> freezeSkuStockBatch(List<SkuStockOperaterEntity> skuStockOperaterEntityList) throws ServiceException;
 
 
     /**
@@ -57,13 +56,4 @@ public interface StockService {
     boolean releaseSkuStockInBatch(List<SkuStockOperaterEntity> skuStockOperaterEntityList, long warehouseId, long stockoutOrderId) throws ServiceException;
 
 
-    /**
-     * 获取指定仓库中sku的库存信息
-     *
-     * @param skuId
-     * @param warehouseId
-     * @return
-     * @throws ServiceException
-     */
-    public StockPhysicalEntity getBatchStockBySkuIdAndWarehouseId(long skuId, long warehouseId) throws ServiceException;
-} 
+}

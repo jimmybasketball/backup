@@ -1,6 +1,5 @@
 package com.sfebiz.supplychain.service.stock;
 
-import com.aliyun.openservices.ons.api.Message;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
@@ -10,7 +9,6 @@ import com.sfebiz.supplychain.exposed.stock.api.StockService;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuBatchStockOperaterEntity;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuStockOperaterEntity;
 import com.sfebiz.supplychain.exposed.stock.entity.StockBatchEntity;
-import com.sfebiz.supplychain.exposed.stock.entity.StockPhysicalEntity;
 import com.sfebiz.supplychain.exposed.stock.enums.StockBatchStateType;
 import com.sfebiz.supplychain.exposed.stock.enums.StockFreezeOrderType;
 import com.sfebiz.supplychain.exposed.stock.enums.StockFreezeState;
@@ -24,13 +22,10 @@ import com.sfebiz.supplychain.persistence.base.stock.manager.StockFreezeManager;
 import com.sfebiz.supplychain.persistence.base.stock.manager.StockPhysicalManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
-import com.sfebiz.supplychain.queue.MessageConstants;
 import com.sfebiz.supplychain.queue.MessageProducer;
-import com.sfebiz.supplychain.service.stock.convert.StockPhysicalConvertUtil;
 import com.sfebiz.supplychain.util.stock.ComparatorExpirationDate;
 import com.sfebiz.supplychain.util.stock.ComparatorStockinDate;
 import net.pocrd.entity.ServiceException;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -67,21 +62,25 @@ public class StockServiceImpl implements StockService {
             StockBatchDO stockBatchDO = new StockBatchDO();
             BeanCopier beanCopier = BeanCopier.create(StockBatchEntity.class, StockBatchDO.class, false);
             beanCopier.copy(stockBatchEntity, stockBatchDO, null);
-            //TODO 初始化数据,设置批次库存
             stockBatchDO.setState(StockBatchStateType.ENABLE.value);
-
 
             stockBatchManager.insert(stockBatchDO);
             commonRet.setResult(stockBatchDO.getId());
-            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO).setMsg("[批次库存]创建批次库存成功").log();
+            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
+                    .setMsg("[供应链-创建批次库存]创建批次库存成功")
+                    .log();
         } catch (Exception e) {
-            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR).setException(e).setMsg("[批次库存]创建批次库存异常").log();
+            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
+                    .setException(e)
+                    .setMsg("[供应链-创建批次库存]创建批次库存异常")
+                    .log();
         }
         return commonRet;
     }
 
     /**
-     * 冻结库存
+     * 批量冻结库存(销售出库单)
+     * PS：提前一定要指定好批次库存
      *
      * @param skuStockOperaterEntityList 商品库存操作实体集合
      * @return
@@ -89,56 +88,63 @@ public class StockServiceImpl implements StockService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, List<SkuBatchStockOperaterEntity>> freezeStockBatch(List<SkuStockOperaterEntity> skuStockOperaterEntityList) throws ServiceException {
+    public Map<String, List<SkuBatchStockOperaterEntity>> freezeSkuStockBatch(List<SkuStockOperaterEntity> skuStockOperaterEntityList) throws ServiceException {
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
+                .setMsg("[供应链-批量冻结库存信息]:开始")
+                .addParm("商品信息", skuStockOperaterEntityList).log();
         //1. 判断参数合法性
-        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO).setMsg("[供应链-批量冻结库存信息]:开始").addParm("商品信息", skuStockOperaterEntityList).log();
         if (null == skuStockOperaterEntityList || skuStockOperaterEntityList.size() == 0) {
-            throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL, "[供应链-批量冻结库存信息失败]: "
-                    + LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL.getDesc() + "[商品信息: " + skuStockOperaterEntityList + "]"
+            throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL,
+                    "[供应链-批量冻结库存信息失败]: " + LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL.getDesc() + "[商品信息: " + skuStockOperaterEntityList + "]"
             );
         }
-        //2. 声明商品指定批次集合
-        List<SkuStockOperaterEntity> productStockOperaterEntityList = new ArrayList<SkuStockOperaterEntity>();
 
-        for (SkuStockOperaterEntity skuStockOperaterEntity : skuStockOperaterEntityList) {
-            if (StringUtils.isNotBlank(skuStockOperaterEntity.getBatchNo())) {
-                productStockOperaterEntityList.add(skuStockOperaterEntity);
-            }
-        }
-        //3 初始化需要冻结批次库存
-        Map<String, List<SkuBatchStockOperaterEntity>> needFreezeBatchStockMap = new HashMap<String, List<SkuBatchStockOperaterEntity>>();
-        //4. 按skuId,stockoutOrderId进行merge和排序
+        //2 初始化已冻结批次库存
+        Map<String, List<SkuBatchStockOperaterEntity>> freezeBatchStockMap = new HashMap<String, List<SkuBatchStockOperaterEntity>>();
+        //3. 按skuId,stockoutOrderId进行merge和排序
         List<SkuStockOperaterEntity> mergeAndSortResult = mergeAndSortSkuStockOperaterEntityBySkuIdAndStockoutOrderId(skuStockOperaterEntityList);
-        //5. 按顺序操作库存
+        //4. 按顺序操作库存
         for (SkuStockOperaterEntity skuStockOperaterEntity : mergeAndSortResult) {
-            //5.1 计算出需要冻结的批次库存信息
+            //4.1 计算出需要冻结的批次库存信息
             List<SkuBatchStockOperaterEntity> skuBatchStockOperaterEntities = checkAndGetNeedFreezeBatchStockByWarehouse(skuStockOperaterEntity);
-            //5.2 冻结库存
+            //4.2 冻结库存
             checkAndFreezeSkuBatchStock(skuStockOperaterEntity.getSkuId(), skuStockOperaterEntity.getWarehouseId(), skuStockOperaterEntity.getCount()
                     , skuStockOperaterEntity.getStockoutOrderId(), skuBatchStockOperaterEntities);
-            //5.3 将商品冻结的批次库存信息返回
+            //4.3 将商品冻结的批次库存信息返回
             String key = skuStockOperaterEntity.getStockoutOrderId() + "_" + skuStockOperaterEntity.getSkuId();
-            needFreezeBatchStockMap.put(key, skuBatchStockOperaterEntities);
+            freezeBatchStockMap.put(key, skuBatchStockOperaterEntities);
         }
 
-        //6. 按顺序更新redis库存
-//        for (SkuStockOperaterEntity skuStockOperaterEntity : mergeAndSortResult) {
-//            sendRedisSyncMessage(skuStockOperaterEntity.getSkuId());
-//        }
+        //TODO 5. 按顺序更新redis库存
+        // for (SkuStockOperaterEntity skuStockOperaterEntity : mergeAndSortResult) {
+        // sendRedisSyncMessage(skuStockOperaterEntity.getSkuId());
+        // }
 
-        LogBetter.instance(LOGGER)
-                .setLevel(LogLevel.INFO)
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                 .setMsg("[供应链-批量冻结库存信息]:结束")
                 .addParm("商品信息", skuStockOperaterEntityList)
-                .addParm("商品冻结的批次库存信息", needFreezeBatchStockMap)
-                .log();
-        return needFreezeBatchStockMap;
+                .addParm("商品冻结的批次库存信息", freezeBatchStockMap).log();
+        return freezeBatchStockMap;
     }
 
+    /**
+     * 批量消费库存
+     *
+     * @param skuStockOperaterEntityList 库存操作集合
+     * @param warehouseId                仓库
+     * @param stockoutOrderId            出库单ID
+     * @return
+     * @throws ServiceException
+     */
     @Override
     public boolean consumeSkuStockInBatch(List<SkuStockOperaterEntity> skuStockOperaterEntityList, long warehouseId, long stockoutOrderId) throws ServiceException {
-        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO).setMsg("[供应链-批量消费商品库存]").addParm("商品信息", skuStockOperaterEntityList)
-                .addParm("仓库ID", warehouseId).addParm("出库单ID", stockoutOrderId).log();
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
+                .setMsg("[供应链-批量消费商品库存]")
+                .addParm("商品信息", skuStockOperaterEntityList)
+                .addParm("仓库ID", warehouseId)
+                .addParm("出库单ID", stockoutOrderId)
+                .log();
+        //1. 判断参数合法性
         if (0 == warehouseId || 0 == stockoutOrderId || null == skuStockOperaterEntityList || skuStockOperaterEntityList.size() == 0) {
             throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL,
                     "[供应链-批量消费商品库存]: " + LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL.getDesc()
@@ -158,13 +164,22 @@ public class StockServiceImpl implements StockService {
         }
 
         //4. 按顺序更新redis库存
-        for (SkuStockOperaterEntity skuStockOperaterEntity : mergeAndSortResult) {
-            sendRedisSyncMessage(skuStockOperaterEntity.getSkuId());
-        }
+        //for (SkuStockOperaterEntity skuStockOperaterEntity : mergeAndSortResult) {
+        //    sendRedisSyncMessage(skuStockOperaterEntity.getSkuId());
+        //}
 
         return true;
     }
 
+    /**
+     * 批量释放库存
+     *
+     * @param skuStockOperaterEntityList 库存操作实体集合
+     * @param warehouseId                仓库id
+     * @param stockoutOrderId            出库单ID
+     * @return
+     * @throws ServiceException
+     */
     @Override
     public boolean releaseSkuStockInBatch(List<SkuStockOperaterEntity> skuStockOperaterEntityList, long warehouseId, long stockoutOrderId) throws ServiceException {
         LogBetter.instance(LOGGER).setLevel(LogLevel.INFO).setMsg("[供应链-批量释放商品库存]").addParm("商品信息", skuStockOperaterEntityList).addParm("仓库ID", warehouseId)
@@ -203,23 +218,12 @@ public class StockServiceImpl implements StockService {
     }
 
 
-    @Override
-    public StockPhysicalEntity getBatchStockBySkuIdAndWarehouseId(long skuId, long warehouseId) throws ServiceException {
-        if (skuId == 0 || warehouseId == 0) {
-            throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL, "[供应链-查询商品实物库存信息失败]: "
-                    + LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL.getDesc() + "[商品ID: " + skuId + ", 仓库ID: " + warehouseId);
-        }
-        try {
-            StockPhysicalDO stockPhysicalDOList = stockPhysicalManager.getBySkuIdAndWarehouseId(skuId, warehouseId);
-            StockPhysicalEntity stockPhysicalEntity = StockPhysicalConvertUtil.convertToStockPhysicalEntity(stockPhysicalDOList);
-            return stockPhysicalEntity;
-        } catch (Exception e) {
-            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR).setMsg("供应链-查询商品实物库存信息异常").setException(e).log();
-        }
-        return null;
-    }
-
-
+    /**
+     * 合并出库单中Sku信息
+     *
+     * @param souceEntityList
+     * @return
+     */
     protected List<SkuStockOperaterEntity> mergeAndSortSkuStockOperaterEntityBySkuIdAndStockoutOrderId(List<SkuStockOperaterEntity> souceEntityList) {
         HashMap<String, SkuStockOperaterEntity> map = new HashMap();
         // 合并skuId重复的数据
@@ -246,11 +250,10 @@ public class StockServiceImpl implements StockService {
 
     protected List<SkuBatchStockOperaterEntity> checkAndGetNeedFreezeBatchStockByWarehouse(SkuStockOperaterEntity skuStockOperaterEntity) throws ServiceException {
         long warehouseId = skuStockOperaterEntity.getWarehouseId();
-        // 不操作可售库存表
-        //  getSaleStockBySkuIdForUpdate(skuStockOperaterEntity.getSkuId());
         //1. 获取仓库中所有符合要求的批次信息
         List<StockBatchDO> stockBatchDOList = stockBatchManager.getBySkuIdAndWarehouseId(skuStockOperaterEntity.getSkuId(), warehouseId);
 
+        //2.判断是否存在批次库存信息
         if (stockBatchDOList == null || stockBatchDOList.size() == 0) {
             LogBetter.instance(LOGGER).setLevel(LogLevel.WARN).setErrorMsg("[供应链-根据商品ID和仓库ID获取批次库存信息失败]: "
                     + LogisticsReturnCode.STOCK_SERVICE_BATCH_STOCK_RECORD_NOT_FOUND.getDesc()).addParm("商品ID", skuStockOperaterEntity.skuId)
@@ -259,6 +262,7 @@ public class StockServiceImpl implements StockService {
                     LogisticsReturnCode.STOCK_SERVICE_BATCH_STOCK_RECORD_NOT_FOUND.getDesc() + "[商品ID:" + skuStockOperaterEntity.skuId + ",仓库ID:" + warehouseId + "]");
         }
 
+        //3.根据Sku出库方案进行批次库存排序
         SkuDO skuDO = skuManager.getById(skuStockOperaterEntity.skuId);
         List<StockBatchDO> sortRusults = sortBatchStock(stockBatchDOList, skuDO);
 
@@ -286,11 +290,15 @@ public class StockServiceImpl implements StockService {
     }
 
     protected List<SkuBatchStockOperaterEntity> getNeedFreezeBatchStock(List<StockBatchDO> sortRusults, SkuStockOperaterEntity skuStockOperaterEntity) throws ServiceException {
+        //1.初始化需要冻结库存信息集合
         List<SkuBatchStockOperaterEntity> needFreezeBatchStocks = new ArrayList<SkuBatchStockOperaterEntity>();
+        //2.初始化本次商品批次库存所需数量
         int remainNeedCount = skuStockOperaterEntity.getCount();
+        //3. 计算整理后批次库存信息
         for (StockBatchDO stockBatchDO : sortRusults) {
             LogBetter.instance(LOGGER).setLevel(LogLevel.INFO).setMsg("[供应链-根据商品出库规则计算所需冻结批次库存]").addParm("批次库存信息", stockBatchDO)
                     .addParm("仓库剩余需冻结数量", remainNeedCount).log();
+            //3.1 批次可用数量> 所需数量  加入冻结集合里面
             if (stockBatchDO.getAvailableCount() >= remainNeedCount) {
                 SkuBatchStockOperaterEntity entity = convertFromBatchStockDO(stockBatchDO);
                 entity.setCount(remainNeedCount);
@@ -301,14 +309,15 @@ public class StockServiceImpl implements StockService {
                         .addParm("商品冻结数量", skuStockOperaterEntity.getCount()).addParm("仓库ID", stockBatchDO.getWarehouseId()).log();
                 return needFreezeBatchStocks;
             } else {
+                //3.2 批次可用数量< 所需数量  减掉可用数量，冻结部分后继续处理，若处理完都没有return就gg了
                 remainNeedCount -= stockBatchDO.getAvailableCount();
                 SkuBatchStockOperaterEntity entity = convertFromBatchStockDO(stockBatchDO);
                 needFreezeBatchStocks.add(entity);
             }
         }
-        LogBetter.instance(LOGGER)
-                .setLevel(LogLevel.WARN)
-                .setErrorMsg("[供应链-根据商品出库规则计算所需冻结批次库存失败]" + LogisticsReturnCode.LOGISTICS_BATCH_STOCK_SKU_NOT_ENOUGH.getDesc())
+        LogBetter.instance(LOGGER).setLevel(LogLevel.WARN)
+                .setErrorMsg("[供应链-根据商品出库规则计算所需冻结批次库存失败]"
+                        + LogisticsReturnCode.LOGISTICS_BATCH_STOCK_SKU_NOT_ENOUGH.getDesc())
                 .addParm("商品ID", skuStockOperaterEntity.getSkuId())
                 .addParm("仓库ID", sortRusults.get(0).getWarehouseId())
                 .addParm("商品冻结数量", skuStockOperaterEntity.getCount())
@@ -322,6 +331,12 @@ public class StockServiceImpl implements StockService {
         );
     }
 
+    /**
+     * 根据批次库存信息转换成sku操作实体
+     *
+     * @param stockBatchDO
+     * @return
+     */
     protected SkuBatchStockOperaterEntity convertFromBatchStockDO(StockBatchDO stockBatchDO) {
         SkuBatchStockOperaterEntity skuBatchStockOperaterEntity = new SkuBatchStockOperaterEntity();
         skuBatchStockOperaterEntity.setSkuId(stockBatchDO.getSkuId());
@@ -339,7 +354,6 @@ public class StockServiceImpl implements StockService {
     }
 
     protected boolean checkAndFreezeSkuBatchStock(long skuId, long warehouseId, int count, long stockoutOrderId, List<SkuBatchStockOperaterEntity> skuBatchStockOperaterEntities) throws ServiceException {
-
         if (0 == skuId || 0 == warehouseId || 0 == stockoutOrderId || 0 == count || skuBatchStockOperaterEntities == null || skuBatchStockOperaterEntities.size() == 0) {
             throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL,
                     "[供应链-根据需要冻结的批次库存信息检查并冻结商品库存失败]: " + LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL.getDesc()
@@ -352,8 +366,7 @@ public class StockServiceImpl implements StockService {
             );
         }
 
-        LogBetter.instance(LOGGER)
-                .setLevel(LogLevel.INFO)
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                 .setMsg("[供应链-根据需要冻结的批次库存信息检查并冻结商品库存]")
                 .addParm("商品ID", skuId)
                 .addParm("仓库ID", warehouseId)
@@ -406,30 +419,28 @@ public class StockServiceImpl implements StockService {
 
 
     protected boolean checkStockIsEnoughThenFreezeByNeedFreezeBatchStock(long skuId, long warehouseId, long stockoutOrderId, int count, List<SkuBatchStockOperaterEntity> skuBatchStockOperaterEntities) throws ServiceException {
-        LogBetter.instance(LOGGER)
-                .setLevel(LogLevel.INFO)
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                 .setMsg("[供应链-冻结商品库存]")
                 .addParm("商品ID", skuId)
                 .addParm("仓库ID", warehouseId)
                 .addParm("出库单ID", stockoutOrderId)
                 .addParm("需冻结数量", count)
                 .log();
+        //1.查询商品实物库存信息
         StockPhysicalDO stockPhysicalDO = stockPhysicalManager.getBySkuIdAndWarehouseId(skuId, warehouseId);
 
-        LogBetter.instance(LOGGER)
-                .setLevel(LogLevel.INFO)
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                 .setMsg("[供应链-多线程获取后的实物库存信息]")
                 .addParm("实物库存信息", stockPhysicalDO)
                 .log();
 
-        // 3. 判断库存是否满足, 如果满足，则冻结库存
+        // 2.判断库存是否满足, 如果满足，则冻结库存
         if (stockPhysicalDO.getAvailableCount() >= count) {
             stockPhysicalDO.setFreezeCount(stockPhysicalDO.getFreezeCount() + count);
             stockPhysicalDO.setAvailableCount(stockPhysicalDO.getAvailableCount() - count);
             stockPhysicalManager.update(stockPhysicalDO);
 
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.INFO)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                     .setMsg("[供应链-冻结商品实物库存成功]")
                     .addParm("商品ID", skuId)
                     .addParm("仓库ID", warehouseId)
@@ -438,9 +449,8 @@ public class StockServiceImpl implements StockService {
                     .addParm("实物库存信息", stockPhysicalDO)
                     .log();
         } else {
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.ERROR)
-                    .setMsg("[供应链-冻结商品实物库存失败]: (LOGISTICS_STOCK_SKU_NOT_ENOUGH)" + LogisticsReturnCode.LOGISTICS_STOCK_SKU_NOT_ENOUGH)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
+                    .setMsg("[供应链-冻结商品实物库存失败]:" + LogisticsReturnCode.LOGISTICS_STOCK_SKU_NOT_ENOUGH)
                     .addParm("商品ID", skuId)
                     .addParm("仓库ID", warehouseId)
                     .addParm("出库单ID", stockoutOrderId)
@@ -457,7 +467,9 @@ public class StockServiceImpl implements StockService {
                             + "]"
             );
         }
+        //3. 冻结冻结批次库存记录
         for (SkuBatchStockOperaterEntity skuBatchStockOperaterEntity : skuBatchStockOperaterEntities) {
+            //3.1 记录冻结库存表
             StockFreezeDO stockFreezeDO = new StockFreezeDO();
             stockFreezeDO.setSkuId(skuId);
             stockFreezeDO.setWarehouseId(stockPhysicalDO.getWarehouseId());
@@ -468,15 +480,14 @@ public class StockServiceImpl implements StockService {
             stockFreezeDO.setBatchNo(skuBatchStockOperaterEntity.getBatchNo());
             stockFreezeDO.setOrderType(Integer.parseInt(StockFreezeOrderType.SALE_OUT_ORDER_TYPE.getValue()));
             stockFreezeManager.insert(stockFreezeDO);
-
+            //3.2 更新批次库存表
             StockBatchDO stockBatchDO = new StockBatchDO();
             stockBatchDO.setId(skuBatchStockOperaterEntity.getId());
             stockBatchDO.setFreezeCount(skuBatchStockOperaterEntity.getFreezeCount());
             stockBatchDO.setAvailableCount(skuBatchStockOperaterEntity.getQualityCount());
             stockBatchManager.update(stockBatchDO);
 
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.INFO)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                     .setMsg("[供应链-冻结商品批次库存成功]")
                     .addParm("商品ID", skuId)
                     .addParm("仓库ID", warehouseId)
@@ -489,33 +500,33 @@ public class StockServiceImpl implements StockService {
     }
 
 
-    public void sendRedisSyncMessage(long skuId) {
-        try {
-            Message msg = new Message();
-            msg.setTopic(MessageConstants.TOPIC_SUPPLY_CHAIN_EVENT);
-            msg.setTag(MessageConstants.TAG_REDIS_SKU_STOCK_INFO);
-            String body = skuId + "";
-            msg.setBody(body.getBytes());
-            Properties properties = new Properties();
-            msg.setUserProperties(properties);
-            msg.setStartDeliverTime(System.currentTimeMillis() + 1000 * 1);
-            supplyChainMessageProducer.send(msg);
-            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
-                    .setMsg("发送Redis商品库存信息同步：消息发送成功")
-                    .addParm("商品ID", skuId)
-                    .log();
-        } catch (Exception e) {
-            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
-                    .setMsg("发送Redis商品库存信息同步：消息发送异常")
-                    .addParm("商品ID", skuId)
-                    .setException(e)
-                    .log();
-        }
-    }
+//    public void sendRedisSyncMessage(long skuId) {
+//        try {
+//            Message msg = new Message();
+//            msg.setTopic(MessageConstants.TOPIC_SUPPLY_CHAIN_EVENT);
+//            msg.setTag(MessageConstants.TAG_REDIS_SKU_STOCK_INFO);
+//            String body = skuId + "";
+//            msg.setBody(body.getBytes());
+//            Properties properties = new Properties();
+//            msg.setUserProperties(properties);
+//            msg.setStartDeliverTime(System.currentTimeMillis() + 1000 * 1);
+//            supplyChainMessageProducer.send(msg);
+//            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
+//                    .setMsg("发送Redis商品库存信息同步：消息发送成功")
+//                    .addParm("商品ID", skuId)
+//                    .log();
+//        } catch (Exception e) {
+//            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
+//                    .setMsg("发送Redis商品库存信息同步：消息发送异常")
+//                    .addParm("商品ID", skuId)
+//                    .setException(e)
+//                    .log();
+//        }
+//    }
 
     protected List<SkuStockOperaterEntity> mergeAndSortSkuStockOperaterEntity(List<SkuStockOperaterEntity> souceEntityList) {
         HashMap<Long, SkuStockOperaterEntity> map = new HashMap();
-        // 合并skuId重复的数据
+        // 1.合并skuId重复的数据
         for (SkuStockOperaterEntity skuStockOperaterEntity : souceEntityList) {
             if (map.containsKey(skuStockOperaterEntity.getSkuId())) {
                 SkuStockOperaterEntity oldSkuStockOperaterEntity = map.get(skuStockOperaterEntity.getSkuId());
@@ -529,24 +540,25 @@ public class StockServiceImpl implements StockService {
                 map.put(skuStockOperaterEntity.getSkuId(), newEntity);
             }
         }
+        // 2.把整合好的SkuStockOperaterEntity Map放到list集合排序
         List<SkuStockOperaterEntity> resultList = new ArrayList<SkuStockOperaterEntity>();
         for (SkuStockOperaterEntity stockInOutEntity : map.values()) {
             resultList.add(stockInOutEntity);
         }
-        // 根据skuId排序
+
         Collections.sort(resultList);
         return resultList;
     }
 
     protected boolean consumeSkuStock(long skuId, long warehouseId, int count, long stockoutOrderId) throws ServiceException {
-        LogBetter.instance(LOGGER)
-                .setLevel(LogLevel.INFO)
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                 .setMsg("[供应链-消费商品库存]")
                 .addParm("商品ID", skuId)
                 .addParm("仓库ID", warehouseId)
                 .addParm("商品数目", count)
                 .addParm("出库单ID", stockoutOrderId)
                 .log();
+        //1.校验参数合法性
         if (0 == skuId || 0 == warehouseId || 0 == stockoutOrderId || 0 == count) {
             throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL,
                     "[供应链-消费商品库存失败]: " + LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL.getDesc()
@@ -558,24 +570,20 @@ public class StockServiceImpl implements StockService {
             );
         }
         try {
-            // 一开始就进行锁，防止并发
-            //            getSaleStockBySkuIdForUpdate(skuId);
-
-            //1. 查找待消费的冻结库存
+            //2. 查找待消费的冻结库存
             List<StockFreezeDO> freezeStockList = getStockoutFreezeStockList(skuId, warehouseId, stockoutOrderId);
 
-            //2. 检查冻结库存的信息是否正确
+            //3. 检查冻结库存的信息是否正确
             checkFreezeStockInfoIsCorrect(freezeStockList, count, StockFreezeState.CONSUMED);
 
-            //3. 消费冻结库存
+            //4. 消费冻结库存
             consumeFreezeStock(skuId, warehouseId, freezeStockList, count);
             return true;
         } catch (ServiceException e) {
             //抛出去
             throw e;
         } catch (Exception e) {
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.ERROR)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
                     .setErrorMsg(LogisticsReturnCode.STOCK_SERVICE_INNER_EXCEPTION.getDesc())
                     .addParm("商品ID", skuId)
                     .addParm("仓库ID", warehouseId)
@@ -595,10 +603,10 @@ public class StockServiceImpl implements StockService {
     }
 
     protected void consumeFreezeStock(long skuId, long warehouseId, List<StockFreezeDO> stockFreezeDOS, int count) throws ServiceException {
+        //1.校验实物库存
         StockPhysicalDO stockPhysicalDO = stockPhysicalManager.getBySkuIdAndWarehouseId(skuId, warehouseId);
-        if (null == stockPhysicalDO) {
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.ERROR)
+        if (stockPhysicalDO == null) {
+            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
                     .setErrorMsg(LogisticsReturnCode.STOCK_SERVICE_ACTUAL_RECORD_NOT_FOUND.getDesc())
                     .addParm("商品ID", skuId)
                     .addParm("仓库ID", warehouseId)
@@ -610,16 +618,16 @@ public class StockServiceImpl implements StockService {
                             + "]"
             );
         }
-        //更新实物库存的数量
+        //2.更新实物库存的数量
         stockPhysicalDO.setFreezeCount(stockPhysicalDO.getFreezeCount() - count);
         stockPhysicalManager.update(stockPhysicalDO);
 
+        //3.更新批次库存信息
         for (StockFreezeDO freezeStockDO : stockFreezeDOS) {
-            //更新批次库存信息
+            //3.1更新批次库存信息
             StockBatchDO stockBatchDO = stockBatchManager.getBySkuIdAndWarehouseIdAndBatchNo(skuId, warehouseId, freezeStockDO.getBatchNo().trim());
             if (stockBatchDO == null) {
-                LogBetter.instance(LOGGER)
-                        .setLevel(LogLevel.ERROR)
+                LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
                         .setErrorMsg(LogisticsReturnCode.STOCK_SERVICE_BATCH_STOCK_RECORD_NOT_FOUND.getDesc())
                         .addParm("商品ID", skuId)
                         .addParm("仓库ID", warehouseId)
@@ -635,13 +643,12 @@ public class StockServiceImpl implements StockService {
             }
             stockBatchDO.setFreezeCount(stockBatchDO.getFreezeCount() - freezeStockDO.getFreezeCount());
             stockBatchManager.update(stockBatchDO);
-            //更新冻结库存的状态
+            //3.2更新冻结库存的状态
             freezeStockDO.setFreezeState(StockFreezeState.CONSUMED.getValue());
             freezeStockDO.setRealCount(freezeStockDO.getFreezeCount());
             stockFreezeManager.update(freezeStockDO);
 
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.INFO)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                     .setMsg("[供应链-消费商品库存成功]")
                     .addParm("商品ID", skuId)
                     .addParm("仓库ID", warehouseId)
@@ -666,8 +673,7 @@ public class StockServiceImpl implements StockService {
         int totalFreezeCount = 0;
         for (StockFreezeDO freezeStockDO : freezeStockList) {
             if (!freezeStockDO.getFreezeState().equals(StockFreezeState.FREEZED.getValue())) {
-                LogBetter.instance(LOGGER)
-                        .setLevel(LogLevel.ERROR)
+                LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
                         .setErrorMsg(LogisticsReturnCode.STOCK_SERVICE_FREEZE_RECORD_STATE_ERROR.getDesc())
                         .addParm("freezeStockDO", freezeStockDO)
                         .addParm("count", count)
@@ -681,8 +687,7 @@ public class StockServiceImpl implements StockService {
                                 + "]"
                 );
             }
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.INFO)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                     .setMsg("[供应链-检查商品冻结状态 ]")
                     .addParm("freezeStockDO", freezeStockDO)
                     .addParm("count", count)
@@ -692,8 +697,7 @@ public class StockServiceImpl implements StockService {
         }
 
         if (totalFreezeCount != count) {
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.WARN)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.WARN)
                     .setErrorMsg("实际消费库存和冻结库存不符")
                     .addParm("totalFreezeCount", totalFreezeCount)
                     .addParm("count", count)
@@ -711,8 +715,7 @@ public class StockServiceImpl implements StockService {
     }
 
     private boolean releaseSkuStock(Long skuId, long warehouseId, Integer count, long stockoutOrderId) throws ServiceException {
-        LogBetter.instance(LOGGER)
-                .setLevel(LogLevel.INFO)
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                 .setMsg("[供应链-释放商品库存]")
                 .addParm("商品ID", skuId)
                 .addParm("仓库ID", warehouseId)
@@ -763,11 +766,11 @@ public class StockServiceImpl implements StockService {
     }
 
     protected void releaseFreezeStock(long skuId, long warehouseId, List<StockFreezeDO> freezeStockDOs, int count) throws ServiceException {
+        //1.校验实物库存和仓库信息
         StockPhysicalDO stockPhysicalDO = stockPhysicalManager.getBySkuIdAndWarehouseId(skuId, warehouseId);
         WarehouseDO warehouseDO = warehouseManager.getById(warehouseId);
         if (null == stockPhysicalDO) {
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.ERROR)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
                     .setErrorMsg(LogisticsReturnCode.STOCK_SERVICE_ACTUAL_RECORD_NOT_FOUND.getDesc())
                     .addParm("商品ID", skuId)
                     .addParm("仓库ID", warehouseId)
@@ -781,18 +784,18 @@ public class StockServiceImpl implements StockService {
         }
 
 
-        //更新实物库存的数量，已实际释放库存为准
+        //2.更新实物库存的数量，已实际释放库存为准
         stockPhysicalDO.setAvailableCount(stockPhysicalDO.getAvailableCount() + count);
         stockPhysicalDO.setFreezeCount(stockPhysicalDO.getFreezeCount() - count);
         stockPhysicalManager.update(stockPhysicalDO);
 
+        //3.更新批次库存信息
         for (StockFreezeDO stockFreezeDO : freezeStockDOs) {
-            //更新批次库存信息
+            //3.1更新批次库存信息
             StockBatchDO batchStockDO = stockBatchManager.getBySkuIdAndWarehouseIdAndBatchNo(skuId, warehouseId, stockFreezeDO.getBatchNo());
 
             if (batchStockDO == null) {
-                LogBetter.instance(LOGGER)
-                        .setLevel(LogLevel.ERROR)
+                LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
                         .setErrorMsg(LogisticsReturnCode.STOCK_SERVICE_BATCH_STOCK_RECORD_NOT_FOUND.getDesc())
                         .addParm("商品ID", skuId)
                         .addParm("仓库ID", warehouseId)
@@ -811,20 +814,17 @@ public class StockServiceImpl implements StockService {
             stockBatchManager.update(batchStockDO);
 
 
-            //更新冻结库存的状态
+            //3.2更新冻结库存的状态
             stockFreezeDO.setFreezeState(StockFreezeState.RELEASED.getValue());
             stockFreezeDO.setRealCount(stockFreezeDO.getFreezeCount());
             stockFreezeManager.update(stockFreezeDO);
 
-            LogBetter.instance(LOGGER)
-                    .setLevel(LogLevel.INFO)
+            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
                     .setMsg("[供应链-释放商品库存成功]")
                     .addParm("商品ID", skuId)
                     .addParm("仓库ID", warehouseId)
                     .addParm("冻结库存信息", stockFreezeDO)
                     .log();
         }
-
     }
-
-} 
+}
