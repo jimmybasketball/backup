@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.sfebiz.supplychain.exposed.line.enums.LineType;
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineOperateStateType;
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineServiceType;
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineStateType;
@@ -137,7 +138,7 @@ public class LogisticsLineBO implements Serializable {
     /**
      * 路线清关时是否需要身份证照 0:否 1:是
      */
-    private Integer                       isNeedIdCardPhoto;
+    private Boolean                       isNeedIdCardPhoto;
 
     /**
      * 每单固定费用
@@ -340,11 +341,11 @@ public class LogisticsLineBO implements Serializable {
         this.pdfTemplate = pdfTemplate;
     }
 
-    public Integer getIsNeedIdCardPhoto() {
+    public Boolean getIsNeedIdCardPhoto() {
         return isNeedIdCardPhoto;
     }
 
-    public void setIsNeedIdCardPhoto(Integer isNeedIdCardPhoto) {
+    public void setIsNeedIdCardPhoto(Boolean isNeedIdCardPhoto) {
         this.isNeedIdCardPhoto = isNeedIdCardPhoto;
     }
 
@@ -386,6 +387,16 @@ public class LogisticsLineBO implements Serializable {
 
     public void setAdditionalWeightCostRmb(Integer additionalWeightCostRmb) {
         this.additionalWeightCostRmb = additionalWeightCostRmb;
+    }
+
+    public LineType getLineType() {
+        if (serviceType == LogisticsLineServiceType.FENG_SU) {
+            return LineType.BONDED;
+        } else if (serviceType == LogisticsLineServiceType.FENG_PEI) {
+            return LineType.DA_MAO;
+        } else {
+            return LineType.DIRECTMAIL;
+        }
     }
 
     /**

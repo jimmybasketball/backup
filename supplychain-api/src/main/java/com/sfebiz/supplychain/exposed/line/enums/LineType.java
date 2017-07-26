@@ -1,13 +1,14 @@
 package com.sfebiz.supplychain.exposed.line.enums;
 
-import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
 
 /**
  * 线路类型
@@ -17,18 +18,26 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class LineType extends Enumerable4StringValue {
 
-    private static final Logger log = LoggerFactory.getLogger(Enumerable4StringValue.class);
+    private static final Logger                             log              = LoggerFactory
+                                                                                 .getLogger(Enumerable4StringValue.class);
 
-    private static final Lock lock = new ReentrantLock();
-    private static final long serialVersionUID = 1244584150755160676L;
+    private static final Lock                               lock             = new ReentrantLock();
+    private static final long                               serialVersionUID = 1244584150755160676L;
 
-    private static volatile transient Map<String, LineType> allbyvalue = new HashMap<String, LineType>();
+    private static volatile transient Map<String, LineType> allbyvalue       = new HashMap<String, LineType>();
 
-    private static volatile transient Map<String, LineType> allbyname = new HashMap<String, LineType>();
+    private static volatile transient Map<String, LineType> allbyname        = new HashMap<String, LineType>();
 
-    public static LineType DIRECTMAIL = LineType.valueOf("DIRECTMAIL", "直邮");
+    public static LineType                                  DIRECTMAIL       = LineType
+                                                                                 .valueOf(
+                                                                                     "DIRECTMAIL",
+                                                                                     "直邮");
 
-    public static LineType BONDED = LineType.valueOf("BONDED", "保税");
+    public static LineType                                  BONDED           = LineType.valueOf(
+                                                                                 "BONDED", "保税");
+
+    public static LineType                                  DA_MAO           = LineType.valueOf(
+                                                                                 "DA_MAO", "大贸");
 
     public LineType(String value, String name) {
         super(value, name);
@@ -42,7 +51,8 @@ public class LineType extends Enumerable4StringValue {
                 return e;
             else {
                 //命名不相同
-                log.warn("Name to be change. value:" + value + ", old name:" + e.name + ", new name:" + name);
+                log.warn("Name to be change. value:" + value + ", old name:" + e.name
+                         + ", new name:" + name);
             }
         }
 

@@ -13,53 +13,53 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class StockoutOrderDeclarePriceBO extends BaseBO {
 
     /** 序号 */
-    private static final long                     serialVersionUID = -5308812849285645233L;
+    private static final long                 serialVersionUID = -5308812849285645233L;
 
     /** 出库单ID */
-    private Long                                  stockoutOrderId;
+    private Long                              stockoutOrderId;
 
     /** 子订单ID */
-    private String                                bizId;
+    private String                            bizId;
 
     /** 用户实际支付总价，单位分 */
-    private Integer                               orderActualPrice;
+    private Integer                           orderActualPrice;
 
     /** 订单总金额，单位分 */
-    private Integer                               orderTotalPrice;
+    private Integer                           orderTotalPrice;
 
     /** 货款总金额，单位分 */
-    private Integer                               goodsTotalPrice;
+    private Integer                           goodsTotalPrice;
 
     /** 订单申报总价，单位分  */
-    private Integer                               declareTotalPrice;
+    private Integer                           declareTotalPrice;
 
     /** 折扣总金额，单位分 */
-    private Integer                               discountTotalPrice;
+    private Integer                           discountTotalPrice;
 
     /** 运费，单位分 */
-    private Integer                               freightFee;
+    private Integer                           freightFee;
 
-    /** 税费(中税费)，单位分 */
+    /** 税费(总税费)，单位分 */
     // TODO
-    private Integer                               taxFee;
+    private Integer                           taxFee;
 
     /** 是否支付了税费，单位分 */
-    private Integer                               isPayTax;
+    private Integer                           isPayTax;
 
     /** 保费，单位分 */
-    private Integer                               insuranceFee;
+    private Integer                           insuranceFee;
 
     /** 消费税，单位分 */
-    private Integer                               consumptionDutyTax;
+    private Integer                           consumptionDutyTax;
 
     /** 增值税，单位分 */
-    private Integer                               addedValueTax;
+    private Integer                           addedValueTax;
 
     /** 关税，单位分 */
-    private Integer                               tariffFee;
+    private Integer                           tariffFee;
 
     /** 备注信息 */
-    private String                                memo;
+    private String                            memo;
 
     /** 出库单申报明细 */
     private StockoutOrderDeclarePriceDetailBO detailsInfo;

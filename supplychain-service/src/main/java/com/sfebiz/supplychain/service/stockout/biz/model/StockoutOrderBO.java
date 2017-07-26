@@ -16,6 +16,9 @@ public class StockoutOrderBO extends BaseBO {
     /** 序号 */
     private static final long           serialVersionUID = -3315207108821015315L;
 
+    /** 用户id，对应实名认证表的用户ID */
+    private String                      userId;
+
     /** 业务订单ID */
     private String                      bizId;
 
@@ -114,10 +117,10 @@ public class StockoutOrderBO extends BaseBO {
     private String                      declarePayerCertType;
 
     /** 用户商品总金额 */
-    private String                      userGoodsPrice;
+    private Integer                     userGoodsPrice;
 
     /** 用户折扣金额 */
-    private String                      userDiscountPrice;
+    private Integer                     userDiscountPrice;
 
     /** 用户运费金额，单位分 */
     private Integer                     userFreightFee;
@@ -151,6 +154,14 @@ public class StockoutOrderBO extends BaseBO {
 
     /** 出库单线路实体 */
     private LogisticsLineBO             lineBO;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getBizId() {
         return bizId;
@@ -408,19 +419,19 @@ public class StockoutOrderBO extends BaseBO {
         this.declarePayerCertType = declarePayerCertType;
     }
 
-    public String getUserGoodsPrice() {
+    public Integer getUserGoodsPrice() {
         return userGoodsPrice;
     }
 
-    public void setUserGoodsPrice(String userGoodsPrice) {
+    public void setUserGoodsPrice(Integer userGoodsPrice) {
         this.userGoodsPrice = userGoodsPrice;
     }
 
-    public String getUserDiscountPrice() {
+    public Integer getUserDiscountPrice() {
         return userDiscountPrice;
     }
 
-    public void setUserDiscountPrice(String userDiscountPrice) {
+    public void setUserDiscountPrice(Integer userDiscountPrice) {
         this.userDiscountPrice = userDiscountPrice;
     }
 
@@ -510,6 +521,17 @@ public class StockoutOrderBO extends BaseBO {
 
     public void setLineBO(LogisticsLineBO lineBO) {
         this.lineBO = lineBO;
+    }
+
+    /*-----------------------------------------自定义业务方法-----------------------------------------------*/
+
+    /**
+     * 获取用户实际支付的金额
+     * 
+     * @return
+     */
+    public Integer getUserActualPaymentAmount() {
+        return userGoodsPrice + userFreightFee - userDiscountPrice;
     }
 
 }
