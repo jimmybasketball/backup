@@ -7,4 +7,6 @@ import com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDetail
  * Created by zhangyajing on 2017/7/12.
  */
 public interface StockinOrderDetailDao extends BaseDao<StockinOrderDetailDO>{
+
+    public void updateByBarcodeAndSkuId(StockinOrderDetailDO stockinOrderDetailDO);
 }

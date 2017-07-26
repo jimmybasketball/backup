@@ -10,5 +10,5 @@ import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;
  * @date 2017/7/13 16:32
  */
 public interface StockBatchDao extends BaseDao<StockBatchDO> {
-
+    StockBatchDO getBySkuIdAndWarehouseIdAndBatchNoForUpdate(StockBatchDO stockBatchDO);
 }

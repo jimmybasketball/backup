@@ -1,6 +1,5 @@
 package com.sfebiz.supplychain.config.mock;
 
-import com.sfebiz.supplychain.config.LogisticsAutoTestConfig;
 import com.sfebiz.supplychain.config.LogisticsDynamicConfig;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -24,7 +23,8 @@ public class MockConfig {
 
             String isAutotest = System.getProperty("autotest");
             if (StringUtils.isNotEmpty(isAutotest)) {
-                configValue = LogisticsAutoTestConfig.getMock().getRule(serviceName, mockKey);
+                // configValue = LogisticsAutoTestConfig.getMock().getRule(serviceName, mockKey);
+                configValue = LogisticsDynamicConfig.getMock().getRule(serviceName, mockKey);
             } else {
                 configValue = LogisticsDynamicConfig.getMock().getRule(serviceName, mockKey);
             }

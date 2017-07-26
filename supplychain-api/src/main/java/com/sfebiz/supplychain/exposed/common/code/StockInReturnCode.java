@@ -20,4 +20,6 @@ public class StockInReturnCode extends SCReturnCode{
     public final static StockInReturnCode STOCKIN_ORDER_NOT_ALLOW_SUBMIT = new StockInReturnCode("当前状态不允许入库单提交", 1060003);
     public final static StockInReturnCode STOCKIN_ORDER_SENDSTOCK_FAIL = new StockInReturnCode("调用仓库接口失败", 1060004);
     public final static StockInReturnCode LOGISTICS_STOCKINID_ERR = new StockInReturnCode("SKU入库失败", 1060005);
+    public final static StockInReturnCode STOCKIN_ORDER_NOT_ALLOW_UPDATE = new StockInReturnCode("当前状态不允许入库单修改", 1060006);
+    public final static StockInReturnCode STOCKIN_ORDER_SKU_NOT_FOUND = new StockInReturnCode("入库单商品未找到", 1060007);
 }

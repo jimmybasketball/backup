@@ -15,10 +15,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2017-07-14 15:02
  **/
 public class StockBatchStateType extends Enumerable4StringValue {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(StockBatchStateType.class);
-
     private static final long serialVersionUID = 6901195709637071714L;
+    public static final Logger LOGGER = LoggerFactory.getLogger(StockBatchStateType.class);
 
     private static final Lock lock = new ReentrantLock();
 

@@ -28,7 +28,7 @@ public class StockinOrderManager extends BaseManager<StockinOrderDO>{
     }
 
     public static void main(String[] args) {
-        DaoHelper.genXMLWithFeature("E:\\work\\cqfqht\\haitao-b2b-supplychain\\supplychain-persistence\\src\\main\\resources\\base\\sqlmap\\stockin/sc_stockin_order.xml",
+        DaoHelper.genXMLWithFeature("E:\\work\\cqcode\\haitao-b2b-supplychain\\supplychain-persistence\\src\\main\\resources\\base\\sqlmap\\stockin\\sc_stockin_order_sqlmap.xml",
                 StockinOrderDao.class,
                 StockinOrderDO.class,
                 "sc_stockin_order");

@@ -1,91 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <config description="供应链AutoConf配置信息">
-    <group name="sfht.supplychian.config.setting">
+    <group name="sfht.supplychain.config.setting">
 
-        <property name="com.sfebiz.supplychian.datasource.url" description="数据库地址" required="true"/>
-        <property name="com.sfebiz.supplychian.datasource.username" description="数据库用户名" required="true"/>
-        <property name="com.sfebiz.supplychian.datasource.password" description="数据库密码" required="true"/>
+        <property name="com.sfebiz.supplychain.datasource.url" description="数据库地址" required="true"/>
+        <property name="com.sfebiz.supplychain.datasource.username" description="数据库用户名" required="true"/>
+        <property name="com.sfebiz.supplychain.datasource.password" description="数据库密码" required="true"/>
 
-        <property name="com.sfebiz.supplychian.datasource.readonly.url" description="只读数据库地址" required="true"/>
-        <property name="com.sfebiz.supplychian.datasource.readonly.username" description="只读数据库用户名" required="true"/>
-        <property name="com.sfebiz.supplychian.datasource.readonly.password" description="只读数据库密码" required="true"/>
-
-        <property name="com.sfebiz.supplychian.birwdataSource.url" description="BI读写数据库地址" required="true"/>
-        <property name="com.sfebiz.supplychian.birwdataSource.username" description="BI读写数据库用户名" required="true"/>
-        <property name="com.sfebiz.supplychian.birwdataSource.password" description="BI读写数据库密码" required="true"/>
-
-        <property name="com.sfebiz.supplychian.bidatasource.postgresql.url" description="BI-PG读写数据库地址" required="true"/>
-        <property name="com.sfebiz.supplychian.bidatasource.postgresql.username" description="BI-PG读写数据库用户名" required="true"/>
-        <property name="com.sfebiz.supplychian.bidatasource.postgresql.password" description="BI-PG读写数据库密码" required="true"/>
-
-        <property name="com.sfebiz.supplychian.log.home" description="日志目录" required="true"/>
-        <property name="com.sfebiz.supplychian.apiurl" description="API URL" required="true"/>
-        <property name="com.sfebiz.supplychian.fileurl" description="文件URL" required="true"/>
-        <property name="com.sfebiz.supplychian.printfile" description="打印文件" required="true"/>
-        <property name="com.sfebiz.supplychian.tmpfile.home" description="临时文件目录" required="true"/>
-        <property name="com.sfebiz.supplychian.printpath" description="文件打印地址" required="true"/>
-
-        <property name="ttf.path" description="TTP字体文件位置" required="true"/>
-
-
-        <property name="com.aliyun.openservices.oss.keyid" description="文件服务用户" required="true"/>
-        <property name="com.aliyun.openservices.oss.keyvalue" description="文件服务" required="true"/>
-        <property name="com.aliyun.openservices.oss.bucketname.private" description="文件服务私有桶名称" required="true"/>
-
-        <property name="com.aliyun.openservices.oss.ossBucketName" description="ossmanage的BucketName" required="true"/>
-        <property name="com.aliyun.openservices.oss.ossEndpoint" description="ossmanage的Endpoint" required="true"/>
+        <property name="com.sfebiz.supplychain.log.home" description="日志目录" required="true"/>
+        <property name="com.sfebiz.supplychain.apiurl" description="API URL" required="true"/>
+        <property name="com.sfebiz.supplychain.fileurl" description="文件URL" required="true"/>
+        <property name="com.sfebiz.supplychain.printfile" description="打印文件" required="true"/>
+        <property name="com.sfebiz.supplychain.tmpfile.home" description="临时文件目录" required="true"/>
+        <property name="com.sfebiz.supplychain.printpath" description="文件打印地址" required="false"/>
 
         <property name="com.sfebiz.env" description="环境变量" required="true"/>
-
-        <property name="com.sfebiz.queue.accessKey" description="消息队列访问Key" required="true"/>
-        <property name="com.sfebiz.queue.secretKey" description="消息队列密钥" required="true"/>
-        <property name="com.sfebiz.queue.orderEventMessageProducerId" description="订单消息生产ID" required="true"/>
-
-        <property name="com.sfebiz.queue.supplychainEventMessageProducerId" description="供应链消息生产ID" required="true"/>
-        <property name="com.sfebiz.queue.supplychainEventMessageConsumerId" description="供应链消息消费ID" required="true"/>
-
-        <property name="com.sfebiz.queue.supplychainEventRouteMessageProducerId" description="供应链路由消息生产ID"
-                  required="true"/>
-        <property name="com.sfebiz.queue.supplychainEventRouteMessageConsumerId" description="供应链路由消息消费ID"
-                  required="true"/>
-
-        <property name="com.sfebiz.queue.openWmsEventMessageProducerId" description="开放平台消息生产ID" required="true"/>
-        <property name="com.sfebiz.queue.openWmsEventMessageConsumerId" description="开放平台消息消费ID" required="true"/>
-
-        <property name="com.sfebiz.queue.openWmsRouteEventMessageProducerId" description="开放平台路由消息生产ID" required="true"/>
-        <property name="com.sfebiz.queue.openWmsRouteEventMessageConsumerId" description="开放平台路由消息消费ID" required="true"/>
-
-        <!--<property name="com.sfebiz.queue.lineDelayNoticeMessageConsumerId" description="物流延迟提醒消息消费ID" required="true"/>-->
-
-        <property name="com.sfebiz.queue.supplychainEfficiencyAlarmProducerId" description="供应链时效预警消息生产ID"
-                  required="true"/>
-
-        <property name="com.sfebiz.queue.orderEventMessageConsumerId" description="订单消息消费ID" required="true"/>
-
-        <property name="com.sfebiz.queue.scfMessageProducerId" description="供应链金融系统消息生产ID" required="true"/>
+        <property name="ttf.path" description="TTP字体文件位置" required="false"/>
 
         <property name="dubbo.registry.url" description="Dubbo服务注册地址" required="true"/>
         <property name="dubbo.reference.version" description="Dubbo服务引用版本号" required="true"/>
         <property name="dubbo.export.version" description="Dubbo服务暴露版本号" required="true"/>
         <property name="dubbo.export.timeout" description="Dubbo服务暴露超时时间" required="true"/>
         <property name="dubbo.export.host" description="Dubbo服务暴露地址" required="false"/>
-        <property name="com.sfebiz.supplychian.oss.accessImageUrl" description="海尚汇图片转换后的地址前缀" required="true"/>
-        <property name="com.sfebiz.supplychian.oss.warter.watermarkUrl" description="海尚汇水印图片地址" required="true"/>
-        <property name="com.sfebiz.supplychian.oss.warter.position" description="海尚汇水印图片的坐标" required="true"/>
-        <property name="com.sfebiz.supplychian.oss.warter.transparency" description="海尚汇水印图片的透明度" required="true"/>
-        <property name="com.sfebiz.supplychian.oss.warter.xAxis" description="海尚汇水印图片的水平偏移" required="true"/>
-        <property name="com.sfebiz.supplychian.oss.warter.yAxis" description="海尚汇水印图片的垂直偏移" required="true"/>
 
-        <property name="com.sfebiz.supplychian.redisproxy.server.host" description="Redis-Proxy集群地址" required="true"/>
-        <property name="com.sfebiz.supplychian.redisproxy.server.port" description="Redis-Proxy集群端口" required="true"/>
-        <property name="com.sfebiz.supplychian.redisproxy.server.password" description="Redis-Proxy集群密码" required="false"/>
-        <property name="com.sfebiz.supplychian.redisproxy.maxIdle" description="最大闲置连接数" required="true"/>
-        <property name="com.sfebiz.supplychian.redisproxy.maxTotal" description="最大连接数，超过此连接时操作redis会报错" required="true"/>
-        <property name="com.sfebiz.supplychian.redisproxy.maxWaitTime" description="redis获取连接的最大等待时间,单位为毫秒" required="true"/>
-        <property name="com.sfebiz.supplychian.redisproxy.testOnBorrow" description="在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的" required="true"/>
-        <property name="com.sfebiz.supplychian.redisproxy.minIdle" description="最小闲置连接数，spring启动的时候自动建立该数目的连接供应用程序使用，不够的时候会申请。默认值为0" required="true"/>
-        <property name="com.sfebiz.supplychian.redisproxy.timeout" description="读取redis的最长超时时间,单位为毫秒" required="true"/>
+        <property name="com.sfebiz.supplychain.redisproxy.server.host" description="Redis-Proxy集群地址" required="true"/>
+        <property name="com.sfebiz.supplychain.redisproxy.server.port" description="Redis-Proxy集群端口" required="true"/>
+        <property name="com.sfebiz.supplychain.redisproxy.server.password" description="Redis-Proxy集群密码" required="false"/>
+        <property name="com.sfebiz.supplychain.redisproxy.maxIdle" description="最大闲置连接数" required="true"/>
+        <property name="com.sfebiz.supplychain.redisproxy.maxTotal" description="最大连接数，超过此连接时操作redis会报错" required="true"/>
+        <property name="com.sfebiz.supplychain.redisproxy.maxWaitTime" description="redis获取连接的最大等待时间,单位为毫秒" required="true"/>
+        <property name="com.sfebiz.supplychain.redisproxy.testOnBorrow" description="在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的" required="true"/>
+        <property name="com.sfebiz.supplychain.redisproxy.minIdle" description="最小闲置连接数，spring启动的时候自动建立该数目的连接供应用程序使用，不够的时候会申请。默认值为0" required="true"/>
+        <property name="com.sfebiz.supplychain.redisproxy.timeout" description="读取redis的最长超时时间,单位为毫秒" required="true"/>
+
     </group>
 
     <script>

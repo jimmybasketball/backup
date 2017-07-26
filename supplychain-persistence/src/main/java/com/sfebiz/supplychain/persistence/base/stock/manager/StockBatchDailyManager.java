@@ -5,10 +5,7 @@ import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.stock.dao.StockBatchDailyDao;
-import com.sfebiz.supplychain.persistence.base.stock.dao.StockBatchDao;
-import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;
 import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDailyDO;
-import org.apache.tools.ant.util.LeadPipeInputStream;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

@@ -2,6 +2,11 @@ package com.sfebiz.supplychain.persistence.base.port.domain;
 
 import com.sfebiz.common.dao.domain.BaseDO;
 
+/**
+ * 口岸信息DO
+ * @author tanzx [tanzongxi@ifunq.com]
+ * @date 2017/7/24 14:45
+ */
 public class PortDO extends BaseDO {
 
     private static final long serialVersionUID = -7812543477136566611L;

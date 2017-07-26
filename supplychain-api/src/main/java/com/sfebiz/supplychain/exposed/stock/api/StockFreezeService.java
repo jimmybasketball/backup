@@ -7,4 +7,5 @@ package com.sfebiz.supplychain.exposed.stock.api;
  */
 
 public interface StockFreezeService {
+
 }

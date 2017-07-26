@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by zhangyajing on 2017/7/17.
  */
-public class StockinOrderType extends Enumerable4IntValue{
+public class StockinOrderType extends Enumerable4IntValue {
     private static final long serialVersionUID = 2504548743721319723L;
     private static final Logger log = LoggerFactory.getLogger(Enumerable4IntValue.class);
     private static volatile transient Map<Integer, StockinOrderType> allbyvalue = new HashMap<Integer, StockinOrderType>();
@@ -24,6 +24,7 @@ public class StockinOrderType extends Enumerable4IntValue{
     public StockinOrderType(int value, String name) {
         super(value, name);
     }
+
     public static StockinOrderType valueOf(Integer value, String name) {
         StockinOrderType e = allbyvalue.get(value);
         if (e != null) {

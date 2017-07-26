@@ -3,12 +3,12 @@
 
 
     <appender name="InfoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${com.sfebiz.supplychian.log.home}/info/info.log</file>
+        <file>${com.sfebiz.supplychain.log.home}/info/info.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
            <level>INFO</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${com.sfebiz.supplychian.log.home}/info/info-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <FileNamePattern>${com.sfebiz.supplychain.log.home}/info/info-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>20MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -22,14 +22,14 @@
     </appender>
     
     <appender name="ErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${com.sfebiz.supplychian.log.home}/error/error.log</file>
+        <file>${com.sfebiz.supplychain.log.home}/error/error.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
            <level>ERROR</level>
            <onMatch>ACCEPT</onMatch>
            <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${com.sfebiz.supplychian.log.home}/error/error-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <FileNamePattern>${com.sfebiz.supplychain.log.home}/error/error-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>20MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -43,14 +43,14 @@
     </appender>
 
     <appender name="CommandErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${com.sfebiz.supplychian.log.home}/error/error-command.log</file>
+        <file>${com.sfebiz.supplychain.log.home}/error/error-command.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${com.sfebiz.supplychian.log.home}/error/error-command-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <FileNamePattern>${com.sfebiz.supplychain.log.home}/error/error-command-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>20MB</maxFileSize>

@@ -46,7 +46,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
         try {
             if (null == stateMachineStateServiceMaps || !stateMachineStateServiceMaps.containsKey(request.getEngineType().getValue())) {
                 throw new ServiceException(StatemationReturnCode.LOGISTICS_STATE_MACHINE_INTERNAL_EXCEPTION,
-                        "[供应链-状态机流程创建异常]: 未找到对应的状态机服务"
+                        "[物流平台-状态机流程创建异常]: 未找到对应的状态机服务"
                                 + "[实例信息: " + request
                                 + ", 实例类型: " + request.getEngineType().getDescription()
                                 + "]");
@@ -54,7 +54,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
 
             if (null == stateMachineTemplateCodeMaps || !stateMachineTemplateCodeMaps.containsKey(request.getEngineType().getValue())) {
                 throw new ServiceException(StatemationReturnCode.LOGISTICS_STATE_MACHINE_INTERNAL_EXCEPTION,
-                        "[供应链-状态机流程创建异常]: 未找到对应的状态机模板"
+                        "[物流平台-状态机流程创建异常]: 未找到对应的状态机模板"
                                 + "[实例信息: " + request
                                 + ", 实例类型: " + request.getEngineType().getDescription()
                                 + "]");
@@ -68,7 +68,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.INFO)
                     .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-状态机流程创建成功]")
+                    .setErrorMsg("[物流平台-状态机流程创建成功]")
                     .addParm("实例信息", request)
                     .addParm("实例类型", request.getEngineType().getDescription())
                     .log();
@@ -85,13 +85,13 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
                     .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-状态机流程创建异常]")
+                    .setErrorMsg("[物流平台-状态机流程创建异常]")
                     .setException(e)
                     .addParm("实例信息", request)
                     .addParm("实例类型", request.getEngineType().getDescription())
                     .log();
             throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
-                    "[供应链-状态机流程创建异常]: " + e.getMessage()
+                    "[物流平台-状态机流程创建异常]: " + e.getMessage()
                             + "[实例信息: " + request
                             + ", 实例类型: " + request.getEngineType().getDescription()
                             + "]");
@@ -104,7 +104,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                .setErrorMsg("[供应链-状态机流程触发执行]")
+                .setErrorMsg("[物流平台-状态机流程触发执行]")
                 .addParm("触发原因", request.getAction().getDescription())
                 .addParm("操作者", request.getOperator())
                 .addParm("请求参数", request)
@@ -114,7 +114,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
 
             if (request == null || request.getId() == null) {
                 throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE,
-                        "[供应链-状态机流程执行异常]: " + StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE.getDesc()
+                        "[物流平台-状态机流程执行异常]: " + StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE.getDesc()
                                 + "[触发原因: " + request.getAction().getDescription()
                                 + ", 操作者: " + request.getOperator()
                                 + ", 请求参数: " + request
@@ -147,7 +147,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.INFO)
                     .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-状态机流程执行成功]")
+                    .setErrorMsg("[物流平台-状态机流程执行成功]")
                     .addParm("触发原因", request.getAction().getDescription())
                     .addParm("操作者", request.getOperator())
                     .addParm("请求参数", request)
@@ -166,14 +166,14 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
                     .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-状态机流程执行异常]: " + e.getMessage())
+                    .setErrorMsg("[物流平台-状态机流程执行异常]: " + e.getMessage())
                     .setException(e)
                     .addParm("触发原因", request.getAction().getDescription())
                     .addParm("操作者", request.getOperator())
                     .addParm("请求参数", request)
                     .log();
             throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
-                    "[供应链-状态机流程执行异常]: " + e.getMessage()
+                    "[物流平台-状态机流程执行异常]: " + e.getMessage()
                             + "[触发原因: " + request.getAction().getDescription()
                             + ", 操作者: " + request.getOperator()
                             + ", 请求参数: " + request
@@ -186,7 +186,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                .setErrorMsg("[供应链-状态机节点触发执行]")
+                .setErrorMsg("[物流平台-状态机节点触发执行]")
                 .addParm("触发原因", request.getAction().getDescription())
                 .addParm("操作者", request.getOperator())
                 .addParm("请求参数", request)
@@ -196,7 +196,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
 
             if (request == null || request.getId() == null) {
                 throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE,
-                        "[供应链-状态机节点执行异常]: " + StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE.getDesc()
+                        "[物流平台-状态机节点执行异常]: " + StatemationReturnCode.STOCKOUT_ORDER_ENGINE_PARAM_ILLAGLE.getDesc()
                                 + "[触发原因: " + request.getAction().getDescription()
                                 + ", 操作者: " + request.getOperator()
                                 + ", 请求参数: " + request
@@ -219,7 +219,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
                             LogBetter.instance(logger)
                                     .setLevel(LogLevel.INFO)
                                     .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                                    .setErrorMsg("[供应链-状态机节点执行异常]")
+                                    .setErrorMsg("[物流平台-状态机节点执行异常]")
                                     .setException(e)
                                     .addParm("触发原因", request.getAction().getDescription())
                                     .addParm("操作者", request.getOperator())
@@ -234,7 +234,7 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.INFO)
                     .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-状态机节点执行成功]")
+                    .setErrorMsg("[物流平台-状态机节点执行成功]")
                     .addParm("触发原因", request.getAction().getDescription())
                     .addParm("操作者", request.getOperator())
                     .addParm("请求参数", request)
@@ -253,14 +253,14 @@ public class EngineServiceImpl implements EngineService, InitializingBean {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
                     .setTraceLogger(TraceLogEntity.instance(request.getTraceLogger(), request.getTraceId(), SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-状态机节点执行异常]")
+                    .setErrorMsg("[物流平台-状态机节点执行异常]")
                     .setException(e)
                     .addParm("触发原因", request.getAction().getDescription())
                     .addParm("操作者", request.getOperator())
                     .addParm("请求参数", request)
                     .log();
             throw new ServiceException(StatemationReturnCode.STOCKOUT_ORDER_STATE_CHANGE_EXCEPTION,
-                    "[供应链-状态机节点执行异常]: " + e.getMessage()
+                    "[物流平台-状态机节点执行异常]: " + e.getMessage()
                             + "[触发原因: " + request.getAction().getDescription()
                             + ", 操作者: " + request.getOperator()
                             + ", 请求参数: " + request

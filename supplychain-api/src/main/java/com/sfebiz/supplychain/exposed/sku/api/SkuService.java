@@ -2,6 +2,7 @@ package com.sfebiz.supplychain.exposed.sku.api;
 
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.sku.entity.SkuEntity;
+import net.pocrd.entity.ServiceException;
 
 import java.util.List;
 
@@ -62,5 +63,10 @@ public interface SkuService {
      * @return 基础商品
      */
     public CommonRet<List<SkuEntity>> selectBarcodeBySkuId(Long skuId);
+
+    /**
+     * 根据商品ID查找商品信息,只查出sku信息，不查效期方案等
+     */
+    SkuEntity getSkuOnlySkuInfo(long id) throws ServiceException;
 
 }
