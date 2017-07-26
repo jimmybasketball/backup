@@ -14,28 +14,27 @@ import java.util.concurrent.locks.ReentrantLock;
  * @description: 批次库存状态枚举
  * @date 2017-07-14 15:02
  **/
-public class StockBatchStateType extends Enumerable4StringValue {
-    private static final long serialVersionUID = 6901195709637071714L;
-    public static final Logger LOGGER = LoggerFactory.getLogger(StockBatchStateType.class);
+public class StockBatchOrderType extends Enumerable4StringValue {
+    private static final long serialVersionUID = -2825271536467865264L;
+    public static final Logger LOGGER = LoggerFactory.getLogger(StockBatchOrderType.class);
 
     private static final Lock lock = new ReentrantLock();
 
-    private static volatile transient Map<String, StockBatchStateType> allbyvalue = new HashMap<String, StockBatchStateType>();
+    private static volatile transient Map<String, StockBatchOrderType> allbyvalue = new HashMap<String, StockBatchOrderType>();
 
-    private static volatile transient Map<String, StockBatchStateType> allbyname = new HashMap<String, StockBatchStateType>();
+    private static volatile transient Map<String, StockBatchOrderType> allbyname = new HashMap<String, StockBatchOrderType>();
 
 
-    public static StockBatchStateType ENABLE = StockBatchStateType.valueOf("ENABLE", "启用");
+    public static StockBatchOrderType PURCHASE_STOCKIN_ORDER_TYPE = StockBatchOrderType.valueOf("0", "采购入库单");
+//    public static StockBatchOrderType PURCHASE_STOCKIN_ORDER_TYPE = StockBatchOrderType.valueOf("0", "采购入库单");
 
-    public static StockBatchStateType DISABLE = StockBatchStateType.valueOf("DISABLE", "禁用");
-
-    public StockBatchStateType(String value, String name) {
+    public StockBatchOrderType(String value, String name) {
         super(value, name);
     }
 
 
-    public static StockBatchStateType valueOf(String value, String name) {
-        StockBatchStateType e = allbyvalue.get(value);
+    public static StockBatchOrderType valueOf(String value, String name) {
+        StockBatchOrderType e = allbyvalue.get(value);
         if (e != null) {
             if (e.name.equals(name) || undefined.equals(name))
                 //undefined可以更新， 其他的name不可以更新？ No, 所有值都可以更新; 但是不能用undefined覆盖已有值
@@ -46,9 +45,9 @@ public class StockBatchStateType extends Enumerable4StringValue {
             }
         }
 
-        Map<String, StockBatchStateType> allbyvalue_new = new HashMap<String, StockBatchStateType>();
-        Map<String, StockBatchStateType> allbyname_new = new HashMap<String, StockBatchStateType>();
-        e = new StockBatchStateType(value, name);
+        Map<String, StockBatchOrderType> allbyvalue_new = new HashMap<String, StockBatchOrderType>();
+        Map<String, StockBatchOrderType> allbyname_new = new HashMap<String, StockBatchOrderType>();
+        e = new StockBatchOrderType(value, name);
         lock.lock();
         try {
             allbyvalue_new.putAll(allbyvalue);
@@ -63,8 +62,8 @@ public class StockBatchStateType extends Enumerable4StringValue {
         return e;
     }
 
-    public static StockBatchStateType valueOf(String value) {
-        StockBatchStateType e = allbyvalue.get(value);
+    public static StockBatchOrderType valueOf(String value) {
+        StockBatchOrderType e = allbyvalue.get(value);
         if (e != null) {
             return e;
         } else {
@@ -73,7 +72,7 @@ public class StockBatchStateType extends Enumerable4StringValue {
     }
 
     public static boolean containValue(String value) {
-        StockBatchStateType e = allbyvalue.get(value);
+        StockBatchOrderType e = allbyvalue.get(value);
         if (e != null) {
             return true;
         } else {
@@ -81,7 +80,7 @@ public class StockBatchStateType extends Enumerable4StringValue {
         }
     }
 
-    public static StockBatchStateType[] values() {
-        return allbyvalue.values().toArray(new StockBatchStateType[0]);
+    public static StockBatchOrderType[] values() {
+        return allbyvalue.values().toArray(new StockBatchOrderType[0]);
     }
 }

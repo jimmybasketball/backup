@@ -12,7 +12,7 @@
     <!-- 定时时间批次库存库存每日数据 -->
     <bean id="calcStockBatchDailyTask" class="com.sfebiz.supplychain.task.stock.CalcStockBatchDailyTask"></bean>
     <task:scheduled-tasks>
-        <task:scheduled ref="calcStockBatchDailyTask" method="excute" cron="30 50 17 * * ?"/>
+        <task:scheduled ref="calcStockBatchDailyTask" method="excute" cron="20 32 11 * * ?"/>
     </task:scheduled-tasks>
 
 

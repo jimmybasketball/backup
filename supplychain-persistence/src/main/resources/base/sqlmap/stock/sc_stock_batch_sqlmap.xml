@@ -476,4 +476,11 @@
     for update
 </select>
 
+<<select id="getBySkuIdAndWarehouseIdAndBatchNoForUpdate" resultMap="stockBatchDOResult">
+    <include refid="stockBatchDO_selector"/>
+    where sku_id = #{skuId}
+    and warehouse_id = #{warehouseId}
+    and batch_no = #{batchNo}
+    for update
+</select>
 </mapper>
