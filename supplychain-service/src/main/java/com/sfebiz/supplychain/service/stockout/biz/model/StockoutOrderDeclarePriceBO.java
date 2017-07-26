@@ -3,6 +3,8 @@ package com.sfebiz.supplychain.service.stockout.biz.model;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
+
 /**
  * 
  * <p>出库单申报实体</p>
@@ -62,7 +64,7 @@ public class StockoutOrderDeclarePriceBO extends BaseBO {
     private String                            memo;
 
     /** 出库单申报明细 */
-    private StockoutOrderDeclarePriceDetailBO detailsInfo;
+    private List<StockoutOrderDeclarePriceDetailBO> declarePriceDetailBOS;
 
     public Long getStockoutOrderId() {
         return stockoutOrderId;
@@ -184,12 +186,12 @@ public class StockoutOrderDeclarePriceBO extends BaseBO {
         this.memo = memo;
     }
 
-    public StockoutOrderDeclarePriceDetailBO getDetailsInfo() {
-        return detailsInfo;
+    public List<StockoutOrderDeclarePriceDetailBO> getDeclarePriceDetailBOS() {
+        return declarePriceDetailBOS;
     }
 
-    public void setDetailsInfo(StockoutOrderDeclarePriceDetailBO detailsInfo) {
-        this.detailsInfo = detailsInfo;
+    public void setDeclarePriceDetailBOS(List<StockoutOrderDeclarePriceDetailBO> declarePriceDetailBOS) {
+        this.declarePriceDetailBOS = declarePriceDetailBOS;
     }
 
     /**

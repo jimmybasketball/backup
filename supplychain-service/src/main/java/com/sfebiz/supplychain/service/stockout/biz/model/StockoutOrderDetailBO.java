@@ -1,12 +1,12 @@
 package com.sfebiz.supplychain.service.stockout.biz.model;
 
+import com.sfebiz.supplychain.service.sku.model.SkuDeclareBO;
+import com.sfebiz.supplychain.service.sku.model.SkuMerchantBO;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.sfebiz.supplychain.service.port.model.ProductDeclareBO;
-
 /**
- * 
+ *
  * <p>出库单明细实体</p>
  *
  * @author matt
@@ -51,7 +51,7 @@ public class StockoutOrderDetailBO extends BaseBO {
     private String            currency;
 
     /** 商品名称 */
-    private Long              skuName;
+    private String              skuName;
 
     /** 商品面单名称 */
     private Long              skuBillName;
@@ -74,8 +74,11 @@ public class StockoutOrderDetailBO extends BaseBO {
     /** 备注 */
     private String            remark;
 
-    /** 商品申报业务实体 */
-    private ProductDeclareBO  productDeclareBO;
+    /** 商品备案信息业务实体 */
+    private SkuDeclareBO skuDeclareBO;
+
+    /** 货主商品信息业务实体 */
+    private SkuMerchantBO     skuMerchantBO;
 
     public Long getStockoutOrderId() {
         return stockoutOrderId;
@@ -165,11 +168,11 @@ public class StockoutOrderDetailBO extends BaseBO {
         this.currency = currency;
     }
 
-    public Long getSkuName() {
+    public String getSkuName() {
         return skuName;
     }
 
-    public void setSkuName(Long skuName) {
+    public void setSkuName(String skuName) {
         this.skuName = skuName;
     }
 
@@ -229,12 +232,20 @@ public class StockoutOrderDetailBO extends BaseBO {
         this.remark = remark;
     }
 
-    public ProductDeclareBO getProductDeclareBO() {
-        return productDeclareBO;
+    public SkuDeclareBO getSkuDeclareBO() {
+        return skuDeclareBO;
     }
 
-    public void setProductDeclareBO(ProductDeclareBO productDeclareBO) {
-        this.productDeclareBO = productDeclareBO;
+    public void setSkuDeclareBO(SkuDeclareBO skuDeclareBO) {
+        this.skuDeclareBO = skuDeclareBO;
+    }
+
+    public SkuMerchantBO getSkuMerchantBO() {
+        return skuMerchantBO;
+    }
+
+    public void setSkuMerchantBO(SkuMerchantBO skuMerchantBO) {
+        this.skuMerchantBO = skuMerchantBO;
     }
 
     /**

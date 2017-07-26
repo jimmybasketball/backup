@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
+import com.sfebiz.supplychain.service.merchant.Model.MerchantPackageMaterialBO;
 
 /**
  * <p>出库单实体</p>
@@ -162,6 +163,8 @@ public class StockoutOrderBO extends BaseBO {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+    /** 货主包材实体 */
+    private MerchantPackageMaterialBO merchantPackageMaterialBO;
 
     public String getBizId() {
         return bizId;
@@ -534,4 +537,11 @@ public class StockoutOrderBO extends BaseBO {
         return userGoodsPrice + userFreightFee - userDiscountPrice;
     }
 
+    public MerchantPackageMaterialBO getMerchantPackageMaterialBO() {
+        return merchantPackageMaterialBO;
+    }
+
+    public void setMerchantPackageMaterialBO(MerchantPackageMaterialBO merchantPackageMaterialBO) {
+        this.merchantPackageMaterialBO = merchantPackageMaterialBO;
+    }
 }

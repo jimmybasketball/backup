@@ -75,4 +75,11 @@
             </map>
         </property> -->
     </bean>
+    
+    <bean id="fileOperationService" class="com.sfebiz.supplychain.service.FileOperationService">
+        <property name="accessKeyId" value="${com.sfebiz.queue.accessKey}"/>
+        <property name="accessKeySecret" value="${com.sfebiz.queue.secretKey}"/>
+        <property name="ttfPath" value="${ttf.path}"/>
+        <property name="tmpPath" value="${com.sfebiz.vender.tmpfile.home}"/>
+    </bean>
 </beans>

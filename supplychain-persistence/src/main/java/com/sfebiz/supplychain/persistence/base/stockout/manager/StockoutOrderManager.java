@@ -11,6 +11,7 @@ import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderDao;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.ExportedShipOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 
 /**
@@ -50,6 +51,10 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
         } else {
             return stockoutOrderDOs.get(0);
         }
+    }
+    
+    public List<ExportedShipOrderDO> query4Page4AutoShipOrder(List<Long> stockoutOrderIdList) {
+        return stockoutOrderDao.query4Page4AutoShipOrderByStockoutOrderIds(stockoutOrderIdList);
     }
 
     public static void main(String[] args) {

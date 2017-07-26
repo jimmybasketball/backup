@@ -60,7 +60,7 @@ public class CalcStockBatchDailyTask {
                     stockBatchDailyDO.setMerchantId(stockBatchDO.getMerchantId());
                     stockBatchDailyDO.setMerchantProviderId(stockBatchDO.getMerchantProviderId());
                     //TODO 查询【采购入库正品】和【采购入库坏品】数量
-                    stockinOrderDetailManager.getStockinOrderDetailByStockinDateAndSkuBatch(stockBatchDO.getBatchNo(),new Date());
+                    //stockinOrderDetailManager.getStockinOrderDetailByStockinDateAndSkuBatch(stockBatchDO.getBatchNo(),new Date());
 
                     stockBatchDailyDO.setPurchaseStockinAvailableCount(0);
                     stockBatchDailyDO.setPurchaseStockoutDamagedCount(0);

@@ -1,194 +1,114 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderBuyerDao">
+<mapper namespace="com.sfebiz.supplychain.persistence.base.user.dao.UserAuthenticationDao">
 
-<resultMap id="stockoutOrderBuyerDOResult" type="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO">
-    <result column="buyer_cert_type" property="buyerCertType"/>
-    <result column="buyer_cert_no" property="buyerCertNo"/>
-    <result column="buyer_id_card_front_photo_url" property="buyerIdCardFrontPhotoUrl"/>
-    <result column="buyer_telephone" property="buyerTelephone"/>
-    <result column="stockout_order_id" property="stockoutOrderId"/>
-    <result column="biz_id" property="bizId"/>
-    <result column="buyer_name" property="buyerName"/>
-    <result column="buyer_city" property="buyerCity"/>
-    <result column="buyer_province" property="buyerProvince"/>
-    <result column="buyer_country" property="buyerCountry"/>
-    <result column="buyer_id_card_photo_timestamp" property="buyerIdCardPhotoTimestamp"/>
-    <result column="buyer_address" property="buyerAddress"/>
-    <result column="buyer_id_card_back_photo_url" property="buyerIdCardBackPhotoUrl"/>
-    <result column="buyer_region" property="buyerRegion"/>
-    <result column="buyer_zipcode" property="buyerZipcode"/>
+<resultMap id="userAuthenticationDOResult" type="com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO">
+    <result column="name" property="name"/>
+    <result column="id_no" property="idNo"/>
+    <result column="id_card_front_photo_url" property="idCardFrontPhotoUrl"/>
+    <result column="id_card_back_photo_url" property="idCardBackPhotoUrl"/>
+    <result column="id_card_photo_timestamp" property="idCardPhotoTimestamp"/>
+    <result column="verify_flag" property="verifyFlag"/>
+    <result column="verify_channel" property="verifyChannel"/>
     <result column="id" property="id"/>
     <result column="gmt_create" property="gmtCreate"/>
     <result column="gmt_modified" property="gmtModified"/>
 </resultMap>
 
-<sql id="stockoutOrderBuyerDO_columns">
-    buyer_cert_type,
-    buyer_cert_no,
-    buyer_id_card_front_photo_url,
-    buyer_telephone,
-    stockout_order_id,
-    biz_id,
-    buyer_name,
-    buyer_city,
-    buyer_province,
-    buyer_country,
-    buyer_id_card_photo_timestamp,
-    buyer_address,
-    buyer_id_card_back_photo_url,
-    buyer_region,
-    buyer_zipcode,
+<sql id="userAuthenticationDO_columns">
+    name,
+    id_no,
+    id_card_front_photo_url,
+    id_card_back_photo_url,
+    id_card_photo_timestamp,
+    verify_flag,
+    verify_channel,
     id,
     gmt_create,
     gmt_modified
 </sql>
 
-<sql id="stockoutOrderBuyerDO_sqlForInsert">
-    buyer_cert_type,
-    buyer_cert_no,
-    buyer_id_card_front_photo_url,
-    buyer_telephone,
-    stockout_order_id,
-    biz_id,
-    buyer_name,
-    buyer_city,
-    buyer_province,
-    buyer_country,
-    buyer_id_card_photo_timestamp,
-    buyer_address,
-    buyer_id_card_back_photo_url,
-    buyer_region,
-    buyer_zipcode,
+<sql id="userAuthenticationDO_sqlForInsert">
+    name,
+    id_no,
+    id_card_front_photo_url,
+    id_card_back_photo_url,
+    id_card_photo_timestamp,
+    verify_flag,
+    verify_channel,
     id,
     gmt_create,
     gmt_modified
 </sql>
 
-<sql id="stockoutOrderBuyerDO_columnsForInsert">
-    #{buyerCertType},
-    #{buyerCertNo},
-    #{buyerIdCardFrontPhotoUrl},
-    #{buyerTelephone},
-    #{stockoutOrderId},
-    #{bizId},
-    #{buyerName},
-    #{buyerCity},
-    #{buyerProvince},
-    #{buyerCountry},
-    #{buyerIdCardPhotoTimestamp},
-    #{buyerAddress},
-    #{buyerIdCardBackPhotoUrl},
-    #{buyerRegion},
-    #{buyerZipcode},
+<sql id="userAuthenticationDO_columnsForInsert">
+    #{name},
+    #{idNo},
+    #{idCardFrontPhotoUrl},
+    #{idCardBackPhotoUrl},
+    #{idCardPhotoTimestamp},
+    #{verifyFlag},
+    #{verifyChannel},
     #{id},
     now(),
     now()
 </sql>
 
-<sql id="stockoutOrderBuyerDO_setterForUpdate">
+<sql id="userAuthenticationDO_setterForUpdate">
     <set>
         gmt_modified = now(),
-        <if test="buyerCertType != null">
-            buyer_cert_type = #{buyerCertType},
+        <if test="name != null">
+            name = #{name},
         </if>
-        <if test="buyerCertNo != null">
-            buyer_cert_no = #{buyerCertNo},
+        <if test="idNo != null">
+            id_no = #{idNo},
         </if>
-        <if test="buyerIdCardFrontPhotoUrl != null">
-            buyer_id_card_front_photo_url = #{buyerIdCardFrontPhotoUrl},
+        <if test="idCardFrontPhotoUrl != null">
+            id_card_front_photo_url = #{idCardFrontPhotoUrl},
         </if>
-        <if test="buyerTelephone != null">
-            buyer_telephone = #{buyerTelephone},
+        <if test="idCardBackPhotoUrl != null">
+            id_card_back_photo_url = #{idCardBackPhotoUrl},
         </if>
-        <if test="stockoutOrderId != null">
-            stockout_order_id = #{stockoutOrderId},
+        <if test="idCardPhotoTimestamp != null">
+            id_card_photo_timestamp = #{idCardPhotoTimestamp},
         </if>
-        <if test="bizId != null">
-            biz_id = #{bizId},
+        <if test="verifyFlag != null">
+            verify_flag = #{verifyFlag},
         </if>
-        <if test="buyerName != null">
-            buyer_name = #{buyerName},
-        </if>
-        <if test="buyerCity != null">
-            buyer_city = #{buyerCity},
-        </if>
-        <if test="buyerProvince != null">
-            buyer_province = #{buyerProvince},
-        </if>
-        <if test="buyerCountry != null">
-            buyer_country = #{buyerCountry},
-        </if>
-        <if test="buyerIdCardPhotoTimestamp != null">
-            buyer_id_card_photo_timestamp = #{buyerIdCardPhotoTimestamp},
-        </if>
-        <if test="buyerAddress != null">
-            buyer_address = #{buyerAddress},
-        </if>
-        <if test="buyerIdCardBackPhotoUrl != null">
-            buyer_id_card_back_photo_url = #{buyerIdCardBackPhotoUrl},
-        </if>
-        <if test="buyerRegion != null">
-            buyer_region = #{buyerRegion},
-        </if>
-        <if test="buyerZipcode != null">
-            buyer_zipcode = #{buyerZipcode},
+        <if test="verifyChannel != null">
+            verify_channel = #{verifyChannel},
         </if>
     </set>
 </sql>
 
-<sql id="stockoutOrderBuyerDO_selector">
+<sql id="userAuthenticationDO_selector">
     select
-    <include refid="stockoutOrderBuyerDO_columns"/>
+    <include refid="userAuthenticationDO_columns"/>
     from base_user_authentication
 </sql>
 
-<sql id="stockoutOrderBuyerDO_query_segment">
+<sql id="userAuthenticationDO_query_segment">
     <trim prefix="WHERE" prefixOverrides="AND|OR">
-        <if test="data.buyerCertType != null">
-            AND buyer_cert_type = #{data.buyerCertType}
+        <if test="data.name != null">
+            AND name = #{data.name}
         </if>
-        <if test="data.buyerCertNo != null">
-            AND buyer_cert_no = #{data.buyerCertNo}
+        <if test="data.idNo != null">
+            AND id_no = #{data.idNo}
         </if>
-        <if test="data.buyerIdCardFrontPhotoUrl != null">
-            AND buyer_id_card_front_photo_url = #{data.buyerIdCardFrontPhotoUrl}
+        <if test="data.idCardFrontPhotoUrl != null">
+            AND id_card_front_photo_url = #{data.idCardFrontPhotoUrl}
         </if>
-        <if test="data.buyerTelephone != null">
-            AND buyer_telephone = #{data.buyerTelephone}
+        <if test="data.idCardBackPhotoUrl != null">
+            AND id_card_back_photo_url = #{data.idCardBackPhotoUrl}
         </if>
-        <if test="data.stockoutOrderId != null">
-            AND stockout_order_id = #{data.stockoutOrderId}
+        <if test="data.idCardPhotoTimestamp != null">
+            AND id_card_photo_timestamp = #{data.idCardPhotoTimestamp}
         </if>
-        <if test="data.bizId != null">
-            AND biz_id = #{data.bizId}
+        <if test="data.verifyFlag != null">
+            AND verify_flag = #{data.verifyFlag}
         </if>
-        <if test="data.buyerName != null">
-            AND buyer_name = #{data.buyerName}
-        </if>
-        <if test="data.buyerCity != null">
-            AND buyer_city = #{data.buyerCity}
-        </if>
-        <if test="data.buyerProvince != null">
-            AND buyer_province = #{data.buyerProvince}
-        </if>
-        <if test="data.buyerCountry != null">
-            AND buyer_country = #{data.buyerCountry}
-        </if>
-        <if test="data.buyerIdCardPhotoTimestamp != null">
-            AND buyer_id_card_photo_timestamp = #{data.buyerIdCardPhotoTimestamp}
-        </if>
-        <if test="data.buyerAddress != null">
-            AND buyer_address = #{data.buyerAddress}
-        </if>
-        <if test="data.buyerIdCardBackPhotoUrl != null">
-            AND buyer_id_card_back_photo_url = #{data.buyerIdCardBackPhotoUrl}
-        </if>
-        <if test="data.buyerRegion != null">
-            AND buyer_region = #{data.buyerRegion}
-        </if>
-        <if test="data.buyerZipcode != null">
-            AND buyer_zipcode = #{data.buyerZipcode}
+        <if test="data.verifyChannel != null">
+            AND verify_channel = #{data.verifyChannel}
         </if>
         <if test="data.id != null">
             AND id = #{data.id}
@@ -270,139 +190,91 @@
 </sql>
 
 
-<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO">
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO">
     insert into base_user_authentication
     (
-        <include refid="stockoutOrderBuyerDO_sqlForInsert"/>
+        <include refid="userAuthenticationDO_sqlForInsert"/>
         ,is_delete
     )
     values
     (
-        <include refid="stockoutOrderBuyerDO_columnsForInsert"/>
+        <include refid="userAuthenticationDO_columnsForInsert"/>
         ,0
     )
 </insert>
 
-<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO">
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO">
     update base_user_authentication
-    <include refid="stockoutOrderBuyerDO_setterForUpdate" />
+    <include refid="userAuthenticationDO_setterForUpdate" />
     where id = #{id}
     and is_delete = 0
 </update>
 
 
-<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO">
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO">
     update base_user_authentication
     <set>
         gmt_modified = now(),
-        <if test="update.buyerCertType != null">
-            buyer_cert_type = #{update.buyerCertType},
+        <if test="update.name != null">
+            name = #{update.name},
         </if>
-        <if test="update.buyerCertNo != null">
-            buyer_cert_no = #{update.buyerCertNo},
+        <if test="update.idNo != null">
+            id_no = #{update.idNo},
         </if>
-        <if test="update.buyerIdCardFrontPhotoUrl != null">
-            buyer_id_card_front_photo_url = #{update.buyerIdCardFrontPhotoUrl},
+        <if test="update.idCardFrontPhotoUrl != null">
+            id_card_front_photo_url = #{update.idCardFrontPhotoUrl},
         </if>
-        <if test="update.buyerTelephone != null">
-            buyer_telephone = #{update.buyerTelephone},
+        <if test="update.idCardBackPhotoUrl != null">
+            id_card_back_photo_url = #{update.idCardBackPhotoUrl},
         </if>
-        <if test="update.stockoutOrderId != null">
-            stockout_order_id = #{update.stockoutOrderId},
+        <if test="update.idCardPhotoTimestamp != null">
+            id_card_photo_timestamp = #{update.idCardPhotoTimestamp},
         </if>
-        <if test="update.bizId != null">
-            biz_id = #{update.bizId},
+        <if test="update.verifyFlag != null">
+            verify_flag = #{update.verifyFlag},
         </if>
-        <if test="update.buyerName != null">
-            buyer_name = #{update.buyerName},
-        </if>
-        <if test="update.buyerCity != null">
-            buyer_city = #{update.buyerCity},
-        </if>
-        <if test="update.buyerProvince != null">
-            buyer_province = #{update.buyerProvince},
-        </if>
-        <if test="update.buyerCountry != null">
-            buyer_country = #{update.buyerCountry},
-        </if>
-        <if test="update.buyerIdCardPhotoTimestamp != null">
-            buyer_id_card_photo_timestamp = #{update.buyerIdCardPhotoTimestamp},
-        </if>
-        <if test="update.buyerAddress != null">
-            buyer_address = #{update.buyerAddress},
-        </if>
-        <if test="update.buyerIdCardBackPhotoUrl != null">
-            buyer_id_card_back_photo_url = #{update.buyerIdCardBackPhotoUrl},
-        </if>
-        <if test="update.buyerRegion != null">
-            buyer_region = #{update.buyerRegion},
-        </if>
-        <if test="update.buyerZipcode != null">
-            buyer_zipcode = #{update.buyerZipcode},
+        <if test="update.verifyChannel != null">
+            verify_channel = #{update.verifyChannel},
         </if>
     </set>
-    <include refid="stockoutOrderBuyerDO_query_segment"/>
+    <include refid="userAuthenticationDO_query_segment"/>
 </update>
 
 
-<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO">
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO">
     insert into base_user_authentication
     (
-        <include refid="stockoutOrderBuyerDO_sqlForInsert"/>
+        <include refid="userAuthenticationDO_sqlForInsert"/>
         ,is_delete
     )
     values
     (
-        <include refid="stockoutOrderBuyerDO_columnsForInsert"/>
+        <include refid="userAuthenticationDO_columnsForInsert"/>
         ,0
     )
     on duplicate key update
     gmt_modified = now()
     ,is_delete = 0
-    <if test="buyerCertType != null">
-        ,buyer_cert_type = #{buyerCertType}
+    <if test="name != null">
+        ,name = #{name}
     </if>
-    <if test="buyerCertNo != null">
-        ,buyer_cert_no = #{buyerCertNo}
+    <if test="idNo != null">
+        ,id_no = #{idNo}
     </if>
-    <if test="buyerIdCardFrontPhotoUrl != null">
-        ,buyer_id_card_front_photo_url = #{buyerIdCardFrontPhotoUrl}
+    <if test="idCardFrontPhotoUrl != null">
+        ,id_card_front_photo_url = #{idCardFrontPhotoUrl}
     </if>
-    <if test="buyerTelephone != null">
-        ,buyer_telephone = #{buyerTelephone}
+    <if test="idCardBackPhotoUrl != null">
+        ,id_card_back_photo_url = #{idCardBackPhotoUrl}
     </if>
-    <if test="stockoutOrderId != null">
-        ,stockout_order_id = #{stockoutOrderId}
+    <if test="idCardPhotoTimestamp != null">
+        ,id_card_photo_timestamp = #{idCardPhotoTimestamp}
     </if>
-    <if test="bizId != null">
-        ,biz_id = #{bizId}
+    <if test="verifyFlag != null">
+        ,verify_flag = #{verifyFlag}
     </if>
-    <if test="buyerName != null">
-        ,buyer_name = #{buyerName}
-    </if>
-    <if test="buyerCity != null">
-        ,buyer_city = #{buyerCity}
-    </if>
-    <if test="buyerProvince != null">
-        ,buyer_province = #{buyerProvince}
-    </if>
-    <if test="buyerCountry != null">
-        ,buyer_country = #{buyerCountry}
-    </if>
-    <if test="buyerIdCardPhotoTimestamp != null">
-        ,buyer_id_card_photo_timestamp = #{buyerIdCardPhotoTimestamp}
-    </if>
-    <if test="buyerAddress != null">
-        ,buyer_address = #{buyerAddress}
-    </if>
-    <if test="buyerIdCardBackPhotoUrl != null">
-        ,buyer_id_card_back_photo_url = #{buyerIdCardBackPhotoUrl}
-    </if>
-    <if test="buyerRegion != null">
-        ,buyer_region = #{buyerRegion}
-    </if>
-    <if test="buyerZipcode != null">
-        ,buyer_zipcode = #{buyerZipcode}
+    <if test="verifyChannel != null">
+        ,verify_channel = #{verifyChannel}
     </if>
 </insert>
 
@@ -410,7 +282,7 @@
 <update id="delete">
     update base_user_authentication
     set is_delete = 1, gmt_modified = now()
-    <include refid="stockoutOrderBuyerDO_query_segment"/>
+    <include refid="userAuthenticationDO_query_segment"/>
 </update>
 <update id="deleteById">
     update base_user_authentication
@@ -423,7 +295,7 @@
 
 
 <!-- query class -->
-<sql id="stockoutOrderBuyerDO_groupBy">
+<sql id="userAuthenticationDO_groupBy">
     <if test="groupBys != null and groupBys != ''">
         group by
         <foreach collection="groupBys" item="item" open="" separator="," close="">
@@ -432,7 +304,7 @@
     </if>
 </sql>
 
-<sql id="stockoutOrderBuyerDO_orderby">
+<sql id="userAuthenticationDO_orderby">
     <if test="orderBys != null and orderBys != ''">
         order by
         <foreach collection="orderBys" item="item" open="" separator="," close="">
@@ -442,35 +314,35 @@
 </sql>
 
 
-<select id="query" resultMap="stockoutOrderBuyerDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO">
-    <include refid="stockoutOrderBuyerDO_selector"/>
-    <include refid="stockoutOrderBuyerDO_query_segment"/>
-    <include refid="stockoutOrderBuyerDO_groupBy"/>
-    <include refid="stockoutOrderBuyerDO_orderby"/>
+<select id="query" resultMap="userAuthenticationDOResult" parameterType="com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO">
+    <include refid="userAuthenticationDO_selector"/>
+    <include refid="userAuthenticationDO_query_segment"/>
+    <include refid="userAuthenticationDO_groupBy"/>
+    <include refid="userAuthenticationDO_orderby"/>
 </select>
 
-<select id="query4Page" resultMap="stockoutOrderBuyerDOResult" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO">
-    <include refid="stockoutOrderBuyerDO_selector"/>
-    <include refid="stockoutOrderBuyerDO_query_segment"/>
-    <include refid="stockoutOrderBuyerDO_groupBy"/>
-    <include refid="stockoutOrderBuyerDO_orderby"/>
+<select id="query4Page" resultMap="userAuthenticationDOResult" parameterType="com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO">
+    <include refid="userAuthenticationDO_selector"/>
+    <include refid="userAuthenticationDO_query_segment"/>
+    <include refid="userAuthenticationDO_groupBy"/>
+    <include refid="userAuthenticationDO_orderby"/>
     limit ${startRowForMysql}, ${pageSize}
 </select>
 
 
 <select id="count" resultType="java.lang.Long">
     SELECT COUNT(1) FROM base_user_authentication
-    <include refid="stockoutOrderBuyerDO_query_segment"/>
+    <include refid="userAuthenticationDO_query_segment"/>
 </select>
 
-<select id="getById" resultMap="stockoutOrderBuyerDOResult">
-    <include refid="stockoutOrderBuyerDO_selector"/>
+<select id="getById" resultMap="userAuthenticationDOResult">
+    <include refid="userAuthenticationDO_selector"/>
     where id = #{id}
     and is_delete = 0
 </select>
 
-<select id="getByIdForUpdate" resultMap="stockoutOrderBuyerDOResult">
-    <include refid="stockoutOrderBuyerDO_selector"/>
+<select id="getByIdForUpdate" resultMap="userAuthenticationDOResult">
+    <include refid="userAuthenticationDO_selector"/>
     where id = #{id}
     and is_delete = 0
     for update

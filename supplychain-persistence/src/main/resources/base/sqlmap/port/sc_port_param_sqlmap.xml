@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sfebiz.supplychain.persistence.base.port.dao.PortParamDao">
+
+<resultMap id="portParamDOResult" type="com.sfebiz.supplychain.persistence.base.port.domain.PortParamDO">
+    <result column="value" property="value"/>
+    <result column="type" property="type"/>
+    <result column="code" property="code"/>
+    <result column="port_id" property="portId"/>
+    <result column="id" property="id"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="gmt_modified" property="gmtModified"/>
+</resultMap>
+
+<sql id="portParamDO_columns">
+    value,
+    type,
+    code,
+    port_id,
+    id,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="portParamDO_sqlForInsert">
+    value,
+    type,
+    code,
+    port_id,
+    id,
+    gmt_create,
+    gmt_modified
+</sql>
+
+<sql id="portParamDO_columnsForInsert">
+    #{value},
+    #{type},
+    #{code},
+    #{portId},
+    #{id},
+    now(),
+    now()
+</sql>
+
+<sql id="portParamDO_setterForUpdate">
+    <set>
+        gmt_modified = now(),
+        <if test="value != null">
+            value = #{value},
+        </if>
+        <if test="type != null">
+            type = #{type},
+        </if>
+        <if test="code != null">
+            code = #{code},
+        </if>
+        <if test="portId != null">
+            port_id = #{portId},
+        </if>
+    </set>
+</sql>
+
+<sql id="portParamDO_selector">
+    select
+    <include refid="portParamDO_columns"/>
+    from sc_port_param
+</sql>
+
+<sql id="portParamDO_query_segment">
+    <trim prefix="WHERE" prefixOverrides="AND|OR">
+        <if test="data.value != null">
+            AND value = #{data.value}
+        </if>
+        <if test="data.type != null">
+            AND type = #{data.type}
+        </if>
+        <if test="data.code != null">
+            AND code = #{data.code}
+        </if>
+        <if test="data.portId != null">
+            AND port_id = #{data.portId}
+        </if>
+        <if test="data.id != null">
+            AND id = #{data.id}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="ins != null and ins != ''">
+            AND
+            <foreach collection="ins" item="item" open="(" separator="and" close=")">
+                ${item.column} in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="notIns != null and notIns != ''">
+            AND
+            <foreach collection="notIns" item="item" open="(" separator="and" close=")">
+                ${item.column} not in
+                <foreach collection="item.values" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </foreach>
+        </if>
+        <if test="equals != null and equals != ''">
+            AND
+            <foreach collection="equals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="notEquals != null and notEquals != ''">
+            AND
+            <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
+                ${item.column} = #{item.value}
+            </foreach>
+        </if>
+        <if test="lts != null and lts != ''">
+            AND
+            <foreach collection="lts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ < ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gts != null and gts != ''">
+            AND
+            <foreach collection="gts" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ > ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="likes != null and likes != ''">
+            AND
+            <foreach collection="likes" item="item" open="(" separator="and" close=")">
+                ${item.column} like concat('%', #{item.value}, '%')
+            </foreach>
+        </if>
+        <if test="ltes != null and ltes != ''">
+            AND
+            <foreach collection="ltes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ <= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="gtes != null and gtes != ''">
+            AND
+            <foreach collection="gtes" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.value}
+            </foreach>
+        </if>
+        <if test="ranges != null and ranges != ''">
+            AND
+            <foreach collection="ranges" item="item" open="(" separator="and" close=")">
+                ${item.column} <![CDATA[ >= ]]> #{item.from} and ${item.column} <![CDATA[ < ]]> #{item.to}
+            </foreach>
+        </if>
+        AND is_delete = 0
+    </trim>
+</sql>
+
+
+<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.port.domain.PortParamDO">
+    insert into sc_port_param
+    (
+        <include refid="portParamDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="portParamDO_columnsForInsert"/>
+        ,0
+    )
+</insert>
+
+<update id="update" parameterType="com.sfebiz.supplychain.persistence.base.port.domain.PortParamDO">
+    update sc_port_param
+    <include refid="portParamDO_setterForUpdate" />
+    where id = #{id}
+    and is_delete = 0
+</update>
+
+
+<update id="updateByQuery" parameterType="com.sfebiz.supplychain.persistence.base.port.domain.PortParamDO">
+    update sc_port_param
+    <set>
+        gmt_modified = now(),
+        <if test="update.value != null">
+            value = #{update.value},
+        </if>
+        <if test="update.type != null">
+            type = #{update.type},
+        </if>
+        <if test="update.code != null">
+            code = #{update.code},
+        </if>
+        <if test="update.portId != null">
+            port_id = #{update.portId},
+        </if>
+    </set>
+    <include refid="portParamDO_query_segment"/>
+</update>
+
+
+<insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.sfebiz.supplychain.persistence.base.port.domain.PortParamDO">
+    insert into sc_port_param
+    (
+        <include refid="portParamDO_sqlForInsert"/>
+        ,is_delete
+    )
+    values
+    (
+        <include refid="portParamDO_columnsForInsert"/>
+        ,0
+    )
+    on duplicate key update
+    gmt_modified = now()
+    ,is_delete = 0
+    <if test="value != null">
+        ,value = #{value}
+    </if>
+    <if test="type != null">
+        ,type = #{type}
+    </if>
+    <if test="code != null">
+        ,code = #{code}
+    </if>
+    <if test="portId != null">
+        ,port_id = #{portId}
+    </if>
+</insert>
+
+<!-- Delete -->
+<update id="delete">
+    update sc_port_param
+    set is_delete = 1, gmt_modified = now()
+    <include refid="portParamDO_query_segment"/>
+</update>
+<update id="deleteById">
+    update sc_port_param
+    set is_delete = 1, gmt_modified = now()
+    where id = #{id}
+</update>
+
+
+
+
+
+<!-- query class -->
+<sql id="portParamDO_groupBy">
+    <if test="groupBys != null and groupBys != ''">
+        group by
+        <foreach collection="groupBys" item="item" open="" separator="," close="">
+            #{item}
+        </foreach>
+    </if>
+</sql>
+
+<sql id="portParamDO_orderby">
+    <if test="orderBys != null and orderBys != ''">
+        order by
+        <foreach collection="orderBys" item="item" open="" separator="," close="">
+            ${item.column} ${item.direction}
+        </foreach>
+    </if>
+</sql>
+
+
+<select id="query" resultMap="portParamDOResult" parameterType="com.sfebiz.supplychain.persistence.base.port.domain.PortParamDO">
+    <include refid="portParamDO_selector"/>
+    <include refid="portParamDO_query_segment"/>
+    <include refid="portParamDO_groupBy"/>
+    <include refid="portParamDO_orderby"/>
+</select>
+
+<select id="query4Page" resultMap="portParamDOResult" parameterType="com.sfebiz.supplychain.persistence.base.port.domain.PortParamDO">
+    <include refid="portParamDO_selector"/>
+    <include refid="portParamDO_query_segment"/>
+    <include refid="portParamDO_groupBy"/>
+    <include refid="portParamDO_orderby"/>
+    limit ${startRowForMysql}, ${pageSize}
+</select>
+
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(1) FROM sc_port_param
+    <include refid="portParamDO_query_segment"/>
+</select>
+
+<select id="getById" resultMap="portParamDOResult">
+    <include refid="portParamDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+</select>
+
+<select id="getByIdForUpdate" resultMap="portParamDOResult">
+    <include refid="portParamDO_selector"/>
+    where id = #{id}
+    and is_delete = 0
+    for update
+</select>
+
+</mapper>

@@ -1,13 +1,14 @@
 package com.sfebiz.supplychain.exposed.line.enums;
 
-import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
 
 /**
  * 面单格式
@@ -27,12 +28,15 @@ public class PdfTemplateType extends Enumerable4StringValue{
 
     public static PdfTemplateType SIMPLE = PdfTemplateType.valueOf("SIMPLE", "简单格式");
     public static PdfTemplateType YZYW_SIMPLE = PdfTemplateType.valueOf("YZYW_SIMPLE", "原汁原味简单格式");
+    public static PdfTemplateType YZYW_SIMPLE_TITLE = PdfTemplateType.valueOf("YZYW_SIMPLE_TITLE", "原汁原味-简易面单-头部");
     public static PdfTemplateType SF_SF = PdfTemplateType.valueOf("SF_SF", "顺丰清关-顺丰落地配");
+    public static PdfTemplateType SF_ZTO = PdfTemplateType.valueOf("SF_ZTO", "顺丰清关-中通落地配");
     public static PdfTemplateType GAOJIE_ZTO = PdfTemplateType.valueOf("GAOJIE_ZTO", "高捷清关-中通落地配");
     public static PdfTemplateType GAOJIE_ZTO_SIMPLE = PdfTemplateType.valueOf("GAOJIE_ZTO_SIMPLE", "高捷清关-中通落地配-简单格式(不带SKU信息)");
     public static PdfTemplateType WTD_ZTO = PdfTemplateType.valueOf("WTD_ZTO", "威时沛清关-中通落地配");
     public static PdfTemplateType WTD_ZTO_SIMPLE = PdfTemplateType.valueOf("WTD_ZTO_SIMPLE", "威时沛清关-中通落地配-简单格式(不带SKU信息)");
     public static PdfTemplateType YXT_ZTO = PdfTemplateType.valueOf("YXT_ZTO", "优先投-中通落地配");
+    public static PdfTemplateType YXT_ZTO_2 = PdfTemplateType.valueOf("YXT_ZTO_2", "优先投-中通落地配");
     public static PdfTemplateType YXT_ZTO_SIMPLE = PdfTemplateType.valueOf("YXT_ZTO_SIMPLE", "优先投-中通落地配-简单格式(不带SKU信息)");
     public static PdfTemplateType RHF_YUNDA = PdfTemplateType.valueOf("RHF_YUNDA", "润亨丰-韵达落地配");
     public static PdfTemplateType SH_YUNDA = PdfTemplateType.valueOf("SH_YUNDA", "上海-韵达落地配");

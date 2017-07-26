@@ -636,4 +636,13 @@
     for update
 </select>
 
+    <!-- 修改出库单口岸下单状态 -->
+    <update id="updatePortState" parameterType="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderRecordDO">
+        update sc_stockout_order_record
+        set port_state = #{portState}
+        <if test="portValidatePassTime != null">
+            ,port_validate_pass_time = #{portValidatePassTime}
+        </if>
+        where stockout_order_id = #{stockoutOrderId}
+    </update>
 </mapper>

@@ -45,6 +45,8 @@ public class StockoutReturnCode extends SCReturnCode {
     public final static int                 STOCKOUT_ORDER_CCB_CONFIRM_ERROR_CODE             = 2110029;
     public final static int                 STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_ILLEGAL_CODE     = 2110030;
     public final static int                 STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR_CODE  = 2110031;
+    public final static int                 STOCKOUT_ORDER_SERVICE_PDF_ERROR_CODE             = 2110032;
+    public final static int                 STOCKOUT_ORDER_SERVICE_PDFTEMPLATE_ERROR_CODE     = 2110033;
 
     public final static LogisticsReturnCode STOCKOUT_ORDER_WAVENO_UPDATE_ERROR                = new LogisticsReturnCode(
                                                                                                   "出库单波次号更新失败",
@@ -139,4 +141,8 @@ public class StockoutReturnCode extends SCReturnCode {
     public final static LogisticsReturnCode STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR       = new LogisticsReturnCode(
                                                                                                   "订单下发海关总署，发送异常",
                                                                                                   STOCKOUT_ORDER_CUSTOMSOFFICE_MSG_SEND_ERROR_CODE);
+    
+    public final static LogisticsReturnCode STOCKOUT_ORDER_SERVICE_PDF_ERROR = new LogisticsReturnCode("生成PDF面单异常", STOCKOUT_ORDER_SERVICE_PDF_ERROR_CODE);
+    public final static LogisticsReturnCode STOCKOUT_ORDER_SERVICE_PDFTEMPLATE_ERROR = new LogisticsReturnCode("线路PDFTemplate配置错误", STOCKOUT_ORDER_SERVICE_PDFTEMPLATE_ERROR_CODE);
+
 }

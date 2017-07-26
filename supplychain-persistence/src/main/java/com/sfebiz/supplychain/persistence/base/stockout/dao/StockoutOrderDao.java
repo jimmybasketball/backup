@@ -1,6 +1,9 @@
 package com.sfebiz.supplychain.persistence.base.stockout.dao;
 
+import java.util.List;
+
 import com.sfebiz.common.dao.BaseDao;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.ExportedShipOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 
 /**
@@ -12,4 +15,5 @@ import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
  */
 public interface StockoutOrderDao extends BaseDao<StockoutOrderDO> {
 
+    List<ExportedShipOrderDO> query4Page4AutoShipOrderByStockoutOrderIds(List<Long> stockoutOrderIdList);
 }

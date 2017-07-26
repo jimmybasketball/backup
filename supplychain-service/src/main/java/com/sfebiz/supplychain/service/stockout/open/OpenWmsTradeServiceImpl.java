@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import net.pocrd.entity.ServiceException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -39,11 +37,9 @@ import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderMan
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderTaskManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
-import com.sfebiz.supplychain.service.stockout.biz.StockoutOrderBizService;
-import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
-import com.sfebiz.supplychain.service.stockout.convert.StockoutOrderConvert;
-import com.sfebiz.supplychain.util.AreaUtil;
 import com.sfebiz.supplychain.util.NumberUtil;
+
+import net.pocrd.entity.ServiceException;
 
 @Service("openWmsTradeService")
 public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
@@ -75,8 +71,8 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
     @Resource
     private StockoutService               stockoutService;
 
-    @Resource
-    private StockoutOrderBizService       stockoutOrderBizService;
+//    @Resource
+//    private StockoutOrderBizService       stockoutOrderBizService;
 
     @Override
     public List<WmsOrderRoutesResult> orderRouteSearch(String customerCode, List<String> orderNoList)
@@ -112,9 +108,9 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
                 }
 
                 // 2.1. 创建出库单
-                StockoutOrderBO stockoutOrderEntity = StockoutOrderConvert
-                    .buildStockoutOrderEntityByOpenOrderCreateReq(request);
-                stockoutOrderBizService.createOrder(stockoutOrderEntity);
+//                StockoutOrderBO stockoutOrderEntity = StockoutOrderConvert
+//                    .buildStockoutOrderEntityByOpenOrderCreateReq(request);
+//                stockoutOrderBizService.createOrder(stockoutOrderEntity);
 
             } else if (StringUtils.equals(OpenWmsTradeActionType.EDIT.getCode(),
                 request.order.actionType)) {
@@ -293,15 +289,15 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
                     "收货地址中国家、省、市、区、详细地址信息均为必填字段不能为空");
             }
 
-            AreaUtil.AreaCheckResult areaCheckResult = AreaUtil.checkAreaInfo(
-                consigneeItem.addrProvince, consigneeItem.addrCity, consigneeItem.addrDistrict);
-            if (StringUtils.isNotBlank(areaCheckResult.getErrorMsg())) {
-                throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
-                    areaCheckResult.getErrorMsg());
-            }
-            consigneeItem.addrProvince = areaCheckResult.getProvinceName();
-            consigneeItem.addrCity = areaCheckResult.getCityName();
-            consigneeItem.addrDistrict = areaCheckResult.getRegionName();
+//            AreaUtil.AreaCheckResult areaCheckResult = AreaUtil.checkAreaInfo(
+//                consigneeItem.addrProvince, consigneeItem.addrCity, consigneeItem.addrDistrict);
+//            if (StringUtils.isNotBlank(areaCheckResult.getErrorMsg())) {
+//                throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+//                    areaCheckResult.getErrorMsg());
+//            }
+//            consigneeItem.addrProvince = areaCheckResult.getProvinceName();
+//            consigneeItem.addrCity = areaCheckResult.getCityName();
+//            consigneeItem.addrDistrict = areaCheckResult.getRegionName();
         }
     }
 }
