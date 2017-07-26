@@ -1,9 +1,7 @@
 package com.sfebiz.supplychain.exposed.stock.api;
 
-import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuBatchStockOperaterEntity;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuStockOperaterEntity;
-import com.sfebiz.supplychain.exposed.stock.entity.StockBatchEntity;
 import net.pocrd.entity.ServiceException;
 
 import java.util.List;
@@ -15,13 +13,18 @@ import java.util.Map;
  * @date 2017-07-25 10:01
  **/
 public interface StockService {
+
     /**
-     * 创建批次库存
+     * 入库新增库存
      *
-     * @param stockBatchEntity
+     * @param storehouseId
+     * @param stockinOrderId
+     * @param stockinType
+     * @param skuBatchStockOperaterEntity
      * @return
+     * @throws ServiceException
      */
-    public CommonRet<Long> createStockBatch(StockBatchEntity stockBatchEntity);
+    boolean incrementSkuBatchStock(long storehouseId, long stockinOrderId, int stockinType, SkuBatchStockOperaterEntity skuBatchStockOperaterEntity) throws ServiceException;
 
     /**
      * 批量冻结商品库存

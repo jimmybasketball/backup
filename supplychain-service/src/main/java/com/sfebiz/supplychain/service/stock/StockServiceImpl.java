@@ -2,16 +2,15 @@ package com.sfebiz.supplychain.service.stock;
 
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
-import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.enums.LogisticsReturnCode;
 import com.sfebiz.supplychain.exposed.common.enums.StockOutPlanType;
 import com.sfebiz.supplychain.exposed.stock.api.StockService;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuBatchStockOperaterEntity;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuStockOperaterEntity;
-import com.sfebiz.supplychain.exposed.stock.entity.StockBatchEntity;
 import com.sfebiz.supplychain.exposed.stock.enums.StockBatchStateType;
 import com.sfebiz.supplychain.exposed.stock.enums.StockFreezeOrderType;
 import com.sfebiz.supplychain.exposed.stock.enums.StockFreezeState;
+import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderType;
 import com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuManager;
 import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;
@@ -29,7 +28,6 @@ import net.pocrd.entity.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -55,27 +53,58 @@ public class StockServiceImpl implements StockService {
     @Resource
     private WarehouseManager warehouseManager;
 
-    @Override
-    public CommonRet<Long> createStockBatch(StockBatchEntity stockBatchEntity) {
-        CommonRet<Long> commonRet = new CommonRet<Long>();
-        try {
-            StockBatchDO stockBatchDO = new StockBatchDO();
-            BeanCopier beanCopier = BeanCopier.create(StockBatchEntity.class, StockBatchDO.class, false);
-            beanCopier.copy(stockBatchEntity, stockBatchDO, null);
-            stockBatchDO.setState(StockBatchStateType.ENABLE.value);
 
-            stockBatchManager.insert(stockBatchDO);
-            commonRet.setResult(stockBatchDO.getId());
-            LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
-                    .setMsg("[供应链-创建批次库存]创建批次库存成功")
-                    .log();
-        } catch (Exception e) {
-            LogBetter.instance(LOGGER).setLevel(LogLevel.ERROR)
-                    .setException(e)
-                    .setMsg("[供应链-创建批次库存]创建批次库存异常")
-                    .log();
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean incrementSkuBatchStock(long warehouseId, long stockinOrderId, int stockinType, SkuBatchStockOperaterEntity skuBatchStockOperaterEntity) throws ServiceException {
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
+                .setMsg("[供应链-增加商品批次库存]")
+                .addParm("商品信息", skuBatchStockOperaterEntity)
+                .addParm("仓库ID", warehouseId)
+                .addParm("入库单ID", stockinOrderId)
+                .addParm("入库单类型", stockinType)
+                .log();
+
+        if (0 == warehouseId || 0 == stockinOrderId || null == skuBatchStockOperaterEntity || 0 == skuBatchStockOperaterEntity.getSkuId() || skuBatchStockOperaterEntity.getCount() < 0
+                || skuBatchStockOperaterEntity.getWearCount() < 0 || skuBatchStockOperaterEntity.getPrice() < 0 || skuBatchStockOperaterEntity.getPriceRmb() < 0) {
+            throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL,
+                    "[供应链-增加商品库存失败]: " + LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL.getDesc() + " "
+                            + "[商品信息: " + skuBatchStockOperaterEntity
+                            + ", 仓库ID: " + warehouseId
+                            + ", 入库单ID: " + stockinOrderId
+                            + "]"
+            );
         }
-        return commonRet;
+
+        try {
+            //1. 获取实物库存记录，如果不存在则创建
+            StockPhysicalDO stockPhysicalDO = getStockPhysicalBySkuIdAndwarehouseIdIfNotExistThenCreate(skuBatchStockOperaterEntity.getSkuId(), warehouseId);
+            //2. 更新实物库存的信息和成本价
+            return updateSkuBatchStockCount(stockPhysicalDO, stockinOrderId, stockinType, skuBatchStockOperaterEntity);
+        } catch (ServiceException e) {
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.WARN)
+                    .setErrorMsg(e.getMessage())
+                    .setException(e)
+                    .log();
+            throw e;
+        } catch (Exception e) {
+            LogBetter.instance(LOGGER)
+                    .setLevel(LogLevel.ERROR)
+                    .setMsg("[供应链-增加商品库存失败]" + e.getMessage())
+                    .addParm("商品信息", skuBatchStockOperaterEntity)
+                    .addParm("仓库ID", warehouseId)
+                    .addParm("入库单ID", stockinOrderId)
+                    .setException(e)
+                    .log();
+            throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_INNER_EXCEPTION,
+                    "[供应链-增加商品库存异常]: " + e.getMessage() + " "
+                            + "[商品信息: " + skuBatchStockOperaterEntity
+                            + ", 仓库ID: " + warehouseId
+                            + ", 入库单ID: " + stockinOrderId
+                            + "]"
+            );
+        }
     }
 
     /**
@@ -163,7 +192,7 @@ public class StockServiceImpl implements StockService {
             consumeSkuStock(skuStockOperaterEntity.getSkuId(), warehouseId, skuStockOperaterEntity.getCount(), stockoutOrderId);
         }
 
-        //4. 按顺序更新redis库存
+        //TODO 4. 按顺序更新redis库存
         //for (SkuStockOperaterEntity skuStockOperaterEntity : mergeAndSortResult) {
         //    sendRedisSyncMessage(skuStockOperaterEntity.getSkuId());
         //}
@@ -202,10 +231,10 @@ public class StockServiceImpl implements StockService {
             releaseSkuStock(skuStockOperaterEntity.getSkuId(), warehouseId, skuStockOperaterEntity.getCount(), stockoutOrderId);
         }
 
-//        //4. 按顺序更新redis库存
-//        for (SkuStockOperaterEntity skuStockOperaterEntity : mergeAndSortResult) {
-//            sendRedisSyncMessage(skuStockOperaterEntity.getSkuId());
-//        }
+        //TODO 4. 按顺序更新redis库存
+        //for (SkuStockOperaterEntity skuStockOperaterEntity : mergeAndSortResult) {
+        //       sendRedisSyncMessage(skuStockOperaterEntity.getSkuId());
+        //     }
 
         LogBetter.instance(LOGGER)
                 .setLevel(LogLevel.INFO)
@@ -215,6 +244,116 @@ public class StockServiceImpl implements StockService {
                 .addParm("出库单ID", stockoutOrderId)
                 .log();
         return true;
+    }
+
+    /**
+     * 查询实物库存信息是否存在
+     *
+     * @param skuId
+     * @param warehouseId
+     * @return
+     * @throws ServiceException
+     */
+    protected StockPhysicalDO getStockPhysicalBySkuIdAndwarehouseIdIfNotExistThenCreate(long skuId, long warehouseId) throws ServiceException {
+        StockPhysicalDO stockPhysicalDO = stockPhysicalManager.getBySkuIdAndWarehouseId(skuId, warehouseId);
+        if (null == stockPhysicalDO) {
+            stockPhysicalDO = new StockPhysicalDO();
+            stockPhysicalDO.setSkuId(skuId);
+            stockPhysicalDO.setWarehouseId(warehouseId);
+            stockPhysicalDO.setAvailableCount(0);
+            stockPhysicalDO.setFreezeCount(0);
+            stockPhysicalDO.setDamagedCount(0);
+        }
+        return stockPhysicalDO;
+    }
+
+    /**
+     * 更新批次库存信息
+     *
+     * @param stockPhysicalDO
+     * @param stockinOrderId
+     * @param stockinType
+     * @param skuBatchStockOperaterEntity
+     * @return
+     * @throws ServiceException
+     */
+    protected boolean updateSkuBatchStockCount(StockPhysicalDO stockPhysicalDO, long stockinOrderId, int stockinType,
+                                               SkuBatchStockOperaterEntity skuBatchStockOperaterEntity) throws ServiceException {
+        LogBetter.instance(LOGGER)
+                .setMsg("[供应链-增加商品库存]: 更新商品批次库存的数量和价格")
+                .addParm("商品信息", skuBatchStockOperaterEntity)
+                .addParm("入库单ID", stockinOrderId)
+                .addParm("入库单类型", stockinType)
+                .log();
+
+        //更新实物库存数量
+        updateStockPhysicalCount(stockPhysicalDO, stockinOrderId, skuBatchStockOperaterEntity);
+
+        //更新批次库存信息
+        addBatchStock(stockPhysicalDO, stockinOrderId, stockinType, skuBatchStockOperaterEntity);
+
+        LogBetter.instance(LOGGER)
+                .setLevel(LogLevel.INFO)
+                .setMsg("[供应链-增加商品库存成功]")
+                .addParm("商品信息", skuBatchStockOperaterEntity)
+                .addParm("入库单ID", stockinOrderId)
+                .log();
+        return true;
+    }
+
+    /**
+     * 增加sku批次库存
+     *
+     * @param stockPhysicalDO
+     * @param stockinOrderId
+     * @param stockinType
+     * @param skuBatchStockOperaterEntity
+     * @throws ServiceException
+     */
+    private void addBatchStock(StockPhysicalDO stockPhysicalDO, long stockinOrderId, int stockinType,
+                               SkuBatchStockOperaterEntity skuBatchStockOperaterEntity) throws ServiceException {
+        //增加sku批次库存
+        StockBatchDO existBatchStockDO = stockBatchManager.getBySkuIdAndWarehouseIdAndBatchNo(stockPhysicalDO.getSkuId(), stockPhysicalDO.getWarehouseId(), skuBatchStockOperaterEntity.getBatchNo());
+        if (existBatchStockDO == null) {
+            StockBatchDO stockBatchDO = new StockBatchDO();
+            stockBatchDO.setBatchNo(skuBatchStockOperaterEntity.getBatchNo());
+            stockBatchDO.setMerchantBatchNo(skuBatchStockOperaterEntity.getBatchNo());
+            stockBatchDO.setAvailableCount(skuBatchStockOperaterEntity.getCount());
+            stockBatchDO.setSkuId(stockPhysicalDO.getSkuId());
+            stockBatchDO.setStockPhysicalId(stockPhysicalDO.getId());
+            stockBatchDO.setExpirationDate(skuBatchStockOperaterEntity.getExpirationDate());
+            stockBatchDO.setFreezeCount(0);
+            stockBatchDO.setState(StockBatchStateType.ENABLE.getValue());
+            stockBatchDO.setProductionDate(skuBatchStockOperaterEntity.getProductionDate());
+            stockBatchDO.setMerchantProviderId(skuBatchStockOperaterEntity.getProviderId());
+            stockBatchDO.setWarehouseId(stockPhysicalDO.getWarehouseId());
+            stockBatchDO.setDamagedCount(skuBatchStockOperaterEntity.getWearCount());
+            stockBatchDO.setStockinOrderId(skuBatchStockOperaterEntity.getStockinId());
+            //对于那些通过线下入库的sku,是没有设置入库日期的,设置手工入库完成日期作为入库日期
+            if (null == skuBatchStockOperaterEntity.getStockinDate()) {
+                stockBatchDO.setStockinDate(new Date());
+            } else {
+                stockBatchDO.setStockinDate(skuBatchStockOperaterEntity.getStockinDate());
+            }
+            stockBatchManager.insert(stockBatchDO);
+        } else {
+            // 如果已经存在该批次信息，则说明，有可能是调拨入库或者销售退货入库或者海关退货入库，需要判断
+            if (stockinType == StockinOrderType.SALES_STOCK_IN.getValue()) {
+                throw new ServiceException(
+                        LogisticsReturnCode.STOCK_SERVICE_BATCH_STOCK_RECODE_DUPLICATE,
+                        "[供应链-供应链-增加商品库存异常: ]" + LogisticsReturnCode.STOCK_SERVICE_BATCH_STOCK_RECODE_DUPLICATE.getDesc() + " "
+                                + "[商品信息: " + skuBatchStockOperaterEntity
+                                + ", 入库单ID: " + stockinOrderId
+                                + "]"
+                );
+            } else {
+                existBatchStockDO.setAvailableCount(existBatchStockDO.getAvailableCount().intValue() + skuBatchStockOperaterEntity.getCount().intValue());
+                existBatchStockDO.setDamagedCount(existBatchStockDO.getDamagedCount() + skuBatchStockOperaterEntity.getWearCount());
+                existBatchStockDO.setExpirationDate(skuBatchStockOperaterEntity.getExpirationDate());
+                existBatchStockDO.setProductionDate(skuBatchStockOperaterEntity.getProductionDate());
+                stockBatchManager.update(existBatchStockDO);
+            }
+        }
     }
 
 
@@ -827,4 +966,32 @@ public class StockServiceImpl implements StockService {
                     .log();
         }
     }
+
+    /**
+     * 更新实物库存数量
+     *
+     * @param stockPhysicalDO
+     * @param stockinOrderId
+     * @param skuBatchStockOperaterEntity
+     * @throws ServiceException
+     */
+    private void updateStockPhysicalCount(StockPhysicalDO stockPhysicalDO,
+                                          long stockinOrderId,
+                                          SkuBatchStockOperaterEntity skuBatchStockOperaterEntity) throws ServiceException {
+        LogBetter.instance(LOGGER).setLevel(LogLevel.INFO)
+                .setMsg("[供应链-增加商品库存]: 更新实物库存数量")
+                .addParm("商品信息", skuBatchStockOperaterEntity)
+                .addParm("入库单ID", stockinOrderId)
+                .log();
+        // 更新实物库存的破损库存
+        stockPhysicalDO.setDamagedCount(stockPhysicalDO.getDamagedCount() + skuBatchStockOperaterEntity.getWearCount());
+        stockPhysicalDO.setAvailableCount(stockPhysicalDO.getAvailableCount() + skuBatchStockOperaterEntity.getCount());
+        if (null != stockPhysicalDO.getId()) {
+            stockPhysicalManager.update(stockPhysicalDO);
+        } else {
+            stockPhysicalManager.insert(stockPhysicalDO);
+        }
+    }
+
+
 }
