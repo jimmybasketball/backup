@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.service.merchant.Model;
+package com.sfebiz.supplychain.service.merchant.model;
 
 import com.sfebiz.supplychain.service.stockout.biz.model.BaseBO;
 import org.apache.commons.lang3.builder.ToStringBuilder;

@@ -1,7 +1,7 @@
 package com.sfebiz.supplychain.service.stockout.biz.model;
 
 import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
-import com.sfebiz.supplychain.service.merchant.Model.MerchantPackageMaterialBO;
+import com.sfebiz.supplychain.service.merchant.model.MerchantPackageMaterialBO;
 
 import java.util.Date;
 import java.util.List;
