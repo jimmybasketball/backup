@@ -37,7 +37,7 @@ public class SkuWarehouseSyncManager extends BaseManager<SkuWarehouseSyncDO> {
         return skuWarehouseSyncDOList;
     }
 
-    public SkuWarehouseSyncDO getBySkuIdAndStorehouseId(long skuId,long warehouseId){
+    public SkuWarehouseSyncDO getBySkuIdAndWarehouseId(long skuId,long warehouseId){
         SkuWarehouseSyncDO skuWarehouseSyncDO = new SkuWarehouseSyncDO();
         skuWarehouseSyncDO.setSkuId(skuId);
         skuWarehouseSyncDO.setWarehouseId(warehouseId);
@@ -77,7 +77,7 @@ public class SkuWarehouseSyncManager extends BaseManager<SkuWarehouseSyncDO> {
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("D:/development/IDEA/ifunq-supplychain/haitao-b2b-supplychain/" +
                         "supplychain-persistence/src/main/resources/base/sqlmap/sku/sku-warehouse-sync-sqlmap.xml",
-                SkuWarehouseSyncDao.class, SkuWarehouseSyncDO.class, "sc_sku_warehouse_syc");
+                SkuWarehouseSyncDao.class, SkuWarehouseSyncDO.class, "sc_sku_warehouse_sync");
     }
 
     public List<SkuWarehouseSyncDO> getAllUnSyncDataByWarehouseId(long warehouseId) {

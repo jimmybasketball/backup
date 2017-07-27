@@ -3,17 +3,23 @@ package com.sfebiz.supplychain.provider.biz;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
+import com.sfebiz.supplychain.config.mock.MockConfig;
 import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
 import com.sfebiz.supplychain.exposed.common.enums.LogisticsReturnCode;
 import com.sfebiz.supplychain.exposed.common.enums.PortNid;
 import com.sfebiz.supplychain.exposed.sku.api.SkuService;
 import com.sfebiz.supplychain.exposed.sku.entity.SkuEntity;
 import com.sfebiz.supplychain.exposed.sku.enums.SkuDeclareStateType;
+import com.sfebiz.supplychain.exposed.sku.enums.SkuWarehouseSyncStateType;
 import com.sfebiz.supplychain.exposed.warehouse.enums.WmsMessageType;
 import com.sfebiz.supplychain.exposed.warehouse.enums.WmsOperaterType;
+import com.sfebiz.supplychain.factory.SpringBeanFactory;
 import com.sfebiz.supplychain.persistence.base.port.domain.PortDO;
 import com.sfebiz.supplychain.persistence.base.sku.domain.ProductDeclareDO;
+import com.sfebiz.supplychain.persistence.base.sku.domain.SkuWarehouseSyncDO;
 import com.sfebiz.supplychain.persistence.base.sku.manager.ProductDeclareManager;
+import com.sfebiz.supplychain.persistence.base.sku.manager.SkuWarehouseSyncLogManager;
+import com.sfebiz.supplychain.persistence.base.sku.manager.SkuWarehouseSyncManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.LogisticsProviderDetailDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.LogisticsProviderDetailManager;
@@ -112,6 +118,25 @@ public class SkuSyncBizService implements ApplicationContextAware {
         return null;
     }
 
+
+    /**
+     * 发送基础商品信息给仓库,异步发送
+     *
+     * @return
+     */
+    public BaseResult sendProductBasicInfo2Wms(List<Long> skuIds, Long warehouseId, WmsOperaterType type) throws ServiceException {
+        return sendProductBasicInfo2Wms(skuIds, warehouseId, type, true);
+    }
+
+    /**
+     * 发送基础商品信息给仓库,同步发送
+     *
+     * @return
+     */
+    public BaseResult sendProductBasicInfo2WmsNotSync(List<Long> skuIds, Long warehouseId, WmsOperaterType type) throws ServiceException {
+        return sendProductBasicInfo2Wms(skuIds, warehouseId, type, false);
+    }
+
     /**
      * 发送基础商品信息给仓库,支持批量同步,如果是bom的主件，也是需要同步的。
      * isSync 是否同步执行
@@ -120,7 +145,6 @@ public class SkuSyncBizService implements ApplicationContextAware {
      */
     public BaseResult sendProductBasicInfo2Wms(List<Long> skuIds, Long warehouseId, WmsOperaterType type, boolean isSync) throws ServiceException {
         BaseResult baseResult = new BaseResult();
-
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setMsg("向仓库同步基础商品信息")
@@ -158,6 +182,48 @@ public class SkuSyncBizService implements ApplicationContextAware {
             throw new ServiceException(LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION, LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION.getDesc());
         }
 
+        // 如果不存在仓库和和sku对应同步数据，就创建
+        for (SkuEntity skuEntity : skuEntities) {
+            SkuWarehouseSyncManager skuWarehouseSyncManager = SpringBeanFactory.getBean("skuWarehouseSyncManager", SkuWarehouseSyncManager.class);
+            SkuWarehouseSyncDO warehouseSyncDO = skuWarehouseSyncManager.getBySkuIdAndWarehouseId(skuEntity.getId(), warehouseDO.getId());
+            if (warehouseSyncDO == null) {
+                SkuWarehouseSyncDO skuWarehouseSyncDO = new SkuWarehouseSyncDO();
+                skuWarehouseSyncDO.setSkuId(skuEntity.getId());
+                skuWarehouseSyncDO.setWarehouseId(warehouseDO.getId());
+                skuWarehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_FAIL.value);
+                skuWarehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value);
+                skuWarehouseSyncManager.insert(skuWarehouseSyncDO);
+            }
+        }
+
+
+        // mock所有仓库返回同步成功 start
+        boolean isMockSkuSync = MockConfig.isMocked("command", "skuSyncCommand");
+        if (isMockSkuSync) {
+            //直接返回仓库已发货
+            logger.info("MOCK：COE仓库 商品同步 采用MOCK实现");
+            SkuWarehouseSyncManager skuWarehouseSyncManager = SpringBeanFactory.getBean("skuWarehouseSyncManager", SkuWarehouseSyncManager.class);
+            SkuWarehouseSyncLogManager skuWarehouseSyncLogManager = SpringBeanFactory.getBean("skuWarehouseSyncLogManager", SkuWarehouseSyncLogManager.class);
+            for (SkuEntity skuEntity : skuEntities) {
+                SkuWarehouseSyncDO warehouseSyncDO = skuWarehouseSyncManager.getBySkuIdAndWarehouseId(skuEntity.getId(), warehouseDO.getId());
+                if (warehouseSyncDO != null) {
+                    if (WmsOperaterType.ADD.equals(type)) {
+                        warehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_SUCCESS.value);
+                    } else {
+                        warehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_SUCCESS.value);
+                    }
+                    skuWarehouseSyncManager.update(warehouseSyncDO);
+                } else {
+                    logger.error("skuId:{},warehouseId:{} 不存在", skuEntity.id, warehouseDO.getId());
+                }
+                skuWarehouseSyncLogManager.createLog(skuEntity.id, warehouseDO.getId(), "成功", "mock", 1);
+            }
+            baseResult.setSuccess(Boolean.TRUE);
+            return baseResult;
+        }
+        // mock所有仓库返回同步成功 end
+
+        // 根据command-config.xml配置执行对应的Command
         try {
             ProviderCommand cmd = CommandFactory.createCommand(logisticsProviderDetailDO.getInterfaceType().toString(), WmsMessageType.SKU_SYNC.getValue());
             WmsOrderSkuSyncCommand productSyncCommand = (WmsOrderSkuSyncCommand) cmd;
@@ -256,23 +322,6 @@ public class SkuSyncBizService implements ApplicationContextAware {
         return baseResult;
     }
 
-    /**
-     * 发送基础商品信息给仓库,异步发送
-     *
-     * @return
-     */
-    public BaseResult sendProductBasicInfo2Wms(List<Long> skuIds, Long warehouseId, WmsOperaterType type) throws ServiceException {
-        return sendProductBasicInfo2Wms(skuIds, warehouseId, type, true);
-    }
-
-    /**
-     * 发送基础商品信息给仓库,同步发送
-     *
-     * @return
-     */
-    public BaseResult sendProductBasicInfo2WmsNotSync(List<Long> skuIds, Long warehouseId, WmsOperaterType type) throws ServiceException {
-        return sendProductBasicInfo2Wms(skuIds, warehouseId, type, false);
-    }
 //
 //    /**
 //     * 发送商品BOM物料信息给仓库
