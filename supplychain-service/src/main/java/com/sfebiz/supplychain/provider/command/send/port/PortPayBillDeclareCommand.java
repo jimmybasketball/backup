@@ -31,6 +31,7 @@ public abstract class PortPayBillDeclareCommand extends AbstractCommand {
 
     private static final HaitaoTraceLogger traceLogger = HaitaoTraceLoggerFactory.getTraceLogger("order");
 
+    /* 需要外部传入  */
     /**
      * 出库单业务对象
      */
@@ -40,6 +41,13 @@ public abstract class PortPayBillDeclareCommand extends AbstractCommand {
      * 口岸支付单申报记录
      */
     protected PortBillDeclareDO portBillDeclareDO;
+
+    /**
+     * 申报类型
+     */
+    protected DeclareType declareType = DeclareType.CREATE;
+
+
 
 
     /* 根据stockoutOrderBO整理出的数据结构，方便业务调用，不需要外部传入  */
@@ -64,10 +72,7 @@ public abstract class PortPayBillDeclareCommand extends AbstractCommand {
     protected StockoutOrderRecordBO recordBO;
 
 
-    /**
-     * 申报类型
-     */
-    protected DeclareType declareType = DeclareType.CREATE;
+
 
 
     public StockoutOrderBO getStockoutOrderBO() {
@@ -104,6 +109,14 @@ public abstract class PortPayBillDeclareCommand extends AbstractCommand {
 
     public void setPortBillDeclareDO(PortBillDeclareDO portBillDeclareDO) {
         this.portBillDeclareDO = portBillDeclareDO;
+    }
+
+    public DeclareType getDeclareType() {
+        return declareType;
+    }
+
+    public void setDeclareType(DeclareType declareType) {
+        this.declareType = declareType;
     }
 
     /**
