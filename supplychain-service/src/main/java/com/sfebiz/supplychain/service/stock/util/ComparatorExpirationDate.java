@@ -1,4 +1,4 @@
-package com.sfebiz.supplychain.util.stock;
+package com.sfebiz.supplychain.service.stock.util;
 
 
 import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;

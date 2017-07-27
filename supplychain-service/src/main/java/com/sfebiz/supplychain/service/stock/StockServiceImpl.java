@@ -22,8 +22,8 @@ import com.sfebiz.supplychain.persistence.base.stock.manager.StockPhysicalManage
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
 import com.sfebiz.supplychain.queue.MessageProducer;
-import com.sfebiz.supplychain.util.stock.ComparatorExpirationDate;
-import com.sfebiz.supplychain.util.stock.ComparatorStockinDate;
+import com.sfebiz.supplychain.service.stock.util.ComparatorExpirationDate;
+import com.sfebiz.supplychain.service.stock.util.ComparatorStockinDate;
 import net.pocrd.entity.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
