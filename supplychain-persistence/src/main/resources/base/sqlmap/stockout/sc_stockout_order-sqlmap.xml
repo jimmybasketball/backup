@@ -847,6 +847,7 @@
 
 <select id="query4Page4AutoShipOrderByStockoutOrderIds" parameterType="java.util.List" resultMap="waitStockoutOrder4AutoExportResult">
     SELECT 
+    (stockout_order.user_goods_price+stockout_order.user_freight_fee)/100 as price,
     stockout_order.id,
     stockout_order.declare_payer_name,
     buyer.buyer_name,
@@ -883,9 +884,6 @@
     LEFT JOIN sc_merchant_package_material merchant_package ON stockout_order.merchant_id = merchant_package.merchant_id and stockout_order.order_source = merchant_package.order_source
     LEFT JOIN sc_warehouse warehouse ON warehouse.id = stockout_order.warehouse_id
     LEFT JOIN sc_sku sku ON stockout_order_detail.sku_id = sku.id
-    WHERE stockout_order.is_delete = 0
-    AND stockout_order.order_type in (1,4)
-    AND stockout_order.id IN (1)
     WHERE stockout_order.id IN
     <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
         #{item}

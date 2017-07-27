@@ -46,7 +46,7 @@ public class AcsCustomZTODeliveryPDFFormat extends AbstractPDFFormat {
 	/** 字体文件路径 */
 	private static final String simheiFontPath = "/home/admin/font/AdobeSongStd-Light.otf";
 
-	private static final String logoFilePath = "/home/admin/images/acs_zto_logo.jpg";
+	//private static final String logoFilePath = "/home/admin/images/acs_zto_logo.jpg";
 
 	@Override
 	public PdfPTable buildPdfBill(ExportedShipOrderDO exportedShipOrderDO,
