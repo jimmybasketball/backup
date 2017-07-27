@@ -4,12 +4,13 @@
 
 <resultMap id="userAuthenticationDOResult" type="com.sfebiz.supplychain.persistence.base.user.domain.UserAuthenticationDO">
     <result column="name" property="name"/>
-    <result column="id_no" property="idNo"/>
     <result column="id_card_front_photo_url" property="idCardFrontPhotoUrl"/>
     <result column="id_card_back_photo_url" property="idCardBackPhotoUrl"/>
     <result column="id_card_photo_timestamp" property="idCardPhotoTimestamp"/>
+    <result column="features" property="features"/>
     <result column="verify_flag" property="verifyFlag"/>
     <result column="verify_channel" property="verifyChannel"/>
+    <result column="id_no" property="idNo"/>
     <result column="id" property="id"/>
     <result column="gmt_create" property="gmtCreate"/>
     <result column="gmt_modified" property="gmtModified"/>
@@ -17,12 +18,13 @@
 
 <sql id="userAuthenticationDO_columns">
     name,
-    id_no,
     id_card_front_photo_url,
     id_card_back_photo_url,
     id_card_photo_timestamp,
+    features,
     verify_flag,
     verify_channel,
+    id_no,
     id,
     gmt_create,
     gmt_modified
@@ -30,12 +32,13 @@
 
 <sql id="userAuthenticationDO_sqlForInsert">
     name,
-    id_no,
     id_card_front_photo_url,
     id_card_back_photo_url,
     id_card_photo_timestamp,
+    features,
     verify_flag,
     verify_channel,
+    id_no,
     id,
     gmt_create,
     gmt_modified
@@ -43,12 +46,13 @@
 
 <sql id="userAuthenticationDO_columnsForInsert">
     #{name},
-    #{idNo},
     #{idCardFrontPhotoUrl},
     #{idCardBackPhotoUrl},
     #{idCardPhotoTimestamp},
+    #{features},
     #{verifyFlag},
     #{verifyChannel},
+    #{idNo},
     #{id},
     now(),
     now()
@@ -60,9 +64,6 @@
         <if test="name != null">
             name = #{name},
         </if>
-        <if test="idNo != null">
-            id_no = #{idNo},
-        </if>
         <if test="idCardFrontPhotoUrl != null">
             id_card_front_photo_url = #{idCardFrontPhotoUrl},
         </if>
@@ -72,11 +73,17 @@
         <if test="idCardPhotoTimestamp != null">
             id_card_photo_timestamp = #{idCardPhotoTimestamp},
         </if>
+        <if test="features != null">
+            features = #{features},
+        </if>
         <if test="verifyFlag != null">
             verify_flag = #{verifyFlag},
         </if>
         <if test="verifyChannel != null">
             verify_channel = #{verifyChannel},
+        </if>
+        <if test="idNo != null">
+            id_no = #{idNo},
         </if>
     </set>
 </sql>
@@ -92,9 +99,6 @@
         <if test="data.name != null">
             AND name = #{data.name}
         </if>
-        <if test="data.idNo != null">
-            AND id_no = #{data.idNo}
-        </if>
         <if test="data.idCardFrontPhotoUrl != null">
             AND id_card_front_photo_url = #{data.idCardFrontPhotoUrl}
         </if>
@@ -104,11 +108,17 @@
         <if test="data.idCardPhotoTimestamp != null">
             AND id_card_photo_timestamp = #{data.idCardPhotoTimestamp}
         </if>
+        <if test="data.features != null">
+            AND features = #{data.features}
+        </if>
         <if test="data.verifyFlag != null">
             AND verify_flag = #{data.verifyFlag}
         </if>
         <if test="data.verifyChannel != null">
             AND verify_channel = #{data.verifyChannel}
+        </if>
+        <if test="data.idNo != null">
+            AND id_no = #{data.idNo}
         </if>
         <if test="data.id != null">
             AND id = #{data.id}
@@ -218,9 +228,6 @@
         <if test="update.name != null">
             name = #{update.name},
         </if>
-        <if test="update.idNo != null">
-            id_no = #{update.idNo},
-        </if>
         <if test="update.idCardFrontPhotoUrl != null">
             id_card_front_photo_url = #{update.idCardFrontPhotoUrl},
         </if>
@@ -230,11 +237,17 @@
         <if test="update.idCardPhotoTimestamp != null">
             id_card_photo_timestamp = #{update.idCardPhotoTimestamp},
         </if>
+        <if test="update.features != null">
+            features = #{update.features},
+        </if>
         <if test="update.verifyFlag != null">
             verify_flag = #{update.verifyFlag},
         </if>
         <if test="update.verifyChannel != null">
             verify_channel = #{update.verifyChannel},
+        </if>
+        <if test="update.idNo != null">
+            id_no = #{update.idNo},
         </if>
     </set>
     <include refid="userAuthenticationDO_query_segment"/>
@@ -258,9 +271,6 @@
     <if test="name != null">
         ,name = #{name}
     </if>
-    <if test="idNo != null">
-        ,id_no = #{idNo}
-    </if>
     <if test="idCardFrontPhotoUrl != null">
         ,id_card_front_photo_url = #{idCardFrontPhotoUrl}
     </if>
@@ -270,11 +280,17 @@
     <if test="idCardPhotoTimestamp != null">
         ,id_card_photo_timestamp = #{idCardPhotoTimestamp}
     </if>
+    <if test="features != null">
+        ,features = #{features}
+    </if>
     <if test="verifyFlag != null">
         ,verify_flag = #{verifyFlag}
     </if>
     <if test="verifyChannel != null">
         ,verify_channel = #{verifyChannel}
+    </if>
+    <if test="idNo != null">
+        ,id_no = #{idNo}
     </if>
 </insert>
 

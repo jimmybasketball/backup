@@ -255,6 +255,12 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
+
+        <!-- 易极付接口调用API -->
+        <dependency>
+            <groupId>com.yiji.openapi.tool</groupId>
+            <artifactId>yijiApi-tool</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

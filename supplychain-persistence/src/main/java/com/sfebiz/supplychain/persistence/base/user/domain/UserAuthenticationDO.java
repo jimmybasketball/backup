@@ -30,7 +30,7 @@ public class UserAuthenticationDO extends BaseDO {
     private Long idCardPhotoTimestamp;
     
     /** 扩展信息 */
-    private String feature;
+    private String features;
     
     /** 实名验证状态标识（1：成功，0：不成功） */
     private Integer verifyFlag;
@@ -78,12 +78,12 @@ public class UserAuthenticationDO extends BaseDO {
         this.idCardPhotoTimestamp = idCardPhotoTimestamp;
     }
 
-    public String getFeature() {
-        return feature;
+    public String getFeatures() {
+        return features;
     }
 
-    public void setFeature(String feature) {
-        this.feature = feature;
+    public void setFeatures(String features) {
+        this.features = features;
     }
 
     public Integer getVerifyFlag() {
@@ -102,4 +102,17 @@ public class UserAuthenticationDO extends BaseDO {
         this.verifyChannel = verifyChannel;
     }
 
+    @Override
+    public String toString() {
+        return "UserAuthenticationDO{" +
+                "name='" + name + '\'' +
+                ", idNo='" + idNo + '\'' +
+                ", idCardFrontPhotoUrl='" + idCardFrontPhotoUrl + '\'' +
+                ", idCardBackPhotoUrl='" + idCardBackPhotoUrl + '\'' +
+                ", idCardPhotoTimestamp=" + idCardPhotoTimestamp +
+                ", features='" + features + '\'' +
+                ", verifyFlag=" + verifyFlag +
+                ", verifyChannel='" + verifyChannel + '\'' +
+                '}';
+    }
 }
