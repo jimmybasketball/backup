@@ -21,7 +21,6 @@ import com.sfebiz.supplychain.persistence.base.stock.manager.StockFreezeManager;
 import com.sfebiz.supplychain.persistence.base.stock.manager.StockPhysicalManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
-import com.sfebiz.supplychain.queue.MessageProducer;
 import com.sfebiz.supplychain.service.stock.util.ComparatorExpirationDate;
 import com.sfebiz.supplychain.service.stock.util.ComparatorStockinDate;
 import net.pocrd.entity.ServiceException;
@@ -51,8 +50,6 @@ public class StockServiceImpl implements StockService {
     @Resource
     private SkuManager skuManager;
     @Resource
-    private MessageProducer supplyChainMessageProducer;
-    @Resource
     private WarehouseManager warehouseManager;
 
 
@@ -68,7 +65,7 @@ public class StockServiceImpl implements StockService {
                 .log();
 
         if (0 == warehouseId || 0 == stockinOrderId || null == skuBatchStockOperaterEntity || 0 == skuBatchStockOperaterEntity.getSkuId() || skuBatchStockOperaterEntity.getCount() < 0
-                || skuBatchStockOperaterEntity.getWearCount() < 0 || skuBatchStockOperaterEntity.getPrice() < 0 || skuBatchStockOperaterEntity.getPriceRmb() < 0) {
+                || skuBatchStockOperaterEntity.getWearCount() < 0) {
             throw new ServiceException(LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL,
                     "[供应链-增加商品库存失败]: " + LogisticsReturnCode.STOCK_SERVICE_PARAMS_ILLEGAL.getDesc() + " "
                             + "[商品信息: " + skuBatchStockOperaterEntity
@@ -319,6 +316,7 @@ public class StockServiceImpl implements StockService {
         if (existBatchStockDO == null) {
             StockBatchDO stockBatchDO = new StockBatchDO();
             stockBatchDO.setBatchNo(skuBatchStockOperaterEntity.getBatchNo());
+            stockBatchDO.setMerchantId(skuBatchStockOperaterEntity.getMerchantId());
             stockBatchDO.setMerchantBatchNo(skuBatchStockOperaterEntity.getBatchNo());
             stockBatchDO.setAvailableCount(skuBatchStockOperaterEntity.getCount());
             stockBatchDO.setSkuId(stockPhysicalDO.getSkuId());
@@ -445,6 +443,7 @@ public class StockServiceImpl implements StockService {
                 entity.setCount(remainNeedCount);
                 entity.setQualityCount(stockBatchDO.getAvailableCount() - remainNeedCount);
                 entity.setFreezeCount(stockBatchDO.getFreezeCount() + remainNeedCount);
+                entity.setMerchantId(stockBatchDO.getMerchantId());
                 needFreezeBatchStocks.add(entity);
                 LogBetter.instance(LOGGER).setLevel(LogLevel.INFO).setMsg("[供应链-根据商品出库规则计算所需冻结批次库存结束]").addParm("商品ID", skuStockOperaterEntity.getSkuId())
                         .addParm("商品冻结数量", skuStockOperaterEntity.getCount()).addParm("仓库ID", stockBatchDO.getWarehouseId()).log();
@@ -618,6 +617,8 @@ public class StockServiceImpl implements StockService {
             stockFreezeDO.setFreezeState(StockFreezeState.FREEZED.getValue());
             stockFreezeDO.setFreezeCount(skuBatchStockOperaterEntity.getCount());
             stockFreezeDO.setRealCount(0);
+            stockFreezeDO.setStockBatchId(skuBatchStockOperaterEntity.getId());
+            stockFreezeDO.setMerchantId(skuBatchStockOperaterEntity.getMerchantId());
             stockFreezeDO.setBatchNo(skuBatchStockOperaterEntity.getBatchNo());
             stockFreezeDO.setOrderType(Integer.parseInt(StockFreezeOrderType.SALE_OUT_ORDER_TYPE.getValue()));
             stockFreezeManager.insert(stockFreezeDO);
@@ -985,6 +986,9 @@ public class StockServiceImpl implements StockService {
                 .addParm("商品信息", skuBatchStockOperaterEntity)
                 .addParm("入库单ID", stockinOrderId)
                 .log();
+        //更新货主 供应商
+        stockPhysicalDO.setMerchantProviderId(skuBatchStockOperaterEntity.getProviderId());
+        stockPhysicalDO.setMerchantId(skuBatchStockOperaterEntity.getMerchantId());
         // 更新实物库存的破损库存
         stockPhysicalDO.setDamagedCount(stockPhysicalDO.getDamagedCount() + skuBatchStockOperaterEntity.getWearCount());
         stockPhysicalDO.setAvailableCount(stockPhysicalDO.getAvailableCount() + skuBatchStockOperaterEntity.getCount());
