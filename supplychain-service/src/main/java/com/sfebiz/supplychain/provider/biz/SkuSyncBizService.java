@@ -193,6 +193,19 @@ public class SkuSyncBizService implements ApplicationContextAware {
                 skuWarehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_FAIL.value);
                 skuWarehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value);
                 skuWarehouseSyncManager.insert(skuWarehouseSyncDO);
+            } else if (WmsOperaterType.ADD.equals(type) && !warehouseSyncDO.getSyncState().equals(SkuWarehouseSyncStateType.SYNC_FAIL.value)) {
+                SkuWarehouseSyncDO skuWarehouseSyncDO = new SkuWarehouseSyncDO();
+                skuWarehouseSyncDO.setSkuId(skuEntity.getId());
+                skuWarehouseSyncDO.setWarehouseId(warehouseDO.getId());
+                skuWarehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_FAIL.value);
+                skuWarehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value);
+                skuWarehouseSyncManager.update(skuWarehouseSyncDO);
+            } else if (WmsOperaterType.UPDATE.equals(type) && !warehouseSyncDO.getSyncUpdateState().equals(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value)) {
+                SkuWarehouseSyncDO skuWarehouseSyncDO = new SkuWarehouseSyncDO();
+                skuWarehouseSyncDO.setSkuId(skuEntity.getId());
+                skuWarehouseSyncDO.setWarehouseId(warehouseDO.getId());
+                skuWarehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value);
+                skuWarehouseSyncManager.update(skuWarehouseSyncDO);
             }
         }
 

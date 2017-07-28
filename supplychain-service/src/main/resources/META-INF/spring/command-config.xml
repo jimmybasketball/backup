@@ -159,6 +159,224 @@
             </map>
         </property>
 
+        <property name="payMapping">
+            <map>
+                <!-- 支付宝外卡支付 -->
+                <entry key="ALIPAY">
+                    <map>
+                        <!-- 支付单申报 -->
+                        <entry key="PAYBILL_DECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_DECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_DECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.alipay.AlipayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 支付单重新申报 -->
+                        <entry key="PAYBILL_REDECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_REDECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_REDECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.alipay.AlipayOrderReDeclareCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 支付单申报状态查询 -->
+                        <entry key="PAYBILL_QUERY">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_QUERY"/>
+                                <entry key="msg_type" value="PAYBILL_QUERY"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.alipay.AlipayPayOrderQueryCommand"/>
+                            </map>
+                        </entry>
+
+                    </map>
+                </entry>
+
+                <!-- 易汇金支付 -->
+                <entry key="YIHUIJINPAY">
+                    <map>
+                        <!-- 支付单申报 -->
+                        <entry key="PAYBILL_DECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_DECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_DECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.yihuijin.YihuijinPayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 支付单申报状态查询 -->
+                        <entry key="PAYBILL_QUERY">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_QUERY"/>
+                                <entry key="msg_type" value="PAYBILL_QUERY"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.yihuijin.YihuijinPayOrderQueryCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 支付单重新申报 -->
+                        <entry key="PAYBILL_REDECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_REDECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_REDECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.yihuijin.YihuijinPayOrderReDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 易汇金支付 -->
+                <entry key="NEWYIHUIJINPAY">
+                    <map>
+                        <!-- 支付单申报 -->
+                        <entry key="PAYBILL_DECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_DECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_DECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.yihuijin.NewYihuijinPayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 易极付支付 -->
+                <entry key="YIJIFUPAY">
+                    <map>
+                        <!-- 支付单申报 -->
+                        <entry key="PAYBILL_DECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_DECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_DECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.yijifu.YijifuPayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 宝付支付 -->
+                <entry key="BAOFOOPAY">
+                    <map>
+                        <!-- 支付单申报 -->
+                        <entry key="PAYBILL_DECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_DECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_DECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.baofoo.BaofooPayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 财付通外卡支付 -->
+                <entry key="TENPAY">
+                    <map>
+                        <!-- 财付通支付申报 -->
+                        <entry key="PAYBILL_DECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_DECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_DECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.tencent.TenPayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 财付通支付单申报状态查询 -->
+                        <entry key="PAYBILL_QUERY">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_QUERY"/>
+                                <entry key="msg_type" value="PAYBILL_QUERY"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.tencent.TenPayOrderQueryCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 支付单重新申报 -->
+                        <entry key="PAYBILL_REDECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_REDECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_REDECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.tencent.TenPayOrderReDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 财付通内卡支付 -->
+                <entry key="TENPAY_INTL">
+                    <map>
+                        <!-- 财付通支付申报 -->
+                        <entry key="PAYBILL_DECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_DECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_DECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.tencent.TenPayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 财付通支付单申报状态查询 -->
+                        <entry key="PAYBILL_QUERY">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_QUERY"/>
+                                <entry key="msg_type" value="PAYBILL_QUERY"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.tencent.TenPayOrderQueryCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 支付单重新申报 -->
+                        <entry key="PAYBILL_REDECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_REDECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_REDECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.tencent.TenPayOrderReDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 平潭支付 -->
+                <entry key="PTPAY">
+                    <map>
+                        <!-- 支付单申报 -->
+                        <entry key="PAYBILL_DECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_DECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_DECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.ptpay.PTPayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 支付单重新申报 -->
+                        <entry key="PAYBILL_REDECLAR">
+                            <map>
+                                <entry key="service_name" value="PAYBILL_REDECLAR"/>
+                                <entry key="msg_type" value="PAYBILL_REDECLAR"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.pay.ptpay.PTPayOrderDeclareCommand"/>
+                            </map>
+                        </entry>
+
+
+                    </map>
+                </entry>
+
+            </map>
+        </property>
+
     </bean>
 
 </beans>
