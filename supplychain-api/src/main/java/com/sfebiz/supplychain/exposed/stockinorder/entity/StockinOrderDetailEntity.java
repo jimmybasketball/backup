@@ -23,6 +23,10 @@ public class StockinOrderDetailEntity implements Serializable {
      */
     public String skuBatch;
     /**
+     * 批次生成规则
+     */
+    private String batchGeneratePlan;
+    /**
      * 商品条码
      */
     public String skuBarcode;
@@ -74,6 +78,7 @@ public class StockinOrderDetailEntity implements Serializable {
                 ", skuId=" + skuId +
                 ", skuName='" + skuName + '\'' +
                 ", skuBatch='" + skuBatch + '\'' +
+                ", batchGeneratePlan='" + batchGeneratePlan + '\'' +
                 ", skuBarcode='" + skuBarcode + '\'' +
                 ", skuForeignName='" + skuForeignName + '\'' +
                 ", skuSpecification='" + skuSpecification + '\'' +
@@ -86,6 +91,14 @@ public class StockinOrderDetailEntity implements Serializable {
                 ", expirationDate=" + expirationDate +
                 ", stockinDate=" + stockinDate +
                 '}';
+    }
+
+    public String getBatchGeneratePlan() {
+        return batchGeneratePlan;
+    }
+
+    public void setBatchGeneratePlan(String batchGeneratePlan) {
+        this.batchGeneratePlan = batchGeneratePlan;
     }
 
     public Long getId() {
