@@ -28,6 +28,7 @@ import net.pocrd.entity.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -38,6 +39,7 @@ import java.util.*;
  * @description: 库存相关操作
  * @date 2017-07-25 10:01
  **/
+@Service("stockSerivce")
 public class StockServiceImpl implements StockService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StockService.class);
     @Resource
