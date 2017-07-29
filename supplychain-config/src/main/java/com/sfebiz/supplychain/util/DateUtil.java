@@ -34,6 +34,10 @@ public final class DateUtil {
 
     public static final String SIMPLE_ALTERNATIVE_ISO8601_DATE_FORMAT = "yyyy-MM-dd'Z'";
 
+    public static final String DATE_DEF_PATTERN = "yyyyMMddHHmmss";//日期格式
+
+    public static final String DATE_PATTERN_UNDEF = "yyyyMMdd";
+
     /**
      * 方法说明：获得指定格式当前系统时间字符串
      *
