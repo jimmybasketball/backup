@@ -38,10 +38,10 @@ public class StockoutOrderDO extends BaseDO {
     private Integer           serviceType;
 
     /** 货主ID */
-    private String            merchantId;
+    private Long              merchantId;
 
     /** 货主供应商ID */
-    private String            merchantProviderId;
+    private Long              merchantProviderId;
 
     /** 仓库ID */
     private Long              warehouseId;
@@ -179,19 +179,19 @@ public class StockoutOrderDO extends BaseDO {
         this.serviceType = serviceType;
     }
 
-    public String getMerchantId() {
+    public Long getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(String merchantId) {
+    public void setMerchantId(Long merchantId) {
         this.merchantId = merchantId;
     }
 
-    public String getMerchantProviderId() {
+    public Long getMerchantProviderId() {
         return merchantProviderId;
     }
 
-    public void setMerchantProviderId(String merchantProviderId) {
+    public void setMerchantProviderId(Long merchantProviderId) {
         this.merchantProviderId = merchantProviderId;
     }
 

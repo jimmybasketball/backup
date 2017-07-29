@@ -32,7 +32,7 @@ public class StockoutOrderBuyerDO extends BaseDO {
     private String            buyerTelephone;
 
     /** 购买人证件类型 */
-    private String            buyerCertType;
+    private Integer           buyerCertType;
 
     /** 收货人证件号码 */
     private String            buyerCertNo;
@@ -96,11 +96,11 @@ public class StockoutOrderBuyerDO extends BaseDO {
         this.buyerTelephone = buyerTelephone;
     }
 
-    public String getBuyerCertType() {
+    public Integer getBuyerCertType() {
         return buyerCertType;
     }
 
-    public void setBuyerCertType(String buyerCertType) {
+    public void setBuyerCertType(Integer buyerCertType) {
         this.buyerCertType = buyerCertType;
     }
 

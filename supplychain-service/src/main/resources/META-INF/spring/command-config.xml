@@ -28,8 +28,137 @@
                         </entry>
                     </map>
                 </entry>
+                <!-- 发网云仓命令集合 -->
+                <entry key="34">
+                    <map>
+                        <entry key="logistics.event.wms.skusync">
+                            <map>
+                                <entry key="service_name" value="logistics.event.wms.skusync"/>
+                                <entry key="msg_type" value="logistics.event.wms.skusync"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.wms.fineex.FineExSkuSyncCommand"/>
+                            </map>
+                        </entry>
+                        <entry key="logistics.event.wms.skustockin">
+                            <map>
+                                <entry key="service_name" value="logistics.event.wms.skustockin"/>
+                                <entry key="msg_type" value="logistics.event.wms.skustockin"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.wms.fineex.FineExSkuStockInCommand"/>
+                            </map>
+                        </entry>
+                        <entry key="logistics.event.wms.create">
+                            <map>
+                                <entry key="service_name" value="logistics.event.wms.create"/>
+                                <entry key="msg_type" value="logistics.event.wms.create"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.wms.fineex.FineExOrderCreateCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
             </map>
         </property>
+
+        <!-- 口岸commond配置 -->
+        <property name="portMapping">
+            <map>
+                <!-- 杭州电子口岸 -->
+                <entry key="HZPORT">
+                    <map>
+                        <!-- 杭州口岸订单申报 -->
+                        <entry key="IMPORTORDER">
+                            <map>
+                                <entry key="service_name" value="IMPORTORDER"/>
+                                <entry key="msg_type" value="IMPORTORDER"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.port.hangzhou.HzPortOrderBillDeclareCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 杭州口岸电商企业代理支付企业进行支付单申报 -->
+                        <entry key="PAYMENT">
+                            <map>
+                                <entry key="service_name" value="PAYMENT"/>
+                                <entry key="msg_type" value="PAYMENT"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.port.hangzhou.HzPortPayBillDeclareCommand"/>
+                            </map>
+                        </entry>
+
+                        <!-- 杭州口岸商品备案 -->
+                        <entry key="PRODUCT_RECORD">
+                            <map>
+                                <entry key="service_name" value="PRODUCT_RECORD"/>
+                                <entry key="msg_type" value="PRODUCT_RECORD"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.port.hangzhou.HzPortProductDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+                <!-- 广州(海关总署) -->
+                <entry key="GZPORT">
+                    <map>
+                        <!-- 广州(海关总署)口岸订单申报 -->
+                        <entry key="IMPORTORDER">
+                            <map>
+                                <entry key="service_name" value="IMPORTORDER"/>
+                                <entry key="msg_type" value="IMPORTORDER"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.port.customsoffice.CebPortOrderBillDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 平潭 -->
+                <entry key="PTPORT">
+                    <map>
+                        <!-- 平潭订单申报  -->
+                        <entry key="IMPORTORDER">
+                            <map>
+                                <entry key="service_name" value="IMPORTORDER"/>
+                                <entry key="msg_type" value="IMPORTORDER"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.port.pingtan.PTPortOrderBillDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 宁波 -->
+                <entry key="NBPORT">
+                    <map>
+                        <!-- 宁波订单申报 -->
+                        <entry key="IMPORTORDER">
+                            <map>
+                                <entry key="service_name" value="IMPORTORDER"/>
+                                <entry key="msg_type" value="IMPORTORDER"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.port.ningbo.NBPortOrderBillDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
+                <!-- 空口岸 -->
+                <entry key="EMPTYPORT">
+                    <map>
+                        <!-- 空口岸订单申报 -->
+                        <entry key="IMPORTORDER">
+                            <map>
+                                <entry key="service_name" value="IMPORTORDER"/>
+                                <entry key="msg_type" value="IMPORTORDER"/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.port.empty.NullPortOrderBillDeclareCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+            </map>
+        </property>
+
     </bean>
 
 </beans>

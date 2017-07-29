@@ -2,6 +2,7 @@ package com.sfebiz.supplychain.autotest;
 
 import com.sfebiz.supplychain.exposed.demo.api.DemoApi;
 import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
+import com.sfebiz.supplychain.exposed.user.api.RealNameAuthenticationService;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,4 +36,7 @@ public class BaseServiceTest {
 
     @Resource
     protected StockInService stockInService;
+
+    @Resource
+    protected RealNameAuthenticationService realNameAuthenticationService;
 }

@@ -12,6 +12,7 @@ import com.sfebiz.supplychain.persistence.base.warehouse.domain.LogisticsProvide
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.provider.command.AbstractCommand;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -82,10 +83,10 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
     @Override
     public boolean execute() {
 
-        boolean isMockAutoCreated = MockConfig.isMocked("coe", "skuSyncCommand");
+        boolean isMockAutoCreated = MockConfig.isMocked("command", "skuSyncCommand");
         if (isMockAutoCreated) {
             //直接返回仓库已发货
-            logger.info("MOCK：COE仓库 商品同步 采用MOCK实现");
+            logger.info("MOCK：所有仓库 商品同步 采用MOCK实现");
             return mockSkuSyncSuccess();
         }
 //
@@ -244,14 +245,15 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
         SkuWarehouseSyncManager skuWarehouseSyncManager = SpringBeanFactory.getBean("skuWarehouseSyncManager", SkuWarehouseSyncManager.class);
         SkuWarehouseSyncLogManager skuWarehouseSyncLogManager = SpringBeanFactory.getBean("skuWarehouseSyncLogManager", SkuWarehouseSyncLogManager.class);
         for (SkuEntity skuEntity : skuEntities) {
-            SkuWarehouseSyncDO warehouseSyscDO = skuWarehouseSyncManager.getBySkuIdAndStorehouseId(skuEntity.getId(), this.warehouseDO.getId());
-            if (warehouseSyscDO != null) {
+            SkuWarehouseSyncDO warehouseSyncDO = skuWarehouseSyncManager.getBySkuIdAndWarehouseId(skuEntity.getId(), this.warehouseDO.getId());
+            if (warehouseSyncDO != null) {
                 if (WmsOperaterType.ADD.equals(getWmsOperaterType())) {
-                    warehouseSyscDO.setSyncState(SkuWarehouseSyncStateType.SYNC_SUCCESS.value);
+                    warehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_SUCCESS.value);
                 } else {
-                    warehouseSyscDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_SUCCESS.value);
+                    warehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_SUCCESS.value);
                 }
-                skuWarehouseSyncManager.update(warehouseSyscDO);
+                warehouseSyncDO.setGmtModified(new Date());
+                skuWarehouseSyncManager.update(warehouseSyncDO);
             } else {
                 logger.error("skuId:{},warehouseId:{} 不存在", skuEntity.id, this.getWarehouseDO().getId());
             }

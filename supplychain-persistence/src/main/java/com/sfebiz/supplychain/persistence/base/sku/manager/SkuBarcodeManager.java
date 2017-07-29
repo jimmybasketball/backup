@@ -40,6 +40,17 @@ public class SkuBarcodeManager extends BaseManager<SkuBarcodeDO> {
         }
     }
 
+    public List<SkuBarcodeDO> getSkuBySkuId(Long skuId) {
+        SkuBarcodeDO skuBarcodeDO = new SkuBarcodeDO();
+        skuBarcodeDO.setSkuId(skuId);
+        List<SkuBarcodeDO> skuBarcodeDOList = query(BaseQuery.getInstance(skuBarcodeDO));
+        if (null == skuBarcodeDOList || 0 == skuBarcodeDOList.size()) {
+            return null;
+        } else {
+            return skuBarcodeDOList;
+        }
+    }
+
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("D:/development/IDEA/ifunq-supplychain/haitao-b2b-supplychain/" +
                         "supplychain-persistence/src/main/resources/base/sqlmap/sku/sc_sku_barcode_sqlmap.xml",

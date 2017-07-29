@@ -1,14 +1,13 @@
 package com.sfebiz.supplychain.exposed.warehouse.enums;
 
+import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
 
 /**
  * <p>
@@ -20,23 +19,20 @@ import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
  */
 public class WarehouseState extends Enumerable4StringValue {
 
+	private static volatile transient Map<String, WarehouseState> allbyvalue = new HashMap<String, WarehouseState>();
+
+	private static volatile transient Map<String, WarehouseState> allbyname = new HashMap<String, WarehouseState>();
+
+	private static final Lock lock = new ReentrantLock();
+
+	private static final Logger log = LoggerFactory.getLogger(WarehouseState.class);
+
+	private static final long serialVersionUID = -5549123648103158733L;
+
     /** 启用 */
-    public static WarehouseState ENABLE = WarehouseState
-	    .valueOf("ENABLE", "启用");
+    public static WarehouseState ENABLE = WarehouseState.valueOf("ENABLE", "启用");
     /** 禁用 */
-    public static WarehouseState DISABLE = WarehouseState.valueOf("DISABLE",
-	    "禁用");
-
-    private static final long serialVersionUID = -5549123648103158733L;
-
-    private static final Logger log = LoggerFactory
-	    .getLogger(WarehouseState.class);
-
-    private static final Lock lock = new ReentrantLock();
-
-    private static volatile transient Map<String, WarehouseState> allbyvalue = new HashMap<String, WarehouseState>();
-
-    private static volatile transient Map<String, WarehouseState> allbyname = new HashMap<String, WarehouseState>();
+    public static WarehouseState DISABLE = WarehouseState.valueOf("DISABLE", "禁用");
 
     public WarehouseState(String value, String name) {
 	super(value, name);

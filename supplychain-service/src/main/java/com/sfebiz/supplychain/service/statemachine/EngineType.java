@@ -1,13 +1,14 @@
 package com.sfebiz.supplychain.service.statemachine;
 
-import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sfebiz.supplychain.exposed.common.enums.Enumerable4StringValue;
 
 /**
  * User: <a href="mailto:lenolix@163.com">李星</a>
@@ -19,14 +20,23 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class EngineType extends Enumerable4StringValue {
 
-    private static final long serialVersionUID = 2504548743721319723L;
-    private static final Logger log = LoggerFactory.getLogger(Enumerable4StringValue.class);
-    private static final Lock lock = new ReentrantLock();
-    private static volatile transient Map<String, EngineType> allbyvalue = new HashMap<String, EngineType>();
-    private static volatile transient Map<String, EngineType> allbyname = new HashMap<String, EngineType>();
-    
+    private static final long                                 serialVersionUID = 2504548743721319723L;
+    private static final Logger                               log              = LoggerFactory
+                                                                                   .getLogger(Enumerable4StringValue.class);
+    private static final Lock                                 lock             = new ReentrantLock();
+    private static volatile transient Map<String, EngineType> allbyvalue       = new HashMap<String, EngineType>();
+    private static volatile transient Map<String, EngineType> allbyname        = new HashMap<String, EngineType>();
+
     /** 入库单状态机 */
-    public static EngineType STOCKIN_ORDER = EngineType.valueOf("STOCKIN_ORDER","入库单状态机");
+    public static EngineType                                  STOCKIN_ORDER    = EngineType
+                                                                                   .valueOf(
+                                                                                       "STOCKIN_ORDER",
+                                                                                       "入库单状态机");
+
+    public static EngineType                                  STOCKOUT_ORDER   = EngineType
+                                                                                   .valueOf(
+                                                                                       "STOCKOUT_ORDER",
+                                                                                       "出库单状态机");
 
     private EngineType(String value, String name) {
         super(value, name);
@@ -40,7 +50,8 @@ public class EngineType extends Enumerable4StringValue {
                 return e;
             else {
                 //命名不相同
-                log.warn("Name to be change. value:" + value + ", old name:" + e.name + ", new name:" + name);
+                log.warn("Name to be change. value:" + value + ", old name:" + e.name
+                         + ", new name:" + name);
             }
         }
 
@@ -60,7 +71,6 @@ public class EngineType extends Enumerable4StringValue {
         }
         return e;
     }
-
 
     public static EngineType valueOf(String value) {
         EngineType e = allbyvalue.get(value);

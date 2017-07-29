@@ -10,7 +10,7 @@ import java.util.Date;
  * @author tanzx
  * @create 2017-07-12 18:22
  **/
-public class SkuBarcodeDO extends BaseDO {
+public class SkuBarcodeDO extends BaseDO implements Comparable<SkuBarcodeDO>{
 
     private static final long serialVersionUID = -4498478048292642391L;
 
@@ -131,5 +131,11 @@ public class SkuBarcodeDO extends BaseDO {
                 ", skuId='" + skuId + '\'' +
                 ", barcode='" + barcode + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(SkuBarcodeDO o) {
+        // TODO Auto-generated method stub
+        return this.getId().compareTo(o.getId());
     }
 }
