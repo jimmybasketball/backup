@@ -8,10 +8,13 @@ import com.sfebiz.common.utils.log.TraceLogEntity;
 import com.sfebiz.supplychain.config.SystemConstants;
 import com.sfebiz.supplychain.exposed.common.code.WarehouseReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
+import com.sfebiz.supplychain.exposed.stock.api.StockService;
+import com.sfebiz.supplychain.exposed.stock.entity.SkuBatchStockOperaterEntity;
 import com.sfebiz.supplychain.exposed.stock.entity.StockBatchEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderDetailEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderState;
+import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderType;
 import com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDetailDO;
 import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderDetailManager;
@@ -49,7 +52,7 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
     @Resource
     StockinOrderDetailManager stockinOrderDetailManager;
     @Resource
-    StockInService stockInService;
+    StockService stockService;
     @Resource
     StockinOrderStateLogManager stockinOrderStateLogManager;
 
@@ -103,10 +106,10 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
                 stockinOrderDetailManager.update(stockinOrderDetailDOForUpdate);
             }
             if (detailEntity.realCount > 0 || detailEntity.badRealCount > 0 ) {
-                StockBatchEntity stockBatchEntity = buildSkuStockBatch(stockinOrderDO.getMerchantProviderId(), detailEntity);
-                stockBatchEntity.setStockinOrderId(stockinOrderDO.getId());
-                stockBatchEntity.setWarehouseId(warehouseDO.getId());
-                stockInService.incrementSkuBatchStock(warehouseDO.getId(), stockinOrderDO.getId(), stockBatchEntity);
+                SkuBatchStockOperaterEntity batchStockEntity = buildSkuStockBatch(stockinOrderDO.getMerchantProviderId(), detailEntity);
+                batchStockEntity.setStockinId(stockinOrderDO.getId());
+                batchStockEntity.setWarehouseId(warehouseDO.getId());
+                stockService.incrementSkuBatchStock(warehouseDO.getId(), stockinOrderDO.getId(), StockinOrderType.SALES_STOCK_IN.getValue(), batchStockEntity);
             } else {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.WARN)
@@ -120,18 +123,18 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
         }
     }
 
-    protected StockBatchEntity buildSkuStockBatch(Long providerId, StockinOrderDetailEntity stockinOrderDetailEntity) {
+    protected SkuBatchStockOperaterEntity buildSkuStockBatch(Long providerId, StockinOrderDetailEntity stockinOrderDetailEntity) {
         if (null != stockinOrderDetailEntity) {
-            StockBatchEntity stockBatchEntity = new StockBatchEntity();
-            stockBatchEntity.setSkuId(stockinOrderDetailEntity.getSkuId());
-            stockBatchEntity.setBatchNo(stockinOrderDetailEntity.getSkuBatch());
-            stockBatchEntity.setExpirationDate(stockinOrderDetailEntity.getExpirationDate());
-            stockBatchEntity.setProductionDate(stockinOrderDetailEntity.getProductionDate());
-            stockBatchEntity.setStockinDate(stockinOrderDetailEntity.getStockinDate());
-            stockBatchEntity.setAvailableCount(stockinOrderDetailEntity.getRealCount());
-            stockBatchEntity.setDamagedCount(stockinOrderDetailEntity.getBadRealCount());
-            stockBatchEntity.setMerchantProviderId(providerId);
-            return stockBatchEntity;
+            SkuBatchStockOperaterEntity batchStockEntity = new SkuBatchStockOperaterEntity();
+            batchStockEntity.setSkuId(stockinOrderDetailEntity.getSkuId());
+            batchStockEntity.setBatchNo(stockinOrderDetailEntity.getSkuBatch());
+            batchStockEntity.setExpirationDate(stockinOrderDetailEntity.getExpirationDate());
+            batchStockEntity.setProductionDate(stockinOrderDetailEntity.getProductionDate());
+            batchStockEntity.setStockinDate(stockinOrderDetailEntity.getStockinDate());
+            batchStockEntity.setCount(stockinOrderDetailEntity.getRealCount());
+            batchStockEntity.setWearCount(stockinOrderDetailEntity.getBadRealCount());
+            batchStockEntity.setProviderId(providerId);
+            return batchStockEntity;
         }
         return null;
     }
