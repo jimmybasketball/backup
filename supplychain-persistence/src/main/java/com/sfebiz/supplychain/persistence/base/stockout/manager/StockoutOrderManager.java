@@ -1,20 +1,19 @@
 package com.sfebiz.supplychain.persistence.base.stockout.manager;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Component;
-
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderDao;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
- * 
+ *
  * <p>出库单manager类</p>
  *
  * @author matt
@@ -33,7 +32,7 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
 
     /**
      * 通过商户订单号和商户编码查询订单信息
-     * 
+     *
      * @param merchantOrderNo 商户订单号
      * @param merchantId 货主ID
      * @return
@@ -44,6 +43,26 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
         stockoutOrderDO.setMerchantOrderNo(merchantOrderNo);
         stockoutOrderDO.setMerchantId(merchantId);
         BaseQuery<StockoutOrderDO> baseQuery = new BaseQuery<StockoutOrderDO>(stockoutOrderDO);
+        List<StockoutOrderDO> stockoutOrderDOs = stockoutOrderDao.query(baseQuery);
+        if (stockoutOrderDOs == null || stockoutOrderDOs.size() == 0) {
+            return null;
+        } else {
+            return stockoutOrderDOs.get(0);
+        }
+    }
+
+    /**
+     * 根据bizId获取出库单对象
+     * @param bizId  业务ID
+     * @return
+     */
+    public StockoutOrderDO getByBizId(String bizId) {
+        if (StringUtils.isBlank(bizId)) {
+            return null;
+        }
+        StockoutOrderDO query = new StockoutOrderDO();
+        query.setBizId(bizId);
+        BaseQuery<StockoutOrderDO> baseQuery = new BaseQuery<StockoutOrderDO>(query);
         List<StockoutOrderDO> stockoutOrderDOs = stockoutOrderDao.query(baseQuery);
         if (stockoutOrderDOs == null || stockoutOrderDOs.size() == 0) {
             return null;

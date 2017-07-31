@@ -1,6 +1,7 @@
 package com.sfebiz.supplychain.autotest;
 
 import com.sfebiz.supplychain.exposed.demo.api.DemoApi;
+import com.sfebiz.supplychain.exposed.route.api.RouteService;
 import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
 import com.sfebiz.supplychain.exposed.user.api.RealNameAuthenticationService;
 import org.junit.Ignore;
@@ -39,4 +40,7 @@ public class BaseServiceTest {
 
     @Resource
     protected RealNameAuthenticationService realNameAuthenticationService;
+
+    @Resource
+    protected RouteService routeService;
 }
