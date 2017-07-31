@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author yangh [yanghua@ifunq.com]
@@ -54,15 +55,53 @@ public class StockServiceImplTest extends BaseServiceTest {
             skuStockOperaterEntity.setBatchNo("SB89757as");
             skuStockOperaterEntity.setWarehouseId(1L);
             skuStockOperaterEntity.setSkuId(1132011L);
-            skuStockOperaterEntity.setStockoutOrderId(3L);
-            skuStockOperaterEntity.setCount(5);
+            skuStockOperaterEntity.setStockoutOrderId(4L);
+            skuStockOperaterEntity.setCount(2);
             skuStockOperaterEntities.add(skuStockOperaterEntity);
             stockService.freezeSkuStockBatch(skuStockOperaterEntities);
         } catch (Exception e) {
             //TODO
             e.printStackTrace();
         }
+    }
 
+
+    @Test
+    public void consumeSkuStockInBatch() throws ServiceException {
+        try {
+            List<SkuStockOperaterEntity> skuStockOperaterEntities = new ArrayList<SkuStockOperaterEntity>();
+            SkuStockOperaterEntity skuStockOperaterEntity = new SkuStockOperaterEntity();
+            skuStockOperaterEntity.setBatchNo("SB89757as");
+            skuStockOperaterEntity.setWarehouseId(1L);
+            skuStockOperaterEntity.setSkuId(1132011L);
+            skuStockOperaterEntity.setStockoutOrderId(4L);
+            skuStockOperaterEntity.setCount(2);
+            skuStockOperaterEntities.add(skuStockOperaterEntity);
+            //List<SkuStockOperaterEntity> skuStockOperaterEntityList, long warehouseId, long stockoutOrderId
+            stockService.consumeSkuStockInBatch(skuStockOperaterEntities, skuStockOperaterEntity.getWarehouseId(), skuStockOperaterEntity.getStockoutOrderId());
+        } catch (Exception e) {
+            //TODO
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void releaseSkuStockInBatch() throws ServiceException {
+        try {
+            List<SkuStockOperaterEntity> skuStockOperaterEntities = new ArrayList<SkuStockOperaterEntity>();
+            SkuStockOperaterEntity skuStockOperaterEntity = new SkuStockOperaterEntity();
+            skuStockOperaterEntity.setBatchNo("SB89757as");
+            skuStockOperaterEntity.setWarehouseId(1L);
+            skuStockOperaterEntity.setSkuId(1132011L);
+            skuStockOperaterEntity.setStockoutOrderId(4L);
+            skuStockOperaterEntity.setCount(2);
+            skuStockOperaterEntities.add(skuStockOperaterEntity);
+            //List<SkuStockOperaterEntity> skuStockOperaterEntityList, long warehouseId, long stockoutOrderId
+            stockService.releaseSkuStockInBatch(skuStockOperaterEntities, 1L, 4);
+        } catch (Exception e) {
+            //TODO
+            e.printStackTrace();
+        }
     }
 
 
