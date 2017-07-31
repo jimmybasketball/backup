@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  *
@@ -69,6 +73,44 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
         } else {
             return stockoutOrderDOs.get(0);
         }
+    }
+
+    /**
+     * 更新出库单申报支付单号
+     *
+     * @param stockoutOrderId
+     * @param payNo
+     * @return
+     *
+     * @author tanzx [tanzongxi@ifunq.com]
+     * @date 2017/7/27 16:59
+     */
+    public int updatePayNo(long stockoutOrderId, String payNo) {
+        StockoutOrderDO updateDO = new StockoutOrderDO();
+        updateDO.setId(stockoutOrderId);
+        updateDO.setDeclarePayNo(payNo);
+        return this.update(updateDO);
+    }
+
+    /**
+     * 更新出库单支付申报相关信息
+     *
+     * @param stockoutOrderId
+     * @param payNo
+     * @param payerName
+     * @param payerCertNo
+     * @return
+     *
+     * @author tanzx [tanzongxi@ifunq.com]
+     * @date 2017/7/28 14:46
+     */
+    public int updatePayBillInfo(long stockoutOrderId, String payNo, String payerName, String payerCertNo){
+        StockoutOrderDO updateDO = new StockoutOrderDO();
+        updateDO.setId(stockoutOrderId);
+        updateDO.setDeclarePayNo(payNo);
+        updateDO.setDeclarePayerName(payerName);
+        updateDO.setDeclarePayerCertNo(payerCertNo);
+        return this.update(updateDO);
     }
 
     public static void main(String[] args) {

@@ -95,6 +95,11 @@ public class StockinOrderEntity implements Serializable {
     public Date stockinFinishTime;
 
     /**
+     * 备注
+     */
+    public String remarks;
+
+    /**
      * 入库明细列表
      */
     public List<StockinOrderDetailEntity> detailEntities;
@@ -123,8 +128,17 @@ public class StockinOrderEntity implements Serializable {
                 ", warehouseConfirmEnd=" + warehouseConfirmEnd +
                 ", warehouseStockinTime=" + warehouseStockinTime +
                 ", stockinFinishTime=" + stockinFinishTime +
+                ", remarks='" + remarks + '\'' +
                 ", detailEntities=" + detailEntities +
                 '}';
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
     public Long getId() {

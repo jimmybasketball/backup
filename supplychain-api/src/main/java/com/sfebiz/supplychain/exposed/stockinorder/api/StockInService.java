@@ -23,7 +23,7 @@ public interface StockInService {
      * @return
      * @throws ServiceException
      */
-    CommonRet<List<Long>> createStockinOrder (StockinOrderEntity stockinOrderEntity, Long userId, String userName);
+    CommonRet<Long> createStockinOrder (StockinOrderEntity stockinOrderEntity, Long userId, String userName);
 
     /**
      * 更新入库单明细
@@ -34,7 +34,7 @@ public interface StockInService {
      * @return
      * @throws ServiceException
      */
-    CommonRet<List<Long>> updateStockinOrderDetails(Long stockinOrderId, List<StockinOrderDetailEntity> stockinOrderDetailEntities, Long userId, String userName);
+    CommonRet<Void> updateStockinOrderDetails(Long stockinOrderId, List<StockinOrderDetailEntity> stockinOrderDetailEntities, Long userId, String userName);
 
     /**
      * 提交入库单给仓库
@@ -89,11 +89,12 @@ public interface StockInService {
     CommonRet<Void> finishStockinOrder(Long stockinOrderId, Long warehouseId, List<StockinOrderDetailEntity> stockinOrderDetailEntities, Long userId, String userName);
 
     /**
-     * 入库完成增加库存
-     * @param warehouseId
-     * @param stockinOrderId
-     * @param stockBatchEntity
+     * 更新入库单的基本信息
+     * @param stockinOrderEntity
+     * @param userId
+     * @param userName
      * @return
      */
-    CommonRet<Boolean> incrementSkuBatchStock(Long warehouseId, Long stockinOrderId, StockBatchEntity stockBatchEntity);
+    CommonRet<Void> updateStockinOrderBaseInfo(StockinOrderEntity stockinOrderEntity, Long userId, String userName);
+
 }
