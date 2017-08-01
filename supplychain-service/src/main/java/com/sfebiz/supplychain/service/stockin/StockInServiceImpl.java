@@ -701,11 +701,12 @@ public class StockInServiceImpl implements StockInService{
             try {
                 if (null == entity.id || entity.id.equals(0L)) {
                     List<StockinOrderDetailEntity> tmp = new ArrayList<StockinOrderDetailEntity>();
-                    entity.setRealDiffCount(entity.getCount() - entity.getRealCount() - entity.getBadRealCount());
                     tmp.add(entity);
                     insertStockinOrderDetails(stockinOrderDO, skuDOMap, tmp);
                 } else {
-                    entity.setRealDiffCount(entity.getCount() - entity.getRealCount() - entity.getBadRealCount());
+                    if (entity.getCount() != null && entity.getRealCount() != null && entity.getBadRealCount() != null) {
+                        entity.setRealDiffCount(entity.getCount() - entity.getRealCount() - entity.getBadRealCount());
+                    }
                     StockinOrderDetailDO stockinOrderDetailDO =  modelMapper.map(entity, StockinOrderDetailDO.class);
                     stockinOrderDetailManager.update(stockinOrderDetailDO);
                 }
