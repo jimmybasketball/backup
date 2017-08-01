@@ -6,13 +6,13 @@ import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderDao;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 
  * <p>出库单manager类</p>
  *
  * @author matt
@@ -31,9 +31,9 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
 
     /**
      * 通过商户订单号和商户编码查询订单信息
-     * 
+     *
      * @param merchantOrderNo 商户订单号
-     * @param merchantId 货主ID
+     * @param merchantId      货主ID
      * @return
      */
     public StockoutOrderDO queryByMerchantOrderNoAndMerchantId(String merchantOrderNo,
@@ -51,12 +51,32 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
     }
 
     /**
+     * 根据bizId获取出库单对象
+     *
+     * @param bizId 业务ID
+     * @return
+     */
+    public StockoutOrderDO getByBizId(String bizId) {
+        if (StringUtils.isBlank(bizId)) {
+            return null;
+        }
+        StockoutOrderDO query = new StockoutOrderDO();
+        query.setBizId(bizId);
+        BaseQuery<StockoutOrderDO> baseQuery = new BaseQuery<StockoutOrderDO>(query);
+        List<StockoutOrderDO> stockoutOrderDOs = stockoutOrderDao.query(baseQuery);
+        if (stockoutOrderDOs == null || stockoutOrderDOs.size() == 0) {
+            return null;
+        } else {
+            return stockoutOrderDOs.get(0);
+        }
+    }
+
+    /**
      * 更新出库单申报支付单号
      *
      * @param stockoutOrderId
      * @param payNo
      * @return
-     *
      * @author tanzx [tanzongxi@ifunq.com]
      * @date 2017/7/27 16:59
      */
@@ -75,11 +95,10 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
      * @param payerName
      * @param payerCertNo
      * @return
-     *
      * @author tanzx [tanzongxi@ifunq.com]
      * @date 2017/7/28 14:46
      */
-    public int updatePayBillInfo(long stockoutOrderId, String payNo, String payerName, String payerCertNo){
+    public int updatePayBillInfo(long stockoutOrderId, String payNo, String payerName, String payerCertNo) {
         StockoutOrderDO updateDO = new StockoutOrderDO();
         updateDO.setId(stockoutOrderId);
         updateDO.setDeclarePayNo(payNo);
@@ -90,6 +109,6 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
 
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("C:/sc_stockout_order-sqlmap.xml", StockoutOrderDao.class,
-            StockoutOrderDO.class, "sc_stockout_order");
+                StockoutOrderDO.class, "sc_stockout_order");
     }
 }

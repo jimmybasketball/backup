@@ -75,4 +75,23 @@
             </map>
         </property> -->
     </bean>
+
+    <!-- 路由读写操作实现 -->
+    <bean id="routeOperation" class="com.sfebiz.supplychain.service.route.op.impl.RouteOperationImpl">
+        <!-- 写操作集合 -->
+        <property name="writeOperations" >
+            <list>
+                <ref bean="routeOperationOnOTS"/>
+                <ref bean="routeOperationOnRedis"/>
+            </list>
+        </property>
+
+        <!-- 读操作集合 -->
+        <property name="readOperations" >
+            <list>
+                <ref bean="routeOperationOnRedis"/>
+                <ref bean="routeOperationOnOTS"/>
+            </list>
+        </property>
+    </bean>
 </beans>
