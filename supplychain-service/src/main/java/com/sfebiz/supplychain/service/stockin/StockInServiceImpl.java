@@ -347,8 +347,16 @@ public class StockInServiceImpl implements StockInService{
         }
         try {
             //更新sku
-            for (StockinOrderDetailCargoResultEntity stockinOrderDetailCargoResultEntity : stockinOrderSkuCargoResultEntities) {
-                updateStockinOrderSku(stockinOrderDetailCargoResultEntity);
+            for (StockinOrderDetailCargoResultEntity entity : stockinOrderSkuCargoResultEntities) {
+                StockinOrderDetailDO detailDO = stockinOrderDetailManager.getByStockinOrderIdAndSkuId(entity.getStockinOrderId(), entity.getSkuId());
+                if (null != detailDO) {
+                    entity.setRealDiffCount(detailDO.getCount() - entity.getRealCount() - entity.getBadRealCount());
+                    updateStockinOrderSku(entity);
+                } else {
+                    commonRet.setRetCode(StockInReturnCode.PARAM_ILLEGAL_ERR.getCode());
+                    commonRet.setRetMsg("[物流平台-未找到入库单明细]: " + StockInReturnCode.PARAM_ILLEGAL_ERR.getDesc());
+                    return commonRet;
+                }
             }
             LogBetter.instance(logger)
                     .setLevel(LogLevel.INFO)
@@ -689,18 +697,20 @@ public class StockInServiceImpl implements StockInService{
         /**
          * 创建新增 更新已有
          */
-        for (StockinOrderDetailEntity stockinOrderDetailEntity : detailAfterMerge) {
+        for (StockinOrderDetailEntity entity : detailAfterMerge) {
             try {
-                if (null == stockinOrderDetailEntity.id || stockinOrderDetailEntity.id.equals(0L)) {
+                if (null == entity.id || entity.id.equals(0L)) {
                     List<StockinOrderDetailEntity> tmp = new ArrayList<StockinOrderDetailEntity>();
-                    tmp.add(stockinOrderDetailEntity);
+                    entity.setRealDiffCount(entity.getCount() - entity.getRealCount() - entity.getBadRealCount());
+                    tmp.add(entity);
                     insertStockinOrderDetails(stockinOrderDO, skuDOMap, tmp);
                 } else {
-                    StockinOrderDetailDO stockinOrderDetailDO =  modelMapper.map(stockinOrderDetailEntity, StockinOrderDetailDO.class);
+                    entity.setRealDiffCount(entity.getCount() - entity.getRealCount() - entity.getBadRealCount());
+                    StockinOrderDetailDO stockinOrderDetailDO =  modelMapper.map(entity, StockinOrderDetailDO.class);
                     stockinOrderDetailManager.update(stockinOrderDetailDO);
                 }
             } catch (Exception e) {
-                throw new Exception("更新入库单明细：" + stockinOrderDetailEntity.skuId + "信息失败，原因" + e.getMessage());
+                throw new Exception("更新入库单明细：" + entity.skuId + "信息失败，原因" + e.getMessage());
             }
         }
         return skuList;

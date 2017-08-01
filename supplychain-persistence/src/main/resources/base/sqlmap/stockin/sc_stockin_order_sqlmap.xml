@@ -13,7 +13,6 @@
     <result column="asn_success_time" property="asnSuccessTime"/>
     <result column="predict_send_time" property="predictSendTime"/>
     <result column="predict_arrive_port" property="predictArrivePort"/>
-    <result column="actdict_arrive_port" property="actdictArrivePort"/>
     <result column="warehouse_stockin_time" property="warehouseStockinTime"/>
     <result column="stockin_finish_time" property="stockinFinishTime"/>
     <result column="warehouse_confirm_start" property="warehouseConfirmStart"/>
@@ -40,7 +39,6 @@
     asn_success_time,
     predict_send_time,
     predict_arrive_port,
-    actdict_arrive_port,
     warehouse_stockin_time,
     stockin_finish_time,
     warehouse_confirm_start,
@@ -67,7 +65,6 @@
     asn_success_time,
     predict_send_time,
     predict_arrive_port,
-    actdict_arrive_port,
     warehouse_stockin_time,
     stockin_finish_time,
     warehouse_confirm_start,
@@ -94,7 +91,6 @@
     #{asnSuccessTime},
     #{predictSendTime},
     #{predictArrivePort},
-    #{actdictArrivePort},
     #{warehouseStockinTime},
     #{stockinFinishTime},
     #{warehouseConfirmStart},
@@ -142,9 +138,6 @@
         </if>
         <if test="predictArrivePort != null">
             predict_arrive_port = #{predictArrivePort},
-        </if>
-        <if test="actdictArrivePort != null">
-            actdict_arrive_port = #{actdictArrivePort},
         </if>
         <if test="warehouseStockinTime != null">
             warehouse_stockin_time = #{warehouseStockinTime},
@@ -216,9 +209,6 @@
         </if>
         <if test="data.predictArrivePort != null">
             AND predict_arrive_port = #{data.predictArrivePort}
-        </if>
-        <if test="data.actdictArrivePort != null">
-            AND actdict_arrive_port = #{data.actdictArrivePort}
         </if>
         <if test="data.warehouseStockinTime != null">
             AND warehouse_stockin_time = #{data.warehouseStockinTime}
@@ -385,9 +375,6 @@
         <if test="update.predictArrivePort != null">
             predict_arrive_port = #{update.predictArrivePort},
         </if>
-        <if test="update.actdictArrivePort != null">
-            actdict_arrive_port = #{update.actdictArrivePort},
-        </if>
         <if test="update.warehouseStockinTime != null">
             warehouse_stockin_time = #{update.warehouseStockinTime},
         </if>
@@ -466,9 +453,6 @@
     </if>
     <if test="predictArrivePort != null">
         ,predict_arrive_port = #{predictArrivePort}
-    </if>
-    <if test="actdictArrivePort != null">
-        ,actdict_arrive_port = #{actdictArrivePort}
     </if>
     <if test="warehouseStockinTime != null">
         ,warehouse_stockin_time = #{warehouseStockinTime}

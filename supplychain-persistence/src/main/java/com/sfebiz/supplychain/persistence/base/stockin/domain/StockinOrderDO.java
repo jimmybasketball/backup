@@ -45,8 +45,6 @@ public class StockinOrderDO extends BaseDO {
     private Date predictSendTime;
     //预计到港时间
     private Date predictArrivePort;
-    //实际到港时间
-    private Date actdictArrivePort;
     //仓库回传的入库时间
     private Date warehouseStockinTime;
     //完成收货时间
@@ -75,7 +73,6 @@ public class StockinOrderDO extends BaseDO {
                 ", asnSuccessTime=" + asnSuccessTime +
                 ", predictSendTime=" + predictSendTime +
                 ", predictArrivePort=" + predictArrivePort +
-                ", actdictArrivePort=" + actdictArrivePort +
                 ", warehouseStockinTime=" + warehouseStockinTime +
                 ", stockinFinishTime=" + stockinFinishTime +
                 ", warehouseConfirmStart=" + warehouseConfirmStart +
@@ -209,14 +206,6 @@ public class StockinOrderDO extends BaseDO {
 
     public void setPredictArrivePort(Date predictArrivePort) {
         this.predictArrivePort = predictArrivePort;
-    }
-
-    public Date getActdictArrivePort() {
-        return actdictArrivePort;
-    }
-
-    public void setActdictArrivePort(Date actdictArrivePort) {
-        this.actdictArrivePort = actdictArrivePort;
     }
 
     public Date getWarehouseStockinTime() {

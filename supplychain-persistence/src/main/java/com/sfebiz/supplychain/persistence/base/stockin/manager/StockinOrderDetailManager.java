@@ -1,6 +1,7 @@
 package com.sfebiz.supplychain.persistence.base.stockin.manager;
 
 import com.sfebiz.common.dao.BaseDao;
+import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.stockin.dao.StockinOrderDetailDao;
@@ -8,6 +9,7 @@ import com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDetail
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by zhangyajing on 2017/7/12.
@@ -25,6 +27,19 @@ public class StockinOrderDetailManager extends BaseManager<StockinOrderDetailDO>
 
     public void updateByBarcodeAndSkuId(StockinOrderDetailDO stockinOrderDetailDO) {
         stockinOrderDetailDao.updateByBarcodeAndSkuId(stockinOrderDetailDO);
+    }
+
+    public StockinOrderDetailDO getByStockinOrderIdAndSkuId(Long stockinOrderId, Long skuId) {
+        StockinOrderDetailDO detailDO = new StockinOrderDetailDO();
+        detailDO.setStockinOrderId(stockinOrderId);
+        detailDO.setSkuId(skuId);
+        BaseQuery<StockinOrderDetailDO> query = new BaseQuery<StockinOrderDetailDO>(detailDO);
+        List<StockinOrderDetailDO> result = stockinOrderDetailDao.query(query);
+        if (null != result && result.size() > 0) {
+             return result.get(0);
+        } else {
+            return null;
+        }
     }
 
     public static void main(String[] args){

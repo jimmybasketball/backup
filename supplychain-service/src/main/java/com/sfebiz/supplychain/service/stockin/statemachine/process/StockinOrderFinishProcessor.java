@@ -97,12 +97,12 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
         List<StockBatchEntity> stockBatchEntityList = new ArrayList<StockBatchEntity>();
         StockinOrderDO stockinOrderDO = request.getStockinOrderDO();
         List<StockinOrderDetailEntity> stockinOrderDetailEntityList = request.getStockinOrderDetailEntities();
-        Long providerId = stockinOrderDO.getMerchantProviderId();
         for (StockinOrderDetailEntity detailEntity : stockinOrderDetailEntityList) {
             if (detailEntity.id != null) {
                 StockinOrderDetailDO stockinOrderDetailDOForUpdate = new StockinOrderDetailDO();
                 stockinOrderDetailDOForUpdate = modelMapper.map(detailEntity, StockinOrderDetailDO.class);
-              // TODO: 2017/7/24 判断支持批次管理则更新批次号
+                stockinOrderDetailDOForUpdate.setRealDiffCount(stockinOrderDetailDOForUpdate.getCount() - stockinOrderDetailDOForUpdate.getRealCount() - stockinOrderDetailDOForUpdate.getBadRealCount());
+                // TODO: 2017/7/24 判断支持批次管理则更新批次号
                 stockinOrderDetailManager.update(stockinOrderDetailDOForUpdate);
             }
             if (detailEntity.realCount > 0 || detailEntity.badRealCount > 0 ) {
