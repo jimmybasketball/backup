@@ -172,6 +172,7 @@ public class StockInServiceImpl implements StockInService{
             commonRet.setRetMsg(e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
+        commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
         commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
         commonRet.setResult(stockinOrderId);
         return commonRet;
