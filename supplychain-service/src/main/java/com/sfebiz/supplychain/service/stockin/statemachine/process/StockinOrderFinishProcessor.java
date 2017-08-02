@@ -106,9 +106,11 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
                 stockinOrderDetailManager.update(stockinOrderDetailDOForUpdate);
             }
             if (detailEntity.realCount > 0 || detailEntity.badRealCount > 0 ) {
-                SkuBatchStockOperaterEntity batchStockEntity = buildSkuStockBatch(stockinOrderDO.getMerchantProviderId(), detailEntity);
+                SkuBatchStockOperaterEntity batchStockEntity = buildSkuStockBatch(detailEntity);
                 batchStockEntity.setStockinId(stockinOrderDO.getId());
                 batchStockEntity.setWarehouseId(warehouseDO.getId());
+                batchStockEntity.setMerchantId(stockinOrderDO.getMerchantId());
+                batchStockEntity.setProviderId(stockinOrderDO.getMerchantProviderId());
                 stockService.incrementSkuBatchStock(warehouseDO.getId(), stockinOrderDO.getId(), StockinOrderType.SALES_STOCK_IN.getValue(), batchStockEntity);
             } else {
                 LogBetter.instance(logger)
@@ -123,7 +125,7 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
         }
     }
 
-    protected SkuBatchStockOperaterEntity buildSkuStockBatch(Long providerId, StockinOrderDetailEntity stockinOrderDetailEntity) {
+    protected SkuBatchStockOperaterEntity buildSkuStockBatch(StockinOrderDetailEntity stockinOrderDetailEntity) {
         if (null != stockinOrderDetailEntity) {
             SkuBatchStockOperaterEntity batchStockEntity = new SkuBatchStockOperaterEntity();
             batchStockEntity.setSkuId(stockinOrderDetailEntity.getSkuId());
@@ -133,7 +135,6 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
             batchStockEntity.setStockinDate(stockinOrderDetailEntity.getStockinDate());
             batchStockEntity.setCount(stockinOrderDetailEntity.getRealCount());
             batchStockEntity.setWearCount(stockinOrderDetailEntity.getBadRealCount());
-            batchStockEntity.setProviderId(providerId);
             return batchStockEntity;
         }
         return null;
