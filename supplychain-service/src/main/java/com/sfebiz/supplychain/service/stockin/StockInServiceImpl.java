@@ -143,7 +143,7 @@ public class StockInServiceImpl implements StockInService{
 
         try {
             StockinOrderDO stockinOrderDO = modelMapper.map(stockinOrderEntity, StockinOrderDO.class);
-            stockinOrderDO.setStockinId(UniqueNumberGenerator.getUniqueNo("RK"));
+            stockinOrderDO.setStockinId("RK" + UniqueNumberGenerator.getUniqueNo("batchrk"));
             stockinOrderDO.setState(BpmConstants.NULL_STATE);
             stockinOrderManager.insert(stockinOrderDO);
             stockinOrderId = stockinOrderDO.getId();
