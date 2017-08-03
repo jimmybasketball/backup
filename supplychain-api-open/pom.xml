@@ -11,7 +11,7 @@
 
     <groupId>com.sfebiz.supplychain</groupId>
     <artifactId>supplychain-api-open</artifactId>
-
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,7 +30,6 @@
             <artifactId>junit</artifactId>
         </dependency>
 
-
         <dependency>
             <groupId>net.sf.oval</groupId>
             <artifactId>oval</artifactId>
@@ -39,6 +38,17 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>${maven-source-plugin.version}</version>
