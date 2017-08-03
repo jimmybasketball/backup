@@ -1,14 +1,5 @@
 package com.sfebiz.supplychain.persistence.base.stockout.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
@@ -17,6 +8,13 @@ import com.sfebiz.supplychain.exposed.stockout.enums.SubTaskType;
 import com.sfebiz.supplychain.exposed.stockout.enums.TaskStatus;
 import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderTaskDao;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderTaskDO;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -127,5 +125,20 @@ public class StockoutOrderTaskManager extends BaseManager<StockoutOrderTaskDO> {
             }
         }
         return null;
+    }
+
+    /**
+     * 查询发送消息异常的Task
+     *
+     * @param uniqueNo
+     * @param type
+     * @return
+     */
+    public List<StockoutOrderTaskDO> querySendMsgErrorLog(String uniqueNo, String type) {
+        StockoutOrderTaskDO o = new StockoutOrderTaskDO();
+        o.setBizId(uniqueNo);
+        o.setTaskType(type);
+        BaseQuery<StockoutOrderTaskDO> q = BaseQuery.getInstance(o);
+        return stockoutOrderTaskDao.query(q);
     }
 }

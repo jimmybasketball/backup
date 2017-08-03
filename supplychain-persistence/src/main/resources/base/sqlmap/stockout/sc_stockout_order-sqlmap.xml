@@ -828,4 +828,13 @@
     for update
 </select>
 
+
+    <select id="getByMailNo" parameterType="map" resultMap="stockoutOrderDOResult" >
+        <include refid="stockoutOrderDO_selector"/>
+        where
+        intl_mail_no = #{mailNo}
+        or  intr_mail_no = #{mailNo}
+        and is_delete = 0
+        and order_state NOT IN ('STOCKOUT_CANCEL','CLOSED', 'SIGNED');
+    </select>
 </mapper>

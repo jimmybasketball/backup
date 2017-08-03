@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                             http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                             http://www.springframework.org/schema/context
                             http://www.springframework.org/schema/context/spring-context-4.0.xsd"
        default-lazy-init="false">
-    <context:annotation-config/>
+    <import resource="classpath*:persistance.xml"/>
 
     <context:property-placeholder file-encoding="UTF-8" ignore-resource-not-found="true"
                                   location="classpath:config.properties"/>
-
-    <import resource="classpath*:persistance.xml"/>
-    <import resource="command-config.xml"/>
-    <!--<import resource="classpath*:/META-INF/spring/application-statemachine.xml"/>-->
-
-
     <context:component-scan base-package="com.sfebiz.supplychain"/>
+
 
     <bean id="threadPoolTaskExecutor"
           class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -54,17 +50,17 @@
         <constructor-arg name="redisTestOnBorrow" value="${com.sfebiz.supplychain.redisproxy.testOnBorrow}"/>
         <constructor-arg name="redisTimeout" value="${com.sfebiz.supplychain.redisproxy.timeout}"/>
     </bean>
-    
+
     <bean id="exceptionHandlerMap" class="java.util.HashMap">
         <constructor-arg>
             <map>
                 <entry key="STOCKOUT_CREATE_EXCEPTION" value-ref="stockoutCreateExceptionHandler"/>
-                <entry key="STOCKOUT_SEND_EXCEPTION"  value-ref="stockoutSendExceptionHandler"/>
-                <entry key="STOCKOUT_EXCEPTION"  value-ref="stockoutStockExceptionHandler"/>
+                <entry key="STOCKOUT_SEND_EXCEPTION" value-ref="stockoutSendExceptionHandler"/>
+                <entry key="STOCKOUT_EXCEPTION" value-ref="stockoutStockExceptionHandler"/>
             </map>
         </constructor-arg>
     </bean>
-    
+
     <bean id="autotask" class="com.sfebiz.supplychain.service.AutoTaskContainer" depends-on="distributedLock">
         <!-- <property name="msgProducerMap">
             <map>
@@ -79,7 +75,7 @@
     <!-- 路由读写操作实现 -->
     <bean id="routeOperation" class="com.sfebiz.supplychain.service.route.op.impl.RouteOperationImpl">
         <!-- 写操作集合 -->
-        <property name="writeOperations" >
+        <property name="writeOperations">
             <list>
                 <ref bean="routeOperationOnOTS"/>
                 <ref bean="routeOperationOnRedis"/>
@@ -87,11 +83,26 @@
         </property>
 
         <!-- 读操作集合 -->
-        <property name="readOperations" >
+        <property name="readOperations">
             <list>
                 <ref bean="routeOperationOnRedis"/>
                 <ref bean="routeOperationOnOTS"/>
             </list>
         </property>
     </bean>
+
+
+    <!-- 路由获取更新处理链 begin -->
+    <!-- 国际段路由获取更新 -->
+    <bean id="internationalRouteFetchHandler"
+          class="com.sfebiz.supplychain.service.route.handler.impl.InternationalRouteFetchHandler">
+        <!-- 下一段是国内段 -->
+        <property name="nextHandler" ref="domesticRouteFetchHandler"/>
+    </bean>
+
+    <!-- 国内段路由获取更新 -->
+    <bean id="domesticRouteFetchHandler"
+          class="com.sfebiz.supplychain.service.route.handler.impl.DomesticRouteFetchHandler"/>
+    <!-- 路由获取更新处理链 end -->
+
 </beans>

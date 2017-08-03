@@ -4,6 +4,7 @@ import com.sfebiz.supplychain.exposed.demo.api.DemoApi;
 import com.sfebiz.supplychain.exposed.route.api.RouteService;
 import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
 import com.sfebiz.supplychain.exposed.user.api.RealNameAuthenticationService;
+import com.sfebiz.supplychain.service.route.handler.impl.InternationalRouteFetchHandler;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,7 +28,9 @@ import javax.annotation.Resource;
         "classpath*:/META-INF/spring/application-context.xml",
         "classpath*:/META-INF/spring/application-statemachine.xml",
         "classpath*:/META-INF/spring/application-aop.xml",
-        "classpath*:/META-INF/spring/application-task.xml"
+        "classpath*:/META-INF/spring/application-task.xml",
+        "classpath*:/META-INF/spring/command-config.xml",
+        "classpath*:/META-INF/spring/application-message.xml"
 })
 @Ignore
 public class BaseServiceTest {
@@ -43,4 +46,7 @@ public class BaseServiceTest {
 
     @Resource
     protected RouteService routeService;
+
+    @Resource
+    protected InternationalRouteFetchHandler internationalRouteFetchHandler;
 }

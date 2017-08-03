@@ -30,9 +30,14 @@ public class RouteReturnCode extends SCReturnCode{
     public final static RouteReturnCode USER_ROUTE_STOCKOUT_ORDER_NOT_EXIST =  new RouteReturnCode("出库单不存在",_C_USER_ROUTE_STOCKOUT_ORDER_NOT_EXIST);
 
 
-    /**
-     *
-     * 系统路由 [1081000 - 1082000)
-     *
-     */
+
+    public final static int _C_REGIST_KD100_ROUTES_FAIL = 1081000;
+    public final static int _C_MAIL_NO_FIND_MULTI_STOCKOUT_ORDER = 1081001;
+    public final static int _C_SEND_FETCH_ROUTE_MSG_ERROR= 1081002;
+    public final static RouteReturnCode REGIST_KD100_ROUTES_FAIL =  new RouteReturnCode("注册快递100失败",_C_REGIST_KD100_ROUTES_FAIL);
+    public final static RouteReturnCode MAIL_NO_FIND_MULTI_STOCKOUT_ORDER =  new RouteReturnCode("根据运单号查出多个执行中的出库单",_C_MAIL_NO_FIND_MULTI_STOCKOUT_ORDER);
+    public final static RouteReturnCode SEND_FETCH_ROUTE_MSG_ERROR =  new RouteReturnCode("根据运单号查出多个执行中的出库单",_C_SEND_FETCH_ROUTE_MSG_ERROR);
+
+
+
 }

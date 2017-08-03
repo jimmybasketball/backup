@@ -78,6 +78,11 @@
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
         <!--日志相关end-->
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
