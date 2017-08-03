@@ -22,4 +22,5 @@ public class StockInReturnCode extends SCReturnCode{
     public final static StockInReturnCode LOGISTICS_STOCKINID_ERR = new StockInReturnCode("SKU入库失败", 1060005);
     public final static StockInReturnCode STOCKIN_ORDER_NOT_ALLOW_UPDATE = new StockInReturnCode("当前状态不允许入库单修改", 1060006);
     public final static StockInReturnCode STOCKIN_ORDER_SKU_NOT_FOUND = new StockInReturnCode("入库单商品未找到", 1060007);
+    public final static StockInReturnCode STOCKIN_ORDER_NOT_ALLOW_CANCEL = new StockInReturnCode("当前状态不允许入库单取消", 1060008);
 }
