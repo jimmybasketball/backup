@@ -142,11 +142,11 @@ public class LogisticsCallbackServiceImpl implements LogisticsCallbackService {
             if (ABORT.equals(callbackRequest.getStatus())  &&
                     (callbackRequest.getMessage().contains("3天"))) {
                 if (StringUtils.isNotEmpty(callbackRequest.getComNew())) {
-                    //修改承运商编码
+                    //有新的承运商编码就不需要再订阅，修改承运商编码
                     String carrierCode = TransCarrierCode.getCarrierCode(callbackRequest.getComNew());
                     stockoutOrderManager.updateCarrierCodeById(stockOutOrder.getId(), routeType, carrierCode);
                 } else {
-                    //重新注册KD100
+                    //重新订阅KD100
                     sendRegistKD100(stockOutOrder.getBizId(), routeType.getType());
                 }
             }

@@ -43,13 +43,6 @@ public abstract class AbstractRouteFetchHandler {
         }
     }
 
-    /**
-     * 执行存储
-     */
-    protected void doSave() {
-
-    }
-
     public void setNextHandler(AbstractRouteFetchHandler nextHandler) {
         this.nextHandler = nextHandler;
     }

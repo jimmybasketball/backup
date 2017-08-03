@@ -1,11 +1,13 @@
 package com.sfebiz.supplychain.service.route;
 
+import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.aliyun.openservices.ons.api.Message;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.aop.annotation.MethodParamValidate;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
 import com.sfebiz.supplychain.config.lp.LogisticsProviderConfig;
+import com.sfebiz.supplychain.config.route.LogisticsRoutes;
 import com.sfebiz.supplychain.exposed.common.code.RouteReturnCode;
 import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
@@ -14,10 +16,12 @@ import com.sfebiz.supplychain.exposed.route.api.RouteService;
 import com.sfebiz.supplychain.exposed.route.entity.LogisticsSystemRouteEntity;
 import com.sfebiz.supplychain.exposed.route.entity.LogisticsUserRouteEntity;
 import com.sfebiz.supplychain.exposed.route.enums.RouteType;
+import com.sfebiz.supplychain.exposed.stockout.enums.StockoutOrderState;
 import com.sfebiz.supplychain.exposed.warehouse.enums.WmsMessageType;
 import com.sfebiz.supplychain.lock.Lock;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
+import com.sfebiz.supplychain.protocol.bsp.BSPConstants.BSPConstants;
 import com.sfebiz.supplychain.provider.command.CommandFactory;
 import com.sfebiz.supplychain.provider.command.ProviderCommand;
 import com.sfebiz.supplychain.provider.command.send.tpl.TplOrderRegistRoutesCommand;
@@ -27,14 +31,13 @@ import com.sfebiz.supplychain.service.route.op.RouteOperation;
 import com.sfebiz.supplychain.service.stockout.StockoutServiceImpl;
 import net.sf.oval.ConstraintViolation;
 import net.sf.oval.Validator;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * 订单路由服务
@@ -111,8 +114,10 @@ public class RouteServiceImpl implements RouteService {
                 //执行追加操作
                 routeOperation.appendUserRoute(logisticsUserRouteEntity, routeEnum);
 
-                //TODO 流转出库单状态信息
-
+                //流转出库单状态信息
+                List<LogisticsUserRouteEntity> routeEntities = new ArrayList<LogisticsUserRouteEntity>();
+                routeEntities.add(logisticsUserRouteEntity);
+                triggerStateByKeyWordsOnRoutes(orderId, routeEnum, routeEntities);
 
                 LogBetter.instance(LOGGER)
                         .setLevel(LogLevel.INFO)
@@ -204,8 +209,8 @@ public class RouteServiceImpl implements RouteService {
                 //执行覆盖操作
                 routeOperation.overrideUserRoute(orderId, routeEnum, logisticsUserRouteEntityList);
 
-                //TODO 出库单状态流转
-
+                //出库单状态流转
+                triggerStateByKeyWordsOnRoutes(orderId, routeEnum, logisticsUserRouteEntityList);
 
                 LogBetter.instance(LOGGER)
                         .setLevel(LogLevel.INFO)
@@ -491,5 +496,113 @@ public class RouteServiceImpl implements RouteService {
             commonRet.setRetCode(RouteReturnCode.USER_ROUTE_STOCKOUT_ORDER_NOT_EXIST.getCode());
         }
         return commonRet;
+    }
+
+    /**
+     * 根据路由中的关键字信息触发出库单状态流转 （只有国内段的会触发）
+     * @param orderId
+     * @param routeType
+     * @param routeEntities
+     */
+    private void triggerStateByKeyWordsOnRoutes(String orderId, RouteType routeType, List<LogisticsUserRouteEntity> routeEntities) {
+        if (routeType == null || routeType != RouteType.INTERNAL) {
+            return;
+        }
+        StockoutOrderDO stockoutOrderDO = stockoutOrderManager.getByBizId(orderId);
+        for (LogisticsUserRouteEntity routeEntity : routeEntities) {
+            if (isContainEntity(routeEntity.content, LogisticsRoutes.getkeyWordsByCodeAndStatus(stockoutOrderDO.getIntrCarrierCode(), StockoutOrderState.COLLECTED.getValue()))) {
+                triggerStockoutOrderState(stockoutOrderDO, BSPConstants.BSPRoute.Collected.getCode(), routeEntity.mailNo, routeEntity.eventTime);
+            }
+            if (isContainEntity(routeEntity.content, LogisticsRoutes.getkeyWordsByCodeAndStatus(stockoutOrderDO.getIntrCarrierCode(), StockoutOrderState.DELIVEING.getValue()))) {
+                triggerStockoutOrderState(stockoutOrderDO, BSPConstants.BSPRoute.Delivering.getCode(), routeEntity.mailNo, routeEntity.eventTime);
+            }
+            if (isContainEntity(routeEntity.content, LogisticsRoutes.getkeyWordsByCodeAndStatus(stockoutOrderDO.getIntrCarrierCode(), StockoutOrderState.SIGNED.getValue()))) {
+                triggerStockoutOrderState(stockoutOrderDO, BSPConstants.BSPRoute.Signed.getCode(), routeEntity.mailNo, routeEntity.eventTime);
+            }
+        }
+    }
+
+    /**
+     * 根据路由信息触发订单状态变更
+     *
+     * @param stockoutOrderDO 出库单对象
+     * @param bspRouteCode    路由码
+     * @param mailNo          运单号
+     * @param eventTime       时间发生时间
+     */
+    private void triggerStockoutOrderState(StockoutOrderDO stockoutOrderDO, String bspRouteCode, String mailNo, long eventTime) {
+        try {
+            stockoutOrderDO = stockoutOrderManager.getById(stockoutOrderDO.getId());
+
+            //TODO 注释掉的业务逻辑  后续补上
+            //如果收到BSP信息订单是已出库
+            if (StringUtils.isNotBlank(bspRouteCode)) {
+//                stockoutOrderDO.setMailNo(mailNo);
+//                boolean isSuccess = stockoutBizService.triggerStockoutOrderStateCollected(stockoutOrderDO, new Date().getTime());
+//                if (!isSuccess) {
+//                    return;
+//                }
+                LOGGER.info("[供应链-根据路由改状态]订单跳转为已收件，订单ID：" + stockoutOrderDO.getBizId());
+            }
+
+            //收派件中信息，订单状态跳转到派件中
+            if (BSPConstants.BSPRoute.Delivering.getCode().equals(bspRouteCode)
+                    && StockoutOrderState.COLLECTED.getValue().equals(stockoutOrderDO.getOrderState())) {
+//                boolean isSuccess = callEngine(stockoutOrderDO, StockoutOrderActionType.DELIVER, new Date(eventTime));
+//                if (!isSuccess) {
+//                    return;
+//                }
+                stockoutOrderDO.setOrderState(StockoutOrderState.DELIVEING.getValue());
+                LOGGER.info("[供应链-根据路由改状态]订单跳转为派件中，订单ID：" + stockoutOrderDO.getBizId());
+            }
+
+            //收到已签收路由信息，但是订单状态还是已揽收时，直接跳到已签收（BSP一些订单没有派件中状态）
+            if (BSPConstants.BSPRoute.Signed.getCode().equals(bspRouteCode)
+                    && StockoutOrderState.COLLECTED.getValue().equals(stockoutOrderDO.getOrderState())) {
+//                boolean isSuccess = callEngine(stockoutOrderDO, StockoutOrderActionType.DELIVER, new Date(eventTime));
+//                if (!isSuccess) {
+//                    return;
+//                }
+//                stockoutOrderDO.setState(StockoutOrderState.DELIVEING.getValue());
+//                isSuccess = callEngine(stockoutOrderDO, StockoutOrderActionType.SIGN, new Date(eventTime));
+//                if (!isSuccess) {
+//                    return;
+//                }
+                stockoutOrderDO.setOrderState(StockoutOrderState.SIGNED.getValue());
+                LOGGER.info("[供应链-根据路由改状态]订单跳转为已签收，订单ID：" + stockoutOrderDO.getBizId());
+            }
+
+            //收到已签收路由信息，订单状态跳转到已签收
+            if (BSPConstants.BSPRoute.Signed.getCode().equals(bspRouteCode)
+                    && StockoutOrderState.DELIVEING.getValue().equals(stockoutOrderDO.getOrderState())) {
+//                boolean isSuccess = callEngine(stockoutOrderDO, StockoutOrderActionType.SIGN, new Date(eventTime));
+//                if (!isSuccess) {
+//                    return;
+//                }
+                stockoutOrderDO.setOrderState(StockoutOrderState.SIGNED.getValue());
+                LOGGER.info("[供应链-根据路由改状态]订单跳转为已签收，订单ID：" + stockoutOrderDO.getBizId());
+            }
+        } catch (Exception e) {
+            LOGGER.warn("根据路由触发出库单状态流转发生异常，订单ID：" + stockoutOrderDO.getBizId(), e);
+        }
+    }
+
+    /**
+     * 判断列表是否包含指定关键字
+     *
+     * @param key
+     * @param entities
+     * @return
+     */
+    private static boolean isContainEntity(String key, List<String> entities) {
+        if (StringUtils.isBlank(key) || CollectionUtils.isEmpty(entities)) {
+            return false;
+        }
+        for (String entity : entities) {
+            if (key.contains(entity)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
