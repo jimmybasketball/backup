@@ -29,3 +29,10 @@ com.sfebiz.supplychain.redisproxy.maxWaitTime=${com.sfebiz.supplychain.redisprox
 com.sfebiz.supplychain.redisproxy.testOnBorrow=${com.sfebiz.supplychain.redisproxy.testOnBorrow}
 com.sfebiz.supplychain.redisproxy.minIdle=${com.sfebiz.supplychain.redisproxy.minIdle}
 com.sfebiz.supplychain.redisproxy.timeout=${com.sfebiz.supplychain.redisproxy.timeout}
+
+
+# message
+com.sfebiz.queue.accessKey=${com.sfebiz.queue.accessKey}
+com.sfebiz.queue.secretKey=${com.sfebiz.queue.secretKey}
+com.sfebiz.queue.supplychainEventRouteMessageProducerId=${com.sfebiz.queue.supplychainEventRouteMessageProducerId}
+com.sfebiz.queue.supplychainEventRouteMessageConsumerId=${com.sfebiz.queue.supplychainEventRouteMessageConsumerId}
