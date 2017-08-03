@@ -72,4 +72,34 @@ public interface RouteService {
 
     /*    系统物流   end      */
 
+
+
+
+
+
+
+
+    /*    其他服务   begin      */
+
+    /**
+     *  注册快递100，只支持国内/国际路由类型
+     *
+     * @param orderId       订单ID
+     * @param routeType     路由类型（国内路由/国际路由）
+     * @return
+     */
+    public CommonRet<Void> registKD100Routes(String orderId, String routeType);
+
+
+    /**
+     * 发送路由获取延迟消息
+     * @param orderId       订单ID
+     * @param delaySecond   延迟时间 单位秒
+     * @return
+     */
+    public CommonRet<Void> sendRouteFetchMessage(String orderId, Long delaySecond);
+
+    /*    其他服务   end      */
+
+
 }

@@ -7,7 +7,7 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-4.0.xsd"
        default-lazy-init="false">
-    <context:annotation-config/>
+
 
     <!-- 物流平台与外部系统交互的命令配置 -->
     <bean id="commandConfig" class="com.sfebiz.supplychain.provider.command.common.CommandConfig">
@@ -28,6 +28,30 @@
                         </entry>
                     </map>
                 </entry>
+
+
+                <!--快递100命令集合-->
+                <entry key="16">
+                    <map>
+                        <entry key="logistics.event.kd100.registroutes">
+                            <map>
+                                <entry key="service_name" value="logistics.event.kd100.registroutes"/>
+                                <entry key="msg_type" value=""/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.supplychain.provider.command.send.tpl.kd100.KD100RegistRoutesCommand"/>
+                            </map>
+                        </entry>
+                        <entry key="logistics.event.kd100.queryroutes">
+                            <map>
+                                <entry key="service_name" value="logistics.event.kd100.queryroutes"/>
+                                <entry key="msg_type" value=""/>
+                                <entry key="class_name"
+                                       value="com.sfebiz.logistics.provider.command.send.tpl.kd.KD100QueryRouteCommand"/>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+
                 <!-- 发网云仓命令集合 -->
                 <entry key="34">
                     <map>

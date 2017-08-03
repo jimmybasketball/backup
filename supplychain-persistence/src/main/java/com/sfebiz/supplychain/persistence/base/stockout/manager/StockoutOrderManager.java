@@ -4,13 +4,18 @@ import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
+import com.sfebiz.supplychain.exposed.common.code.RouteReturnCode;
+import com.sfebiz.supplychain.exposed.route.enums.RouteType;
 import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderDao;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
+import net.pocrd.entity.ServiceException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>出库单manager类</p>
@@ -105,6 +110,51 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
         updateDO.setDeclarePayerName(payerName);
         updateDO.setDeclarePayerCertNo(payerCertNo);
         return this.update(updateDO);
+    }
+
+
+    /**
+     * 根据运单号出库单信息
+     * @param mailNo        运单号
+     * @return
+     */
+    public StockoutOrderDO getByMailNo(String mailNo) throws ServiceException{
+        if (StringUtils.isBlank(mailNo)) {
+            return null;
+        }
+        Map<String, String> paramMap = new HashMap<String, String>();
+        paramMap.put("mailNo", mailNo);
+        List<StockoutOrderDO> stockoutOrderDOS = stockoutOrderDao.getByMailNo(paramMap);
+        if (stockoutOrderDOS != null && stockoutOrderDOS.size() > 0) {
+            if (stockoutOrderDOS.size() > 1) {
+                throw new ServiceException(RouteReturnCode.MAIL_NO_FIND_MULTI_STOCKOUT_ORDER);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 修改出库单承运商编码
+     * @param id
+     * @param routeType
+     * @param carrierCode
+     */
+    public void updateCarrierCodeById(Long id, RouteType routeType, String carrierCode) {
+        if (id == null || routeType == null || StringUtils.isBlank(carrierCode)) {
+            return;
+        }
+
+        StockoutOrderDO update = new StockoutOrderDO();
+        update.setId(id);
+        if (RouteType.INTERNAL == routeType) {
+            update.setIntrCarrierCode(carrierCode);
+        } else if (RouteType.INTERNATIONAL == routeType) {
+            update.setIntlCarrierCode(carrierCode);
+        } else {
+            return;
+        }
+
+        stockoutOrderDao.update(update);
     }
 
     public static void main(String[] args) {

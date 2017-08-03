@@ -7,6 +7,9 @@ import com.sfebiz.supplychain.exposed.common.enums.SystemUserName;
 import com.sfebiz.supplychain.exposed.route.entity.LogisticsSystemRouteEntity;
 import com.sfebiz.supplychain.exposed.route.entity.LogisticsUserRouteEntity;
 import com.sfebiz.supplychain.exposed.route.enums.RouteType;
+import com.sfebiz.supplychain.exposed.stockout.enums.StockoutOrderState;
+import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
+import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderRecordBO;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -129,4 +132,22 @@ public class RouteServiceTest extends BaseServiceTest{
         System.out.println(JSON.toJSONString(systemRouteList));
     }
 
+    @Test
+    public void testFetchRoute() throws Exception {
+        StockoutOrderBO stockoutOrderBO = new StockoutOrderBO();
+        stockoutOrderBO.setId(1L);
+        stockoutOrderBO.setBizId("3201707141000093190S0002");
+        stockoutOrderBO.setOrderState(StockoutOrderState.SIGNED.getValue());
+        stockoutOrderBO.setIntlCarrierCode("EMS");
+        stockoutOrderBO.setIntlMailNo("20202020202");
+        stockoutOrderBO.setIntrCarrierCode("SF");
+        stockoutOrderBO.setIntrMailNo("10101010101");
+
+        StockoutOrderRecordBO recordBO = new StockoutOrderRecordBO();
+        recordBO.setTplIntlState(1);
+
+        stockoutOrderBO.setRecordBO(recordBO);
+        boolean isPolling = internationalRouteFetchHandler.fetchRouteByStockOrder(stockoutOrderBO);
+
+    }
 }

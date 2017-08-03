@@ -29,7 +29,7 @@ public class RouteOperationImpl implements RouteOperation {
     private List<RouteOperation> writeOperations;
 
     /**
-     * 写操作集合，按照集合中元素顺序执行读操作(例如先读取Redis，如果Redis不命中，再从OTS中读取数据)
+     * 读操作集合，按照集合中元素顺序执行读操作(例如先读取Redis，如果Redis不命中，再从OTS中读取数据)
      */
     private List<RouteOperation> readOperations;
 
@@ -105,7 +105,7 @@ public class RouteOperationImpl implements RouteOperation {
     @Override
     public List<LogisticsUserRouteEntity> getUserRoutes(String orderId) {
         List<LogisticsUserRouteEntity> logisticsRouteEntities = null;
-        boolean isMockAutoGetRoutes = MockConfig.isMocked("bsp", "getRoutes");
+        boolean isMockAutoGetRoutes = MockConfig.isMocked("routes", "getRoutes");
         if (isMockAutoGetRoutes) {
             //直接返回仓库已发货
             LOGGER.info("MOCK：获取用户路由信息 采用MOCK实现");

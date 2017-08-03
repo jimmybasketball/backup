@@ -3,6 +3,9 @@ package com.sfebiz.supplychain.persistence.base.stockout.dao;
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 
  * <p>出库单Dao</p>
@@ -12,4 +15,5 @@ import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
  */
 public interface StockoutOrderDao extends BaseDao<StockoutOrderDO> {
 
+    List<StockoutOrderDO> getByMailNo(Map<String, String> paramMap);
 }

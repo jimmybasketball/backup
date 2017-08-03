@@ -48,11 +48,6 @@ public class RouteOperationOnOTS extends AbstractRouteOperation {
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RouteOperationOnOTS.class);
-    /**
-     * 路由固定的时间日期
-     */
-    private static final Date routeFixDate = RouteOperationOnOTS.parse("2017-08-01 09:00:00", DATE_FORMAT);
-
 
     /**
      * 追加用户路由 OTS实现
