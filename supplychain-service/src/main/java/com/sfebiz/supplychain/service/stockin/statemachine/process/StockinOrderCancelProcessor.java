@@ -42,7 +42,7 @@ public class StockinOrderCancelProcessor extends StockinAbstractProcessor {
         validateRequest(request);
 
         //2. 如果入库单已提交仓库，需要向仓库下发取消指令
-        if (!stockinOrderDO.getState().equals(StockinOrderState.TO_BE_SUBMITED.getValue())) {
+        if (!stockinOrderDO.getState().equals(StockinOrderState.STOCKIN_FINISH.getValue())) {
             cancelStockinOrder(request);
         }
 
