@@ -97,4 +97,14 @@ public interface StockInService {
      */
     CommonRet<Void> updateStockinOrderBaseInfo(StockinOrderEntity stockinOrderEntity, Long userId, String userName);
 
+    /**
+     * 取消入库单
+     *
+     * @param stockinOrderId
+     * @param userId
+     * @param userName
+     * @return
+     * @throws ServiceException
+     */
+    CommonRet<Void> cancelStockinOrder(Long stockinOrderId, Long userId, String userName) throws ServiceException;
 }

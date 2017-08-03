@@ -22,6 +22,7 @@ public class StockinOrderActionType extends Enumerable4StringValue{
     public static StockinOrderActionType STOCKIN_TO_CREATE = StockinOrderActionType.valueOf("STOCKIN_TO_CREATE","创建入库单");
     public static StockinOrderActionType STOCKIN_TO_SUBMIT = StockinOrderActionType.valueOf("STOCKIN_TO_SUBMIT","提交给仓库");
     public static StockinOrderActionType STOCKIN_TO_FINISH = StockinOrderActionType.valueOf("STOCKIN_TO_FINISH","手工完成入库单");
+    public static StockinOrderActionType STOCKIN_TO_CANCEL = StockinOrderActionType.valueOf("STOCKIN_TO_CANCEL","取消入库单");
 
     public StockinOrderActionType(String value, String name) {
         super(value, name);

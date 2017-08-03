@@ -78,6 +78,7 @@ public class StockInServiceImpl implements StockInService{
     private static final String SUBMIT_STOCKIN_ORDER_KEY = "SUBMIT_STOCKIN_ORDER_KEY:";
     private static final String FINISH_STOCKIN_ORDER_KEY = "FINISH_STOCKIN_ORDER_KEY:";
     private static final String UPDATE_STOCKIN_ORDER_KEY = "UPDATE_STOCKIN_ORDER_KEY:";
+    private static final String CANCEL_STOCKIN_ORDER_KEY = "CANCEL_STOCKIN_ORDER_KEY:";
 
     @Resource
     private WarehouseManager warehouseManager;
@@ -649,6 +650,81 @@ public class StockInServiceImpl implements StockInService{
         }
         commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
         commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
+        return commonRet;
+    }
+
+    @Override
+    public CommonRet<Void> cancelStockinOrder(Long stockinOrderId, Long userId, String userName) throws ServiceException {
+        LogBetter.instance(logger)
+                .setLevel(LogLevel.INFO)
+                .setMsg("[供应链-取消入库单]")
+                .addParm("入库单ID", stockinOrderId)
+                .addParm("操作者", userName)
+                .log();
+
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
+        commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
+        if (null == stockinOrderId) {
+            LogBetter.instance(logger)
+                    .setLevel(LogLevel.ERROR)
+                    .setErrorMsg("[供应链-取消入库单异常]: " + StockInReturnCode.PARAM_ILLEGAL_ERR.getDesc())
+                    .addParm("入库单ID", stockinOrderId)
+                    .addParm("操作者", userName)
+                    .log();
+            commonRet.setRetCode(StockInReturnCode.PARAM_ILLEGAL_ERR.getCode());
+            commonRet.setRetMsg("[供应链-取消入库单异常]: " + StockInReturnCode.PARAM_ILLEGAL_ERR.getDesc());
+            return commonRet;
+        }
+        //1. 控制并发
+        if (distributedLock.fetch(CANCEL_STOCKIN_ORDER_KEY + stockinOrderId)) {
+            try {
+                //1. 检查入库单是否已取消
+                StockinOrderDO stockinOrderDO = checkStockinOrderById(stockinOrderId);
+                if (StockinOrderState.STOCKIN_CANCLE.getValue().equals(stockinOrderDO.getState())) {
+                    LogBetter.instance(logger)
+                            .setLevel(LogLevel.INFO)
+                            .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
+                            .setMsg("[入库单已是取消状态]")
+                            .addParm("入库单ID", stockinOrderId)
+                            .addParm("操作者", userName)
+                            .log();
+                    return commonRet;
+                }
+
+                //2. 触发状态引擎
+                StockinOrderRequest stockinOrderRequest = StockinOrderRequestFactory.generateStockinOrderRequest(
+                        StockinOrderActionType.STOCKIN_TO_CANCEL, stockinOrderDO, null, null, Operator.valueOf(userId, userName));
+                engineService.executeStateMachineEngine(stockinOrderRequest, false);
+            } catch (ServiceException e) {
+                throw e;
+            } catch (Exception e) {
+                LogBetter.instance(logger)
+                        .setLevel(LogLevel.ERROR)
+                        .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
+                        .setErrorMsg("[供应链-取消入库单异常]")
+                        .setException(e)
+                        .addParm("入库单ID", stockinOrderId)
+                        .addParm("操作者", userName)
+                        .log();
+                commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+                commonRet.setRetMsg("[供应链-取消入库单异常]:  " + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+                return commonRet;
+            } finally {
+                distributedLock.realease(CANCEL_STOCKIN_ORDER_KEY + stockinOrderId);
+            }
+        } else {
+            LogBetter.instance(logger)
+                    .setLevel(LogLevel.ERROR)
+                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
+                    .setErrorMsg("[供应链-取消入库单异常]")
+                    .addParm("入库单ID", stockinOrderId)
+                    .addParm("操作者", userName)
+                    .log();
+            commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+            commonRet.setRetMsg("[供应链-取消入库单异常]:  并发异常" + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+            return commonRet;
+        }
         return commonRet;
     }
 
