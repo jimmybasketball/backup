@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
 
 /**
- * 供应链路由消息
+ * 物流平台路由消息
  * @author liujc [liujunchi@ifunq.com]
  * @date  2017/8/2 11:59
  */
@@ -37,7 +37,7 @@ public class SupplychainEventRouteMessageConsumer extends AbstractMessageConsume
             public Action consume(Message message, ConsumeContext context) {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.INFO)
-                        .setMsg("[供应链路由消息]--开始处理统一事件")
+                        .setMsg("[物流平台路由消息] 开始处理统一事件")
                         .addParm("message", message)
                         .log();
 
@@ -48,7 +48,7 @@ public class SupplychainEventRouteMessageConsumer extends AbstractMessageConsume
                     if (messageProcesser == null) {
                         LogBetter.instance(logger)
                                 .setLevel(LogLevel.WARN)
-                                .setMsg("[供应链路由消息]--未找到消息TAG处理器，默认为完成")
+                                .setMsg("[物流平台路由消息] 未找到消息TAG处理器，默认为完成")
                                 .addParm("tag", message.getTag())
                                 .addParm("message", message)
                                 .log();
@@ -58,7 +58,7 @@ public class SupplychainEventRouteMessageConsumer extends AbstractMessageConsume
 
                     LogBetter.instance(logger)
                             .setLevel(LogLevel.INFO)
-                            .setMsg("[供应链路由消息]--完成处理统一事件")
+                            .setMsg("[物流平台路由消息] 完成处理统一事件")
                             .addParm("message", message)
                             .addParm("处理器实现", messageProcesser.getClass().getSimpleName())
                             .addParm("是否处理成功", handleSuccess)
@@ -66,7 +66,7 @@ public class SupplychainEventRouteMessageConsumer extends AbstractMessageConsume
                 } catch (Exception e) {
                     LogBetter.instance(logger)
                             .setLevel(LogLevel.ERROR)
-                            .setErrorMsg("[订单系统统一事件]-调用事件处理器出现异常")
+                            .setErrorMsg("[物流平台路由消息] 调用事件处理器出现异常")
                             .setException(e)
                             .log();
                     return Action.ReconsumeLater;
@@ -75,7 +75,7 @@ public class SupplychainEventRouteMessageConsumer extends AbstractMessageConsume
                 if (!handleSuccess) {
                     LogBetter.instance(logger)
                             .setLevel(LogLevel.WARN)
-                            .setMsg("[供应链路由消息]--事件处理失败")
+                            .setMsg("[物流平台路由消息] 事件处理失败")
                             .addParm("tag", message.getTag())
                             .addParm("message", message)
                             .log();

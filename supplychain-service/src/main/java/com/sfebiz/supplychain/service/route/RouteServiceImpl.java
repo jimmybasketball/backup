@@ -307,7 +307,7 @@ public class RouteServiceImpl implements RouteService {
      */
     @Override
     @MethodParamValidate
-    public CommonRet<List<LogisticsSystemRouteEntity>> getSystemRouteList(@ParamNotBlank String orderId) {
+    public CommonRet<List<LogisticsSystemRouteEntity>> getSystemRouteList(@ParamNotBlank("订单ID不能为空") String orderId) {
         CommonRet<List<LogisticsSystemRouteEntity>> commonRet = new CommonRet<List<LogisticsSystemRouteEntity>>();
         //检查出库单是否存在
         commonRet = checkStockOutOrder(orderId);
@@ -335,6 +335,7 @@ public class RouteServiceImpl implements RouteService {
      * @return
      */
     @Override
+    @MethodParamValidate
     public CommonRet<Void> registKD100Routes(
             @ParamNotBlank("订单ID不能为空") String orderId,
             @ParamNotBlank("路由类型不能为空") String routeType) {
@@ -426,7 +427,10 @@ public class RouteServiceImpl implements RouteService {
      * @return
      */
     @Override
-    public CommonRet<Void> sendRouteFetchMessage(String orderId, Long delaySecond) {
+    @MethodParamValidate
+    public CommonRet<Void> sendRouteFetchMessage(
+            @ParamNotBlank("订单ID不能为空") String orderId,
+            @ParamNotBlank("延迟时间不能为空") Long delaySecond) {
         CommonRet<Void> commonRet = new CommonRet<Void>();
         LogBetter.instance(LOGGER)
                 .setLevel(LogLevel.INFO)
@@ -500,6 +504,7 @@ public class RouteServiceImpl implements RouteService {
 
     /**
      * 根据路由中的关键字信息触发出库单状态流转 （只有国内段的会触发）
+     *
      * @param orderId
      * @param routeType
      * @param routeEntities
