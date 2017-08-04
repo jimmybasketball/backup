@@ -20,14 +20,14 @@ dubbo.export.timeout=${dubbo.export.timeout}
 dubbo.export.host=${dubbo.export.host}
 
 # jedisCluster
-com.sfebiz.supplychain.rediscluster.server.addresses=${com.sfebiz.supplychain.reidscluster.server.addresses}
-com.sfebiz.supplychain.rediscluster.server.password=${com.sfebiz.supplychain.reidscluster.server.password}
-com.sfebiz.supplychain.rediscluster.maxIdle=${com.sfebiz.supplychain.reidscluster.maxIdle}
-com.sfebiz.supplychain.rediscluster.maxTotal=${com.sfebiz.supplychain.reidscluster.maxTotal}
-com.sfebiz.supplychain.rediscluster.maxWaitTime=${com.sfebiz.supplychain.reidscluster.maxWaitTime}
-com.sfebiz.supplychain.rediscluster.testOnBorrow=${com.sfebiz.supplychain.reidscluster.testOnBorrow}
-com.sfebiz.supplychain.rediscluster.minIdle=${com.sfebiz.supplychain.reidscluster.minIdle}
-com.sfebiz.supplychain.rediscluster.timeout=${com.sfebiz.supplychain.reidscluster.timeout}
+com.sfebiz.supplychain.rediscluster.server.addresses=${com.sfebiz.supplychain.rediscluster.server.addresses}
+com.sfebiz.supplychain.rediscluster.server.password=${com.sfebiz.supplychain.rediscluster.server.password}
+com.sfebiz.supplychain.rediscluster.maxIdle=${com.sfebiz.supplychain.rediscluster.maxIdle}
+com.sfebiz.supplychain.rediscluster.maxTotal=${com.sfebiz.supplychain.rediscluster.maxTotal}
+com.sfebiz.supplychain.rediscluster.maxWaitTime=${com.sfebiz.supplychain.rediscluster.maxWaitTime}
+com.sfebiz.supplychain.rediscluster.testOnBorrow=${com.sfebiz.supplychain.rediscluster.testOnBorrow}
+com.sfebiz.supplychain.rediscluster.minIdle=${com.sfebiz.supplychain.rediscluster.minIdle}
+com.sfebiz.supplychain.rediscluster.timeout=${com.sfebiz.supplychain.rediscluster.timeout}
 
 # message
 com.sfebiz.queue.accessKey=${com.sfebiz.queue.accessKey}
