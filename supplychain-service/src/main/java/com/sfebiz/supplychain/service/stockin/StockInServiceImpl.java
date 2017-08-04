@@ -172,6 +172,7 @@ public class StockInServiceImpl implements StockInService{
             commonRet.setRetCode(StockInReturnCode._C_COMMON_FAIL);
             commonRet.setRetMsg(e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return commonRet;
         }
         commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
         commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
