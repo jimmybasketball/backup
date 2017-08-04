@@ -204,9 +204,9 @@ public class StockInServiceImpl implements StockInService{
             return commonRet;
         }
 
-        //1. 控制并发
-        if (distributedLock.fetch(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId)) {
-            try {
+        try {
+            //1. 控制并发
+            if (distributedLock.fetch(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId)) {
                 //1. 验证入库单是否存在
                 StockinOrderDO stockinOrderDO = checkStockinOrderById(stockinOrderId);
 
@@ -221,24 +221,29 @@ public class StockInServiceImpl implements StockInService{
                         .addParm("商品信息", stockinOrderDetailEntities)
                         .addParm("操作者", userName)
                         .log();
-            } catch (Exception e) {
-                LogBetter.instance(logger)
-                        .setLevel(LogLevel.ERROR)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId.toString(), SystemConstants.TRACE_APP))
-                        .setErrorMsg("[物流平台-更新入库单异常]")
-                        .addParm("入库单ID", stockinOrderId.toString())
-                        .addParm("商品信息", stockinOrderDetailEntities)
-                        .addParm("操作者", userName)
-                        .setException(e)
-                        .log();
-                commonRet.setRetCode(StockInReturnCode._C_COMMON_FAIL);
-                commonRet.setRetMsg(e.getMessage());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            } else {
+                commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+                commonRet.setRetMsg("[物流平台-更新入库单并发异常]");
                 return commonRet;
-            } finally {
-                distributedLock.realease(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId);
             }
+        } catch (Exception e) {
+            LogBetter.instance(logger)
+                    .setLevel(LogLevel.ERROR)
+                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId.toString(), SystemConstants.TRACE_APP))
+                    .setErrorMsg("[物流平台-更新入库单异常]")
+                    .addParm("入库单ID", stockinOrderId.toString())
+                    .addParm("商品信息", stockinOrderDetailEntities)
+                    .addParm("操作者", userName)
+                    .setException(e)
+                    .log();
+            commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+            commonRet.setRetMsg(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return commonRet;
+        } finally {
+            distributedLock.realease(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId);
         }
+
         commonRet.setRetCode(StockInReturnCode._C_COMMON_SUCCESS);
         return commonRet;
     }
