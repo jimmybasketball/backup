@@ -3,7 +3,6 @@ package com.sfebiz.supplychain.service.route.op.impl;
 import com.alibaba.fastjson.JSON;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
-import com.sfebiz.supplychain.config.JedisProxyUtil;
 import com.sfebiz.supplychain.exposed.common.enums.ConfigSystemConstants;
 import com.sfebiz.supplychain.exposed.route.entity.LogisticsSystemRouteEntity;
 import com.sfebiz.supplychain.exposed.route.entity.LogisticsUserRouteEntity;
@@ -13,10 +12,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 路由信息Redis操作， 缓存数据会过期
@@ -32,7 +34,10 @@ public class RouteOperationOnRedis extends AbstractRouteOperation {
 
 
     @Resource
-    private JedisProxyUtil jedisProxyUtil;
+    private JedisCluster jedisCluster;
+
+    @Resource
+    private String env;
 
     /**
      * 追加用户路由 redis实现
@@ -47,12 +52,10 @@ public class RouteOperationOnRedis extends AbstractRouteOperation {
             return;
         }
 
-        Jedis jedis = null;
-        String key = ConfigSystemConstants.SCM_REDIS_PREFIX + ConfigSystemConstants.ROUTE_REDIS_DATA_KEY + orderId;
+        String key = env + ConfigSystemConstants.SCM_REDIS_PREFIX + ConfigSystemConstants.ROUTE_REDIS_DATA_KEY + orderId;
         try {
-            jedis = jedisProxyUtil.getJedis();
             //获取缓存中的路由信息
-            String routeJson = jedis.hget(key, routeType.getType());
+            String routeJson = jedisCluster.hget(key, routeType.getType());
 
             List<LogisticsUserRouteEntity> logisticsRouteEntities = new ArrayList<LogisticsUserRouteEntity>();
             if (StringUtils.isNotBlank(routeJson)) {
@@ -66,8 +69,8 @@ public class RouteOperationOnRedis extends AbstractRouteOperation {
             if (checkRouteTime(logisticsUserRouteEntitySet, logisticsUserRouteEntity)) {
                 //追加路由信息
                 logisticsUserRouteEntitySet.add(logisticsUserRouteEntity);
-                jedis.hset(key, routeType.getType(), JSON.toJSONString(logisticsUserRouteEntitySet));
-                jedis.expire(key, 60 * 60 * 24 * 7);
+                jedisCluster.hset(key, routeType.getType(), JSON.toJSONString(logisticsUserRouteEntitySet));
+                jedisCluster.expire(key, 60 * 60 * 24 * 7);
                 LogBetter.instance(LOGGER)
                         .setLevel(LogLevel.INFO)
                         .setMsg("[物流平台路由-追加用户路由信息] Redis存储成功")
@@ -93,10 +96,6 @@ public class RouteOperationOnRedis extends AbstractRouteOperation {
                     .addParm("路由类型", routeType.getType())
                     .log();
             throw new RuntimeException(e);
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
     }
 
@@ -117,13 +116,11 @@ public class RouteOperationOnRedis extends AbstractRouteOperation {
             logisticsUserRouteEntitySet.add(routeEntity);
         }
 
-        Jedis jedis = null;
-        String key = ConfigSystemConstants.SCM_REDIS_PREFIX + ConfigSystemConstants.ROUTE_REDIS_DATA_KEY + orderId;
+        String key = env +ConfigSystemConstants.SCM_REDIS_PREFIX + ConfigSystemConstants.ROUTE_REDIS_DATA_KEY + orderId;
 
         try {
-            jedis = jedisProxyUtil.getJedis();
-            jedis.hset(key, routeType.getType(), JSON.toJSONString(logisticsUserRouteEntitySet));
-            jedis.expire(key, 60 * 60 * 24 * 7);
+            jedisCluster.hset(key, routeType.getType(), JSON.toJSONString(logisticsUserRouteEntitySet));
+            jedisCluster.expire(key, 60 * 60 * 24 * 7);
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.INFO)
                     .setMsg("[物流平台路由-覆盖用户路由信息] Redis存储成功")
@@ -138,10 +135,6 @@ public class RouteOperationOnRedis extends AbstractRouteOperation {
                     .addParm("覆盖集合", logisticsUserRouteEntityList)
                     .addParm("路由类型", routeType)
                     .log();
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
     }
 
@@ -158,11 +151,9 @@ public class RouteOperationOnRedis extends AbstractRouteOperation {
             return null;
         }
 
-        Jedis jedis = null;
-        String key = ConfigSystemConstants.SCM_REDIS_PREFIX + ConfigSystemConstants.ROUTE_REDIS_DATA_KEY + orderId;
+        String key = env + ConfigSystemConstants.SCM_REDIS_PREFIX + ConfigSystemConstants.ROUTE_REDIS_DATA_KEY + orderId;
         try {
-            jedis = jedisProxyUtil.getJedis();
-            String routesJson = jedis.hget(key, routeType.getType());
+            String routesJson = jedisCluster.hget(key, routeType.getType());
             Set<LogisticsUserRouteEntity> logisticsUserRouteEntitySet = new TreeSet<LogisticsUserRouteEntity>();
             logisticsUserRouteEntitySet.addAll(JSON.parseArray(routesJson, LogisticsUserRouteEntity.class));
             return logisticsUserRouteEntitySet;
@@ -174,10 +165,6 @@ public class RouteOperationOnRedis extends AbstractRouteOperation {
                     .addParm("覆盖集合", orderId)
                     .addParm("路由类型", routeType)
                     .log();
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
         return null;
     }

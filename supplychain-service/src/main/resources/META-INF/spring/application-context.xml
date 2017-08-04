@@ -39,17 +39,26 @@
         </property>
     </bean>
 
-    <bean id="jedisProxyUtil" class="com.sfebiz.supplychain.config.JedisProxyUtil" destroy-method="closeJedisProxy">
-        <constructor-arg name="redisHost" value="${com.sfebiz.supplychain.redisproxy.server.host}"/>
-        <constructor-arg name="redisPort" value="${com.sfebiz.supplychain.redisproxy.server.port}"/>
-        <constructor-arg name="redisPassWord" value="${com.sfebiz.supplychain.redisproxy.server.password}"/>
-        <constructor-arg name="redisMaxTotal" value="${com.sfebiz.supplychain.redisproxy.maxTotal}"/>
-        <constructor-arg name="redisMinIdle" value="${com.sfebiz.supplychain.redisproxy.minIdle}"/>
-        <constructor-arg name="redisMaxWaitTime" value="${com.sfebiz.supplychain.redisproxy.maxWaitTime}"/>
-        <constructor-arg name="redisMaxIdle" value="${com.sfebiz.supplychain.redisproxy.maxIdle}"/>
-        <constructor-arg name="redisTestOnBorrow" value="${com.sfebiz.supplychain.redisproxy.testOnBorrow}"/>
-        <constructor-arg name="redisTimeout" value="${com.sfebiz.supplychain.redisproxy.timeout}"/>
-    </bean>
+    <!-- jedisPool 配置-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig" >
+        <!--最大空闲数-->
+        <property name="maxIdle" value="${com.sfebiz.supplychain.reidscluster.maxIdle}" />
+        <!--最大建立连接等待时间-->
+        <property name="maxWaitMillis" value="${com.sfebiz.supplychain.reidscluster.maxWaitTime}" />
+        <!--是否在从池中取出连接前进行检验,如果检验失败,则从池中去除连接并尝试取出另一个-->
+        <property name="testOnBorrow" value="${com.sfebiz.supplychain.reidscluster.testOnBorrow}" />
+        <property name="maxTotal" value="${com.sfebiz.supplychain.reidscluster.maxTotal}" />
+        <property name="minIdle" value="${com.sfebiz.supplychain.reidscluster.minIdle}" />
+    </bean >
+    <!-- jedisCluster 集群 -->
+    <bean id="jedisCluster"  class="com.sfebiz.supplychain.config.JedisClusterFactory" >
+        <property name="addresses" value="${com.sfebiz.supplychain.reidscluster.server.addresses}" />
+        <property name="timeout" value="${com.sfebiz.supplychain.reidscluster.timeout}" />
+        <property name="maxRedirections" value="6" />
+        <property name="genericObjectPoolConfig" ref="poolConfig" />
+    </bean >
+
+
 
     <bean id="exceptionHandlerMap" class="java.util.HashMap">
         <constructor-arg>
