@@ -32,11 +32,11 @@ public abstract class AbstractRouteFetchHandler {
      * @param stockoutOrderBO 出库单业务对象
      * @return 是否需要继续发送路由获取消息
      */
-    public boolean fetchRouteByStockOrder(StockoutOrderBO stockoutOrderBO) throws ServiceException {
+    public boolean fetchRouteByStockoutOrder(StockoutOrderBO stockoutOrderBO) throws ServiceException {
         boolean isPolling = doFetch(stockoutOrderBO);
         if (nextHandler != null) {
             //如果有的话，交给下一段路由获取更新处理器执行
-            return nextHandler.fetchRouteByStockOrder(stockoutOrderBO);
+            return nextHandler.fetchRouteByStockoutOrder(stockoutOrderBO);
         } else {
             //本段路由做为链条的结尾，有权利决定是否还要继续轮询
             return isPolling;

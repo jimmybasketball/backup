@@ -60,7 +60,7 @@ public class RouteFetchEventMessageProcesser implements MessageProcesser{
             StockoutOrderBO stockoutOrderBO = new StockoutOrderBO();
 
             //执行路由获取更新操作
-            boolean isPolling = internationalRouteFetchHandler.fetchRouteByStockOrder(stockoutOrderBO);
+            boolean isPolling = internationalRouteFetchHandler.fetchRouteByStockoutOrder(stockoutOrderBO);
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.WARN)
                     .setMsg("[物流平台路由-查询路由信息消息处理] 处理结束")
