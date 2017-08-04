@@ -23,7 +23,7 @@ public class JedisClusterFactory implements FactoryBean<JedisCluster>, Initializ
 
     private Logger logger = LoggerFactory.getLogger(JedisClusterFactory.class);
 
-    private String addresses;
+    private String addresses = "";
 
     private JedisCluster jedisCluster;
 
