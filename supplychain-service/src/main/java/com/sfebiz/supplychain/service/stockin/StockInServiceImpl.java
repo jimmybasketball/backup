@@ -527,24 +527,25 @@ public class StockInServiceImpl implements StockInService{
             commonRet.setRetMsg(StockInReturnCode.PARAM_ILLEGAL_ERR.getDesc());
             return commonRet;
         }
-        //1.  锁
-        if (distributedLock.fetch(FINISH_STOCKIN_ORDER_KEY + stockinOrderId)) {
-            // 2. 初始化事务
-            DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-            StockinOrderDO stockinOrderDO = null;
+        try {
+            //1.  锁
+            if (distributedLock.fetch(FINISH_STOCKIN_ORDER_KEY + stockinOrderId)) {
+                // 2. 初始化事务
+                DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+                def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+                StockinOrderDO stockinOrderDO = null;
 
-            try {
+
                 //3.  逻辑处理
                 stockinOrderDO = checkStockinOrderById(stockinOrderId);
                 StockinOrderRequest stockinOrderRequest = StockinOrderRequestFactory.generateStockinOrderRequest(StockinOrderActionType.STOCKIN_TO_FINISH,
                         stockinOrderDO, stockinOrderDetailEntities, null, Operator.valueOf(userId, userName));
                 engineService.executeStateMachineEngine(stockinOrderRequest, false);
-            } catch (Exception e) {
+            } else {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.ERROR)
                         .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
-                        .setErrorMsg("[供应链-手工完成入库单异常]")
+                        .setErrorMsg("[供应链-手工完成入库单异常]: 并发异常")
                         .addParm("入库单ID", stockinOrderId)
                         .addParm("仓库ID", warehouseId)
                         .addParm("商品详细信息", stockinOrderDetailEntities)
@@ -553,15 +554,12 @@ public class StockInServiceImpl implements StockInService{
                 commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
                 commonRet.setRetMsg(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
                 return commonRet;
-            } finally {
-                // 释放锁
-                distributedLock.realease(FINISH_STOCKIN_ORDER_KEY + stockinOrderId);
             }
-        } else {
+        } catch (Exception e) {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
                     .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-手工完成入库单异常]: 并发异常")
+                    .setErrorMsg("[供应链-手工完成入库单异常]")
                     .addParm("入库单ID", stockinOrderId)
                     .addParm("仓库ID", warehouseId)
                     .addParm("商品详细信息", stockinOrderDetailEntities)
@@ -570,6 +568,9 @@ public class StockInServiceImpl implements StockInService{
             commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
             commonRet.setRetMsg(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
             return commonRet;
+        } finally {
+            // 释放锁
+            distributedLock.realease(FINISH_STOCKIN_ORDER_KEY + stockinOrderId);
         }
         commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
         commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
