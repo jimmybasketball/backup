@@ -654,7 +654,7 @@ public class StockInServiceImpl implements StockInService{
     }
 
     @Override
-    public CommonRet<Void> cancelStockinOrder(Long stockinOrderId, Long userId, String userName) throws ServiceException {
+    public CommonRet<Void> cancelStockinOrder(Long stockinOrderId, Long userId, String userName) {
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setMsg("[供应链-取消入库单]")
@@ -697,7 +697,9 @@ public class StockInServiceImpl implements StockInService{
                         StockinOrderActionType.STOCKIN_TO_CANCEL, stockinOrderDO, null, null, Operator.valueOf(userId, userName));
                 engineService.executeStateMachineEngine(stockinOrderRequest, false);
             } catch (ServiceException e) {
-                throw e;
+                commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+                commonRet.setRetMsg(e + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+                return commonRet;
             } catch (Exception e) {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.ERROR)
@@ -726,6 +728,11 @@ public class StockInServiceImpl implements StockInService{
             return commonRet;
         }
         return commonRet;
+    }
+
+    @Override
+    public CommonRet<Void> editStockinorderWarehouse(Long stockinorderId, Long warehouseId, String userName) {
+        return null;
     }
 
 
