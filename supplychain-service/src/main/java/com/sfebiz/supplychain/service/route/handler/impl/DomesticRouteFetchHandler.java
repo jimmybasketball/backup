@@ -60,7 +60,7 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
         if (endStates.contains(stockoutOrderBO.getOrderState())) {
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.INFO)
-                    .setMsg("[物流平台路由-国内段路由查询] 出库单状态不在运输中，结束路由轮询")
+                    .setMsg("[物流平台路由-国内段路由获取] 出库单状态不在运输中，结束路由轮询")
                     .addParm("订单ID", stockoutOrderBO.getBizId())
                     .addParm("出库单状态", stockoutOrderBO.getOrderState())
                     .log();
@@ -72,7 +72,7 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
         if (StringUtils.isBlank(mailNo)) {
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.WARN)
-                    .setMsg("[物流平台路由-国内段路由查询] 未发现国内运单号")
+                    .setMsg("[物流平台路由-国内段路由获取] 未发现国内运单号")
                     .addParm("订单ID", stockoutOrderBO.getBizId())
                     .log();
             return true;
@@ -81,7 +81,7 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
         if (MockConfig.isMocked("routes", "fetchIntrRoutes")) {
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.WARN)
-                    .setMsg("[物流平台路由-国内段路由查询] mock")
+                    .setMsg("[物流平台路由-国内段路由获取] mock")
                     .addParm("订单ID", stockoutOrderBO.getBizId())
                     .log();
             return true;
@@ -89,13 +89,13 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
 
         /*
             出库单===》线路===》找到国内路由获取方式对应的第三方服务商NID===》
-            找到配置的command ===》执行路由查询command
+            找到配置的command ===》执行路由获取command
          */
         LogisticsProviderBO providerBO = stockoutOrderBO.getLineBO().getDomesticRouteProviderBO();
         if (providerBO == null) {
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.ERROR)
-                    .setErrorMsg("[物流平台路由-国内段路由查询] 线路上未找到国内路由查询provider")
+                    .setErrorMsg("[物流平台路由-国内段路由获取] 线路上未找到国内路由获取provider")
                     .addParm("订单ID", stockoutOrderBO.getBizId())
                     .addParm("线路ID", stockoutOrderBO.getLineBO().getId())
                     .log();
@@ -103,7 +103,7 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
             return true;
         }
 
-        //获取国内路由查询commond
+        //获取国内路由获取commond
         ProviderCommand cmd = CommandFactory.createCommand(providerBO.getLogisticsProviderNid(), WmsMessageType.GET_INTR_ROUTES.getValue());
         TplOrderGetRoutesCommand tplOrderGetRoutesCommand = (TplOrderGetRoutesCommand) cmd;
         tplOrderGetRoutesCommand.setCarrierCode(stockoutOrderBO.getIntlCarrierCode());
@@ -118,7 +118,7 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
 
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.ERROR)
-                    .setErrorMsg("[物流平台路由-国内段路由查询] 查询成功")
+                    .setErrorMsg("[物流平台路由-国内段路由获取] 获取成功")
                     .addParm("订单ID", stockoutOrderBO.getBizId())
                     .addParm("运单号", stockoutOrderBO.getIntlMailNo())
                     .addParm("承运商编码", stockoutOrderBO.getIntlCarrierCode())
@@ -133,14 +133,14 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
                 if (commonRet.getRetCode() == SCReturnCode.COMMON_SUCCESS.getCode()) {
                     LogBetter.instance(LOGGER)
                             .setLevel(LogLevel.ERROR)
-                            .setErrorMsg("[物流平台路由-国内段路由查询] 保存成功")
+                            .setErrorMsg("[物流平台路由-国内段路由获取] 保存成功")
                             .addParm("订单ID", stockoutOrderBO.getBizId())
                             .addParm("运单号", stockoutOrderBO.getIntlMailNo())
                             .log();
                 } else {
                     LogBetter.instance(LOGGER)
                             .setLevel(LogLevel.ERROR)
-                            .setErrorMsg("[物流平台路由-国内段路由查询] 保存失败")
+                            .setErrorMsg("[物流平台路由-国内段路由获取] 保存失败")
                             .addParm("执行结果", commonRet.toString())
                             .addParm("订单ID", stockoutOrderBO.getBizId())
                             .addParm("运单号", stockoutOrderBO.getIntlMailNo())
@@ -150,7 +150,7 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
         } else {
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.ERROR)
-                    .setErrorMsg("[物流平台路由-国内段路由查询] 执行commond失败")
+                    .setErrorMsg("[物流平台路由-国内段路由获取] 执行commond失败")
                     .addParm("订单ID", stockoutOrderBO.getBizId())
                     .addParm("运单号", stockoutOrderBO.getIntlMailNo())
                     .addParm("承运商编码", stockoutOrderBO.getIntlCarrierCode())

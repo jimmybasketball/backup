@@ -23,15 +23,15 @@
         <property name="dubbo.export.timeout" description="Dubbo服务暴露超时时间" required="true"/>
         <property name="dubbo.export.host" description="Dubbo服务暴露地址" required="false"/>
 
-        <property name="com.sfebiz.supplychain.redisproxy.server.host" description="Redis-Proxy集群地址" required="true"/>
-        <property name="com.sfebiz.supplychain.redisproxy.server.port" description="Redis-Proxy集群端口" required="true"/>
-        <property name="com.sfebiz.supplychain.redisproxy.server.password" description="Redis-Proxy集群密码" required="false"/>
-        <property name="com.sfebiz.supplychain.redisproxy.maxIdle" description="最大闲置连接数" required="true"/>
-        <property name="com.sfebiz.supplychain.redisproxy.maxTotal" description="最大连接数，超过此连接时操作redis会报错" required="true"/>
-        <property name="com.sfebiz.supplychain.redisproxy.maxWaitTime" description="redis获取连接的最大等待时间,单位为毫秒" required="true"/>
-        <property name="com.sfebiz.supplychain.redisproxy.testOnBorrow" description="在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的" required="true"/>
-        <property name="com.sfebiz.supplychain.redisproxy.minIdle" description="最小闲置连接数，spring启动的时候自动建立该数目的连接供应用程序使用，不够的时候会申请。默认值为0" required="true"/>
-        <property name="com.sfebiz.supplychain.redisproxy.timeout" description="读取redis的最长超时时间,单位为毫秒" required="true"/>
+
+        <property name="com.sfebiz.supplychain.rediscluster.server.addresses" description="reidscluster中所有节点的连接，ip:port，多个逗号分隔" required="true"/>
+        <property name="com.sfebiz.supplychain.rediscluster.server.password" description="reidscluster密码" required="false"/>
+        <property name="com.sfebiz.supplychain.rediscluster.maxIdle" description="最大闲置连接数" required="true"/>
+        <property name="com.sfebiz.supplychain.rediscluster.maxTotal" description="最大连接数，超过此连接时操作redis会报错" required="true"/>
+        <property name="com.sfebiz.supplychain.rediscluster.maxWaitTime" description="redis获取连接的最大等待时间,单位为毫秒" required="true"/>
+        <property name="com.sfebiz.supplychain.reidscluster.testOnBorrow" description="在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的" required="true"/>
+        <property name="com.sfebiz.supplychain.rediscluster.minIdle" description="最小闲置连接数，spring启动的时候自动建立该数目的连接供应用程序使用，不够的时候会申请。默认值为0" required="true"/>
+        <property name="com.sfebiz.supplychain.rediscluster.timeout" description="读取redis的最长超时时间,单位为毫秒" required="true"/>
 
 
         <property name="com.sfebiz.queue.accessKey" description="消息服务AK" required="true"/>

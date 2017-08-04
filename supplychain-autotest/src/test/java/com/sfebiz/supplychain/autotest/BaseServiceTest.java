@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import redis.clients.jedis.JedisCluster;
 
 import javax.annotation.Resource;
 
@@ -49,4 +50,7 @@ public class BaseServiceTest {
 
     @Resource
     protected InternationalRouteFetchHandler internationalRouteFetchHandler;
+
+    @Resource
+    protected JedisCluster jedisCluster;
 }

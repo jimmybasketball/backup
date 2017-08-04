@@ -1,11 +1,10 @@
 package com.sfebiz.supplychain.lock;
 
-import com.sfebiz.supplychain.config.JedisProxyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 
 import javax.annotation.Resource;
 
@@ -22,10 +21,13 @@ public class DistributedLock implements Lock {
      */
     private static final Logger logger = LoggerFactory.getLogger(DistributedLock.class);
 
-    private static final String lockKey = "UNIQUESUPPLYCHAIN";
+    @Resource
+    private String env;
+
+    private String lockKey = "UNIQUESUPPLYCHAIN";
 
     @Resource
-    private JedisProxyUtil jedisProxyUtil;
+    private JedisCluster jedisCluster;
 
     @Override
     public Boolean fetch(String key) {
@@ -35,15 +37,13 @@ public class DistributedLock implements Lock {
     @Override
     public Boolean fetch(String key, Long timeout) {
 
-        String fullKey = lockKey + key;
+        String fullKey = env + lockKey + key;
         /**
          * 尝试获取分布式锁，超时时间默认是轮询时间的1/2
          */
-        Jedis jedis = null;
         try {
             logger.debug("try lock key: " + key);
-            jedis = jedisProxyUtil.getJedis();
-            String ret = jedis.set(fullKey, fullKey, "NX", "PX", timeout);
+            String ret = jedisCluster.set(fullKey, fullKey, "NX", "PX", timeout);
             if (StringUtils.equalsIgnoreCase("OK", ret)) {
                 logger.info("get lock, key: " + fullKey + " , expire in " + timeout + " seconds.");
                 return Boolean.TRUE;
@@ -54,25 +54,13 @@ public class DistributedLock implements Lock {
         } catch (Exception e) {
             logger.error("fetch lock exception: ", e);
             return Boolean.FALSE;
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
     }
 
     @Override
     public void realease(String key) {
-        Jedis jedis = null;
-        try {
-            String fullKey = lockKey + key;
-            jedis = jedisProxyUtil.getJedis();
-            jedis.del(fullKey);
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
-        }
+        String fullKey = env + lockKey + key;
+        jedisCluster.del(fullKey);
     }
 
 }
