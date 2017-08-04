@@ -36,7 +36,7 @@ public class RouteReturnCode extends SCReturnCode{
     public final static int _C_SEND_FETCH_ROUTE_MSG_ERROR= 1081002;
     public final static RouteReturnCode REGIST_KD100_ROUTES_FAIL =  new RouteReturnCode("注册快递100失败",_C_REGIST_KD100_ROUTES_FAIL);
     public final static RouteReturnCode MAIL_NO_FIND_MULTI_STOCKOUT_ORDER =  new RouteReturnCode("根据运单号查出多个执行中的出库单",_C_MAIL_NO_FIND_MULTI_STOCKOUT_ORDER);
-    public final static RouteReturnCode SEND_FETCH_ROUTE_MSG_ERROR =  new RouteReturnCode("根据运单号查出多个执行中的出库单",_C_SEND_FETCH_ROUTE_MSG_ERROR);
+    public final static RouteReturnCode SEND_FETCH_ROUTE_MSG_ERROR =  new RouteReturnCode("路由获取消息发送异常",_C_SEND_FETCH_ROUTE_MSG_ERROR);
 
 
 

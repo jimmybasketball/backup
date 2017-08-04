@@ -31,7 +31,7 @@ public class KD100EventProcess implements MessageProcesser {
     public Boolean process(Message message) {
         LogBetter.instance(LOGGER)
                 .setLevel(LogLevel.INFO)
-                .setMsg("[供应链-订阅快递100]: 接收订阅快递100消息")
+                .setMsg("[物流平台路由-订阅快递100] 接收订阅快递100消息")
                 .addParm("消息内容", message)
                 .log();
         String bizId = (String) message.getUserProperties().get("bizId");
@@ -41,7 +41,7 @@ public class KD100EventProcess implements MessageProcesser {
 
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.INFO)
-                    .setMsg("[供应链-订阅快递100]: 结束")
+                    .setMsg("[物流平台路由-订阅快递100] 结束")
                     .addParm("commonRet", commonRet)
                     .addParm("消息内容", message)
                     .log();
@@ -49,7 +49,7 @@ public class KD100EventProcess implements MessageProcesser {
         } catch (Exception e) {
             LogBetter.instance(LOGGER)
                     .setLevel(LogLevel.WARN)
-                    .setErrorMsg("[供应链-订阅快递100失败]: " + e.getMessage())
+                    .setErrorMsg("[物流平台路由-订阅快递100] 异常")
                     .addParm("消息内容", message)
                     .addParm("订单ID", bizId)
                     .addParm("routeType", routeType)
