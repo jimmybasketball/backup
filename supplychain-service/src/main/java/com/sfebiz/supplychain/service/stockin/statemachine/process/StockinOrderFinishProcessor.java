@@ -8,6 +8,7 @@ import com.sfebiz.common.utils.log.TraceLogEntity;
 import com.sfebiz.supplychain.config.SystemConstants;
 import com.sfebiz.supplychain.exposed.common.code.WarehouseReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
+import com.sfebiz.supplychain.exposed.common.enums.BatchGeneratePlanType;
 import com.sfebiz.supplychain.exposed.stock.api.StockService;
 import com.sfebiz.supplychain.exposed.stock.entity.SkuBatchStockOperaterEntity;
 import com.sfebiz.supplychain.exposed.stock.entity.StockBatchEntity;
@@ -103,6 +104,10 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
                 stockinOrderDetailDOForUpdate = modelMapper.map(detailEntity, StockinOrderDetailDO.class);
                 stockinOrderDetailDOForUpdate.setRealDiffCount(stockinOrderDetailDOForUpdate.getCount() - stockinOrderDetailDOForUpdate.getRealCount() - stockinOrderDetailDOForUpdate.getBadRealCount());
                 // TODO: 2017/7/24 判断支持批次管理则更新批次号
+                if (stockinOrderDetailDOForUpdate.getBatchGeneratePlan().equals(BatchGeneratePlanType.STOCKIN_SAME.getValue())) {
+                    stockinOrderDetailDOForUpdate.setProductionDate(null);
+                    stockinOrderDetailDOForUpdate.setExpirationDate(null);
+                }
                 stockinOrderDetailManager.update(stockinOrderDetailDOForUpdate);
             }
             if (detailEntity.realCount > 0 || detailEntity.badRealCount > 0 ) {
@@ -135,6 +140,10 @@ public class StockinOrderFinishProcessor extends StockinAbstractProcessor{
             batchStockEntity.setStockinDate(stockinOrderDetailEntity.getStockinDate());
             batchStockEntity.setCount(stockinOrderDetailEntity.getRealCount());
             batchStockEntity.setWearCount(stockinOrderDetailEntity.getBadRealCount());
+            if (stockinOrderDetailEntity.getBatchGeneratePlan().equals(BatchGeneratePlanType.STOCKIN_SAME.getValue())) {
+                batchStockEntity.setExpirationDate(null);
+                batchStockEntity.setProductionDate(null);
+            }
             return batchStockEntity;
         }
         return null;
