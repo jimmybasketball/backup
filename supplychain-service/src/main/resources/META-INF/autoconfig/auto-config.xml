@@ -33,6 +33,12 @@
         <property name="com.sfebiz.supplychain.redisproxy.minIdle" description="最小闲置连接数，spring启动的时候自动建立该数目的连接供应用程序使用，不够的时候会申请。默认值为0" required="true"/>
         <property name="com.sfebiz.supplychain.redisproxy.timeout" description="读取redis的最长超时时间,单位为毫秒" required="true"/>
 
+
+        <property name="com.sfebiz.queue.accessKey" description="消息服务AK" required="true"/>
+        <property name="com.sfebiz.queue.secretKey" description="消息服务SK" required="true"/>
+        <property name="com.sfebiz.queue.supplychainEventRouteMessageProducerId" description="路由消息生产者ID" required="true"/>
+        <property name="com.sfebiz.queue.supplychainEventRouteMessageConsumerId" description="路由消息消费者ID" required="true"/>
+
     </group>
 
     <script>
