@@ -172,6 +172,7 @@ public class StockInServiceImpl implements StockInService{
             commonRet.setRetCode(StockInReturnCode._C_COMMON_FAIL);
             commonRet.setRetMsg(e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return commonRet;
         }
         commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
         commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
@@ -203,9 +204,9 @@ public class StockInServiceImpl implements StockInService{
             return commonRet;
         }
 
-        //1. 控制并发
-        if (distributedLock.fetch(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId)) {
-            try {
+        try {
+            //1. 控制并发
+            if (distributedLock.fetch(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId)) {
                 //1. 验证入库单是否存在
                 StockinOrderDO stockinOrderDO = checkStockinOrderById(stockinOrderId);
 
@@ -220,24 +221,29 @@ public class StockInServiceImpl implements StockInService{
                         .addParm("商品信息", stockinOrderDetailEntities)
                         .addParm("操作者", userName)
                         .log();
-            } catch (Exception e) {
-                LogBetter.instance(logger)
-                        .setLevel(LogLevel.ERROR)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId.toString(), SystemConstants.TRACE_APP))
-                        .setErrorMsg("[物流平台-更新入库单异常]")
-                        .addParm("入库单ID", stockinOrderId.toString())
-                        .addParm("商品信息", stockinOrderDetailEntities)
-                        .addParm("操作者", userName)
-                        .setException(e)
-                        .log();
-                commonRet.setRetCode(StockInReturnCode._C_COMMON_FAIL);
-                commonRet.setRetMsg(e.getMessage());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            } else {
+                commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+                commonRet.setRetMsg("[物流平台-更新入库单并发异常]");
                 return commonRet;
-            } finally {
-                distributedLock.realease(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId);
             }
+        } catch (Exception e) {
+            LogBetter.instance(logger)
+                    .setLevel(LogLevel.ERROR)
+                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId.toString(), SystemConstants.TRACE_APP))
+                    .setErrorMsg("[物流平台-更新入库单异常]")
+                    .addParm("入库单ID", stockinOrderId.toString())
+                    .addParm("商品信息", stockinOrderDetailEntities)
+                    .addParm("操作者", userName)
+                    .setException(e)
+                    .log();
+            commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+            commonRet.setRetMsg(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return commonRet;
+        } finally {
+            distributedLock.realease(UPDATE_STOCKIN_ORDER_SKUS_KEY + stockinOrderId);
         }
+
         commonRet.setRetCode(StockInReturnCode._C_COMMON_SUCCESS);
         return commonRet;
     }
@@ -654,7 +660,7 @@ public class StockInServiceImpl implements StockInService{
     }
 
     @Override
-    public CommonRet<Void> cancelStockinOrder(Long stockinOrderId, Long userId, String userName) throws ServiceException {
+    public CommonRet<Void> cancelStockinOrder(Long stockinOrderId, Long userId, String userName) {
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setMsg("[供应链-取消入库单]")
@@ -697,7 +703,9 @@ public class StockInServiceImpl implements StockInService{
                         StockinOrderActionType.STOCKIN_TO_CANCEL, stockinOrderDO, null, null, Operator.valueOf(userId, userName));
                 engineService.executeStateMachineEngine(stockinOrderRequest, false);
             } catch (ServiceException e) {
-                throw e;
+                commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+                commonRet.setRetMsg(e + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+                return commonRet;
             } catch (Exception e) {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.ERROR)
@@ -726,6 +734,11 @@ public class StockInServiceImpl implements StockInService{
             return commonRet;
         }
         return commonRet;
+    }
+
+    @Override
+    public CommonRet<Void> editStockinorderWarehouse(Long stockinorderId, Long warehouseId, String userName) {
+        return null;
     }
 
 

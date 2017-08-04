@@ -106,5 +106,14 @@ public interface StockInService {
      * @return
      * @throws ServiceException
      */
-    CommonRet<Void> cancelStockinOrder(Long stockinOrderId, Long userId, String userName) throws ServiceException;
+    CommonRet<Void> cancelStockinOrder(Long stockinOrderId, Long userId, String userName);
+
+    /**
+     * 修改入库单仓库
+     *
+     * @param stockinorderId 入库单ID
+     * @param warehouseId    仓库ID
+     * @throws ServiceException
+     */
+    CommonRet<Void> editStockinorderWarehouse(Long stockinorderId, Long warehouseId, String userName);
 }
