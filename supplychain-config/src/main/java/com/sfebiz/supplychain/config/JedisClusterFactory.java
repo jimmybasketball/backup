@@ -1,5 +1,6 @@
 package com.sfebiz.supplychain.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,17 +55,22 @@ public class JedisClusterFactory implements FactoryBean<JedisCluster>, Initializ
         try {
 
             Set<HostAndPort> haps = new HashSet<HostAndPort>();
-            for (String addresses : addresses.split(",")) {
+            if (StringUtils.isBlank(addresses)) {
+                throw new Exception("redisCluster addresses不能为空");
+            } else {
+                for (String addresses : addresses.split(",")) {
 
-                boolean isIpPort = p.matcher(addresses).matches();
+                    boolean isIpPort = p.matcher(addresses).matches();
 
-                if (!isIpPort) {
-                    throw new IllegalArgumentException("ip 或 port 不合法");
+                    if (!isIpPort) {
+                        throw new IllegalArgumentException("ip 或 port 不合法");
+                    }
+                    String[] ipAndPort = addresses.split(":");
+
+                    HostAndPort hap = new HostAndPort(ipAndPort[0], Integer.parseInt(ipAndPort[1]));
+                    haps.add(hap);
                 }
-                String[] ipAndPort = addresses.split(":");
 
-                HostAndPort hap = new HostAndPort(ipAndPort[0], Integer.parseInt(ipAndPort[1]));
-                haps.add(hap);
             }
 
             return haps;
