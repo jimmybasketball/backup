@@ -58,14 +58,14 @@ public class JedisClusterFactory implements FactoryBean<JedisCluster>, Initializ
             if (StringUtils.isBlank(addresses)) {
                 throw new Exception("redisCluster addresses不能为空");
             } else {
-                for (String addresses : addresses.split(",")) {
+                for (String address : addresses.split(",")) {
 
-                    boolean isIpPort = p.matcher(addresses).matches();
+                    boolean isIpPort = p.matcher(address).matches();
 
                     if (!isIpPort) {
                         throw new IllegalArgumentException("ip 或 port 不合法");
                     }
-                    String[] ipAndPort = addresses.split(":");
+                    String[] ipAndPort = address.split(":");
 
                     HostAndPort hap = new HostAndPort(ipAndPort[0], Integer.parseInt(ipAndPort[1]));
                     haps.add(hap);
