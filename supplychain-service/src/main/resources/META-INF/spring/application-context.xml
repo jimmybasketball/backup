@@ -51,7 +51,7 @@
         <property name="minIdle" value="${com.sfebiz.supplychain.rediscluster.minIdle}" />
     </bean >
     <!-- jedisCluster 集群 -->
-    <bean id="jedisCluster"  class="com.sfebiz.supplychain.config.JedisClusterFactory" >
+    <bean id="jedisCluster"  class="com.sfebiz.supplychain.config.JedisClusterFactory" destroy-method="closeJedisCluster" >
         <property name="addresses" value="${com.sfebiz.supplychain.rediscluster.server.addresses}" />
         <property name="timeout" value="${com.sfebiz.supplychain.rediscluster.timeout}" />
         <property name="maxRedirections" value="6" />

@@ -88,6 +88,11 @@ public class JedisClusterFactory implements FactoryBean<JedisCluster>, Initializ
         logger.info("jedisCluster init success!");
     }
 
+    public void closeJedisCluster() {
+        jedisCluster.close();
+        logger.info("jedisCluster has closed!");
+    }
+
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
