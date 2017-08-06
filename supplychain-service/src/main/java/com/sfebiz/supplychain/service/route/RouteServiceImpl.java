@@ -592,6 +592,34 @@ public class RouteServiceImpl implements RouteService {
         }
     }
 
+
+    /**
+     * 添加系统路由信息
+     *
+     * @param bizId
+     * @param content
+     * @param level
+     * @param eventTime
+     * @param opreator
+     * @return
+     */
+    @Override
+    @MethodParamValidate
+    public CommonRet<Void> appandSystemRoute(@ParamNotBlank("订单ID不能为空")String bizId, String content, String level, Date eventTime, String opreator) {
+
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+
+        LogisticsSystemRouteEntity logisticsSystemRouteEntity = new LogisticsSystemRouteEntity();
+        logisticsSystemRouteEntity.orderId = bizId;
+        logisticsSystemRouteEntity.content = content;
+        logisticsSystemRouteEntity.level = level;
+        logisticsSystemRouteEntity.eventTime = eventTime.getTime();
+        logisticsSystemRouteEntity.opreator = opreator;
+
+        return commonRet;
+    }
+
+
     /**
      * 判断列表是否包含指定关键字
      *

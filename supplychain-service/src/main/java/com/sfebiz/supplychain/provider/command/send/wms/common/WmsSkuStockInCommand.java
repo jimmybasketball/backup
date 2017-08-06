@@ -1,7 +1,6 @@
 package com.sfebiz.supplychain.provider.command.send.wms.common;
 
-import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
-import com.sfebiz.supplychain.exposed.common.entity.Void;
+import com.sfebiz.supplychain.provider.command.send.CommandResponse;
 import com.sfebiz.supplychain.provider.command.send.wms.WmsOrderSkuStockInCommand;
 import net.pocrd.entity.ServiceException;
 
@@ -12,7 +11,7 @@ public class WmsSkuStockInCommand extends WmsOrderSkuStockInCommand {
 
 
     @Override
-    protected CommonRet<Void> sendStockInCommandToWarehouse() throws ServiceException {
-        return new CommonRet<Void>();
+    protected CommandResponse sendStockInCommandToWarehouse() throws ServiceException {
+        return new CommandResponse();
     }
 }

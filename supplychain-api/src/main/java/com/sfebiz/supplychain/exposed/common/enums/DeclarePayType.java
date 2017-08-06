@@ -25,13 +25,11 @@ public class DeclarePayType extends Enumerable4StringValue{
 
     public static DeclarePayType ALIPAY = DeclarePayType.valueOf("ALIPAY", "支付宝");
 
-    public static DeclarePayType TENPAY = DeclarePayType.valueOf("TENPAY", "财付通");
-
-    public static DeclarePayType LIANLIANPAY = DeclarePayType.valueOf("LIANLIANPAY", "连连");
+    public static DeclarePayType TENPAY = DeclarePayType.valueOf("TENPAY", "财付通外卡");
 
     public static DeclarePayType YIHUIJINPAY = DeclarePayType.valueOf("YIHUIJINPAY", "易汇金");
 
-    public static DeclarePayType TENPAY_INTL = DeclarePayType.valueOf("TENPAY_INTL", "财付通");
+    public static DeclarePayType TENPAY_INTL = DeclarePayType.valueOf("TENPAY_INTL", "财付通内卡");
 
     public static DeclarePayType PTPAY = DeclarePayType.valueOf("PTPAY", "平潭");
 

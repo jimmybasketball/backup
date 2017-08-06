@@ -118,10 +118,10 @@ public class StockoutOrderBO extends BaseBO {
     private Long                        userId;
 
     /** 用户商品总金额 */
-    private String                      userGoodsPrice;
+    private Integer                     userGoodsPrice;
 
     /** 用户折扣金额 */
-    private String                      userDiscountPrice;
+    private Integer                     userDiscountPrice;
 
     /** 用户运费金额，单位分 */
     private Integer                     userFreightFee;
@@ -415,19 +415,19 @@ public class StockoutOrderBO extends BaseBO {
         this.declarePayerCertType = declarePayerCertType;
     }
 
-    public String getUserGoodsPrice() {
+    public Integer getUserGoodsPrice() {
         return userGoodsPrice;
     }
 
-    public void setUserGoodsPrice(String userGoodsPrice) {
+    public void setUserGoodsPrice(Integer userGoodsPrice) {
         this.userGoodsPrice = userGoodsPrice;
     }
 
-    public String getUserDiscountPrice() {
+    public Integer getUserDiscountPrice() {
         return userDiscountPrice;
     }
 
-    public void setUserDiscountPrice(String userDiscountPrice) {
+    public void setUserDiscountPrice(Integer userDiscountPrice) {
         this.userDiscountPrice = userDiscountPrice;
     }
 

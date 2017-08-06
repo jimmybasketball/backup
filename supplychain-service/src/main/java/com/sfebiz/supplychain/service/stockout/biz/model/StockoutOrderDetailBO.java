@@ -51,13 +51,14 @@ public class StockoutOrderDetailBO extends BaseBO {
     private String            currency;
 
     /** 商品名称 */
-    private String              skuName;
+    private String            skuName;
 
     /** 商品面单名称 */
-    private Long              skuBillName;
+    private String            skuBillName;
 
     /** 商品外文名称 */
-    private Long              skuForeignName;
+    private String            skuForeignName;
+
     /** 商品 */
     private String            brandName;
 
@@ -176,19 +177,19 @@ public class StockoutOrderDetailBO extends BaseBO {
         this.skuName = skuName;
     }
 
-    public Long getSkuBillName() {
+    public String getSkuBillName() {
         return skuBillName;
     }
 
-    public void setSkuBillName(Long skuBillName) {
+    public void setSkuBillName(String skuBillName) {
         this.skuBillName = skuBillName;
     }
 
-    public Long getSkuForeignName() {
+    public String getSkuForeignName() {
         return skuForeignName;
     }
 
-    public void setSkuForeignName(Long skuForeignName) {
+    public void setSkuForeignName(String skuForeignName) {
         this.skuForeignName = skuForeignName;
     }
 

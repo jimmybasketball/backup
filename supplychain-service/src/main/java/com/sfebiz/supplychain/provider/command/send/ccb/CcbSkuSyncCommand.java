@@ -2,8 +2,8 @@ package com.sfebiz.supplychain.provider.command.send.ccb;
 
 import com.sfebiz.supplychain.exposed.sku.entity.SkuEntity;
 import com.sfebiz.supplychain.exposed.warehouse.enums.WmsOperaterType;
-import com.sfebiz.supplychain.persistence.base.warehouse.domain.LogisticsProviderDetailDO;
 import com.sfebiz.supplychain.provider.command.AbstractCommand;
+import com.sfebiz.supplychain.service.lp.model.LogisticsProviderBO;
 
 import java.util.List;
 
@@ -18,13 +18,12 @@ public abstract class CcbSkuSyncCommand extends AbstractCommand {
     protected List<SkuEntity> skuEntities;
 
     /**
-     * 供应商信息
-     */
-    protected LogisticsProviderDetailDO logisticsProviderDetailDO;
-    /**
      * 同步失败的异常原因
      */
     protected String errorMessage;
+
+    protected LogisticsProviderBO logisticsProviderBO;
+
     /**
      * 同步类型，新增或者更新
      */
@@ -36,14 +35,6 @@ public abstract class CcbSkuSyncCommand extends AbstractCommand {
 
     public void setSkuEntities(List<SkuEntity> skuEntities) {
         this.skuEntities = skuEntities;
-    }
-
-    public LogisticsProviderDetailDO getLogisticsProviderDetailDO() {
-        return logisticsProviderDetailDO;
-    }
-
-    public void setLogisticsProviderDetailDO(LogisticsProviderDetailDO logisticsProviderDetailDO) {
-        this.logisticsProviderDetailDO = logisticsProviderDetailDO;
     }
 
     public WmsOperaterType getWmsOperaterType() {
@@ -60,5 +51,13 @@ public abstract class CcbSkuSyncCommand extends AbstractCommand {
 
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    public LogisticsProviderBO getLogisticsProviderBO() {
+        return logisticsProviderBO;
+    }
+
+    public void setLogisticsProviderBO(LogisticsProviderBO logisticsProviderBO) {
+        this.logisticsProviderBO = logisticsProviderBO;
     }
 }

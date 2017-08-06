@@ -157,7 +157,7 @@ public class BaofooPayOrderDeclareCommand extends PayOrderDeclareCommand {
         String response = null;
         try {
             // 宝付接口调用地址url
-            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);;
+            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);
             // 商户号：（商户在宝付注册时提供）
             String MEMBER_ID = getPartnerId("DEFAULT");
             // 终端号：（商户在宝付注册时提供）
@@ -299,7 +299,7 @@ public class BaofooPayOrderDeclareCommand extends PayOrderDeclareCommand {
         String response = null;
         try {
             // 宝付接口调用地址url
-            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);;
+            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);
             // 商户号：（商户在宝付注册时提供）
             String MEMBER_ID = getPartnerId("DEFAULT");
             // 终端号：（商户在宝付注册时提供）
@@ -440,7 +440,7 @@ public class BaofooPayOrderDeclareCommand extends PayOrderDeclareCommand {
         String response = null;
         try {
             // 宝付接口调用地址url
-            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);;
+            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);
             // 商户号：（商户在宝付注册时提供）
             String MEMBER_ID = getPartnerId("DEFAULT");
             // 终端号：（商户在宝付注册时提供）
@@ -531,7 +531,7 @@ public class BaofooPayOrderDeclareCommand extends PayOrderDeclareCommand {
         String response = null;
         try {
             // 宝付接口调用地址url
-            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);;
+            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);
             // 商户号：（商户在宝付注册时提供）
             String MEMBER_ID = getPartnerId("DEFAULT");
             // 终端号：（商户在宝付注册时提供）

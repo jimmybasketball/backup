@@ -38,6 +38,8 @@ public final class DateUtil {
 
     public static final String DATE_PATTERN_UNDEF = "yyyyMMdd";
 
+    public static final String DATETIME_FORMAT                        = "yyyy-MM-dd HH:mm:ss";
+
     /**
      * 方法说明：获得指定格式当前系统时间字符串
      *

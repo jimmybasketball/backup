@@ -141,7 +141,7 @@ public class YijifuPayOrderDeclareCommand extends PayOrderDeclareCommand {
         String response = null;
         try {
             // 易极付接口调用地址url
-            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);;
+            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);
             // 易极付的创建交易的支付是由公司国内的账户向国际的账户付款
             // 查询的商户id
             String partnerIdQuery = getPartnerId("query");
@@ -210,7 +210,7 @@ public class YijifuPayOrderDeclareCommand extends PayOrderDeclareCommand {
         String response = null;
         try {
             // 易极付接口调用地址url
-            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);;
+            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);
             // 易极付的创建交易的支付是由公司国内的账户向国际的账户付款
             // 国内的商户id
             String partnerIdDomestic = getPartnerId("domestic");
@@ -322,7 +322,7 @@ public class YijifuPayOrderDeclareCommand extends PayOrderDeclareCommand {
         String response = null;
         try {
             // 易极付接口调用地址url
-            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);;
+            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);
             // 易极付的创建交易的支付是由公司国内的账户向国际的账户付款
             // 国内的商户id
             String partnerIdDomestic = getPartnerId("domestic");
@@ -395,7 +395,7 @@ public class YijifuPayOrderDeclareCommand extends PayOrderDeclareCommand {
         String response = null;
         try {
             // 易极付接口调用地址url
-            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);;
+            String url = PayConfig.getPayProviderInterfaceUrl(payBillDeclareProviderNid);
             // 易极付的创建交易的支付是由公司国内的账户向国际的账户付款
             // 申报的商户id
             String partnerIdDeclare = getPartnerId("declare");

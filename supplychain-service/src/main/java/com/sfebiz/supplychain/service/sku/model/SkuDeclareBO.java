@@ -206,6 +206,11 @@ public class SkuDeclareBO implements Serializable {
      */
     private String secondWeight;
 
+    /**
+     * 单个条码
+     */
+    private String singleBarCode;
+
 
     public Long getSkuId() {
         return skuId;
@@ -517,6 +522,14 @@ public class SkuDeclareBO implements Serializable {
 
     public void setSecondWeight(String secondWeight) {
         this.secondWeight = secondWeight;
+    }
+
+    public String getSingleBarCode() {
+        return singleBarCode;
+    }
+
+    public void setSingleBarCode(String singleBarCode) {
+        this.singleBarCode = singleBarCode;
     }
 
     public String toString() {
