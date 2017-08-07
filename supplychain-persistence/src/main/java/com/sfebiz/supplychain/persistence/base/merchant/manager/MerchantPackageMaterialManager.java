@@ -69,9 +69,8 @@ public class MerchantPackageMaterialManager extends BaseManager<MerchantPackageM
     }
 
     public static void main(String[] args) {
-        DaoHelper.genXMLWithFeature("/Users/liujunchi/git_projects/" +
-                        "supplychain/supplychain-persistence/" +
-                        "src/main/resources/base/sqlmap/merchant/sc_merchant_package_material_sqlmap.xml",
+        DaoHelper.genXMLWithFeature("D:/development/IDEA/ifunq-supplychain/haitao-b2b-supplychain/" +
+                        "supplychain-persistence/src/main/resources/base/sqlmap/merchant/sc_merchant_package_material_sqlmap.xml",
                 MerchantPackageMaterialDao.class,
                 MerchantPackageMaterialDO.class,
                 "sc_merchant_package_material");

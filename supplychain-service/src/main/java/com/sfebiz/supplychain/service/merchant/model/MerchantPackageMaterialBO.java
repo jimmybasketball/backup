@@ -42,7 +42,6 @@ public class MerchantPackageMaterialBO extends BaseBO{
      */
     private String nbShopNumber;
 
-
     /**
      * 品牌的Logo（头部）（图片路径）
      * 示例：http://img0.fengqucdn.com/logo/fq-logo.png
