@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -65,6 +66,12 @@ public class StockoutOrderDeclarePriceBO extends BaseBO {
 
     /** 出库单申报明细 */
     private List<StockoutOrderDeclarePriceDetailBO> declarePriceDetailBOS;
+
+    /**
+     * 出库单商品申报价格
+     */
+    private Map<Long,Integer> stockoutOrderSkuDeclareMap;
+
 
     public Long getStockoutOrderId() {
         return stockoutOrderId;
@@ -192,6 +199,14 @@ public class StockoutOrderDeclarePriceBO extends BaseBO {
 
     public void setDeclarePriceDetailBOS(List<StockoutOrderDeclarePriceDetailBO> declarePriceDetailBOS) {
         this.declarePriceDetailBOS = declarePriceDetailBOS;
+    }
+
+    public Map<Long, Integer> getStockoutOrderSkuDeclareMap() {
+        return stockoutOrderSkuDeclareMap;
+    }
+
+    public void setStockoutOrderSkuDeclareMap(Map<Long, Integer> stockoutOrderSkuDeclareMap) {
+        this.stockoutOrderSkuDeclareMap = stockoutOrderSkuDeclareMap;
     }
 
     /**

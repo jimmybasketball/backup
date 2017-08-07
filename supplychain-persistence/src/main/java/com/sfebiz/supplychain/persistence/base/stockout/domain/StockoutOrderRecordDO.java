@@ -1,11 +1,10 @@
 package com.sfebiz.supplychain.persistence.base.stockout.domain;
 
-import java.util.Date;
-
+import com.sfebiz.common.dao.domain.BaseDO;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.sfebiz.common.dao.domain.BaseDO;
+import java.util.Date;
 
 /**
  * 
@@ -81,6 +80,9 @@ public class StockoutOrderRecordDO extends BaseDO {
 
     /** 海外仓出库时间 */
     private Date              overseasWarehouseStockoutTime;
+
+    /** 包裹的物流状态标识，描述包裹的物流流转情况（参照LogisticsState枚举） */
+    private Integer            logisticsState;
 
     /** 商户运单号 */
     private String            merchantMailNo;
@@ -260,6 +262,14 @@ public class StockoutOrderRecordDO extends BaseDO {
 
     public void setOverseasWarehouseStockoutTime(Date overseasWarehouseStockoutTime) {
         this.overseasWarehouseStockoutTime = overseasWarehouseStockoutTime;
+    }
+
+    public Integer getLogisticsState() {
+        return logisticsState;
+    }
+
+    public void setLogisticsState(Integer logisticsState) {
+        this.logisticsState = logisticsState;
     }
 
     public String getMerchantMailNo() {

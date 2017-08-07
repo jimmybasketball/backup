@@ -1,9 +1,9 @@
 package com.sfebiz.supplychain.service.stockout.biz.model;
 
-import java.util.Date;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Date;
 
 /**
  * 
@@ -79,6 +79,9 @@ public class StockoutOrderRecordBO extends BaseBO {
 
     /** 海外仓出库时间 */
     private Date              overseasWarehouseStockoutTime;
+
+    /** 包裹的物流状态标识，描述包裹的物流流转情况（参照LogisticsState枚举） */
+    private Integer            logisticsState;
 
     /** 商户运单号 */
     private String            merchantMailNo;
@@ -258,6 +261,14 @@ public class StockoutOrderRecordBO extends BaseBO {
 
     public void setOverseasWarehouseStockoutTime(Date overseasWarehouseStockoutTime) {
         this.overseasWarehouseStockoutTime = overseasWarehouseStockoutTime;
+    }
+
+    public Integer getLogisticsState() {
+        return logisticsState;
+    }
+
+    public void setLogisticsState(Integer logisticsState) {
+        this.logisticsState = logisticsState;
     }
 
     public String getMerchantMailNo() {

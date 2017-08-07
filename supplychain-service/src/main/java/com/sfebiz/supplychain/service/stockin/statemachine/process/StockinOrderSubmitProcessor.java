@@ -19,13 +19,19 @@ import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManage
 import com.sfebiz.supplychain.provider.command.CommandFactory;
 import com.sfebiz.supplychain.provider.command.ProviderCommand;
 import com.sfebiz.supplychain.provider.command.send.wms.WmsOrderSkuStockInCommand;
+import com.sfebiz.supplychain.service.stockin.modle.StockinOrderBO;
+import com.sfebiz.supplychain.service.stockin.modle.StockinOrderDetailBO;
 import com.sfebiz.supplychain.service.stockin.modle.StockinOrderRequest;
+import com.sfebiz.supplychain.service.warehouse.model.WarehouseBO;
 import net.pocrd.entity.ServiceException;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +40,7 @@ import java.util.List;
  */
 @Component("stockinOrderSubmitProcessor")
 public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
-
+    private final static ModelMapper modelMapper = new ModelMapper();
     private static Logger logger = LoggerFactory.getLogger(StockinOrderSubmitProcessor.class);
 
     @Resource
@@ -116,10 +122,27 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
         String version = "0";
         String key = "supplychain.event.wms.skustockin";
         cmd = CommandFactory.createCommand(version, key);
+
+        StockinOrderBO stockinOrderBO = new StockinOrderBO();
+        BeanCopier beanCopier = BeanCopier.create(StockinOrderDO.class, StockinOrderBO.class, false);
+        beanCopier.copy(stockinOrderBO, stockinOrderDO, null);
+
+        WarehouseBO warehouseBO = new WarehouseBO();
+        beanCopier = BeanCopier.create(WarehouseDO.class, WarehouseBO.class, false);
+        beanCopier.copy(warehouseBO, warehouseDO, null);
+
+        List<StockinOrderDetailBO> stockinOrderDetailBOs = new ArrayList<StockinOrderDetailBO>();
+        for (StockinOrderDetailDO stockinOrderDetailDO : stockinOrderDetailDOs) {
+            StockinOrderDetailBO stockinOrderDetailBO = new StockinOrderDetailBO();
+            beanCopier = BeanCopier.create(StockinOrderDetailDO.class, StockinOrderDetailBO.class, false);
+            beanCopier.copy(stockinOrderDetailBO, stockinOrderDetailDO, null);
+            stockinOrderDetailBOs.add(stockinOrderDetailBO);
+        }
+
         WmsOrderSkuStockInCommand wmsOrderSkuStockInCommand = (WmsOrderSkuStockInCommand) cmd;
-        wmsOrderSkuStockInCommand.setStockinOrderDetailDOs(stockinOrderDetailDOs);
-        wmsOrderSkuStockInCommand.setStockinOrderDO(stockinOrderDO);
-        wmsOrderSkuStockInCommand.setWarehouseDO(warehouseDO);
+        wmsOrderSkuStockInCommand.setStockinOrderDetailBOs(stockinOrderDetailBOs);
+        wmsOrderSkuStockInCommand.setStockinOrderBO(stockinOrderBO);
+        wmsOrderSkuStockInCommand.setWarehouseBO(warehouseBO);
 
         return wmsOrderSkuStockInCommand;
     }

@@ -1,13 +1,13 @@
 package com.sfebiz.supplychain.util;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NumberUtil {
 
@@ -97,6 +97,16 @@ public class NumberUtil {
         }
 
         return def;
+    }
+
+    /**
+     * 默认将分转换为元，并保留两位有效数字，如果为0，直接返回0
+     *
+     * @param priceOnFeng 金额（分）
+     * @return
+     */
+    public static String defaultParsePriceFeng2Yuan(Integer priceOnFeng) {
+        return  defaultParsePriceFeng2Yuan(priceOnFeng, 2);
     }
 
     /**

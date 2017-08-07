@@ -5,6 +5,7 @@ import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.route.entity.LogisticsSystemRouteEntity;
 import com.sfebiz.supplychain.exposed.route.entity.LogisticsUserRouteEntity;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,6 +61,7 @@ public interface RouteService {
      * @return
      */
     public CommonRet<Void> appandSystemRoute(LogisticsSystemRouteEntity logisticsSystemRouteEntity);
+    public CommonRet<Void> appandSystemRoute(String bizId, String content, String level, Date eventTime, String opreator);
 
 
     /**

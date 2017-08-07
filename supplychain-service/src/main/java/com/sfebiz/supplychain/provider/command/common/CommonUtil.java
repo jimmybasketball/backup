@@ -1,9 +1,12 @@
 package com.sfebiz.supplychain.provider.command.common;
 
+import com.alibaba.fastjson.JSON;
 import com.sfebiz.supplychain.config.lp.LogisticsProviderConfig;
+import com.sfebiz.supplychain.exposed.stockout.entity.LogisticsClearanceDetailEntity;
 import com.sfebiz.supplychain.protocol.bsp.*;
 import com.sfebiz.supplychain.provider.biz.ProviderBizService;
 import com.sfebiz.supplychain.provider.entity.BspServiceCode;
+import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDetailBO;
 import com.sfebiz.supplychain.util.JSONUtil;
@@ -250,36 +253,35 @@ public class CommonUtil {
      * >这里面的清关供应商除了完成清关外，并完成国内的包裹配送。
      *
      * @param line
-     * @param stockoutOrderDO
+     * @param stockoutOrderBO
      * @return
      */
-//    public static LogisticsClearanceDetailEntity buildClearanceDetailEntity(LineEntity line, StockoutOrderDO stockoutOrderDO) {
-//        if (line == null || stockoutOrderDO == null) {
-//            throw new IllegalArgumentException("路线或者出库单不能为空");
-//        }
-//        if (StringUtils.isBlank(line.routeCode)) {
-//            throw new IllegalArgumentException("路线中RouteCode不能为空");
-//        }
-//        LogisticsClearanceDetailEntity clearanceDetailEntity = new LogisticsClearanceDetailEntity();
-//        clearanceDetailEntity.orderId = stockoutOrderDO.getBizId();
-//        clearanceDetailEntity.carrierCode = line.routeCode;
-//        clearanceDetailEntity.mailNo = stockoutOrderDO.getMailNo();
+    public static LogisticsClearanceDetailEntity buildClearanceDetailEntity(LogisticsLineBO line, StockoutOrderBO stockoutOrderBO) {
+        if (line == null || stockoutOrderBO == null) {
+            throw new IllegalArgumentException("路线或者出库单不能为空");
+        }
+        if (StringUtils.isBlank(line.getRouteCode())) {
+            throw new IllegalArgumentException("路线中RouteCode不能为空");
+        }
+        LogisticsClearanceDetailEntity clearanceDetailEntity = new LogisticsClearanceDetailEntity();
+        clearanceDetailEntity.orderId = stockoutOrderBO.getBizId();
+        clearanceDetailEntity.carrierCode = line.getRouteCode();
+        clearanceDetailEntity.mailNo = stockoutOrderBO.getIntrMailNo();
 //        clearanceDetailEntity.shipperCode = stockoutOrderDO.getOrigincode();
-//        clearanceDetailEntity.deliveryCode = stockoutOrderDO.getDestcode();
-//        clearanceDetailEntity.senderAddress = line.warehouseEntity.senderAddress;
+        clearanceDetailEntity.deliveryCode = stockoutOrderBO.getDestcode();
+        clearanceDetailEntity.senderAddress = line.getWarehouseBO().getSenderBO().getSenderAddress();
 //        clearanceDetailEntity.custId = line.custId;
-//        clearanceDetailEntity.payMethod = "寄付月结";
-//
-//        if (line.clearanceProviderEntity != null && StringUtils.isNotBlank(line.clearanceProviderEntity.meta)) {
-//            String meta = line.clearanceProviderEntity.meta;
-//            Map<String, String> metaMap = JSON.parseObject(meta, Map.class);
-//            if (null != meta) {
-//                clearanceDetailEntity.logo = metaMap.get("logo");
-//            }
-//        }
-//
-//        return clearanceDetailEntity;
-//    }
+        clearanceDetailEntity.payMethod = "寄付月结";
+        if (line.getClearanceLogisticsProviderBO() != null && StringUtils.isNotBlank(line.getClearanceLogisticsProviderBO().getInterfaceMeta().get("meta"))) {
+            String meta = line.getClearanceLogisticsProviderBO().getInterfaceMeta().get("meta");
+            Map<String, String> metaMap = JSON.parseObject(meta, Map.class);
+            if (null != meta) {
+                clearanceDetailEntity.logo = metaMap.get("logo");
+            }
+        }
+
+        return clearanceDetailEntity;
+    }
 
 
     /**

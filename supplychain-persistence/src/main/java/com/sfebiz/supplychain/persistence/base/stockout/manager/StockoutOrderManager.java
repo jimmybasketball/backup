@@ -2,6 +2,7 @@ package com.sfebiz.supplychain.persistence.base.stockout.manager;
 
 import com.sfebiz.common.dao.BaseDao;
 import com.sfebiz.common.dao.domain.BaseQuery;
+import com.sfebiz.common.dao.domain.UpdateByQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.exposed.common.code.RouteReturnCode;
@@ -155,6 +156,47 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
         }
 
         stockoutOrderDao.update(update);
+    }
+
+    /**
+     * 更新出库单计费重量
+     *
+     * @param stockoutOrderId
+     * @param calWeight 计费重量 g为单位
+     * @return
+     *
+     * @author tanzx [tanzongxi@ifunq.com]
+     * @date 2017/8/6 22:51
+     */
+    public int updateCalWeight(long stockoutOrderId, int calWeight) {
+        StockoutOrderDO stockoutOrderDO = new StockoutOrderDO();
+        stockoutOrderDO.setId(stockoutOrderId);
+        BaseQuery<StockoutOrderDO> q = BaseQuery.getInstance(stockoutOrderDO);
+        StockoutOrderDO e = new StockoutOrderDO();
+        e.setActualWeight(calWeight);
+        e.setCalWeight(calWeight);
+        UpdateByQuery<StockoutOrderDO> up = new UpdateByQuery<StockoutOrderDO>(q, e);
+        return this.updateByQuery(up);
+    }
+
+    /**
+     * 更新出库单国内运单号
+     *
+     * @param stockoutOrderId
+     * @param intrMailNo
+     * @return
+     *
+     * @author tanzx [tanzongxi@ifunq.com]
+     * @date 2017/8/6 22:51
+     */
+    public int updateMailNo(long stockoutOrderId, String intrMailNo) {
+        StockoutOrderDO stockoutOrderDO = new StockoutOrderDO();
+        stockoutOrderDO.setId(stockoutOrderId);
+        BaseQuery<StockoutOrderDO> q = BaseQuery.getInstance(stockoutOrderDO);
+        StockoutOrderDO e = new StockoutOrderDO();
+        e.setIntrMailNo(intrMailNo);
+        UpdateByQuery<StockoutOrderDO> up = new UpdateByQuery<StockoutOrderDO>(q, e);
+        return this.updateByQuery(up);
     }
 
     public static void main(String[] args) {

@@ -4,72 +4,121 @@
 
 <resultMap id="merchantPackageMaterialDOResult" type="com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantPackageMaterialDO">
     <result column="id" property="id"/>
+    <result column="package_material_type" property="packageMaterialType"/>
+    <result column="sender_telephone" property="senderTelephone"/>
+    <result column="nb_shop_number" property="nbShopNumber"/>
+    <result column="header_logo" property="headerLogo"/>
+    <result column="route_id" property="routeId"/>
     <result column="merchant_id" property="merchantId"/>
+    <result column="pdf_sender_name" property="pdfSenderName"/>
+    <result column="is_master" property="isMaster"/>
+    <result column="gmt_modified" property="gmtModified"/>
+    <result column="footer_advert" property="footerAdvert"/>
+    <result column="gmt_create" property="gmtCreate"/>
+    <result column="header_title" property="headerTitle"/>
+    <result column="footer_desc" property="footerDesc"/>
     <result column="order_source" property="orderSource"/>
     <result column="sender_name" property="senderName"/>
-    <result column="sender_telephone" property="senderTelephone"/>
-    <result column="package_material_type" property="packageMaterialType"/>
-    <result column="nb_shop_number" property="nbShopNumber"/>
-    <result column="gmt_create" property="gmtCreate"/>
-    <result column="gmt_modified" property="gmtModified"/>
 </resultMap>
 
 <sql id="merchantPackageMaterialDO_columns">
     id,
-    merchant_id,
-    order_source,
-    sender_name,
-    sender_telephone,
     package_material_type,
+    sender_telephone,
     nb_shop_number,
+    header_logo,
+    route_id,
+    merchant_id,
+    pdf_sender_name,
+    is_master,
+    gmt_modified,
+    footer_advert,
     gmt_create,
-    gmt_modified
+    header_title,
+    footer_desc,
+    order_source,
+    sender_name
 </sql>
 
 <sql id="merchantPackageMaterialDO_sqlForInsert">
     id,
-    merchant_id,
-    order_source,
-    sender_name,
-    sender_telephone,
     package_material_type,
+    sender_telephone,
     nb_shop_number,
+    header_logo,
+    route_id,
+    merchant_id,
+    pdf_sender_name,
+    is_master,
+    gmt_modified,
+    footer_advert,
     gmt_create,
-    gmt_modified
+    header_title,
+    footer_desc,
+    order_source,
+    sender_name
 </sql>
 
 <sql id="merchantPackageMaterialDO_columnsForInsert">
     #{id},
-    #{merchantId},
-    #{orderSource},
-    #{senderName},
-    #{senderTelephone},
     #{packageMaterialType},
+    #{senderTelephone},
     #{nbShopNumber},
+    #{headerLogo},
+    #{routeId},
+    #{merchantId},
+    #{pdfSenderName},
+    #{isMaster},
     now(),
-    now()
+    #{footerAdvert},
+    now(),
+    #{headerTitle},
+    #{footerDesc},
+    #{orderSource},
+    #{senderName}
 </sql>
 
 <sql id="merchantPackageMaterialDO_setterForUpdate">
     <set>
         gmt_modified = now(),
+        <if test="packageMaterialType != null">
+            package_material_type = #{packageMaterialType},
+        </if>
+        <if test="senderTelephone != null">
+            sender_telephone = #{senderTelephone},
+        </if>
+        <if test="nbShopNumber != null">
+            nb_shop_number = #{nbShopNumber},
+        </if>
+        <if test="headerLogo != null">
+            header_logo = #{headerLogo},
+        </if>
+        <if test="routeId != null">
+            route_id = #{routeId},
+        </if>
         <if test="merchantId != null">
             merchant_id = #{merchantId},
+        </if>
+        <if test="pdfSenderName != null">
+            pdf_sender_name = #{pdfSenderName},
+        </if>
+        <if test="isMaster != null">
+            is_master = #{isMaster},
+        </if>
+        <if test="footerAdvert != null">
+            footer_advert = #{footerAdvert},
+        </if>
+        <if test="headerTitle != null">
+            header_title = #{headerTitle},
+        </if>
+        <if test="footerDesc != null">
+            footer_desc = #{footerDesc},
         </if>
         <if test="orderSource != null">
             order_source = #{orderSource},
         </if>
         <if test="senderName != null">
             sender_name = #{senderName},
-        </if>
-        <if test="senderTelephone != null">
-            sender_telephone = #{senderTelephone},
-        </if>
-        <if test="packageMaterialType != null">
-            package_material_type = #{packageMaterialType},
-        </if>
-        <if test="nbShopNumber != null">
-            nb_shop_number = #{nbShopNumber},
         </if>
     </set>
 </sql>
@@ -85,29 +134,50 @@
         <if test="data.id != null">
             AND id = #{data.id}
         </if>
+        <if test="data.packageMaterialType != null">
+            AND package_material_type = #{data.packageMaterialType}
+        </if>
+        <if test="data.senderTelephone != null">
+            AND sender_telephone = #{data.senderTelephone}
+        </if>
+        <if test="data.nbShopNumber != null">
+            AND nb_shop_number = #{data.nbShopNumber}
+        </if>
+        <if test="data.headerLogo != null">
+            AND header_logo = #{data.headerLogo}
+        </if>
+        <if test="data.routeId != null">
+            AND route_id = #{data.routeId}
+        </if>
         <if test="data.merchantId != null">
             AND merchant_id = #{data.merchantId}
+        </if>
+        <if test="data.pdfSenderName != null">
+            AND pdf_sender_name = #{data.pdfSenderName}
+        </if>
+        <if test="data.isMaster != null">
+            AND is_master = #{data.isMaster}
+        </if>
+        <if test="data.gmtModified != null">
+            AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="data.footerAdvert != null">
+            AND footer_advert = #{data.footerAdvert}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
+        </if>
+        <if test="data.headerTitle != null">
+            AND header_title = #{data.headerTitle}
+        </if>
+        <if test="data.footerDesc != null">
+            AND footer_desc = #{data.footerDesc}
         </if>
         <if test="data.orderSource != null">
             AND order_source = #{data.orderSource}
         </if>
         <if test="data.senderName != null">
             AND sender_name = #{data.senderName}
-        </if>
-        <if test="data.senderTelephone != null">
-            AND sender_telephone = #{data.senderTelephone}
-        </if>
-        <if test="data.packageMaterialType != null">
-            AND package_material_type = #{data.packageMaterialType}
-        </if>
-        <if test="data.nbShopNumber != null">
-            AND nb_shop_number = #{data.nbShopNumber}
-        </if>
-        <if test="data.gmtCreate != null">
-            AND gmt_create = #{data.gmtCreate}
-        </if>
-        <if test="data.gmtModified != null">
-            AND gmt_modified = #{data.gmtModified}
         </if>
         <if test="ins != null and ins != ''">
             AND
@@ -136,7 +206,7 @@
         <if test="notEquals != null and notEquals != ''">
             AND
             <foreach collection="notEquals" item="item" open="(" separator="and" close=")">
-                ${item.column} != #{item.value}
+                ${item.column} = #{item.value}
             </foreach>
         </if>
         <if test="lts != null and lts != ''">
@@ -205,23 +275,44 @@
     update sc_merchant_package_material
     <set>
         gmt_modified = now(),
+        <if test="update.packageMaterialType != null">
+            package_material_type = #{update.packageMaterialType},
+        </if>
+        <if test="update.senderTelephone != null">
+            sender_telephone = #{update.senderTelephone},
+        </if>
+        <if test="update.nbShopNumber != null">
+            nb_shop_number = #{update.nbShopNumber},
+        </if>
+        <if test="update.headerLogo != null">
+            header_logo = #{update.headerLogo},
+        </if>
+        <if test="update.routeId != null">
+            route_id = #{update.routeId},
+        </if>
         <if test="update.merchantId != null">
             merchant_id = #{update.merchantId},
+        </if>
+        <if test="update.pdfSenderName != null">
+            pdf_sender_name = #{update.pdfSenderName},
+        </if>
+        <if test="update.isMaster != null">
+            is_master = #{update.isMaster},
+        </if>
+        <if test="update.footerAdvert != null">
+            footer_advert = #{update.footerAdvert},
+        </if>
+        <if test="update.headerTitle != null">
+            header_title = #{update.headerTitle},
+        </if>
+        <if test="update.footerDesc != null">
+            footer_desc = #{update.footerDesc},
         </if>
         <if test="update.orderSource != null">
             order_source = #{update.orderSource},
         </if>
         <if test="update.senderName != null">
             sender_name = #{update.senderName},
-        </if>
-        <if test="update.senderTelephone != null">
-            sender_telephone = #{update.senderTelephone},
-        </if>
-        <if test="update.packageMaterialType != null">
-            package_material_type = #{update.packageMaterialType},
-        </if>
-        <if test="update.nbShopNumber != null">
-            nb_shop_number = #{update.nbShopNumber},
         </if>
     </set>
     <include refid="merchantPackageMaterialDO_query_segment"/>
@@ -242,23 +333,44 @@
     on duplicate key update
     gmt_modified = now()
     ,is_delete = 0
+    <if test="packageMaterialType != null">
+        ,package_material_type = #{packageMaterialType}
+    </if>
+    <if test="senderTelephone != null">
+        ,sender_telephone = #{senderTelephone}
+    </if>
+    <if test="nbShopNumber != null">
+        ,nb_shop_number = #{nbShopNumber}
+    </if>
+    <if test="headerLogo != null">
+        ,header_logo = #{headerLogo}
+    </if>
+    <if test="routeId != null">
+        ,route_id = #{routeId}
+    </if>
     <if test="merchantId != null">
         ,merchant_id = #{merchantId}
+    </if>
+    <if test="pdfSenderName != null">
+        ,pdf_sender_name = #{pdfSenderName}
+    </if>
+    <if test="isMaster != null">
+        ,is_master = #{isMaster}
+    </if>
+    <if test="footerAdvert != null">
+        ,footer_advert = #{footerAdvert}
+    </if>
+    <if test="headerTitle != null">
+        ,header_title = #{headerTitle}
+    </if>
+    <if test="footerDesc != null">
+        ,footer_desc = #{footerDesc}
     </if>
     <if test="orderSource != null">
         ,order_source = #{orderSource}
     </if>
     <if test="senderName != null">
         ,sender_name = #{senderName}
-    </if>
-    <if test="senderTelephone != null">
-        ,sender_telephone = #{senderTelephone}
-    </if>
-    <if test="packageMaterialType != null">
-        ,package_material_type = #{packageMaterialType}
-    </if>
-    <if test="nbShopNumber != null">
-        ,nb_shop_number = #{nbShopNumber}
     </if>
 </insert>
 

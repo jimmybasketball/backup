@@ -1,11 +1,10 @@
 package com.sfebiz.supplychain.persistence.base.stockout.domain;
 
-import java.util.Date;
-
+import com.sfebiz.common.dao.domain.BaseDO;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.sfebiz.common.dao.domain.BaseDO;
+import java.util.Date;
 
 /**
  * 
@@ -111,10 +110,10 @@ public class StockoutOrderDO extends BaseDO {
     private String            declarePayerCertType;
 
     /** 用户商品总金额 */
-    private String            userGoodsPrice;
+    private Integer           userGoodsPrice;
 
     /** 用户折扣金额 */
-    private String            userDiscountPrice;
+    private Integer           userDiscountPrice;
 
     /** 用户运费金额，单位分 */
     private Integer           userFreightFee;
@@ -371,19 +370,19 @@ public class StockoutOrderDO extends BaseDO {
         this.declarePayerCertType = declarePayerCertType;
     }
 
-    public String getUserGoodsPrice() {
+    public Integer getUserGoodsPrice() {
         return userGoodsPrice;
     }
 
-    public void setUserGoodsPrice(String userGoodsPrice) {
+    public void setUserGoodsPrice(Integer userGoodsPrice) {
         this.userGoodsPrice = userGoodsPrice;
     }
 
-    public String getUserDiscountPrice() {
+    public Integer getUserDiscountPrice() {
         return userDiscountPrice;
     }
 
-    public void setUserDiscountPrice(String userDiscountPrice) {
+    public void setUserDiscountPrice(Integer userDiscountPrice) {
         this.userDiscountPrice = userDiscountPrice;
     }
 

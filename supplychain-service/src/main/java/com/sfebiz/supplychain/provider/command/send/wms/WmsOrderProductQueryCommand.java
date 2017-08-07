@@ -1,8 +1,8 @@
 package com.sfebiz.supplychain.provider.command.send.wms;
 
 import com.sfebiz.supplychain.exposed.sku.entity.SkuEntity;
-import com.sfebiz.supplychain.persistence.base.warehouse.domain.LogisticsProviderDetailDO;
 import com.sfebiz.supplychain.provider.command.AbstractCommand;
+import com.sfebiz.supplychain.service.lp.model.LogisticsProviderBO;
 
 /**
  * User: <a href="mailto:lenolix@163.com">李星</a>
@@ -25,7 +25,7 @@ public abstract class WmsOrderProductQueryCommand extends AbstractCommand {
     /**
      * 仓库供应商信息
      */
-    private LogisticsProviderDetailDO logisticsProviderDetailDO;
+    private LogisticsProviderBO logisticsProviderBO;
 
     public Long getSkuId() {
         return skuId;
@@ -43,11 +43,11 @@ public abstract class WmsOrderProductQueryCommand extends AbstractCommand {
         this.skuEntity = skuEntity;
     }
 
-    public LogisticsProviderDetailDO getLogisticsProviderDetailDO() {
-        return logisticsProviderDetailDO;
+    public LogisticsProviderBO getLogisticsProviderBO() {
+        return logisticsProviderBO;
     }
 
-    public void setLogisticsProviderDetailDO(LogisticsProviderDetailDO logisticsProviderDetailDO) {
-        this.logisticsProviderDetailDO = logisticsProviderDetailDO;
+    public void setLogisticsProviderBO(LogisticsProviderBO logisticsProviderBO) {
+        this.logisticsProviderBO = logisticsProviderBO;
     }
 }

@@ -51,13 +51,13 @@ public class StockoutOrderDetailDO extends BaseDO {
     private String            currency;
 
     /** 商品名称 */
-    private Long              skuName;
+    private String            skuName;
 
     /** 商品面单名称 */
-    private Long              skuBillName;
+    private String            skuBillName;
 
     /** 商品外文名称 */
-    private Long              skuForeignName;
+    private String            skuForeignName;
     /** 商品 */
     private String            brandName;
 
@@ -162,27 +162,27 @@ public class StockoutOrderDetailDO extends BaseDO {
         this.currency = currency;
     }
 
-    public Long getSkuName() {
+    public String getSkuName() {
         return skuName;
     }
 
-    public void setSkuName(Long skuName) {
+    public void setSkuName(String skuName) {
         this.skuName = skuName;
     }
 
-    public Long getSkuBillName() {
+    public String getSkuBillName() {
         return skuBillName;
     }
 
-    public void setSkuBillName(Long skuBillName) {
+    public void setSkuBillName(String skuBillName) {
         this.skuBillName = skuBillName;
     }
 
-    public Long getSkuForeignName() {
+    public String getSkuForeignName() {
         return skuForeignName;
     }
 
-    public void setSkuForeignName(Long skuForeignName) {
+    public void setSkuForeignName(String skuForeignName) {
         this.skuForeignName = skuForeignName;
     }
 
