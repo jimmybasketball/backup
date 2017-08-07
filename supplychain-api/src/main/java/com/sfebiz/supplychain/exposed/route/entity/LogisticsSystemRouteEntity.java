@@ -1,5 +1,6 @@
 package com.sfebiz.supplychain.exposed.route.entity;
 
+import com.sfebiz.supplychain.exposed.route.enums.SystemRouteLevel;
 import net.sf.oval.constraint.NotNull;
 
 import java.io.Serializable;
@@ -28,7 +29,7 @@ public class LogisticsSystemRouteEntity implements Serializable, Comparable<Logi
     /**
      * 记录级别 INFO/WARN/ERROR
      */
-    public String level = "INFO";
+    public String level = SystemRouteLevel.INFO.getValue();
 
 
     /**
@@ -55,5 +56,45 @@ public class LogisticsSystemRouteEntity implements Serializable, Comparable<Logi
         }
         //按日期倒序排序
         return o.eventTime >= this.eventTime ? 1 : -1;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public Long getEventTime() {
+        return eventTime;
+    }
+
+    public void setEventTime(Long eventTime) {
+        this.eventTime = eventTime;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getOpreator() {
+        return opreator;
+    }
+
+    public void setOpreator(String opreator) {
+        this.opreator = opreator;
     }
 }
