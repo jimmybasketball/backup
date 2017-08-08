@@ -26,21 +26,20 @@ public abstract class AbstractRouteOperation implements RouteOperation {
             if (type == RouteType.USERDEFINED) {
                 //自定义路由后续单独插入，因为不涉及到覆盖
                 continue;
+            }
+            Set<LogisticsUserRouteEntity> otherTypeRouteSet = routeTypeSetMap.get(type);
+            if (routeEntityList.size() > 0) {
+                //上一个类型的最后一条路由信息
+                LogisticsUserRouteEntity lastRoute = routeEntityList.get(routeEntityList.size() - 1);
+                for (LogisticsUserRouteEntity otherTypeRoute : otherTypeRouteSet) {
+                    //下一个路由类型的路由信息不能大于上一个路由类型路由信息 时间最小的一条，否则覆盖
+                    if (otherTypeRoute.eventTime < lastRoute.eventTime) {
+                        routeEntityList.add(otherTypeRoute);
+                    }
+                }
             } else {
-                Set<LogisticsUserRouteEntity> otherTypeRouteSet = routeTypeSetMap.get(type);
-                if (routeEntityList.size() > 0) {
-                    //上一个类型的最后一条路由信息
-                    LogisticsUserRouteEntity lastRoute = routeEntityList.get(routeEntityList.size() - 1);
-                    for (LogisticsUserRouteEntity otherTypeRoute : otherTypeRouteSet) {
-                        //下一个路由类型的路由信息不能大于上一个路由类型路由信息 时间最小的一条，否则覆盖
-                        if (otherTypeRoute.eventTime < lastRoute.eventTime) {
-                            routeEntityList.add(otherTypeRoute);
-                        }
-                    }
-                } else {
-                    if (otherTypeRouteSet != null && otherTypeRouteSet.size() > 0) {
-                        routeEntityList.addAll(otherTypeRouteSet);
-                    }
+                if (otherTypeRouteSet != null && otherTypeRouteSet.size() > 0) {
+                    routeEntityList.addAll(otherTypeRouteSet);
                 }
             }
         }

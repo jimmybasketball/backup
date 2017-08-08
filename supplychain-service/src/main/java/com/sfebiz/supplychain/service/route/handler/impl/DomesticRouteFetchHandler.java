@@ -128,7 +128,7 @@ public class DomesticRouteFetchHandler extends AbstractRouteFetchHandler {
 
             if (userRouteEntities != null && userRouteEntities.size() > 0) {
                 Collections.sort(userRouteEntities);
-                //覆盖国际段路由信息
+                //覆盖国内段路由信息
                 CommonRet<Void> commonRet = routeService.overrideUserRoute(stockoutOrderBO.getBizId(), RouteType.INTERNAL.getType(), userRouteEntities);
                 if (commonRet.getRetCode() == SCReturnCode.COMMON_SUCCESS.getCode()) {
                     LogBetter.instance(LOGGER)
