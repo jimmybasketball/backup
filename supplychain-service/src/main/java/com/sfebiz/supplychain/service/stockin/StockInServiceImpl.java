@@ -1,5 +1,6 @@
 package com.sfebiz.supplychain.service.stockin;
 
+import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.tracelog.HaitaoTraceLogger;
 import com.sfebiz.common.tracelog.HaitaoTraceLoggerFactory;
 import com.sfebiz.common.utils.generator.UniqueCodeGenerator;
@@ -12,9 +13,11 @@ import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
 import com.sfebiz.supplychain.config.SystemConstants;
 import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.common.code.StockInReturnCode;
+import com.sfebiz.supplychain.exposed.common.code.WarehouseReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.common.enums.BatchGeneratePlanType;
+import com.sfebiz.supplychain.exposed.sku.enums.SkuWarehouseSyncStateType;
 import com.sfebiz.supplychain.exposed.stock.entity.StockBatchEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.api.StockInService;
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderDetailCargoResultEntity;
@@ -22,13 +25,16 @@ import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderDetailEnti
 import com.sfebiz.supplychain.exposed.stockinorder.entity.StockinOrderEntity;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderState;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderType;
+import com.sfebiz.supplychain.exposed.warehouse.enums.WmsOperaterType;
 import com.sfebiz.supplychain.lock.DistributedLock;
 import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderLineDO;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderLineManager;
 import com.sfebiz.supplychain.persistence.base.sku.domain.SkuBarcodeDO;
 import com.sfebiz.supplychain.persistence.base.sku.domain.SkuDO;
+import com.sfebiz.supplychain.persistence.base.sku.domain.SkuWarehouseSyncDO;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuBarcodeManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuManager;
+import com.sfebiz.supplychain.persistence.base.sku.manager.SkuWarehouseSyncManager;
 import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;
 import com.sfebiz.supplychain.persistence.base.stock.manager.StockBatchManager;
 import com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO;
@@ -40,12 +46,14 @@ import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderManag
 import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderStateLogManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
+import com.sfebiz.supplychain.provider.biz.SkuSyncBizService;
 import com.sfebiz.supplychain.service.statemachine.BpmConstants;
 import com.sfebiz.supplychain.service.statemachine.EngineService;
 import com.sfebiz.supplychain.service.statemachine.Operator;
 import com.sfebiz.supplychain.service.stockin.modle.StockinOrderActionType;
 import com.sfebiz.supplychain.service.stockin.modle.StockinOrderRequest;
 import com.sfebiz.supplychain.service.stockin.modle.StockinOrderRequestFactory;
+import com.sfebiz.supplychain.service.warehouse.model.WarehouseLogisticsProviderBO;
 import com.sfebiz.supplychain.util.DateUtil;
 import net.pocrd.entity.ServiceException;
 import org.apache.commons.collections.CollectionUtils;
@@ -102,6 +110,10 @@ public class StockInServiceImpl implements StockInService{
     SkuBarcodeManager skuBarcodeManager;
     @Resource
     StockBatchManager stockBatchManager;
+    @Resource
+    SkuWarehouseSyncManager skuWarehouseSyncManager;
+    @Resource
+    SkuSyncBizService skuSyncBizService;
 
     static {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -867,7 +879,8 @@ public class StockInServiceImpl implements StockInService{
                 stockinOrderDetailManager.insert(stockinOrderDetailDO);
             }
 
-            //异步同步到仓库 // TODO: 2017/7/20 调用商品接口
+            //异步同步到仓库
+            syncSkuToWarehouse(stockinOrderDO, skus, true);
         } catch (Exception e) {
             throw new ServiceException(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION,"更新入库单" + stockinOrderDO.getId() + "明细失败," + "失败原因" + e.getMessage());
         }
@@ -917,4 +930,36 @@ public class StockInServiceImpl implements StockInService{
         stockinOrderDetailManager.updateByBarcodeAndSkuId(stockinOrderDetailDO);
     }
 
+    protected void syncSkuToWarehouse(StockinOrderDO stockinOrder, List<StockinOrderDetailEntity> skusAfterMerge, boolean isSync) throws ServiceException {
+        //同步商品
+        Long warehouseId = stockinOrder.getWarehouseId();
+        WarehouseDO warehouseDO = warehouseManager.getById(warehouseId);
+        if (warehouseDO == null) {
+            throw new ServiceException(WarehouseReturnCode.WAREHOUSE_NOT_EXIST_ERR, WarehouseReturnCode.WAREHOUSE_NOT_EXIST_ERR.getDesc());
+        }
+        //// TODO: 2017/8/7
+        WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();
+        if (logisticsProvider.getIntegrationBO().getIsIntegrationSkuSync() == 1) {
+            for (StockinOrderDetailEntity skuEntity : skusAfterMerge) {
+                SkuWarehouseSyncDO syncDO = new SkuWarehouseSyncDO();
+                syncDO.setSkuId(skuEntity.skuId);
+                syncDO.setWarehouseId(warehouseId);
+                List<SkuWarehouseSyncDO> exists = skuWarehouseSyncManager.query(BaseQuery.getInstance(syncDO));
+                if (exists.size() == 0) {
+                    SkuWarehouseSyncDO skuWarehouseSyncDO = new SkuWarehouseSyncDO();
+                    skuWarehouseSyncDO.setSkuId(skuEntity.skuId);
+                    skuWarehouseSyncDO.setWarehouseId(warehouseId);
+                    skuWarehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_FAIL.getValue());
+                    skuWarehouseSyncManager.insert(skuWarehouseSyncDO);
+                    List<Long> skuIds = new ArrayList<Long>();
+                    skuIds.add(skuEntity.skuId);
+                    if (isSync) {
+                        skuSyncBizService.sendProductBasicInfo2Wms(skuIds, warehouseId, WmsOperaterType.ADD);
+                    } else {
+                        skuSyncBizService.sendProductBasicInfo2WmsNotSync(skuIds, warehouseId, WmsOperaterType.ADD);
+                    }
+                }
+            }
+        }
+    }
 }

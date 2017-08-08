@@ -9,6 +9,9 @@ import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.common.code.StockInReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderState;
+import com.sfebiz.supplychain.exposed.warehouse.enums.WmsOperaterType;
+import com.sfebiz.supplychain.persistence.base.sku.domain.SkuWarehouseSyncDO;
+import com.sfebiz.supplychain.persistence.base.sku.manager.SkuWarehouseSyncManager;
 import com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockin.domain.StockinOrderDetailDO;
 import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderDetailManager;
@@ -16,6 +19,7 @@ import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderManag
 import com.sfebiz.supplychain.persistence.base.stockin.manager.StockinOrderStateLogManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
+import com.sfebiz.supplychain.provider.biz.SkuSyncBizService;
 import com.sfebiz.supplychain.provider.command.CommandFactory;
 import com.sfebiz.supplychain.provider.command.ProviderCommand;
 import com.sfebiz.supplychain.provider.command.send.wms.WmsOrderSkuStockInCommand;
@@ -23,7 +27,9 @@ import com.sfebiz.supplychain.service.stockin.modle.StockinOrderBO;
 import com.sfebiz.supplychain.service.stockin.modle.StockinOrderDetailBO;
 import com.sfebiz.supplychain.service.stockin.modle.StockinOrderRequest;
 import com.sfebiz.supplychain.service.warehouse.model.WarehouseBO;
+import com.sfebiz.supplychain.service.warehouse.model.WarehouseLogisticsProviderBO;
 import net.pocrd.entity.ServiceException;
+import org.apache.commons.collections.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +57,10 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
     StockinOrderManager stockinOrderManager;
     @Resource
     StockinOrderStateLogManager stockinOrderStateLogManager;
+    @Resource
+    SkuWarehouseSyncManager skuWarehouseSyncManager;
+    @Resource
+    SkuSyncBizService skuSyncBizService;
 
     @Override
     public BaseResult process(StockinOrderRequest request) throws ServiceException {
@@ -60,7 +70,11 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
         //2. 检测仓库是否支持入库命令
         StockinOrderDO stockinOrderDO = request.getStockinOrderDO();
         WarehouseDO warehouseDO = warehouseManager.getById(stockinOrderDO.getWarehouseId());
-        submitStockinOrderToWarehouse(request, warehouseDO);//更新入库单状态日志记录
+        WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();
+        if (logisticsProvider.getIntegrationBO().getIsIntegrationStockin() == 1) {
+            submitStockinOrderToWarehouse(request, warehouseDO);
+        }
+        //更新入库单状态日志记录
         stockinOrderStateLogManager.insertOrUpdate(stockinOrderDO.getId(), request.getOperator().getId(), request.getOperator().getName(), StockinOrderState.WAREHOUSING.getValue());
 
 
@@ -99,7 +113,8 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
         }
 
         ProviderCommand stockinCmd = null;
-        //检查商品是否已经同步到仓库 // TODO: 2017/7/19
+        //检查商品是否已经同步到仓库
+        checkIsSkuSynToWarehouse(stockinOrderDO, warehouseDO,stockinOrderDetailDOs);
         //创建入库命令
         stockinCmd = generateWarehouseStockinCommad(stockinOrderDO, stockinOrderDetailDOs, warehouseDO);
 
@@ -146,4 +161,23 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
 
         return wmsOrderSkuStockInCommand;
     }
+
+    protected void checkIsSkuSynToWarehouse(StockinOrderDO stockinOrderDO, WarehouseDO warehouseDO, List<StockinOrderDetailDO> stockinOrderDetailDOList) throws ServiceException {
+        Long warehouseId = stockinOrderDO.getWarehouseId();
+        WarehouseLogisticsProviderBO logisticsProviderBO = new WarehouseLogisticsProviderBO();
+        if (logisticsProviderBO.getIntegrationBO().getIsIntegrationSkuSync() == 1) {
+            for (StockinOrderDetailDO detailDO : stockinOrderDetailDOList) {
+                SkuWarehouseSyncDO syncDO = new SkuWarehouseSyncDO();
+                syncDO.setSkuId(detailDO.getSkuId());
+                syncDO.setWarehouseId(warehouseId);
+                List<SkuWarehouseSyncDO> syncDOs = skuWarehouseSyncManager.query(BaseQuery.getInstance(syncDO));
+                if (CollectionUtils.isEmpty(syncDOs)) {
+                    List<Long> skuIds = new ArrayList<Long>();
+                    skuIds.add(detailDO.getSkuId());
+                    skuSyncBizService.sendProductBasicInfo2WmsNotSync(skuIds, warehouseId, WmsOperaterType.ADD);
+                }
+            }
+        }
+    }
+
 }
