@@ -13,6 +13,7 @@ import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderRecordBO;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -23,35 +24,44 @@ import java.util.List;
  **/
 public class RouteServiceTest extends BaseServiceTest{
 
-    private static final String ORDER_ID = "order006";
+    private static final String ORDER_ID = "3201707141000093190S0002";
 
     @Test
     public void initUserRoute() {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -20);
+
         //国际物流
         LogisticsUserRouteEntity userRouteEntity = new LogisticsUserRouteEntity();
-        userRouteEntity.eventTime = 130L;
+        userRouteEntity.eventTime = calendar.getTimeInMillis();
         userRouteEntity.content = "国际物流路由信息";
         userRouteEntity.mailNo = "3333";
 
         routeService.appendUserRoute(ORDER_ID, RouteType.INTERNATIONAL.getType(), userRouteEntity);
+
+        calendar.add(Calendar.DAY_OF_MONTH, 2);
         //集货
         LogisticsUserRouteEntity jihuoRoute = new LogisticsUserRouteEntity();
-        jihuoRoute.eventTime = 125L;
+        jihuoRoute.eventTime = calendar.getTimeInMillis();
         jihuoRoute.content = "集货路由信息01";
 
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
         LogisticsUserRouteEntity jihuoRoute2 = new LogisticsUserRouteEntity();
-        jihuoRoute2.eventTime = 135L;
+        jihuoRoute2.eventTime = calendar.getTimeInMillis();;
         jihuoRoute2.content = "集货路由信息02";
         routeService.appendUserRoute(ORDER_ID, RouteType.TRANSIT.getType(), jihuoRoute);
         routeService.appendUserRoute(ORDER_ID, RouteType.TRANSIT.getType(), jihuoRoute2);
 
         //清关
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
         LogisticsUserRouteEntity qgRoute = new LogisticsUserRouteEntity();
-        qgRoute.eventTime = 130L;
+        qgRoute.eventTime = calendar.getTimeInMillis();;
         qgRoute.content = "清关路由信息01";
 
+        calendar.add(Calendar.DAY_OF_MONTH, 2);
         LogisticsUserRouteEntity qgRoute2 = new LogisticsUserRouteEntity();
-        qgRoute2.eventTime = 140L;
+        qgRoute2.eventTime = calendar.getTimeInMillis();;
         qgRoute2.content = "清关路由信息02";
 
         routeService.appendUserRoute(ORDER_ID, RouteType.CLEARANCE.getType(), qgRoute);
@@ -59,14 +69,16 @@ public class RouteServiceTest extends BaseServiceTest{
 
 
         //国内物流
+        calendar.add(Calendar.DAY_OF_MONTH, 2);
         LogisticsUserRouteEntity gnRoute = new LogisticsUserRouteEntity();
-        gnRoute.eventTime = 138L;
+        gnRoute.eventTime = calendar.getTimeInMillis();;
         gnRoute.content = "国内路由信息01";
         gnRoute.carrierCode = "SF";
         gnRoute.mailNo = "555555";
 
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
         LogisticsUserRouteEntity gnRoute2 = new LogisticsUserRouteEntity();
-        gnRoute2.eventTime = 150L;
+        gnRoute2.eventTime = calendar.getTimeInMillis();;
         gnRoute2.content = "国内路由信息02";
         gnRoute2.carrierCode = "SF";
         gnRoute2.mailNo = "555555";
@@ -77,12 +89,14 @@ public class RouteServiceTest extends BaseServiceTest{
 
 
         //自定义路由信息
+        calendar.add(Calendar.DAY_OF_MONTH, -5);
         LogisticsUserRouteEntity zdyRoute = new LogisticsUserRouteEntity();
-        zdyRoute.eventTime = 133L;
+        zdyRoute.eventTime = calendar.getTimeInMillis();;
         zdyRoute.content = "自定义路由01";
 
+        calendar.add(Calendar.DAY_OF_MONTH, 2);
         LogisticsUserRouteEntity zdyRoute02 = new LogisticsUserRouteEntity();
-        zdyRoute02.eventTime = 144L;
+        zdyRoute02.eventTime = calendar.getTimeInMillis();;
         zdyRoute02.content = "自定义路由02";
 
         routeService.appendUserRoute(ORDER_ID, RouteType.USERDEFINED.getType(), zdyRoute);
@@ -147,7 +161,7 @@ public class RouteServiceTest extends BaseServiceTest{
         recordBO.setTplIntlState(1);
 
         stockoutOrderBO.setRecordBO(recordBO);
-        boolean isPolling = internationalRouteFetchHandler.fetchRouteByStockOrder(stockoutOrderBO);
+        boolean isPolling = internationalRouteFetchHandler.fetchRouteByStockoutOrder(stockoutOrderBO);
 
     }
 }

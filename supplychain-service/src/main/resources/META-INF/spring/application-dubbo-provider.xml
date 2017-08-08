@@ -68,7 +68,7 @@
 	
 	
 	<!-- 商户(货主)账户 -->
-	<bean id="MerchantProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
+	<bean id="merchantProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
 		<property name="interface" value="com.sfebiz.supplychain.exposed.merchant.api.MerchantService" />
 		<property name="ref" ref="merchantService" />
 		<property name="application" ref="dubboApplicationConfig" />
@@ -142,4 +142,17 @@
 		<property name="timeout" value="${dubbo.export.timeout}" />
 	</bean>
 	<!-- 入库单end -->
+
+
+	<!-- 物流信息路由服务 -->
+	<bean id="routeServiceProvider" class="com.alibaba.dubbo.config.spring.ServiceBean">
+		<property name="interface" value="com.sfebiz.supplychain.exposed.route.api.RouteService" />
+		<property name="ref" ref="routeService" />
+		<property name="application" ref="dubboApplicationConfig" />
+		<property name="registry" ref="dubboRegistryConfig" />
+		<property name="protocol" ref="dubboProtocolConfig" />
+		<property name="version" value="${dubbo.export.version}" />
+		<property name="timeout" value="${dubbo.export.timeout}" />
+	</bean>
+	<!-- 物流信息路由服务 -->
 </beans>

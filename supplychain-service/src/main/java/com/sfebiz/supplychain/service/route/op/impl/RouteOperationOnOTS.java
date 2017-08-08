@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,6 +37,9 @@ public class RouteOperationOnOTS extends AbstractRouteOperation {
      * 订单用户路由数据 在OTS的key
      */
     public static final String ROUTE_OTS_DATA_KEY = "ROUTE_OTS_DATA_KEY_";
+
+    @Resource
+    private String env;
 
     /**
      * 订单系统内部路由数据 在OTS的key
@@ -63,13 +67,13 @@ public class RouteOperationOnOTS extends AbstractRouteOperation {
         }
 
         Set<LogisticsUserRouteEntity> logisticsRouteEntities = new TreeSet<LogisticsUserRouteEntity>();
-        List<TraceLog> routes = routeLogger.queryAppointAppName(ROUTE_OTS_DATA_KEY + routeType.getType() + orderId, routeType.getType());
+        List<TraceLog> routes = routeLogger.queryAppointAppName(env + ROUTE_OTS_DATA_KEY + routeType.getType() + orderId, routeType.getType());
         fillRoutesSet(logisticsRouteEntities, routes);
 
         if (checkRouteTime(logisticsRouteEntities, logisticsUserRouteEntity)) {
             logisticsRouteEntities.add(logisticsUserRouteEntity);
             //更新路由信息
-            routeLogger.log(new TraceLogNoAutoIncreaseTime(ROUTE_OTS_DATA_KEY + routeType.getType() + orderId,
+            routeLogger.log(new TraceLogNoAutoIncreaseTime(env + ROUTE_OTS_DATA_KEY + routeType.getType() + orderId,
                     routeType.getType(),
                     new Date(),
                     TraceLog.TraceLevel.INFO,
@@ -111,7 +115,7 @@ public class RouteOperationOnOTS extends AbstractRouteOperation {
             logisticsUserRouteEntitySet.add(routeEntity);
         }
 
-        routeLogger.log(new TraceLogNoAutoIncreaseTime(ROUTE_OTS_DATA_KEY + routeType.getType() + orderId,
+        routeLogger.log(new TraceLogNoAutoIncreaseTime(env + ROUTE_OTS_DATA_KEY + routeType.getType() + orderId,
                 routeType.getType(),
                 new Date(),
                 TraceLog.TraceLevel.INFO,
@@ -140,7 +144,7 @@ public class RouteOperationOnOTS extends AbstractRouteOperation {
 
         Set<LogisticsUserRouteEntity> logisticsRouteEntities = new TreeSet<LogisticsUserRouteEntity>();
 
-        List<TraceLog> routes = routeLogger.queryAppointAppName(ROUTE_OTS_DATA_KEY + routeType.getType() + orderId, routeType.getType());
+        List<TraceLog> routes = routeLogger.queryAppointAppName(env + ROUTE_OTS_DATA_KEY + routeType.getType() + orderId, routeType.getType());
         fillRoutesSet(logisticsRouteEntities, routes);
         return logisticsRouteEntities;
     }
@@ -152,7 +156,7 @@ public class RouteOperationOnOTS extends AbstractRouteOperation {
      */
     @Override
     public void appandSystemRoute(LogisticsSystemRouteEntity logisticsSystemRouteEntity) {
-        routeLogger.log(new TraceLog(SYSTEM_ROUTE_OTS_DATA_KEY + logisticsSystemRouteEntity.orderId,
+        routeLogger.log(new TraceLog(env + SYSTEM_ROUTE_OTS_DATA_KEY + logisticsSystemRouteEntity.orderId,
                 logisticsSystemRouteEntity.opreator,
                 new Date(),
                 TraceLog.TraceLevel.INFO,
@@ -173,7 +177,7 @@ public class RouteOperationOnOTS extends AbstractRouteOperation {
      */
     @Override
     public List<LogisticsSystemRouteEntity> getSystemRouteList(String orderId) {
-        List<TraceLog> traceLogs = routeLogger.query(SYSTEM_ROUTE_OTS_DATA_KEY + orderId);
+        List<TraceLog> traceLogs = routeLogger.query(env + SYSTEM_ROUTE_OTS_DATA_KEY + orderId);
         List<LogisticsSystemRouteEntity> systemRouteEntities = new ArrayList<LogisticsSystemRouteEntity>();
         for (TraceLog log : traceLogs) {
             LogisticsSystemRouteEntity logisticsSystemRouteEntity = JSON.parseObject(log.getContent(), LogisticsSystemRouteEntity.class);
