@@ -769,6 +769,10 @@ public class StockInServiceImpl implements StockInService{
             return commonRet;
         }
 
+        if (stockinOrderDO.getWarehouseId() == warehouseId) {
+            return commonRet;
+        }
+
         try {
             List<MerchantProviderLineDO> results = merchantProviderLineManager.getByProviderAndWarehouse(stockinOrderDO.getMerchantId(), stockinOrderDO.getMerchantProviderId(), warehouseId);
             if(CollectionUtils.isEmpty(results)){
