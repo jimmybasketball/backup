@@ -61,6 +61,11 @@ public class LogisticsLineBO implements Serializable {
     private WarehouseBO                   transitWarehouseBO;
 
     /**
+     * 支付申报的providerNid
+     */
+    private String                        payDeclareProviderNid;
+
+    /**
      * 口岸相关业务信息
      */
     private LogisticsPortBO               portBO;
@@ -81,12 +86,12 @@ public class LogisticsLineBO implements Serializable {
     public LogisticsProviderBO            internationalRouteProviderBO;
 
     /**
-     * 国际运输服务提供商相关信息
+     * 国内运输服务提供商相关信息
      */
     public LogisticsProviderBO            domesticLogisticsProviderBO;
 
     /**
-     * 国际物流查询服务提供商相关信息
+     * 国内物流查询服务提供商相关信息
      */
     public LogisticsProviderBO            domesticRouteProviderBO;
 
@@ -219,6 +224,14 @@ public class LogisticsLineBO implements Serializable {
 
     public void setTransitWarehouseBO(WarehouseBO transitWarehouseBO) {
         this.transitWarehouseBO = transitWarehouseBO;
+    }
+
+    public String getPayDeclareProviderNid() {
+        return payDeclareProviderNid;
+    }
+
+    public void setPayDeclareProviderNid(String payDeclareProviderNid) {
+        this.payDeclareProviderNid = payDeclareProviderNid;
     }
 
     public LogisticsPortBO getPortBO() {

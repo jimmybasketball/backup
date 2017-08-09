@@ -25,6 +25,9 @@ public class StockoutOrderRecordDO extends BaseDO {
     /** 业务订单ID */
     private String            bizId;
 
+    /** 包裹的物流状态，参见枚举LogisticsState */
+    private Integer           logisticsState;
+
     /** 支付申报下单状态 */
     private Integer           payState;
 
@@ -108,6 +111,14 @@ public class StockoutOrderRecordDO extends BaseDO {
 
     public void setBizId(String bizId) {
         this.bizId = bizId;
+    }
+
+    public Integer getLogisticsState() {
+        return logisticsState;
+    }
+
+    public void setLogisticsState(Integer logisticsState) {
+        this.logisticsState = logisticsState;
     }
 
     public Integer getPayState() {

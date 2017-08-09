@@ -5,6 +5,8 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.sfebiz.supplychain.service.stockout.biz.model.BaseBO;
+
 /**
  * 
  * <p>物流供应商/提供者业务对象</p>
@@ -12,7 +14,10 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author matt
  * @Date 2017年7月20日 下午1:56:59
  */
-public class LogisticsProviderBO {
+public class LogisticsProviderBO extends BaseBO {
+
+    /** 序号 */
+    private static final long   serialVersionUID = 13555807321934224L;
 
     /** 服务商公司名称 */
     private String              companyName;
@@ -23,8 +28,8 @@ public class LogisticsProviderBO {
     /** 服务提供商业务id */
     private String              logisticsProviderNid;
 
-    /** 接口类型 */
-    private Integer             interfaceType;
+    /** 接口类型，对应xml中配置的key */
+    private String              interfaceType;
 
     /** 是否存仓库管理系统对接（0：不是,1：是） */
     private Integer             isWms;
@@ -77,11 +82,11 @@ public class LogisticsProviderBO {
         this.logisticsProviderNid = logisticsProviderNid;
     }
 
-    public Integer getInterfaceType() {
+    public String getInterfaceType() {
         return interfaceType;
     }
 
-    public void setInterfaceType(Integer interfaceType) {
+    public void setInterfaceType(String interfaceType) {
         this.interfaceType = interfaceType;
     }
 

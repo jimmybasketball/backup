@@ -25,10 +25,10 @@ import com.sfebiz.supplychain.util.DateUtil;
  */
 public class WarehouseConvert {
 
-    private static final Logger logger = LoggerFactory
-	    .getLogger(WarehouseConvert.class);
+    /** 日志 */
+    private static final Logger logger        = LoggerFactory.getLogger(WarehouseConvert.class);
 
-    private static ModelMapper vdModelMapper = null;
+    private static ModelMapper  vdModelMapper = null;
 
     /**
      * VO至DO对象
@@ -36,35 +36,31 @@ public class WarehouseConvert {
      * @return
      */
     private static ModelMapper getVDModelMapper() {
-	if (vdModelMapper == null) {
-	    vdModelMapper = new ModelMapper();
-	    vdModelMapper.getConfiguration().setMatchingStrategy(
-		    MatchingStrategies.STRICT);
+        if (vdModelMapper == null) {
+            vdModelMapper = new ModelMapper();
+            vdModelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-	    final Converter<String, Date> strToDateConverter = new AbstractConverter<String, Date>() {
-		@Override
-		protected Date convert(String source) {
-		    return source == null ? null : DateUtil.parseDate(source,
-			    DateUtil.DEF_PATTERN);
-		}
-	    };
-	    vdModelMapper.addConverter(strToDateConverter);
+            final Converter<String, Date> strToDateConverter = new AbstractConverter<String, Date>() {
+                @Override
+                protected Date convert(String source) {
+                    return source == null ? null : DateUtil.parseDate(source, DateUtil.DEF_PATTERN);
+                }
+            };
+            vdModelMapper.addConverter(strToDateConverter);
 
-	    PropertyMap<WarehouseReqItem, WarehouseDO> propertyMap = new PropertyMap<WarehouseReqItem, WarehouseDO>() {
-		protected void configure() {
-		    using(strToDateConverter).map(
-			    source.getContractPeriodStart())
-			    .setContractPeriodStart(null);
-		    using(strToDateConverter)
-			    .map(source.getContractPeriodEnd())
-			    .setContractPeriodEnd(null);
-		}
-	    };
-	    vdModelMapper.addMappings(propertyMap);
+            PropertyMap<WarehouseReqItem, WarehouseDO> propertyMap = new PropertyMap<WarehouseReqItem, WarehouseDO>() {
+                protected void configure() {
+                    using(strToDateConverter).map(source.getContractPeriodStart())
+                        .setContractPeriodStart(null);
+                    using(strToDateConverter).map(source.getContractPeriodEnd())
+                        .setContractPeriodEnd(null);
+                }
+            };
+            vdModelMapper.addMappings(propertyMap);
 
-	    vdModelMapper.validate();
-	}
-	return vdModelMapper;
+            vdModelMapper.validate();
+        }
+        return vdModelMapper;
     }
 
     /**
@@ -73,11 +69,9 @@ public class WarehouseConvert {
      * @param item
      * @return
      */
-    public static WarehouseDO convertWarehouseVOToWarehouseDO(
-	    WarehouseReqItem item) {
-	WarehouseDO warehouseDO = getVDModelMapper().map(item,
-		WarehouseDO.class);
-	return warehouseDO;
+    public static WarehouseDO convertWarehouseVOToWarehouseDO(WarehouseReqItem item) {
+        WarehouseDO warehouseDO = getVDModelMapper().map(item, WarehouseDO.class);
+        return warehouseDO;
     }
 
 }

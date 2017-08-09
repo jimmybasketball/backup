@@ -39,6 +39,10 @@ public class OpenWmsTradeGoodsItem implements Serializable {
 	@Description("商品批次号")
 	public String batchNo;
 	
+	/** 商户商品编码 */
+	@Description("商户商品编码")
+	public String merchantSkuId;
+	
     /** 
      * @see Object#toString()
      */

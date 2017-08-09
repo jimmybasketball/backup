@@ -1,8 +1,8 @@
 package com.sfebiz.supplychain.persistence.base.line.domain;
 
-import com.sfebiz.common.dao.domain.BaseDO;
-
 import java.util.Date;
+
+import com.sfebiz.common.dao.domain.BaseDO;
 
 /**
  * 线路配置持久化对象
@@ -12,154 +12,159 @@ import java.util.Date;
  **/
 public class LogisticsLineDO extends BaseDO {
 
-
     private static final long serialVersionUID = -8712509899508374345L;
-    private Long id;
+    private Long              id;
 
     /**
      * 线路名称
      */
-    private String logisticsLineNid;
+    private String            logisticsLineNid;
 
     /**
      * 线路状态  ENABLE:启用  DISABLE:禁用
      */
-    private String state;
+    private String            state;
 
     /**
      * 线路运营状态  NORMAL:正常   STOPED:停止
      */
-    private String operateState;
+    private String            operateState;
 
     /**
      * 服务类型
      */
-    private Integer serviceType;
+    private Integer           serviceType;
 
     /**
      * 口岸ID
      */
-    private Long portId;
+    private Long              portId;
+
+    /**
+     * 口岸的业务id
+     */
+    // TODO 待修改
+    private String            portNid;
 
     /**
      * 清关供应商NID
      */
-    public String clearanceLogisticsProviderNid;
+    public String             clearanceLogisticsProviderNid;
 
     /**
      * 仓库ID
      */
-    private Long warehouseId;
+    private Long              warehouseId;
 
     /**
      * 集货(转运)仓ID
      */
-    private Long transitWarehouseId;
+    private Long              transitWarehouseId;
 
-   /**
-     * 国内物流供应商NID
-     */
-    public String domesticLogisticsProviderNid;
+    /**
+      * 国内物流供应商NID
+      */
+    public String             domesticLogisticsProviderNid;
 
     /**
      * 国际物流供应商NID
      */
-    public String internationalLogisticsProviderNid;
+    public String             internationalLogisticsProviderNid;
 
     /**
      * 国内路由供应商NID
      */
-    public String domesticRouteProviderNid;
+    public String             domesticRouteProviderNid;
 
     /**
      * 国际路由供应商NID
      */
-    public String internationalRouteProviderNid;
+    public String             internationalRouteProviderNid;
 
     /**
      * 所属国家ID
      */
-    private Long nationId;
+    private Long              nationId;
 
     /**
      * 发货时效（文字描述）
      */
-    private String timeLimit;
+    private String            timeLimit;
 
     /**
      * 发货时效 最小天数
      */
-    private Integer timeLimitMin;
+    private Integer           timeLimitMin;
 
     /**
      * 发货时效 最大天数
      */
-    private Integer timeLimitMax;
+    private Integer           timeLimitMax;
 
     /**
      * 优先级 （数字越大优先级越高）
      */
-    private Integer priority;
+    private Integer           priority;
 
     /**
      * 用于告知仓库走那条路线的表示
      */
-    private String routeCode;
+    private String            routeCode;
 
     /**
      * 仓库标识路线的业务编码
      */
-    private String routeBizCode;
+    private String            routeBizCode;
 
     /**
      * 是否需要客户提供运单号  0:否  1:是
      */
-    private Integer isNeedWaybillNumber;
+    private Integer           isNeedWaybillNumber;
 
     /**
      * 面单格式
      */
-    private String pdfTemplate;
+    private String            pdfTemplate;
 
     /**
      * 路线清关时是否需要身份证照 0:否 1:是
      */
-    private Integer isNeedIdCardPhoto;
+    private Integer           isNeedIdCardPhoto;
 
     /**
      * 每单固定费用
      */
-    private Integer fixedCost;
+    private Integer           fixedCost;
 
     /**
      * 首重重量(克)
      */
-    private Integer firstWeight;
+    private Integer           firstWeight;
 
     /**
      * 首重成本(分)
      */
-    private Integer firstWeightCostRmb;
+    private Integer           firstWeightCostRmb;
 
     /**
      * 续重重量(克)
      */
-    private Integer additionalWeight;
+    private Integer           additionalWeight;
 
     /**
      * 续重成本(分)
      */
-    private Integer additionalWeightCostRmb;
+    private Integer           additionalWeightCostRmb;
 
     /**
      * 创建时间
      */
-    private Date gmtCreate;
+    private Date              gmtCreate;
 
     /**
      * 修改时间
      */
-    private Date gmtModified;
+    private Date              gmtModified;
 
     @Override
     public Long getId() {
@@ -211,6 +216,13 @@ public class LogisticsLineDO extends BaseDO {
         this.portId = portId;
     }
 
+    public String getPortNid() {
+        return portNid;
+    }
+
+    public void setPortNid(String portNid) {
+        this.portNid = portNid;
+    }
 
     public Long getWarehouseId() {
         return warehouseId;
@@ -410,37 +422,23 @@ public class LogisticsLineDO extends BaseDO {
 
     @Override
     public String toString() {
-        return "LogisticsLineDO{" +
-                "id=" + id +
-                ", logisticsLineNid='" + logisticsLineNid + '\'' +
-                ", state='" + state + '\'' +
-                ", operateState='" + operateState + '\'' +
-                ", serviceType=" + serviceType +
-                ", portId=" + portId +
-                ", clearanceLogisticsProviderNid='" + clearanceLogisticsProviderNid + '\'' +
-                ", warehouseId=" + warehouseId +
-                ", transitWarehouseId=" + transitWarehouseId +
-                ", domesticLogisticsProviderNid='" + domesticLogisticsProviderNid + '\'' +
-                ", internationalLogisticsProviderNid='" + internationalLogisticsProviderNid + '\'' +
-                ", domesticRouteProviderNid='" + domesticRouteProviderNid + '\'' +
-                ", internationalRouteProviderNid='" + internationalRouteProviderNid + '\'' +
-                ", nationId=" + nationId +
-                ", timeLimit=" + timeLimit +
-                ", timeLimitMin=" + timeLimitMin +
-                ", timeLimitMax=" + timeLimitMax +
-                ", priority=" + priority +
-                ", routeCode='" + routeCode + '\'' +
-                ", routeBizCode='" + routeBizCode + '\'' +
-                ", isNeedWaybillNumber=" + isNeedWaybillNumber +
-                ", pdfTemplate=" + pdfTemplate +
-                ", isNeedIdCardPhoto=" + isNeedIdCardPhoto +
-                ", fixedCost=" + fixedCost +
-                ", firstWeight=" + firstWeight +
-                ", firstWeightCostRmb=" + firstWeightCostRmb +
-                ", additionalWeight=" + additionalWeight +
-                ", additionalWeightCostRmb=" + additionalWeightCostRmb +
-                ", gmtCreate=" + gmtCreate +
-                ", gmtModified=" + gmtModified +
-                '}';
+        return "LogisticsLineDO{" + "id=" + id + ", logisticsLineNid='" + logisticsLineNid + '\''
+               + ", state='" + state + '\'' + ", operateState='" + operateState + '\''
+               + ", serviceType=" + serviceType + ", portId=" + portId
+               + ", clearanceLogisticsProviderNid='" + clearanceLogisticsProviderNid + '\''
+               + ", warehouseId=" + warehouseId + ", transitWarehouseId=" + transitWarehouseId
+               + ", domesticLogisticsProviderNid='" + domesticLogisticsProviderNid + '\''
+               + ", internationalLogisticsProviderNid='" + internationalLogisticsProviderNid + '\''
+               + ", domesticRouteProviderNid='" + domesticRouteProviderNid + '\''
+               + ", internationalRouteProviderNid='" + internationalRouteProviderNid + '\''
+               + ", nationId=" + nationId + ", timeLimit=" + timeLimit + ", timeLimitMin="
+               + timeLimitMin + ", timeLimitMax=" + timeLimitMax + ", priority=" + priority
+               + ", routeCode='" + routeCode + '\'' + ", routeBizCode='" + routeBizCode + '\''
+               + ", isNeedWaybillNumber=" + isNeedWaybillNumber + ", pdfTemplate=" + pdfTemplate
+               + ", isNeedIdCardPhoto=" + isNeedIdCardPhoto + ", fixedCost=" + fixedCost
+               + ", firstWeight=" + firstWeight + ", firstWeightCostRmb=" + firstWeightCostRmb
+               + ", additionalWeight=" + additionalWeight + ", additionalWeightCostRmb="
+               + additionalWeightCostRmb + ", gmtCreate=" + gmtCreate + ", gmtModified="
+               + gmtModified + '}';
     }
 }

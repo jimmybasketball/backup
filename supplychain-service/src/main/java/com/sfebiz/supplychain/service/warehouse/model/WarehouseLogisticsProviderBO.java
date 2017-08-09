@@ -11,6 +11,9 @@ import com.sfebiz.supplychain.service.lp.model.LogisticsProviderBO;
  */
 public class WarehouseLogisticsProviderBO extends LogisticsProviderBO {
 
+    /** 序号 */
+    private static final long      serialVersionUID = 702821555323111930L;
+
     /** 与实体仓库系统功能的对接明细 */
     private WarehouseIntegrationBO integrationBO;
 

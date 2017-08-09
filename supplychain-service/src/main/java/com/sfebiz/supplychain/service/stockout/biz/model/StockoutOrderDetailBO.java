@@ -1,9 +1,11 @@
 package com.sfebiz.supplychain.service.stockout.biz.model;
 
-import com.sfebiz.supplychain.service.sku.model.SkuDeclareBO;
-import com.sfebiz.supplychain.service.sku.model.SkuMerchantBO;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.sfebiz.supplychain.exposed.common.enums.StockOutPlanType;
+import com.sfebiz.supplychain.service.sku.model.SkuDeclareBO;
+import com.sfebiz.supplychain.service.sku.model.SkuMerchantBO;
 
 /**
  *
@@ -15,7 +17,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class StockoutOrderDetailBO extends BaseBO {
 
     /** 序号 */
-    private static final long serialVersionUID = -5402329124067594489L;
+    private static final long serialVersionUID              = -5402329124067594489L;
 
     /** 出库单主键ID */
     private Long              stockoutOrderId;
@@ -27,7 +29,7 @@ public class StockoutOrderDetailBO extends BaseBO {
     private Long              skuId;
 
     /** 商户侧skuId */
-    private Long              merchantSkuId;
+    private String            merchantSkuId;
 
     /** 商品条码 */
     private String            skuBarcode;
@@ -41,8 +43,15 @@ public class StockoutOrderDetailBO extends BaseBO {
     /** 商户商品费用，单位分 */
     private Integer           merchantPrice;
 
+    /** 商户商品费用，单位分（不入库，中间字段） */
+    private Integer           merchantPriceRoundDown;
+
     /** 商户折扣费用，单位分 */
     private Integer           merchantDiscountPrice;
+
+    /** 活动折扣金额 */
+    // TODO
+    private Integer           merchantActivityDiscountPrice = 0;
 
     /** 运费，单位分 */
     private Integer           freightFee;
@@ -51,13 +60,14 @@ public class StockoutOrderDetailBO extends BaseBO {
     private String            currency;
 
     /** 商品名称 */
-    private String              skuName;
+    private String            skuName;
 
     /** 商品面单名称 */
-    private Long              skuBillName;
+    private String            skuBillName;
 
     /** 商品外文名称 */
-    private Long              skuForeignName;
+    private String            skuForeignName;
+
     /** 商品 */
     private String            brandName;
 
@@ -71,11 +81,14 @@ public class StockoutOrderDetailBO extends BaseBO {
     /** 入库单ID */
     private Long              stockinOrderId;
 
+    /** 出库方案 */
+    private StockOutPlanType  stockOutPlan;
+
     /** 备注 */
     private String            remark;
 
     /** 商品备案信息业务实体 */
-    private SkuDeclareBO skuDeclareBO;
+    private SkuDeclareBO      skuDeclareBO;
 
     /** 货主商品信息业务实体 */
     private SkuMerchantBO     skuMerchantBO;
@@ -104,11 +117,11 @@ public class StockoutOrderDetailBO extends BaseBO {
         this.skuId = skuId;
     }
 
-    public Long getMerchantSkuId() {
+    public String getMerchantSkuId() {
         return merchantSkuId;
     }
 
-    public void setMerchantSkuId(Long merchantSkuId) {
+    public void setMerchantSkuId(String merchantSkuId) {
         this.merchantSkuId = merchantSkuId;
     }
 
@@ -144,12 +157,28 @@ public class StockoutOrderDetailBO extends BaseBO {
         this.merchantPrice = merchantPrice;
     }
 
+    public Integer getMerchantPriceRoundDown() {
+        return merchantPriceRoundDown;
+    }
+
+    public void setMerchantPriceRoundDown(Integer merchantPriceRoundDown) {
+        this.merchantPriceRoundDown = merchantPriceRoundDown;
+    }
+
     public Integer getMerchantDiscountPrice() {
         return merchantDiscountPrice;
     }
 
     public void setMerchantDiscountPrice(Integer merchantDiscountPrice) {
         this.merchantDiscountPrice = merchantDiscountPrice;
+    }
+
+    public Integer getMerchantActivityDiscountPrice() {
+        return merchantActivityDiscountPrice;
+    }
+
+    public void setMerchantActivityDiscountPrice(Integer merchantActivityDiscountPrice) {
+        this.merchantActivityDiscountPrice = merchantActivityDiscountPrice;
     }
 
     public Integer getFreightFee() {
@@ -176,19 +205,19 @@ public class StockoutOrderDetailBO extends BaseBO {
         this.skuName = skuName;
     }
 
-    public Long getSkuBillName() {
+    public String getSkuBillName() {
         return skuBillName;
     }
 
-    public void setSkuBillName(Long skuBillName) {
+    public void setSkuBillName(String skuBillName) {
         this.skuBillName = skuBillName;
     }
 
-    public Long getSkuForeignName() {
+    public String getSkuForeignName() {
         return skuForeignName;
     }
 
-    public void setSkuForeignName(Long skuForeignName) {
+    public void setSkuForeignName(String skuForeignName) {
         this.skuForeignName = skuForeignName;
     }
 
@@ -222,6 +251,14 @@ public class StockoutOrderDetailBO extends BaseBO {
 
     public void setStockinOrderId(Long stockinOrderId) {
         this.stockinOrderId = stockinOrderId;
+    }
+
+    public StockOutPlanType getStockOutPlan() {
+        return stockOutPlan;
+    }
+
+    public void setStockOutPlan(StockOutPlanType stockOutPlan) {
+        this.stockOutPlan = stockOutPlan;
     }
 
     public String getRemark() {

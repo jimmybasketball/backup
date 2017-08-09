@@ -34,7 +34,7 @@ public class WarehouseManager extends BaseManager<WarehouseDO> {
 
     @Override
     public BaseDao<WarehouseDO> getDao() {
-	return warehouseDao;
+        return warehouseDao;
     }
 
     /**
@@ -44,53 +44,67 @@ public class WarehouseManager extends BaseManager<WarehouseDO> {
      * @return
      */
     public WarehouseDO getByNid(String nid) {
-	WarehouseDO d = new WarehouseDO();
-	d.setWarehouseNid(nid);
-	BaseQuery<WarehouseDO> q = BaseQuery.getInstance(d);
-	List<WarehouseDO> list = this.query(q);
-	if (list != null && list.size() > 0) {
-	    return list.get(0);
-	}
-	return null;
+        WarehouseDO d = new WarehouseDO();
+        d.setWarehouseNid(nid);
+        BaseQuery<WarehouseDO> q = BaseQuery.getInstance(d);
+        List<WarehouseDO> list = this.query(q);
+        if (list != null && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
     }
 
     public Map<Long, WarehouseDO> getAllWarehouseMap() {
-	Map<Long, WarehouseDO> map = new HashMap<Long, WarehouseDO>();
-	WarehouseDO lineDO = new WarehouseDO();
-	BaseQuery<WarehouseDO> ql = BaseQuery.getInstance(lineDO);
-	List<WarehouseDO> lines = warehouseDao.query(ql);
-	if (CollectionUtils.isNotEmpty(lines)) {
-	    for (WarehouseDO WarehouseDO : lines) {
-		map.put(WarehouseDO.getId(), WarehouseDO);
-	    }
-	}
-	return map;
+        Map<Long, WarehouseDO> map = new HashMap<Long, WarehouseDO>();
+        WarehouseDO lineDO = new WarehouseDO();
+        BaseQuery<WarehouseDO> ql = BaseQuery.getInstance(lineDO);
+        List<WarehouseDO> lines = warehouseDao.query(ql);
+        if (CollectionUtils.isNotEmpty(lines)) {
+            for (WarehouseDO WarehouseDO : lines) {
+                map.put(WarehouseDO.getId(), WarehouseDO);
+            }
+        }
+        return map;
+    }
+
+    public Map<Long, WarehouseDO> getAllWarehouseMap(List<Long> warehouseIds) {
+        Map<Long, WarehouseDO> map = new HashMap<Long, WarehouseDO>();
+        WarehouseDO lineDO = new WarehouseDO();
+        BaseQuery<WarehouseDO> ql = BaseQuery.getInstance(lineDO);
+        ql.addIn("id", warehouseIds);
+        List<WarehouseDO> lines = warehouseDao.query(ql);
+        if (CollectionUtils.isNotEmpty(lines)) {
+            for (WarehouseDO WarehouseDO : lines) {
+                map.put(WarehouseDO.getId(), WarehouseDO);
+            }
+        }
+        return map;
     }
 
     public int updateCooperationState(Long warehouseId, String cooperationState) {
-	WarehouseDO queryDO = new WarehouseDO();
-	queryDO.setId(warehouseId);
-	WarehouseDO updateDO = new WarehouseDO();
-	updateDO.setCooperationState(cooperationState);
-	BaseQuery<WarehouseDO> baseQuery = BaseQuery.getInstance(queryDO);
-	UpdateByQuery<WarehouseDO> updateByQuery = new UpdateByQuery<WarehouseDO>(
-		baseQuery, updateDO);
-	return this.updateByQuery(updateByQuery);
+        WarehouseDO queryDO = new WarehouseDO();
+        queryDO.setId(warehouseId);
+        WarehouseDO updateDO = new WarehouseDO();
+        updateDO.setCooperationState(cooperationState);
+        BaseQuery<WarehouseDO> baseQuery = BaseQuery.getInstance(queryDO);
+        UpdateByQuery<WarehouseDO> updateByQuery = new UpdateByQuery<WarehouseDO>(baseQuery,
+            updateDO);
+        return this.updateByQuery(updateByQuery);
     }
 
     public int updateWarehouseState(Long warehouseId, String warehouseState) {
-	WarehouseDO queryDO = new WarehouseDO();
-	queryDO.setId(warehouseId);
-	WarehouseDO updateDO = new WarehouseDO();
-	updateDO.setWarehouseState(warehouseState);
-	BaseQuery<WarehouseDO> baseQuery = BaseQuery.getInstance(queryDO);
-	UpdateByQuery<WarehouseDO> updateByQuery = new UpdateByQuery<WarehouseDO>(
-		baseQuery, updateDO);
-	return this.updateByQuery(updateByQuery);
+        WarehouseDO queryDO = new WarehouseDO();
+        queryDO.setId(warehouseId);
+        WarehouseDO updateDO = new WarehouseDO();
+        updateDO.setWarehouseState(warehouseState);
+        BaseQuery<WarehouseDO> baseQuery = BaseQuery.getInstance(queryDO);
+        UpdateByQuery<WarehouseDO> updateByQuery = new UpdateByQuery<WarehouseDO>(baseQuery,
+            updateDO);
+        return this.updateByQuery(updateByQuery);
     }
 
     public static void main(String[] args) {
-	DaoHelper.genXMLWithFeature("C:/sc_warehouse-sqlmap.xml",
-		WarehouseDao.class, WarehouseDO.class, "sc_warehouse");
+        DaoHelper.genXMLWithFeature("C:/sc_warehouse-sqlmap.xml", WarehouseDao.class,
+            WarehouseDO.class, "sc_warehouse");
     }
 }

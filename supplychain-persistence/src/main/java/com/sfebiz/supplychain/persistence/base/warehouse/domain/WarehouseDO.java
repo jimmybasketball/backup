@@ -36,6 +36,9 @@ public class WarehouseDO extends BaseDO {
     /** 服务提供者id */
     private String            logisticsProviderId;
 
+    /** 服务提供者nid */
+    private String            logisticsProviderNid;
+
     /** 丰趣负责人邮箱 */
     private String            principalEmail;
 
@@ -170,6 +173,14 @@ public class WarehouseDO extends BaseDO {
 
     public void setLogisticsProviderId(String logisticsProviderId) {
         this.logisticsProviderId = logisticsProviderId;
+    }
+
+    public String getLogisticsProviderNid() {
+        return logisticsProviderNid;
+    }
+
+    public void setLogisticsProviderNid(String logisticsProviderNid) {
+        this.logisticsProviderNid = logisticsProviderNid;
     }
 
     public String getPrincipalEmail() {

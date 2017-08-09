@@ -17,6 +17,10 @@
 
 
     <context:component-scan base-package="com.sfebiz.supplychain"/>
+    
+    <bean id="env" class="java.lang.String">
+        <constructor-arg value="${com.sfebiz.env}"/>
+    </bean>
 
     <bean id="threadPoolTaskExecutor"
           class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">

@@ -3,6 +3,8 @@ package com.sfebiz.supplychain.service.stockout.biz.model;
 import java.util.Date;
 import java.util.List;
 
+import net.sf.oval.constraint.NotNull;
+
 import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
 import com.sfebiz.supplychain.service.merchant.Model.MerchantPackageMaterialBO;
 
@@ -102,7 +104,8 @@ public class StockoutOrderBO extends BaseBO {
     /** 商户支付流水 */
     private String                      merchantPayNo;
 
-    /** 支付申报的支付类型 */
+    /** 支付申报的支付类型，从货主支付申报表获取 */
+    @NotNull(message = "支付申报方式不能为空")
     private String                      declarePayType;
 
     /** 支付申报支付流水 */
@@ -156,6 +159,9 @@ public class StockoutOrderBO extends BaseBO {
     /** 出库单线路实体 */
     private LogisticsLineBO             lineBO;
 
+    /** 货主包材实体 */
+    private MerchantPackageMaterialBO   merchantPackageMaterialBO;
+
     public String getUserId() {
         return userId;
     }
@@ -163,8 +169,6 @@ public class StockoutOrderBO extends BaseBO {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    /** 货主包材实体 */
-    private MerchantPackageMaterialBO merchantPackageMaterialBO;
 
     public String getBizId() {
         return bizId;
@@ -526,22 +530,32 @@ public class StockoutOrderBO extends BaseBO {
         this.lineBO = lineBO;
     }
 
-    /*-----------------------------------------自定义业务方法-----------------------------------------------*/
-
-    /**
-     * 获取用户实际支付的金额
-     * 
-     * @return
-     */
-    public Integer getUserActualPaymentAmount() {
-        return userGoodsPrice + userFreightFee - userDiscountPrice;
-    }
-
     public MerchantPackageMaterialBO getMerchantPackageMaterialBO() {
         return merchantPackageMaterialBO;
     }
 
     public void setMerchantPackageMaterialBO(MerchantPackageMaterialBO merchantPackageMaterialBO) {
         this.merchantPackageMaterialBO = merchantPackageMaterialBO;
+    }
+
+    /*-----------------------------------------自定义业务方法-----------------------------------------------*/
+
+    /**
+     * 获取用户实际支付的金额
+     * 
+     * @return userGoodsPrice + userFreightFee - userDiscountPrice
+     */
+    public Integer getUserActualPaymentAmount() {
+        // TODO matt
+        return userGoodsPrice + userFreightFee - userDiscountPrice;
+    }
+
+    /**
+     * 获取用户订单总金额
+     * 
+     * @return
+     */
+    public Integer getUserOrderTotalAmount() {
+        return userGoodsPrice + userFreightFee;
     }
 }

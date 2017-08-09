@@ -1,9 +1,12 @@
 package com.sfebiz.supplychain.persistence.base.sku.manager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import com.sfebiz.common.dao.BaseDao;
@@ -51,6 +54,21 @@ public class SkuBarcodeManager extends BaseManager<SkuBarcodeDO> {
         } else {
             return skuBarcodeDOList;
         }
+    }
+    
+    public Map<String, Long> getBarcode4SkuIdMapByBarcodeList(List<String> barcodeList) {
+        Map<String, Long> barcode4SkuIdMap = new HashMap<String, Long>();
+
+        SkuBarcodeDO queryDO = new SkuBarcodeDO();
+        BaseQuery<SkuBarcodeDO> query = BaseQuery.getInstance(queryDO);
+        query.addIn("barcode", barcodeList);
+        List<SkuBarcodeDO> skuBarcodeDOList = this.query(query);
+        if (CollectionUtils.isNotEmpty(skuBarcodeDOList)) {
+            for (SkuBarcodeDO skuBarcodeDO : skuBarcodeDOList) {
+                barcode4SkuIdMap.put(skuBarcodeDO.getBarcode(), skuBarcodeDO.getSkuId());
+            }
+        }
+        return barcode4SkuIdMap;
     }
 
     public static void main(String[] args) {

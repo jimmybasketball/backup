@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import net.pocrd.entity.ServiceException;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineServiceType;
 import com.sfebiz.supplychain.exposed.stockout.api.StockoutService;
+import com.sfebiz.supplychain.exposed.stockout.enums.IDType;
 import com.sfebiz.supplychain.exposed.stockout.enums.StockoutOrderType;
 import com.sfebiz.supplychain.exposed.stockout.enums.TaskType;
 import com.sfebiz.supplychain.open.exposed.api.SCOpenReturnCode;
@@ -35,11 +38,12 @@ import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderBuy
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderInvokeLogManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderTaskManager;
-import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
+import com.sfebiz.supplychain.service.stockout.biz.StockoutOrderBizService;
+import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
+import com.sfebiz.supplychain.service.stockout.model.StockoutOrderBOFactory;
+import com.sfebiz.supplychain.util.AreaUtil;
 import com.sfebiz.supplychain.util.NumberUtil;
-
-import net.pocrd.entity.ServiceException;
 
 @Service("openWmsTradeService")
 public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
@@ -71,8 +75,11 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
     @Resource
     private StockoutService               stockoutService;
 
-//    @Resource
-//    private StockoutOrderBizService       stockoutOrderBizService;
+    @Resource
+    private StockoutOrderBizService       stockoutOrderBizService;
+
+    @Resource
+    private StockoutOrderBOFactory        stockoutOrderBOFactory;
 
     @Override
     public List<WmsOrderRoutesResult> orderRouteSearch(String customerCode, List<String> orderNoList)
@@ -108,9 +115,9 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
                 }
 
                 // 2.1. 创建出库单
-//                StockoutOrderBO stockoutOrderEntity = StockoutOrderConvert
-//                    .buildStockoutOrderEntityByOpenOrderCreateReq(request);
-//                stockoutOrderBizService.createOrder(stockoutOrderEntity);
+                StockoutOrderBO stockoutOrderBO = stockoutOrderBOFactory
+                    .buildByOpenWmsTradeOrderCreateRequest(request);
+                stockoutOrderBizService.createOrder(stockoutOrderBO);
 
             } else if (StringUtils.equals(OpenWmsTradeActionType.EDIT.getCode(),
                 request.order.actionType)) {
@@ -172,43 +179,64 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL, "order信息不能为空");
         }
         OpenWmsTradeOrderItem orderItem = request.order;
+
         // 货主
         if (StringUtils.isBlank(orderItem.customerCode)) {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
                 "customerCode必填字段不能为空");
         }
-        if (null == merchantManager.getMerchantByMerchantAccountId(orderItem.customerCode)) {
-            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL, "此customerCode不存在");
-        }
 
+        // 商户订单号
         if (StringUtils.isBlank(orderItem.merchantOrderId)) {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
                 "merchantOrderId商户订单号不能为空");
         }
 
-        if (null == OpenWmsTradeActionType.getEnumByCode(orderItem.actionType)) {
+        // 操作类型
+        if (StringUtils.isBlank(orderItem.actionType)
+            || null == OpenWmsTradeActionType.getEnumByCode(orderItem.actionType)) {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
                 "actionType不为有效的值，请参考" + OpenWmsTradeActionType.getCodeListStr());
         }
 
         // 订单类型
-        if (null == StockoutOrderType.valueOf(orderItem.orderType)) {
+        if (StringUtils.isBlank(orderItem.orderType)
+            || !StockoutOrderType.containValue(Integer.valueOf(orderItem.orderType))) {
             throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR,
                 "orderType不为有效的值，请参考" + StockoutOrderType.getCodeListStr());
         }
-        if (orderItem.orderType != String.valueOf(StockoutOrderType.SALES_STOCK_OUT.getValue())) {
+        if (!StringUtils.equals(orderItem.orderType,
+            String.valueOf(StockoutOrderType.SALES_STOCK_OUT.getValue()))
+            && !StringUtils.equals(orderItem.orderType,
+                String.valueOf(StockoutOrderType.TRANSPORT_STOCK_OUT.getValue()))) {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
-                "orderType不为有效的值，当前仅支持销售出库单类型");
+                "orderType不为有效的值，当前仅支持" + StockoutOrderType.SALES_STOCK_OUT.getValue() + "（"
+                        + StockoutOrderType.SALES_STOCK_OUT.getDescription() + "）、"
+                        + StockoutOrderType.TRANSPORT_STOCK_OUT.getValue() + "（"
+                        + StockoutOrderType.TRANSPORT_STOCK_OUT.getDescription());
         }
 
         // 服务类型
-        if (!LogisticsLineServiceType.containValue(Integer.valueOf(orderItem.serviceType))) {
+        if (StringUtils.isBlank(orderItem.serviceType)
+            || !LogisticsLineServiceType.containValue(Integer.valueOf(orderItem.serviceType))) {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
                 "serviceType不为有效的值，请参考" + LogisticsLineServiceType.getCodeListStr());
         }
-        // TODO 根据服务类型，校验运单号
-        if (Integer.valueOf(orderItem.serviceType) == 31) {
-
+        if (Integer.valueOf(orderItem.serviceType) == LogisticsLineServiceType.FENG_YUN_VMI
+            .getValue()) {
+            if (StringUtils.isEmpty(orderItem.mailNo) || StringUtils.isEmpty(orderItem.carrierCode)) {
+                throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                    "使用" + LogisticsLineServiceType.FENG_YUN_VMI.getDescription()
+                            + "类型的产品时，mailNo与carrierCode为必填字段，请填写");
+            }
+            if (orderItem.orderType != String.valueOf(StockoutOrderType.TRANSPORT_STOCK_OUT
+                .getValue())) {
+                throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                    "使用" + LogisticsLineServiceType.FENG_YUN_VMI.getDescription()
+                            + "类型的产品时，orderType必须为"
+                            + StockoutOrderType.TRANSPORT_STOCK_OUT.getValue() + "（"
+                            + StockoutOrderType.TRANSPORT_STOCK_OUT.getDescription() + "）" + "，请填写");
+            }
         }
 
         // 仓库
@@ -216,23 +244,27 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
                 "warehouseCode必填字段不能为空");
         }
-        WarehouseDO warehouseDO = warehouseManager.getByNid(orderItem.warehouseCode);
-        if (warehouseDO == null) {
-            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL, "此warehouseCode不存在");
-        }
-        orderItem.warehouseCode = String.valueOf(warehouseDO.getId());
-
-        // 线路
-        if (StringUtils.isNotBlank(orderItem.routeCode)) {
-            if (null == logisticsLineManager.getById(Long.valueOf(orderItem.routeCode))) {
-                throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL, "此routeCode不存在");
-            }
-        }
 
         // 金额相关计算
-        if (StringUtils.isBlank(orderItem.goodsTotalAmount)) {
+        if (StringUtils.isBlank(orderItem.tradeAmount)
+            || StringUtils.isBlank(orderItem.goodsTotalAmount)
+            || StringUtils.isBlank(orderItem.discountAmount)
+            || StringUtils.isBlank(orderItem.freight)
+            || StringUtils.isBlank(orderItem.insuranceValue)) {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
-                "goodsTotalAmount必填字段不能为空");
+                "tradeAmount、goodsTotalAmount、discountAmount、freight、insuranceValue必填字段不能为空，如果为0请填写0");
+        }
+        if (NumberUtil.parsePriceYuan2Feng(orderItem.insuranceValue) > 0) {
+            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                "暂不支持insuranceValue字段，请填写0");
+        }
+        int calculateTradeAmount = NumberUtil.parsePriceYuan2Feng(orderItem.goodsTotalAmount)
+                                   - NumberUtil.parsePriceYuan2Feng(orderItem.discountAmount)
+                                   + NumberUtil.parsePriceYuan2Feng(orderItem.freight)
+                                   + NumberUtil.parsePriceYuan2Feng(orderItem.insuranceValue);
+        if (NumberUtil.parsePriceYuan2Feng(orderItem.tradeAmount) != calculateTradeAmount) {
+            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                "金额错误（tradeAmount = goodsTotalAmount - discountAmount + freight + insuranceValue），请修改");
         }
 
         // 出库单商品信息校验
@@ -241,11 +273,11 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
         }
 
         for (OpenWmsTradeGoodsItem goodsItem : orderItem.items) {
-            if (StringUtils.isEmpty(goodsItem.barCode)) {
+            if (StringUtils.isBlank(goodsItem.barCode)) {
                 throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
                     "barCode商品条码必填字段不能为空");
             }
-            if (StringUtils.isEmpty(goodsItem.skuUnitPrice)) {
+            if (StringUtils.isBlank(goodsItem.skuUnitPrice)) {
                 throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
                     "skuUnitPrice商品单价必填字段不能为空");
             } else {
@@ -260,44 +292,52 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
             }
         }
 
-        // 地址信息校验
+        // 收货人相关信息校验
         if (null == orderItem.consigneeInfo) {
             throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
                 "consigneeInfo收货人信息必填字段不能为空");
-        } else {
-            OpenWmsTradeConsigneeItem consigneeItem = orderItem.consigneeInfo;
-            if (StringUtils.isEmpty(consigneeItem.consigneeName)
-                || StringUtils.isEmpty(consigneeItem.consigneeMobile)
-                || StringUtils.isEmpty(consigneeItem.idType)
-                || StringUtils.isEmpty(consigneeItem.idNumber)) {
-                throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
-                    "consigneeName,consigneeMobile,idType,idNumber必填字段不能为空");
-            }
-            if (StringUtils.equals(consigneeItem.idType, "1")) { // 身份证
-                consigneeItem.idNumber = consigneeItem.idNumber.replace('x', 'X'); //小写转大写
-                if (!NumberUtil.checkIDNumFormat(consigneeItem.idNumber)) {
-                    throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL, "身份证号码不符合规则");
-                }
-            }
-
-            if (StringUtils.isEmpty(consigneeItem.addrCountry)
-                || StringUtils.isEmpty(consigneeItem.addrProvince)
-                || StringUtils.isEmpty(consigneeItem.addrCity)
-                || StringUtils.isEmpty(consigneeItem.addrDistrict)
-                || StringUtils.isEmpty(consigneeItem.addrDetail)) {
-                throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
-                    "收货地址中国家、省、市、区、详细地址信息均为必填字段不能为空");
-            }
-
-//            AreaUtil.AreaCheckResult areaCheckResult = AreaUtil.checkAreaInfo(
-//                consigneeItem.addrProvince, consigneeItem.addrCity, consigneeItem.addrDistrict);
-//            if (StringUtils.isNotBlank(areaCheckResult.getErrorMsg())) {
-//                throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
-//                    areaCheckResult.getErrorMsg());
-//            }
-//            consigneeItem.addrProvince = areaCheckResult.getProvinceName();
-//            consigneeItem.addrCity = areaCheckResult.getCityName();
-//            consigneeItem.addrDistrict = areaCheckResult.getRegionName();
         }
+        OpenWmsTradeConsigneeItem consigneeItem = orderItem.consigneeInfo;
+        if (StringUtils.isBlank(consigneeItem.consigneeName)
+            || StringUtils.isBlank(consigneeItem.consigneeMobile)
+            || StringUtils.isBlank(consigneeItem.idType)
+            || StringUtils.isBlank(consigneeItem.idNumber)) {
+            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                "consigneeName,consigneeMobile,idType,idNumber必填字段不能为空");
+        }
+
+        if (!StringUtils.equals(String.valueOf(IDType.ID_CARD.getValue()), consigneeItem.idType)) {
+            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                "证件类型错误，当前只支持身份证，请填写1");
+        }
+
+        consigneeItem.idNumber = StringUtils.upperCase(consigneeItem.idNumber);
+        if (!NumberUtil.checkIDNumFormat(consigneeItem.idNumber)) {
+            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL, "身份证号码不符合规则");
+        }
+
+        // 收货地址信息相关校验
+        if (StringUtils.isEmpty(consigneeItem.addrCountry)
+            || StringUtils.isEmpty(consigneeItem.addrProvince)
+            || StringUtils.isEmpty(consigneeItem.addrCity)
+            || StringUtils.isEmpty(consigneeItem.addrDistrict)
+            || StringUtils.isEmpty(consigneeItem.addrDetail)) {
+            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                "收货地址中国家、省、市、区、详细地址信息均为必填字段不能为空");
+        }
+        if (!StringUtils.equals(consigneeItem.addrCountry, AreaUtil.CN_DESC)) {
+            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                "当前只支持收货地址国家在国内，addrCountry请填写中国");
+        }
+
+        AreaUtil.AreaCheckResult areaCheckResult = AreaUtil.checkAreaInfo(
+            consigneeItem.addrProvince, consigneeItem.addrCity, consigneeItem.addrDistrict);
+        if (StringUtils.isNotBlank(areaCheckResult.getErrorMsg())) {
+            throw new ServiceException(SCOpenReturnCode.COMMON_PARAMS_ILLEGAL,
+                areaCheckResult.getErrorMsg());
+        }
+        consigneeItem.addrProvince = areaCheckResult.getProvinceName();
+        consigneeItem.addrCity = areaCheckResult.getCityName();
+        consigneeItem.addrDistrict = areaCheckResult.getRegionName();
     }
 }

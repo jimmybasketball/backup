@@ -153,4 +153,5 @@ public class LogisticsLineServiceType extends Enumerable4IntValue {
         }
         return sb.toString();
     }
+
 }

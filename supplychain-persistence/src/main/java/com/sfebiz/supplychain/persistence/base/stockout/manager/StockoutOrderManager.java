@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.sfebiz.common.dao.BaseDao;
@@ -24,8 +27,10 @@ import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 @Component("stockoutOrderManager")
 public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StockoutOrderManager.class);
+
     @Resource
-    private StockoutOrderDao stockoutOrderDao;
+    private StockoutOrderDao    stockoutOrderDao;
 
     @Override
     public BaseDao<StockoutOrderDO> getDao() {
@@ -52,9 +57,43 @@ public class StockoutOrderManager extends BaseManager<StockoutOrderDO> {
             return stockoutOrderDOs.get(0);
         }
     }
-    
+
     public List<ExportedShipOrderDO> query4Page4AutoShipOrder(List<Long> stockoutOrderIdList) {
         return stockoutOrderDao.query4Page4AutoShipOrderByStockoutOrderIds(stockoutOrderIdList);
+    }
+
+    /**
+     * 根据身份证号，查询此用户下第一个由于口岸单数等被限制的出库单信息
+     *
+     * @param idNo
+     * @return 如果不存在，则返回null
+     */
+    public StockoutOrderDO getFirstPortValidateOrderByIdNo(String idNo, Long portId) {
+        // TODO matt
+        return null;
+    }
+
+    public StockoutOrderDO getByBizId(String bizId) {
+        return getByBizId(bizId, null);
+    }
+
+    public StockoutOrderDO getByBizId(String bizId, String orderType) {
+        if (StringUtils.isBlank(bizId)) {
+            return null;
+        }
+        StockoutOrderDO q = new StockoutOrderDO();
+        q.setBizId(bizId);
+        if (StringUtils.isNotBlank(orderType)) {
+            q.setOrderType(Integer.valueOf(orderType));
+        }
+        BaseQuery<StockoutOrderDO> qs = BaseQuery.getInstance(q);
+        List<StockoutOrderDO> list = this.query(qs);
+        if (list != null && list.size() == 1) {
+            return list.get(0);
+        } else if (list != null && list.size() > 1) {
+            LOGGER.error("订单：" + bizId + "，出库单存在多条（重复），请排查。");
+        }
+        return null;
     }
 
     public static void main(String[] args) {

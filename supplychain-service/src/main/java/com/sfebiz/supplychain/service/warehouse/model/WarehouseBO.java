@@ -3,6 +3,10 @@ package com.sfebiz.supplychain.service.warehouse.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.sfebiz.supplychain.exposed.warehouse.enums.WarehouseCooperationState;
+import com.sfebiz.supplychain.exposed.warehouse.enums.WarehouseState;
+import com.sfebiz.supplychain.exposed.warehouse.enums.WarehouseType;
+
 /**
  * 
  * <p>仓库业务处理实体</p>
@@ -27,8 +31,8 @@ public class WarehouseBO implements Serializable {
     /** 仓库对接由真实仓库方提供的仓库编码 */
     private String                       warehouseCode;
 
-    /** 服务提供者id */
-    private String                       logisticsProviderId;
+    /** 服务提供者nid */
+    private String                       logisticsProviderNid;
 
     /** 丰趣负责人邮箱 */
     private String                       principalEmail;
@@ -37,13 +41,13 @@ public class WarehouseBO implements Serializable {
     private String                       region;
 
     /** 仓库类型 */
-    private String                       warehouseType;
+    private WarehouseType                warehouseType;
 
     /** 合作状态 */
-    private String                       cooperationState;
+    private WarehouseCooperationState    cooperationState;
 
     /** 仓库运行状态 */
-    private String                       warehouseState;
+    private WarehouseState               warehouseState;
 
     /** 合同开始日期 */
     private Date                         contractPeriodStart;
@@ -52,16 +56,16 @@ public class WarehouseBO implements Serializable {
     private Date                         contractPeriodEnd;
 
     /** 是否是存储仓 */
-    private Integer                      isStorage;
+    private Boolean                      isStorage;
 
     /** 是否是退货仓 */
-    private Integer                      isReturn;
+    private Boolean                      isReturn;
 
     /** 是否是转运仓 */
-    private Integer                      isTransit;
+    private Boolean                      isTransit;
 
     /** 是否支持批次管理 */
-    private Integer                      isSupportBatch;
+    private Boolean                      isSupportBatch;
 
     /** 仓库地址信息 */
     private WarehouseAddressBO           addressBO;
@@ -107,12 +111,12 @@ public class WarehouseBO implements Serializable {
         this.warehouseCode = warehouseCode;
     }
 
-    public String getLogisticsProviderId() {
-        return logisticsProviderId;
+    public String getLogisticsProviderNid() {
+        return logisticsProviderNid;
     }
 
-    public void setLogisticsProviderId(String logisticsProviderId) {
-        this.logisticsProviderId = logisticsProviderId;
+    public void setLogisticsProviderNid(String logisticsProviderNid) {
+        this.logisticsProviderNid = logisticsProviderNid;
     }
 
     public String getPrincipalEmail() {
@@ -131,27 +135,27 @@ public class WarehouseBO implements Serializable {
         this.region = region;
     }
 
-    public String getWarehouseType() {
+    public WarehouseType getWarehouseType() {
         return warehouseType;
     }
 
-    public void setWarehouseType(String warehouseType) {
+    public void setWarehouseType(WarehouseType warehouseType) {
         this.warehouseType = warehouseType;
     }
 
-    public String getCooperationState() {
+    public WarehouseCooperationState getCooperationState() {
         return cooperationState;
     }
 
-    public void setCooperationState(String cooperationState) {
+    public void setCooperationState(WarehouseCooperationState cooperationState) {
         this.cooperationState = cooperationState;
     }
 
-    public String getWarehouseState() {
+    public WarehouseState getWarehouseState() {
         return warehouseState;
     }
 
-    public void setWarehouseState(String warehouseState) {
+    public void setWarehouseState(WarehouseState warehouseState) {
         this.warehouseState = warehouseState;
     }
 
@@ -171,35 +175,35 @@ public class WarehouseBO implements Serializable {
         this.contractPeriodEnd = contractPeriodEnd;
     }
 
-    public Integer getIsStorage() {
+    public Boolean getIsStorage() {
         return isStorage;
     }
 
-    public void setIsStorage(Integer isStorage) {
+    public void setIsStorage(Boolean isStorage) {
         this.isStorage = isStorage;
     }
 
-    public Integer getIsReturn() {
+    public Boolean getIsReturn() {
         return isReturn;
     }
 
-    public void setIsReturn(Integer isReturn) {
+    public void setIsReturn(Boolean isReturn) {
         this.isReturn = isReturn;
     }
 
-    public Integer getIsTransit() {
+    public Boolean getIsTransit() {
         return isTransit;
     }
 
-    public void setIsTransit(Integer isTransit) {
+    public void setIsTransit(Boolean isTransit) {
         this.isTransit = isTransit;
     }
 
-    public Integer getIsSupportBatch() {
+    public Boolean getIsSupportBatch() {
         return isSupportBatch;
     }
 
-    public void setIsSupportBatch(Integer isSupportBatch) {
+    public void setIsSupportBatch(Boolean isSupportBatch) {
         this.isSupportBatch = isSupportBatch;
     }
 

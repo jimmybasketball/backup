@@ -1,27 +1,39 @@
 package com.sfebiz.supplychain.provider.command.common;
 
-import com.sfebiz.supplychain.config.lp.LogisticsProviderConfig;
-import com.sfebiz.supplychain.protocol.bsp.*;
-import com.sfebiz.supplychain.provider.biz.ProviderBizService;
-import com.sfebiz.supplychain.provider.entity.BspServiceCode;
-import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
-import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDetailBO;
-import com.sfebiz.supplychain.util.JSONUtil;
-import com.sfebiz.supplychain.util.ListUtil;
-import net.pocrd.util.Md5Util;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.*;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.pocrd.util.Md5Util;
+
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
+import org.apache.commons.beanutils.converters.DoubleConverter;
+import org.apache.commons.beanutils.converters.IntegerConverter;
+import org.apache.commons.beanutils.converters.LongConverter;
+import org.apache.commons.beanutils.converters.ShortConverter;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+
+import com.sfebiz.supplychain.config.lp.LogisticsProviderConfig;
+import com.sfebiz.supplychain.protocol.bsp.BSPBody;
+import com.sfebiz.supplychain.protocol.bsp.BSPRequest;
+import com.sfebiz.supplychain.protocol.bsp.BSPResponse;
+import com.sfebiz.supplychain.protocol.bsp.BSPReturnCode;
+import com.sfebiz.supplychain.protocol.bsp.BSPRoute;
+import com.sfebiz.supplychain.protocol.bsp.BSPRouteRequest;
+import com.sfebiz.supplychain.protocol.bsp.BSPRouteResponse;
+import com.sfebiz.supplychain.provider.biz.ProviderBizService;
+import com.sfebiz.supplychain.provider.entity.BspServiceCode;
+import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
+import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDetailBO;
+import com.sfebiz.supplychain.util.JSONUtil;
+import com.sfebiz.supplychain.util.ListUtil;
 
 /**
  * 命令通用类
@@ -31,8 +43,7 @@ import java.util.Map;
 public class CommonUtil {
 
     public static final Integer YUAN_2_FEN_UNIT = Integer.valueOf(100);
-    private static final Logger logger = LoggerFactory.getLogger("CommandLogger");
-
+    private static final Logger logger          = LoggerFactory.getLogger("CommandLogger");
 
     static {
         ConvertUtils.register(new LongConverter(null), Long.class);
@@ -68,12 +79,11 @@ public class CommonUtil {
             return null;
         }
         BSPResponse resp = ProviderBizService.getInstance().sendBSPRequest(
-                LogisticsProviderConfig.getBspInterfaceUrl(),
-                LogisticsProviderConfig.getBspInterfaceKey(),
-                req, bizId);
+            LogisticsProviderConfig.getBspInterfaceUrl(),
+            LogisticsProviderConfig.getBspInterfaceKey(), req, bizId);
 
         if (resp != null && BSPReturnCode.SUCCESS.getCode().equalsIgnoreCase(resp.getHeader())
-                && resp.getBody().getBody().size() > 0) {
+            && resp.getBody().getBody().size() > 0) {
             BSPBody body = resp.getBody().getBody().get(0);
             if (body instanceof BSPRouteResponse) {
                 BSPRouteResponse routeResponse = (BSPRouteResponse) body;
@@ -94,9 +104,11 @@ public class CommonUtil {
      * @param isSupportBatch      是否支持批次，如果支持，则按照sku+batch维度进行合并，不支持按照sku维度。
      * @return
      */
-    public static List<StockoutOrderDetailBO> mergeStockoutOrderSku(List<StockoutOrderDetailBO> stockoutOrderDetailBOS, Boolean isSupportBatch) {
+    public static List<StockoutOrderDetailBO> mergeStockoutOrderSku(List<StockoutOrderDetailBO> stockoutOrderDetailBOS,
+                                                                    Boolean isSupportBatch) {
+
         List<StockoutOrderDetailBO> resultList = new ArrayList<StockoutOrderDetailBO>();
-        HashMap<String, StockoutOrderDetailBO> map = new HashMap();
+        Map<String, StockoutOrderDetailBO> map = new HashMap<String, StockoutOrderDetailBO>();
         for (StockoutOrderDetailBO stockoutOrderSkuBO : stockoutOrderDetailBOS) {
             String mergeKey = stockoutOrderSkuBO.getSkuId().toString();
             if (isSupportBatch && StringUtils.isNotBlank(stockoutOrderSkuBO.getSkuBatch())) {
@@ -104,7 +116,8 @@ public class CommonUtil {
             }
             if (map.containsKey(mergeKey)) {
                 StockoutOrderDetailBO exitsStockoutOrderSkuBO = map.get(mergeKey);
-                exitsStockoutOrderSkuBO.setQuantity(exitsStockoutOrderSkuBO.getQuantity() + exitsStockoutOrderSkuBO.getQuantity());
+                exitsStockoutOrderSkuBO.setQuantity(exitsStockoutOrderSkuBO.getQuantity()
+                                                    + exitsStockoutOrderSkuBO.getQuantity());
             } else {
                 StockoutOrderDetailBO newStockoutOrderSkuBO = new StockoutOrderDetailBO();
                 BeanUtils.copyProperties(stockoutOrderSkuBO, newStockoutOrderSkuBO);
@@ -125,86 +138,86 @@ public class CommonUtil {
      * @param isSupportBatch      是否支持批次，如果支持，则按照sku+batch维度进行合并，不支持按照sku维度。
      * @return
      */
-//    public static List<StockinOrderSkuDO> mergeStockinOrderSku(List<StockinOrderSkuDO> stockoutOrderSkuDOs, Boolean isSupportBatch) {
-//        List<StockinOrderSkuDO> resultList = new ArrayList<StockinOrderSkuDO>();
-//        HashMap<String, StockinOrderSkuDO> map = new HashMap();
-//        for (StockinOrderSkuDO stockinOrderSkuDO : stockoutOrderSkuDOs) {
-//            String mergeKey = stockinOrderSkuDO.getSkuId().toString();
-//            if (isSupportBatch && StringUtils.isNotBlank(stockinOrderSkuDO.getSkuBatch())) {
-//                mergeKey = mergeKey.concat("_").concat(stockinOrderSkuDO.getSkuBatch());
-//            }
-//            if (map.containsKey(mergeKey)) {
-//                StockinOrderSkuDO exitsStockoutOrderSkuDo = map.get(mergeKey);
-//                exitsStockoutOrderSkuDo.setCount(exitsStockoutOrderSkuDo.getCount() + stockinOrderSkuDO.getCount());
-//            } else {
-//                StockinOrderSkuDO newStockinOrderskuD0 = new StockinOrderSkuDO();
-//                BeanUtils.copyProperties(stockinOrderSkuDO, newStockinOrderskuD0);
-//                map.put(mergeKey, newStockinOrderskuD0);
-//            }
-//        }
-//        for (StockinOrderSkuDO stockinOrderSkuDO : map.values()) {
-//            resultList.add(stockinOrderSkuDO);
-//        }
-//
-//        return resultList;
-//    }
+    //    public static List<StockinOrderSkuDO> mergeStockinOrderSku(List<StockinOrderSkuDO> stockoutOrderSkuDOs, Boolean isSupportBatch) {
+    //        List<StockinOrderSkuDO> resultList = new ArrayList<StockinOrderSkuDO>();
+    //        HashMap<String, StockinOrderSkuDO> map = new HashMap();
+    //        for (StockinOrderSkuDO stockinOrderSkuDO : stockoutOrderSkuDOs) {
+    //            String mergeKey = stockinOrderSkuDO.getSkuId().toString();
+    //            if (isSupportBatch && StringUtils.isNotBlank(stockinOrderSkuDO.getSkuBatch())) {
+    //                mergeKey = mergeKey.concat("_").concat(stockinOrderSkuDO.getSkuBatch());
+    //            }
+    //            if (map.containsKey(mergeKey)) {
+    //                StockinOrderSkuDO exitsStockoutOrderSkuDo = map.get(mergeKey);
+    //                exitsStockoutOrderSkuDo.setCount(exitsStockoutOrderSkuDo.getCount() + stockinOrderSkuDO.getCount());
+    //            } else {
+    //                StockinOrderSkuDO newStockinOrderskuD0 = new StockinOrderSkuDO();
+    //                BeanUtils.copyProperties(stockinOrderSkuDO, newStockinOrderskuD0);
+    //                map.put(mergeKey, newStockinOrderskuD0);
+    //            }
+    //        }
+    //        for (StockinOrderSkuDO stockinOrderSkuDO : map.values()) {
+    //            resultList.add(stockinOrderSkuDO);
+    //        }
+    //
+    //        return resultList;
+    //    }
 
-//    /**
-//     * 口岸和BSP是不支持组合商品的
-//     * 所以需要将组合商品过滤掉
-//     *
-//     * @return
-//     */
-//    public static List<StockoutOrderSkuDO> removeMixedSku(List<StockoutOrderSkuDO> origin) {
-//        List<StockoutOrderSkuDO> resultAfterFilter = new ArrayList<StockoutOrderSkuDO>();
-//        for (StockoutOrderSkuDO stockoutOrderSkuDO : origin) {
-//            if (stockoutOrderSkuDO.getSkuType() != SkuType.MIX_SKU.value) {
-//                resultAfterFilter.add(stockoutOrderSkuDO);
-//            } else {
-//                LogBetter.instance(logger)
-//                        .setLevel(LogLevel.WARN)
-//                        .setMsg("[供应链报文-构建出库单商品-BSP-口岸不支持组合商品,跳过组合商品]:")
-//                        .addParm("skuId", stockoutOrderSkuDO.getSkuId())
-//                        .log();
-//            }
-//        }
-//        return resultAfterFilter;
-//    }
+    //    /**
+    //     * 口岸和BSP是不支持组合商品的
+    //     * 所以需要将组合商品过滤掉
+    //     *
+    //     * @return
+    //     */
+    //    public static List<StockoutOrderSkuDO> removeMixedSku(List<StockoutOrderSkuDO> origin) {
+    //        List<StockoutOrderSkuDO> resultAfterFilter = new ArrayList<StockoutOrderSkuDO>();
+    //        for (StockoutOrderSkuDO stockoutOrderSkuDO : origin) {
+    //            if (stockoutOrderSkuDO.getSkuType() != SkuType.MIX_SKU.value) {
+    //                resultAfterFilter.add(stockoutOrderSkuDO);
+    //            } else {
+    //                LogBetter.instance(logger)
+    //                        .setLevel(LogLevel.WARN)
+    //                        .setMsg("[供应链报文-构建出库单商品-BSP-口岸不支持组合商品,跳过组合商品]:")
+    //                        .addParm("skuId", stockoutOrderSkuDO.getSkuId())
+    //                        .log();
+    //            }
+    //        }
+    //        return resultAfterFilter;
+    //    }
 
     /**
      * 根据仓库是否支持组合商品过滤商品列表
      *
      * @return
      */
-//    public static List<StockoutOrderSkuDO> filterStockoutOrderSku(List<StockoutOrderSkuDO> origin, boolean isWarehouseSupportCombination) {
-//        List<StockoutOrderSkuDO> resultAfterFilter = new ArrayList<StockoutOrderSkuDO>();
-//        // 如果仓库支持组合商品,那么就只发组合商品
-//        // 如果仓库不支持组合商品,那么就过滤掉组合商品
-//        if (isWarehouseSupportCombination) {
-//            for (StockoutOrderSkuDO stockoutOrderSkuDO : origin) {
-//                if (stockoutOrderSkuDO.getSkuType() != SkuType.BASIC_SKU_OF_MIX_SKU.value) {
-//                    resultAfterFilter.add(stockoutOrderSkuDO);
-//                } else {
-//                    LogBetter.instance(logger)
-//                            .setMsg("[供应链报文-构建出库单商品-仓库支持组合商品,跳过组合商品中的基本商品]:")
-//                            .addParm("skuId", stockoutOrderSkuDO.getSkuId())
-//                            .log();
-//                }
-//            }
-//        } else {
-//            for (StockoutOrderSkuDO stockoutOrderSkuDO : origin) {
-//                if (stockoutOrderSkuDO.getSkuType() != SkuType.MIX_SKU.value) {
-//                    resultAfterFilter.add(stockoutOrderSkuDO);
-//                } else {
-//                    LogBetter.instance(logger)
-//                            .setMsg("[供应链报文-构建出库单商品-仓库不支持组合商品,跳过组合商品]:")
-//                            .addParm("skuId", stockoutOrderSkuDO.getSkuId())
-//                            .log();
-//                }
-//            }
-//        }
-//        return resultAfterFilter;
-//    }
+    //    public static List<StockoutOrderSkuDO> filterStockoutOrderSku(List<StockoutOrderSkuDO> origin, boolean isWarehouseSupportCombination) {
+    //        List<StockoutOrderSkuDO> resultAfterFilter = new ArrayList<StockoutOrderSkuDO>();
+    //        // 如果仓库支持组合商品,那么就只发组合商品
+    //        // 如果仓库不支持组合商品,那么就过滤掉组合商品
+    //        if (isWarehouseSupportCombination) {
+    //            for (StockoutOrderSkuDO stockoutOrderSkuDO : origin) {
+    //                if (stockoutOrderSkuDO.getSkuType() != SkuType.BASIC_SKU_OF_MIX_SKU.value) {
+    //                    resultAfterFilter.add(stockoutOrderSkuDO);
+    //                } else {
+    //                    LogBetter.instance(logger)
+    //                            .setMsg("[供应链报文-构建出库单商品-仓库支持组合商品,跳过组合商品中的基本商品]:")
+    //                            .addParm("skuId", stockoutOrderSkuDO.getSkuId())
+    //                            .log();
+    //                }
+    //            }
+    //        } else {
+    //            for (StockoutOrderSkuDO stockoutOrderSkuDO : origin) {
+    //                if (stockoutOrderSkuDO.getSkuType() != SkuType.MIX_SKU.value) {
+    //                    resultAfterFilter.add(stockoutOrderSkuDO);
+    //                } else {
+    //                    LogBetter.instance(logger)
+    //                            .setMsg("[供应链报文-构建出库单商品-仓库不支持组合商品,跳过组合商品]:")
+    //                            .addParm("skuId", stockoutOrderSkuDO.getSkuId())
+    //                            .log();
+    //                }
+    //            }
+    //        }
+    //        return resultAfterFilter;
+    //    }
 
     /**
      * 忽略批次，获取基本SKUID维度商品数
@@ -253,34 +266,33 @@ public class CommonUtil {
      * @param stockoutOrderDO
      * @return
      */
-//    public static LogisticsClearanceDetailEntity buildClearanceDetailEntity(LineEntity line, StockoutOrderDO stockoutOrderDO) {
-//        if (line == null || stockoutOrderDO == null) {
-//            throw new IllegalArgumentException("路线或者出库单不能为空");
-//        }
-//        if (StringUtils.isBlank(line.routeCode)) {
-//            throw new IllegalArgumentException("路线中RouteCode不能为空");
-//        }
-//        LogisticsClearanceDetailEntity clearanceDetailEntity = new LogisticsClearanceDetailEntity();
-//        clearanceDetailEntity.orderId = stockoutOrderDO.getBizId();
-//        clearanceDetailEntity.carrierCode = line.routeCode;
-//        clearanceDetailEntity.mailNo = stockoutOrderDO.getMailNo();
-//        clearanceDetailEntity.shipperCode = stockoutOrderDO.getOrigincode();
-//        clearanceDetailEntity.deliveryCode = stockoutOrderDO.getDestcode();
-//        clearanceDetailEntity.senderAddress = line.warehouseEntity.senderAddress;
-//        clearanceDetailEntity.custId = line.custId;
-//        clearanceDetailEntity.payMethod = "寄付月结";
-//
-//        if (line.clearanceProviderEntity != null && StringUtils.isNotBlank(line.clearanceProviderEntity.meta)) {
-//            String meta = line.clearanceProviderEntity.meta;
-//            Map<String, String> metaMap = JSON.parseObject(meta, Map.class);
-//            if (null != meta) {
-//                clearanceDetailEntity.logo = metaMap.get("logo");
-//            }
-//        }
-//
-//        return clearanceDetailEntity;
-//    }
-
+    //    public static LogisticsClearanceDetailEntity buildClearanceDetailEntity(LineEntity line, StockoutOrderDO stockoutOrderDO) {
+    //        if (line == null || stockoutOrderDO == null) {
+    //            throw new IllegalArgumentException("路线或者出库单不能为空");
+    //        }
+    //        if (StringUtils.isBlank(line.routeCode)) {
+    //            throw new IllegalArgumentException("路线中RouteCode不能为空");
+    //        }
+    //        LogisticsClearanceDetailEntity clearanceDetailEntity = new LogisticsClearanceDetailEntity();
+    //        clearanceDetailEntity.orderId = stockoutOrderDO.getBizId();
+    //        clearanceDetailEntity.carrierCode = line.routeCode;
+    //        clearanceDetailEntity.mailNo = stockoutOrderDO.getMailNo();
+    //        clearanceDetailEntity.shipperCode = stockoutOrderDO.getOrigincode();
+    //        clearanceDetailEntity.deliveryCode = stockoutOrderDO.getDestcode();
+    //        clearanceDetailEntity.senderAddress = line.warehouseEntity.senderAddress;
+    //        clearanceDetailEntity.custId = line.custId;
+    //        clearanceDetailEntity.payMethod = "寄付月结";
+    //
+    //        if (line.clearanceProviderEntity != null && StringUtils.isNotBlank(line.clearanceProviderEntity.meta)) {
+    //            String meta = line.clearanceProviderEntity.meta;
+    //            Map<String, String> metaMap = JSON.parseObject(meta, Map.class);
+    //            if (null != meta) {
+    //                clearanceDetailEntity.logo = metaMap.get("logo");
+    //            }
+    //        }
+    //
+    //        return clearanceDetailEntity;
+    //    }
 
     /**
      * 由于日本关键字在商品名称中处于敏感词，所以在部分清关字段中需要移除
@@ -297,7 +309,6 @@ public class CommonUtil {
             return finalSkuName;
         }
     }
-
 
     /**
      * 获取购买人姓名
@@ -327,7 +338,6 @@ public class CommonUtil {
         return userIdNo;
     }
 
-
     /**
      * 获取购买人注册号
      *
@@ -340,7 +350,8 @@ public class CommonUtil {
             throw new IllegalArgumentException("购买人姓名或者身份证号不能为空");
         }
 
-        String regNo = Md5Util.computeToHex(String.valueOf(buyerName + buyerIdNo).getBytes()).toLowerCase();
+        String regNo = Md5Util.computeToHex(String.valueOf(buyerName + buyerIdNo).getBytes())
+            .toLowerCase();
         return regNo;
     }
 
@@ -353,7 +364,6 @@ public class CommonUtil {
     public static String getConsigneeName(StockoutOrderBO stockoutOrderBO) {
         return stockoutOrderBO.getBuyerBO().getBuyerName();
     }
-
 
     /**
      * 获取收件人身份证号码
@@ -382,7 +392,6 @@ public class CommonUtil {
         return fullAddress.toString();
     }
 
-
     /**
      * 替代 BeanUtils.copyProperties 方法，解决封装数值类型为null时被转换为了0
      * 在本类中增加了静态初始化块
@@ -392,7 +401,8 @@ public class CommonUtil {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    public static void copyProperties(Object dest, Object orig) throws IllegalAccessException, InvocationTargetException {
+    public static void copyProperties(Object dest, Object orig) throws IllegalAccessException,
+                                                               InvocationTargetException {
         org.apache.commons.beanutils.BeanUtils.copyProperties(dest, orig);
     }
 

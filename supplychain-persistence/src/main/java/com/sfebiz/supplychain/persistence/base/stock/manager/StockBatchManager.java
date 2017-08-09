@@ -1,23 +1,26 @@
 package com.sfebiz.supplychain.persistence.base.stock.manager;
 
-import com.sfebiz.common.dao.BaseDao;
-import com.sfebiz.common.dao.domain.BaseQuery;
-import com.sfebiz.common.dao.manager.BaseManager;
-import com.sfebiz.supplychain.exposed.stock.enums.StockBatchStateType;
-import com.sfebiz.supplychain.persistence.base.stock.dao.StockBatchDao;
-import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.util.List;
+import com.sfebiz.common.dao.BaseDao;
+import com.sfebiz.common.dao.domain.BaseQuery;
+import com.sfebiz.common.dao.manager.BaseManager;
+import com.sfebiz.supplychain.exposed.common.enums.StockOutPlanType;
+import com.sfebiz.supplychain.exposed.stock.enums.StockBatchStateType;
+import com.sfebiz.supplychain.persistence.base.stock.dao.StockBatchDao;
+import com.sfebiz.supplychain.persistence.base.stock.domain.StockBatchDO;
 
 /**
  * @author yangh [yanghua@ifunq.com]
  * @description: 批次库存Manager
  * @date 2017-07-13 16:36
  **/
-@Component("batchStockManager")
+@Component("stockBatchManager")
 public class StockBatchManager extends BaseManager<StockBatchDO> {
     @Resource
     private StockBatchDao stockBatchDao;
@@ -213,5 +216,33 @@ public class StockBatchManager extends BaseManager<StockBatchDO> {
             return stockBatchDOList;
         }
         return null;
+    }
+    
+    /**
+     * 获取批次库存信息，出库单创建时
+     * 
+     * @param skuId
+     * @param warehouseId
+     * @param merchantId
+     * @param merchantProviderId
+     * @param batchNo
+     * @param planType
+     * @param buyNum
+     * @return
+     */
+    public List<StockBatchDO> getForCreateStockoutOrder(Long skuId, Long warehouseId, Long merchantId, Long merchantProviderId, String batchNo, StockOutPlanType planType, int buyNum){
+        StockBatchDO queryDO = new StockBatchDO();
+        queryDO.setSkuId(skuId);
+        queryDO.setWarehouseId(warehouseId);
+        queryDO.setMerchantId(merchantId);
+        queryDO.setMerchantProviderId(merchantProviderId);
+        queryDO.setState(StockBatchStateType.ENABLE.value);
+        if(StringUtils.isNotBlank(batchNo)){
+            queryDO.setBatchNo(batchNo);
+        }
+        BaseQuery<StockBatchDO> baseQuery = new BaseQuery<StockBatchDO>(queryDO);
+        baseQuery.addGte("available_count", buyNum);
+        // TODO 根据出库规则进行排序
+        return stockBatchDao.query(baseQuery);
     }
 }

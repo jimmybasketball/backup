@@ -35,12 +35,12 @@ public class StockoutOrderTaskManager extends BaseManager<StockoutOrderTaskDO> {
     public BaseDao<StockoutOrderTaskDO> getDao() {
         return stockoutOrderTaskDao;
     }
-    
+
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("C:/sc_stockout_order_task-sqlmap.xml",
             StockoutOrderTaskDao.class, StockoutOrderTaskDO.class, "sc_stockout_order_task");
     }
-    
+
     public List<StockoutOrderTaskDO> getAllFailDataByTaskType(String taskType) {
         StockoutOrderTaskDO stockoutOrderTaskDO = new StockoutOrderTaskDO();
         stockoutOrderTaskDO.setTaskType(taskType);
@@ -54,7 +54,7 @@ public class StockoutOrderTaskManager extends BaseManager<StockoutOrderTaskDO> {
         }
         return null;
     }
-    
+
     /**
      * 根据业务订单号、货主id、任务类型，获取任务实体
      * 
@@ -65,7 +65,7 @@ public class StockoutOrderTaskManager extends BaseManager<StockoutOrderTaskDO> {
      */
     public StockoutOrderTaskDO getTaskByBizIdAndMerchantIdAndTaskType(String bizId,
                                                                       Long merchantId,
-                                                                    String taskType) {
+                                                                      String taskType) {
         StockoutOrderTaskDO stockoutOrderTaskDO = new StockoutOrderTaskDO();
         stockoutOrderTaskDO.setBizId(bizId);
         stockoutOrderTaskDO.setMerchantId(merchantId);
@@ -125,6 +125,28 @@ public class StockoutOrderTaskManager extends BaseManager<StockoutOrderTaskDO> {
             if (taskDOList.size() > 0) {
                 return stockoutOrderTaskDOs.get(0);
             }
+        }
+        return null;
+    }
+
+    /**
+     * 根据出库单ID和任务类型，子任务类型查询任务
+     * @param stockoutOrderId
+     * @param taskType
+     * @param subTaskType
+     * @return
+     */
+    public StockoutOrderTaskDO getByStockoutOrderIdAndTaskTypeAndSubTaskType(Long stockoutOrderId,
+                                                                             String taskType,
+                                                                             String subTaskType) {
+        StockoutOrderTaskDO stockoutOrderTaskDO = new StockoutOrderTaskDO();
+        stockoutOrderTaskDO.setStockoutOrderId(stockoutOrderId);
+        stockoutOrderTaskDO.setTaskType(taskType);
+        stockoutOrderTaskDO.setSubTaskType(subTaskType);
+        BaseQuery<StockoutOrderTaskDO> qy = new BaseQuery<StockoutOrderTaskDO>(stockoutOrderTaskDO);
+        List<StockoutOrderTaskDO> stockoutOrderTaskDOs = stockoutOrderTaskDao.query(qy);
+        if (stockoutOrderTaskDOs != null && stockoutOrderTaskDOs.size() > 0) {
+            return stockoutOrderTaskDOs.get(0);
         }
         return null;
     }
