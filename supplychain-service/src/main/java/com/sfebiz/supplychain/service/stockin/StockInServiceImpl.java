@@ -794,14 +794,15 @@ public class StockInServiceImpl implements StockInService{
             stockinOrderStateLogManager.insertOrUpdate(stockinorderId, userId, userName, StockinOrderState.TO_BE_SUBMITED.getValue());
 
             //判断仓库是否需要同步商品
-            WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();
-            if (logisticsProvider.getIntegrationBO().getIsIntegrationSkuSync().compareTo(1) == 0) {
+            // TODO: 2017/8/9
+//            WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();
+//            if (logisticsProvider.getIntegrationBO().getIsIntegrationSkuSync().compareTo(1) == 0) {
                 List<StockinOrderDetailDO> details = stockinOrderDetailManager.queryByStockinOrderId(stockinorderId);
                 List<StockinOrderDetailEntity> detailEntitys = new ArrayList<StockinOrderDetailEntity>();
                 for (StockinOrderDetailDO detail : details) {
                     StockinOrderDetailEntity detailEntity = modelMapper.map(detail, StockinOrderDetailEntity.class);
                     detailEntitys.add(detailEntity);
-                }
+//                }
 
                 syncSkuToWarehouse(stockinOrderDO, detailEntitys, true);
             }
