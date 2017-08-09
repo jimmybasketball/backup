@@ -1003,8 +1003,8 @@ public class StockInServiceImpl implements StockInService{
             throw new ServiceException(WarehouseReturnCode.WAREHOUSE_NOT_EXIST_ERR, WarehouseReturnCode.WAREHOUSE_NOT_EXIST_ERR.getDesc());
         }
         //// TODO: 2017/8/7
-        WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();
-        if (logisticsProvider.getIntegrationBO().getIsIntegrationSkuSync() == 1) {
+//        WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();
+//        if (logisticsProvider.getIntegrationBO().getIsIntegrationSkuSync() == 1) {
             for (StockinOrderDetailEntity skuEntity : skusAfterMerge) {
                 SkuWarehouseSyncDO syncDO = new SkuWarehouseSyncDO();
                 syncDO.setSkuId(skuEntity.skuId);
@@ -1024,7 +1024,7 @@ public class StockInServiceImpl implements StockInService{
                         skuSyncBizService.sendProductBasicInfo2WmsNotSync(skuIds, warehouseId, WmsOperaterType.ADD);
                     }
                 }
-            }
+//            }
         }
     }
 }

@@ -71,10 +71,10 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
         //2. 检测仓库是否支持入库命令
         StockinOrderDO stockinOrderDO = request.getStockinOrderDO();
         WarehouseDO warehouseDO = warehouseManager.getById(stockinOrderDO.getWarehouseId());
-        WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();// TODO: 2017/8/9
-        if (logisticsProvider.getIntegrationBO().getIsIntegrationStockin() == 1) {
+//        WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();// TODO: 2017/8/9
+//        if (logisticsProvider.getIntegrationBO().getIsIntegrationStockin() == 1) {
             submitStockinOrderToWarehouse(request, warehouseDO);
-        }
+//        }
         //更新入库单状态日志记录
         stockinOrderStateLogManager.insertOrUpdate(stockinOrderDO.getId(), request.getOperator().getId(), request.getOperator().getName(), StockinOrderState.WAREHOUSING.getValue());
 
