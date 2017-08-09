@@ -758,13 +758,7 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
      */
     @Override
     public void updateProductDeclare(SkuDeclareEntity skuDeclareEntity) throws ServiceException {
-        if (skuDeclareEntity.productDeclareId <= 0
-                || StringUtils.isBlank(skuDeclareEntity.consumptionDutyRate)
-                || !skuDeclareEntity.consumptionDutyRate.startsWith("0.")
-                || StringUtils.isBlank(skuDeclareEntity.addedValueTaxRate)
-                || !skuDeclareEntity.addedValueTaxRate.startsWith("0.")
-                || StringUtils.isBlank(skuDeclareEntity.tariffRate)
-                || !skuDeclareEntity.tariffRate.startsWith("0.")) {
+        if (skuDeclareEntity.productDeclareId <= 0) {
             throw new ServiceException(new LogisticsReturnCode("参数非法", 0));
         }
         ProductDeclareDO productDeclareDO = productDeclareManager.getById(skuDeclareEntity.productDeclareId);
@@ -772,16 +766,17 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
             throw new ServiceException(new LogisticsReturnCode("商品备案信息不存在", 0));
         }
 
-
         ProductDeclareDO doForUpdate = new ProductDeclareDO();
         doForUpdate.setId(skuDeclareEntity.productDeclareId);
         doForUpdate.setProductId(skuDeclareEntity.productId);
         doForUpdate.setDeclareName(skuDeclareEntity.declareName);
         doForUpdate.setBarCode(skuDeclareEntity.barcode);
         doForUpdate.setRecordNo(skuDeclareEntity.recordNo);
+        doForUpdate.setBrand(skuDeclareEntity.brandName);
+        doForUpdate.setCategoryName(skuDeclareEntity.categoryName);
         doForUpdate.setOrigin(skuDeclareEntity.origin);
         if (skuDeclareEntity.price != null) {
-            doForUpdate.setPriceRmb(Long.parseLong(skuDeclareEntity.price.toString()));
+            doForUpdate.setPriceRmb(skuDeclareEntity.price.longValue());
         }
         doForUpdate.setPostTaxNo(skuDeclareEntity.postTaxNo);
         doForUpdate.setConsumptionDutyRate(skuDeclareEntity.consumptionDutyRate);
@@ -795,6 +790,8 @@ public class ProductDeclareServiceImpl implements ProductDeclareService {
         doForUpdate.setSecondWeight(skuDeclareEntity.secondWeight);
         doForUpdate.setFirstMeasuringUnit(skuDeclareEntity.firstMeasuringUnit);
         doForUpdate.setSecondMeasuringUnit(skuDeclareEntity.secondMeasuringUnit);
+        doForUpdate.setProviderName(skuDeclareEntity.providerName);
+
         productDeclareManager.update(doForUpdate);
 
         // 如果税率发生变化, 需要刷新Redis中商品信息
