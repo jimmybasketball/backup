@@ -1,6 +1,7 @@
 package com.sfebiz.supplychain.persistence.base.stockin.manager;
 
 import com.sfebiz.common.dao.BaseDao;
+import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.dao.helper.DaoHelper;
 import com.sfebiz.common.dao.manager.BaseManager;
 import com.sfebiz.supplychain.persistence.base.stockin.dao.StockinOrderStateLogDao;
@@ -37,6 +38,19 @@ public class StockinOrderStateLogManager extends BaseManager<StockinOrderStateLo
         stockinOrderStateLogDO.setUserId(userId);
         stockinOrderStateLogDO.setUserName(userName);
         insert(stockinOrderStateLogDO);
+    }
+
+    /**
+     * 删除状态日志
+     * @param stockinOrderId 入库单ID
+     */
+    public void deleteStockinOrderStateLog(Long stockinOrderId){
+        try{
+            StockinOrderStateLogDO stockinOrderStateLogDO = new StockinOrderStateLogDO();
+            stockinOrderStateLogDO.setStockinOrderId(stockinOrderId);
+            delete(BaseQuery.getInstance(stockinOrderStateLogDO));
+        } catch (Exception e){
+        }
     }
 
     public static void main(String[] args){

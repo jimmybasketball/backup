@@ -147,10 +147,10 @@ public class StockInServiceImpl implements StockInService{
             return commonRet;
         }
 
-        List<MerchantProviderLineDO> merchantProviderLineDOList = merchantProviderLineManager.getByProviderAndWarehouse(stockinOrderEntity.getMerchantProviderId(), stockinOrderEntity.getWarehouseId());
+        List<MerchantProviderLineDO> merchantProviderLineDOList = merchantProviderLineManager.getByProviderAndWarehouse(stockinOrderEntity.getMerchantId(), stockinOrderEntity.getMerchantProviderId(), stockinOrderEntity.getWarehouseId());
         if(CollectionUtils.isEmpty(merchantProviderLineDOList)){
             commonRet.setRetCode(StockInReturnCode.COMMON_FAIL.getCode());
-            commonRet.setRetMsg("[物流平台-创建入库单]:仓库"+stockinOrderEntity.getWarehouseId() + "不属于供应商" + stockinOrderEntity.getMerchantProviderId());
+            commonRet.setRetMsg("[物流平台-创建入库单]:仓库"+stockinOrderEntity.getWarehouseId() + "不属于供应商" + stockinOrderEntity.getMerchantProviderId() + "货主" + stockinOrderEntity.getMerchantId());
             return commonRet;
         }
 
@@ -284,8 +284,8 @@ public class StockInServiceImpl implements StockInService{
         }
 
         //1.控制并发
-        if (distributedLock.fetch(SUBMIT_STOCKIN_ORDER_KEY + stockinOrderId)) {
-            try {
+        try {
+            if (distributedLock.fetch(SUBMIT_STOCKIN_ORDER_KEY + stockinOrderId)) {
                 //1. 检查入库单是否存在
                 StockinOrderDO stockinOrderDO = checkStockinOrderById(stockinOrderId);
                 //2. 只有仓库未回传的入库单可以重复提交
@@ -309,33 +309,33 @@ public class StockInServiceImpl implements StockInService{
                             StockinOrderActionType.STOCKIN_TO_SUBMIT, stockinOrderDO, null, null, Operator.valueOf(userId, userName));
                     engineService.executeStateMachineEngine(stockinOrderRequest, false);
                 }
-            } catch (Exception e) {
+            }else {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.ERROR)
                         .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
                         .setErrorMsg("[物流平台-提交入库单异常]")
-                        .setException(e)
                         .addParm("入库单ID", stockinOrderId)
                         .addParm("操作者", userName)
                         .log();
                 commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
-                commonRet.setRetMsg(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                commonRet.setRetMsg("[物流平台-提交入库单异常]: 并发异常");
                 return commonRet;
-            } finally {
-                distributedLock.realease(SUBMIT_STOCKIN_ORDER_KEY + stockinOrderId);
             }
-        } else {
+        } catch (Exception e) {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
                     .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
                     .setErrorMsg("[物流平台-提交入库单异常]")
+                    .setException(e)
                     .addParm("入库单ID", stockinOrderId)
                     .addParm("操作者", userName)
                     .log();
             commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
-            commonRet.setRetMsg("[物流平台-提交入库单异常]: 并发异常");
+            commonRet.setRetMsg(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return commonRet;
+        } finally {
+            distributedLock.realease(SUBMIT_STOCKIN_ORDER_KEY + stockinOrderId);
         }
         commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
         commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
@@ -470,6 +470,7 @@ public class StockInServiceImpl implements StockInService{
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CommonRet<Void> saveSkusInfo(Long stockinOrderId, List<StockinOrderDetailEntity> stockinOrderDetailEntityList, Long userId, String userName) {
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
@@ -510,6 +511,7 @@ public class StockInServiceImpl implements StockInService{
                     .addParm("理货差异", stockinOrderDetailEntityList)
                     .addParm("操作者", userName)
                     .log();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
             commonRet.setRetMsg(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
             return commonRet;
@@ -612,8 +614,9 @@ public class StockInServiceImpl implements StockInService{
             return commonRet;
         }
 
-        if (distributedLock.fetch(UPDATE_STOCKIN_ORDER_KEY + stockinOrderEntity.id)) {
-            try {
+
+        try {
+            if (distributedLock.fetch(UPDATE_STOCKIN_ORDER_KEY + stockinOrderEntity.id)) {
                 StockinOrderDO stockinOrderDO = checkStockinOrderById(stockinOrderEntity.id);
                 //只要不是已完成状态,预计到港时间,预计发货时间都允许更新
                 if (!StockinOrderState.STOCKIN_FINISH.value.equals(stockinOrderDO.getState())
@@ -640,32 +643,32 @@ public class StockInServiceImpl implements StockInService{
                     throw new ServiceException(StockInReturnCode.STOCKIN_ORDER_NOT_ALLOW_UPDATE,
                             "[供应链-更新入库单基本信息异常]: " + StockInReturnCode.STOCKIN_ORDER_NOT_ALLOW_UPDATE.getDesc());
                 }
-            } catch (Exception e) {
+            } else {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.ERROR)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderEntity.getId(), SystemConstants.TRACE_APP))
-                        .setErrorMsg("[供应链-更新入库单基本信息异常]")
+                        .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderEntity.id, SystemConstants.TRACE_APP))
+                        .setErrorMsg("[供应链-更新入库单基本信息异常]: 并发异常")
                         .addParm("入库单信息", stockinOrderEntity)
                         .addParm("操作者", userName)
-                        .setException(e)
                         .log();
                 commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
-                commonRet.setRetMsg("[供应链-更新入库单基本信息异常]: " + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+                commonRet.setRetMsg("[供应链-更新入库单基本信息异常]: 并发异常" + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
                 return commonRet;
-            } finally {
-                distributedLock.realease(UPDATE_STOCKIN_ORDER_KEY + stockinOrderEntity.id);
             }
-        } else {
+        }catch (Exception e) {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
-                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderEntity.id, SystemConstants.TRACE_APP))
-                    .setErrorMsg("[供应链-更新入库单基本信息异常]: 并发异常")
+                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderEntity.getId(), SystemConstants.TRACE_APP))
+                    .setErrorMsg("[供应链-更新入库单基本信息异常]")
                     .addParm("入库单信息", stockinOrderEntity)
                     .addParm("操作者", userName)
+                    .setException(e)
                     .log();
             commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
-            commonRet.setRetMsg("[供应链-更新入库单基本信息异常]: 并发异常" + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+            commonRet.setRetMsg("[供应链-更新入库单基本信息异常]: " + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
             return commonRet;
+        } finally {
+            distributedLock.realease(UPDATE_STOCKIN_ORDER_KEY + stockinOrderEntity.id);
         }
         commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
         commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
@@ -696,8 +699,8 @@ public class StockInServiceImpl implements StockInService{
             return commonRet;
         }
         //1. 控制并发
-        if (distributedLock.fetch(CANCEL_STOCKIN_ORDER_KEY + stockinOrderId)) {
-            try {
+        try {
+            if (distributedLock.fetch(CANCEL_STOCKIN_ORDER_KEY + stockinOrderId)) {
                 //1. 检查入库单是否已取消
                 StockinOrderDO stockinOrderDO = checkStockinOrderById(stockinOrderId);
                 if (StockinOrderState.STOCKIN_CANCLE.getValue().equals(stockinOrderDO.getState())) {
@@ -715,43 +718,105 @@ public class StockInServiceImpl implements StockInService{
                 StockinOrderRequest stockinOrderRequest = StockinOrderRequestFactory.generateStockinOrderRequest(
                         StockinOrderActionType.STOCKIN_TO_CANCEL, stockinOrderDO, null, null, Operator.valueOf(userId, userName));
                 engineService.executeStateMachineEngine(stockinOrderRequest, false);
-            } catch (ServiceException e) {
-                commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
-                commonRet.setRetMsg(e + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
-                return commonRet;
-            } catch (Exception e) {
+            }else {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.ERROR)
                         .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
                         .setErrorMsg("[供应链-取消入库单异常]")
-                        .setException(e)
                         .addParm("入库单ID", stockinOrderId)
                         .addParm("操作者", userName)
                         .log();
                 commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
-                commonRet.setRetMsg("[供应链-取消入库单异常]:  " + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+                commonRet.setRetMsg("[供应链-取消入库单异常]:  并发异常" + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
                 return commonRet;
-            } finally {
-                distributedLock.realease(CANCEL_STOCKIN_ORDER_KEY + stockinOrderId);
             }
-        } else {
+        } catch (Exception e) {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.ERROR)
                     .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinOrderId, SystemConstants.TRACE_APP))
                     .setErrorMsg("[供应链-取消入库单异常]")
+                    .setException(e)
                     .addParm("入库单ID", stockinOrderId)
                     .addParm("操作者", userName)
                     .log();
             commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
-            commonRet.setRetMsg("[供应链-取消入库单异常]:  并发异常" + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
+            commonRet.setRetMsg("[供应链-取消入库单异常]:  " + StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getDesc());
             return commonRet;
+        } finally {
+            distributedLock.realease(CANCEL_STOCKIN_ORDER_KEY + stockinOrderId);
         }
         return commonRet;
     }
 
     @Override
-    public CommonRet<Void> editStockinorderWarehouse(Long stockinorderId, Long warehouseId, String userName) {
-        return null;
+    @Transactional(rollbackFor = Exception.class)
+    public CommonRet<Void> editStockinorderWarehouse(Long stockinorderId, Long warehouseId, Long userId, String userName) {
+        CommonRet<Void> commonRet = new CommonRet<Void>();
+        commonRet.setRetCode(StockInReturnCode.COMMON_SUCCESS.getCode());
+        commonRet.setRetMsg(StockInReturnCode.COMMON_SUCCESS.getDesc());
+
+        StockinOrderDO stockinOrderDO = stockinOrderManager.getById(stockinorderId);
+        if (null == stockinOrderDO) {
+            commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_NOT_EXIST.getCode());
+            commonRet.setRetMsg("[供应链-更新入库单仓库异常]: " + StockInReturnCode.STOCKIN_ORDER_NOT_EXIST.getDesc());
+            return commonRet;
+        }
+
+        if (stockinOrderDO.getState().equals(StockinOrderState.STOCKIN_FINISH.getValue())
+                || stockinOrderDO.getState().equals(StockinOrderState.STOCKIN_CANCLE.getValue())) {
+            commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_EDIT_WAREHOUSE.getCode());
+            commonRet.setRetMsg("[供应链-更新入库单仓库异常]: " + StockInReturnCode.STOCKIN_ORDER_EDIT_WAREHOUSE.getDesc());
+            return commonRet;
+        }
+
+        try {
+            List<MerchantProviderLineDO> results = merchantProviderLineManager.getByProviderAndWarehouse(stockinOrderDO.getMerchantId(), stockinOrderDO.getMerchantProviderId(), warehouseId);
+            if(CollectionUtils.isEmpty(results)){
+                commonRet.setRetCode(StockInReturnCode.COMMON_FAIL.getCode());
+                commonRet.setRetMsg("[物流平台-入库单修改仓库失败]:仓库"+warehouseId + "不属于供应商" + stockinOrderDO.getMerchantProviderId() + "货主" + stockinOrderDO.getMerchantId());
+                return commonRet;
+            }
+
+            //删除入库日志
+            stockinOrderStateLogManager.deleteStockinOrderStateLog(stockinorderId);
+
+            //更新仓库与状态为待提交
+            stockinOrderDO.setWarehouseId(warehouseId);
+            stockinOrderDO.setState(StockinOrderState.TO_BE_SUBMITED.getValue());
+            stockinOrderManager.update(stockinOrderDO);
+
+            //插入待提交的入库状态日志
+            Date date = new Date();
+            stockinOrderStateLogManager.insertOrUpdate(stockinorderId, userId, userName, StockinOrderState.TO_BE_SUBMITED.getValue());
+
+            //判断仓库是否需要同步商品
+            WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();
+            if (logisticsProvider.getIntegrationBO().getIsIntegrationSkuSync().compareTo(1) == 0) {
+                List<StockinOrderDetailDO> details = stockinOrderDetailManager.queryByStockinOrderId(stockinorderId);
+                List<StockinOrderDetailEntity> detailEntitys = new ArrayList<StockinOrderDetailEntity>();
+                for (StockinOrderDetailDO detail : details) {
+                    StockinOrderDetailEntity detailEntity = modelMapper.map(detail, StockinOrderDetailEntity.class);
+                    detailEntitys.add(detailEntity);
+                }
+
+                syncSkuToWarehouse(stockinOrderDO, detailEntitys, true);
+            }
+            return commonRet;
+        } catch (Exception e) {
+            LogBetter.instance(logger)
+                    .setLevel(LogLevel.ERROR)
+                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockinorderId, SystemConstants.TRACE_APP))
+                    .setErrorMsg("[物流平台-更新入库单仓库异常]")
+                    .addParm("入库单ID", stockinorderId)
+                    .addParm("仓库ID", warehouseId)
+                    .addParm("操作者", userName)
+                    .setException(e)
+                    .log();
+            commonRet.setRetCode(StockInReturnCode.STOCKIN_ORDER_INNER_EXCEPTION.getCode());
+            commonRet.setRetMsg(e.getMessage());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return commonRet;
+        }
     }
 
 

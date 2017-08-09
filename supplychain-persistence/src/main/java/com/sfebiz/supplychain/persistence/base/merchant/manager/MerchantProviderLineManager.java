@@ -35,10 +35,11 @@ public class MerchantProviderLineManager extends BaseManager<MerchantProviderLin
      * @param warehouseId
      * @return
      */
-    public List<MerchantProviderLineDO> getByProviderAndWarehouse(Long providerId, Long warehouseId){
+    public List<MerchantProviderLineDO> getByProviderAndWarehouse(Long merchantId, Long providerId, Long warehouseId){
         Map<String, Long> paramMap = new HashMap<String, Long>();
         paramMap.put("providerId", providerId);
         paramMap.put("warehouseId", warehouseId);
+        paramMap.put("merchantId",merchantId);
         return merchantProviderLineDao.getByProviderAndWarehouse(paramMap);
     }
 

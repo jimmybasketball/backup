@@ -115,5 +115,5 @@ public interface StockInService {
      * @param warehouseId    仓库ID
      * @throws ServiceException
      */
-    CommonRet<Void> editStockinorderWarehouse(Long stockinorderId, Long warehouseId, String userName);
+    CommonRet<Void> editStockinorderWarehouse(Long stockinorderId, Long warehouseId, Long userId, String userName);
 }

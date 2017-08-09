@@ -8,6 +8,7 @@ import com.sfebiz.supplychain.config.SystemConstants;
 import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
 import com.sfebiz.supplychain.exposed.common.code.StockInReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
+import com.sfebiz.supplychain.exposed.sku.enums.SkuWarehouseSyncStateType;
 import com.sfebiz.supplychain.exposed.stockinorder.enums.StockinOrderState;
 import com.sfebiz.supplychain.exposed.warehouse.enums.WmsOperaterType;
 import com.sfebiz.supplychain.persistence.base.sku.domain.SkuWarehouseSyncDO;
@@ -70,7 +71,7 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
         //2. 检测仓库是否支持入库命令
         StockinOrderDO stockinOrderDO = request.getStockinOrderDO();
         WarehouseDO warehouseDO = warehouseManager.getById(stockinOrderDO.getWarehouseId());
-        WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();
+        WarehouseLogisticsProviderBO logisticsProvider = new WarehouseLogisticsProviderBO();// TODO: 2017/8/9
         if (logisticsProvider.getIntegrationBO().getIsIntegrationStockin() == 1) {
             submitStockinOrderToWarehouse(request, warehouseDO);
         }
@@ -135,7 +136,7 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
     protected ProviderCommand generateWarehouseStockinCommad(StockinOrderDO stockinOrderDO, List<StockinOrderDetailDO> stockinOrderDetailDOs, WarehouseDO warehouseDO) throws ServiceException {
         ProviderCommand cmd;
         String version = "0";
-        String key = "supplychain.event.wms.skustockin";
+        String key = "supplychain.event.wms.skustockin";// TODO: 2017/8/9  
         cmd = CommandFactory.createCommand(version, key);
 
         StockinOrderBO stockinOrderBO = new StockinOrderBO();
@@ -174,7 +175,14 @@ public class StockinOrderSubmitProcessor extends StockinAbstractProcessor{
                 if (CollectionUtils.isEmpty(syncDOs)) {
                     List<Long> skuIds = new ArrayList<Long>();
                     skuIds.add(detailDO.getSkuId());
-                    skuSyncBizService.sendProductBasicInfo2WmsNotSync(skuIds, warehouseId, WmsOperaterType.ADD);
+                    BaseResult result = skuSyncBizService.sendProductBasicInfo2WmsNotSync(skuIds, warehouseId, WmsOperaterType.ADD);
+                    if (!result.isSuccess()){
+                        throw new ServiceException(StockInReturnCode.LOGISTICS_STOCKINID_ERR,"[物流平台-提交入库单] 入库单异常,商品同步不成功：仓库id：" + warehouseId + ",skuId:" + detailDO.getSkuId());
+                    }
+                }else{
+                    if (syncDOs.get(0).getSyncState().equals(SkuWarehouseSyncStateType.SYNC_FAIL.getValue())) {
+                        throw new ServiceException(StockInReturnCode.LOGISTICS_STOCKINID_ERR,"[物流平台-提交入库单] 入库单异常,商品同步不成功：仓库id：" + warehouseId + ",skuId:" + detailDO.getSkuId());
+                    }
                 }
             }
         }
