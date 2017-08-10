@@ -37,10 +37,10 @@ public class OpenWmsTradeServiceTest extends BaseServiceTest{
         order.tradesource = "FQHT";
         order.actionType = OpenWmsTradeActionType.CREATE.getCode();
         order.orderType = String.valueOf(StockoutOrderType.SALES_STOCK_OUT.getValue());
-        order.serviceType = String.valueOf(LogisticsLineServiceType.FENG_JI.getValue());
+        order.serviceType = String.valueOf(LogisticsLineServiceType.FENG_JI_SF.getValue());
         order.warehouseCode = "DEV_MAT_003"; // 指定仓库
         order.routeCode = StringUtils.EMPTY; // 指定线路
-        order.customerCode = "HZ00001";
+        order.customerCode = "HZ000011";
         order.tradeAmount = "100.00";
         order.goodsTotalAmount = "100.00";
         order.discountAmount = "0.00";

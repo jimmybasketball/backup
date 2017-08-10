@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.BeanUtils;
 
+import com.sfebiz.supplychain.exposed.stockout.enums.StockoutOrderState;
 import com.sfebiz.supplychain.open.exposed.wms.entity.request.OpenWmsTradeOrderCreateRequest;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
@@ -51,8 +53,14 @@ public class StockoutOrderConvert {
         return orderEntity;
     }
 
-    public static StockoutOrderDO convertStockoutOrderBOToStockoutOrderDO(StockoutOrderBO bo) {
-        return getModelMapper().map(bo, StockoutOrderDO.class);
+    public static StockoutOrderDO convertStockoutOrderBOToStockoutOrderDO(StockoutOrderBO orderBO) {
+        StockoutOrderDO orderDO = new StockoutOrderDO();
+        BeanUtils.copyProperties(orderBO, orderDO);
+        // TODO matt 运单号生成规则
+        orderDO.setBizId(orderBO.getMerchantOrderNo() + "_" + orderBO.getMerchantId() + "S001");
+        orderDO.setOrderType(Integer.valueOf(orderBO.getOrderType()));
+        orderDO.setOrderState(StockoutOrderState.WAIT_AUDITING.value);
+        return orderDO;
     }
 
     public static StockoutOrderBO convertDOToBO(StockoutOrderDO stockoutOrderDO) {

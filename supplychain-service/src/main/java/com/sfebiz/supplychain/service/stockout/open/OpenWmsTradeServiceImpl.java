@@ -1,5 +1,6 @@
 package com.sfebiz.supplychain.service.stockout.open;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
@@ -33,6 +35,7 @@ import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantDO;
 import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantManager;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderInvokeLogDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderTaskDO;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderBuyerManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderInvokeLogManager;
@@ -154,6 +157,10 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
             }
 
         } catch (Exception e) {
+
+            // 保存调用日志
+            saveCreateExceptionInvokeLog(request, e);
+
             if (e instanceof ServiceException) {
                 LOGGER.info("[云仓API-出库单创建]: 创建出库单业务异常", e);
                 throw (ServiceException) e;
@@ -164,6 +171,36 @@ public class OpenWmsTradeServiceImpl implements OpenWmsTradeService {
         }
 
         return true;
+    }
+
+    private void saveCreateExceptionInvokeLog(OpenWmsTradeOrderCreateRequest request,
+                                              Exception createException) {
+        if (null == request) {
+            return;
+        }
+        try {
+            StockoutOrderInvokeLogDO invokeLogDO = new StockoutOrderInvokeLogDO();
+            if (null != request.order) {
+                invokeLogDO.setMerchantOrderNo(request.order.merchantOrderId);
+                invokeLogDO.setMerchantAccountId(request.order.customerCode);
+            }
+            invokeLogDO.setActionType("STOCKOUT_OPEN_CREATE");
+            invokeLogDO.setActionDesc("开放出库单创建");
+            invokeLogDO.setReqInfo(JSON.toJSONString(request));
+            if (createException instanceof ServiceException) {
+                invokeLogDO.setErrCode(String.valueOf(((ServiceException) createException)
+                    .getCode()));
+                invokeLogDO.setErrDesc(((ServiceException) createException).getMsg());
+            } else {
+                invokeLogDO.setErrCode(StringUtils.EMPTY);
+                invokeLogDO.setErrDesc(createException.getMessage());
+            }
+
+            invokeLogDO.setGmtInvoke(new Date());
+            stockoutOrderInvokeLogManager.insert(invokeLogDO);
+        } catch (Exception e) {
+            LOGGER.info("[出库单创建-保存调用日志] 异常");
+        }
     }
 
     /**

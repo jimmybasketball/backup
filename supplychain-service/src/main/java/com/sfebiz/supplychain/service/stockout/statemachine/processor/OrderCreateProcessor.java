@@ -159,11 +159,16 @@ public class OrderCreateProcessor extends TemplateProcessor implements
                             }
                             if (CollectionUtils.isEmpty(merchantProviderLineDOList)) {
                                 continue;
+                            } else {
+                                selectedStockBatchDO = stockBatchDO;
+                                break;
                             }
-                            selectedStockBatchDO = stockBatchDO;
                         }
                         if (null == selectedStockBatchDO) {
                             break;
+                        } else {
+                            skuId4SelectedStockBatchDOMap.put(detailBO.getSkuId(),
+                                selectedStockBatchDO);
                         }
                     }
 
@@ -193,12 +198,19 @@ public class OrderCreateProcessor extends TemplateProcessor implements
                 // 5. 保存出库单信息
                 saveStockoutOrderForCreate(stockoutOrderBO);
 
-                // 6. 触发状态变更为待发货
+                // 6. 冻结批次库存，转运出库不用冻结库存
+                if (stockoutOrderBO.getOrderType() != StockoutOrderType.TRANSPORT_STOCK_OUT
+                    .getValue()) {
+                    stockService
+                        .freezeSkuStockBatch(buildSkuStockOperaterEntityList(stockoutOrderBO));
+                }
+
+                // 7. 触发状态变更为待发货
                 stockoutOrderStateBizService.triggerOrderStateChange(stockoutOrderBO,
                     StockoutOrderActionType.AUDIT);
                 stockoutOrderBO.setOrderState(StockoutOrderState.WAIT_STOCKOUT.getValue());
 
-                // 7. 【执行出库单下发流程】消息通知
+                // 8. 【执行出库单下发流程】消息通知
                 stockoutOrderNoticeBizService
                     .noticeExecStockoutSendProcess(stockoutOrderBO.getId());
 
@@ -221,7 +233,7 @@ public class OrderCreateProcessor extends TemplateProcessor implements
                     .setErrorMsg("[供应链-创建出库单异常]: " + e.getMessage())
                     .addParm("主订单ID", stockoutOrderBO.getMerchantOrderNo()).log();
                 throw new ServiceException(LogisticsReturnCode.LOGISTICS_ORDER_CREATE_ERR,
-                    "[供应链-重新创建出库单商品异常]: " + e.getMessage());
+                    "[供应链-创建出库单异常]: " + e.getMessage());
             } finally {
 
                 //6. 提交事务
@@ -324,19 +336,14 @@ public class OrderCreateProcessor extends TemplateProcessor implements
                 null);
         engineService.startStateMachineEngine(stockoutOrderRequest);
 
-        // 3. 冻结批次库存，转运出库不用冻结库存
-        if (stockoutOrderBO.getOrderType() != StockoutOrderType.TRANSPORT_STOCK_OUT.getValue()) {
-            stockService.freezeSkuStockBatch(buildSkuStockOperaterEntityList(stockoutOrderBO));
-        }
-
-        // 4. 保存出库单买家信息
+        // 3. 保存出库单买家信息
         stockoutOrderBuyerManager.insert(StockoutOrderConvert.convertBuyerBOToDO(stockoutOrderBO
             .getBuyerBO()));
 
-        // 5. 保存出库单记录表信息
+        // 4. 保存出库单记录表信息
         stockoutOrderRecordManager.insert(StockoutOrderConvert.buildInitRecordDO(stockoutOrderBO));
 
-        // 6. 保存出库单明细信息
+        // 5. 保存出库单明细信息
         List<StockoutOrderDetailDO> detailDOList = StockoutOrderConvert
             .convertBOToDetailDOList(stockoutOrderBO);
         for (StockoutOrderDetailDO detailDO : detailDOList) {

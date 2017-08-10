@@ -26,7 +26,7 @@ public class StockoutOrderInvokeLogDO extends BaseDO {
     private String            bizId;
 
     /** 货主ID */
-    private Long              merchantId;
+    private String            merchantAccountId;
 
     /** 动作类型 */
     private String            actionType;
@@ -62,12 +62,12 @@ public class StockoutOrderInvokeLogDO extends BaseDO {
         this.bizId = bizId;
     }
 
-    public Long getMerchantId() {
-        return merchantId;
+    public String getMerchantAccountId() {
+        return merchantAccountId;
     }
 
-    public void setMerchantId(Long merchantId) {
-        this.merchantId = merchantId;
+    public void setMerchantAccountId(String merchantAccountId) {
+        this.merchantAccountId = merchantAccountId;
     }
 
     public String getActionType() {

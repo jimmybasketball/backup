@@ -35,12 +35,13 @@ public class StockoutOrderRequest extends EngineRequest {
 
     @Override
     public HaitaoTraceLogger getTraceLogger() {
+
         return traceLogger;
     }
 
     @Override
     public String getTraceId() {
-        if (StringUtils.isNotEmpty(stockoutOrderBO.getBizId())) {
+        if (null != stockoutOrderBO && StringUtils.isNotEmpty(stockoutOrderBO.getBizId())) {
             return stockoutOrderBO.getMerchantAccountId() + "_" + stockoutOrderBO.getBizId();
         }
         return bizId;
@@ -163,10 +164,6 @@ public class StockoutOrderRequest extends EngineRequest {
 
     public void setGmtModified(Date gmtModified) {
         stockoutOrderBO.setGmtModified(gmtModified);
-    }
-
-    public String toString() {
-        return stockoutOrderBO.toString();
     }
 
     public String getMerchantOrderNo() {
