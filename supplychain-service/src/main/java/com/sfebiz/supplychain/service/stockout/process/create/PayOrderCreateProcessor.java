@@ -116,12 +116,10 @@ public class PayOrderCreateProcessor extends StockoutProcessAction {
                     HzPortBusinessType.PAYBILL_DECLAR.getType());
                 PayOrderDeclareCommand payDeclardCommand = (PayOrderDeclareCommand) cmd;
                 payDeclardCommand.setStockoutOrderBO(stockoutOrderBO);
-                payDeclardCommand.setStockoutOrderDetailBOs(detailBOs);
                 payDeclardCommand.setStockoutOrderDeclarePriceBO(stockoutOrderBO
                     .getDeclarePriceBO());
-                payDeclardCommand.setPayBillDeclareProviderNid(payDeclareProviderNid);
                 payDeclardCommand.setPortBillDeclareDO(portBillDeclareDO);
-                payDeclardCommand.setLineBO(stockoutOrderBO.getLineBO());
+                payDeclardCommand.setLogisticsLineBO(stockoutOrderBO.getLineBO());
 
                 boolean payDeclareResult = payDeclardCommand.execute();
                 LogBetter.instance(logger).setLevel(LogLevel.INFO)
