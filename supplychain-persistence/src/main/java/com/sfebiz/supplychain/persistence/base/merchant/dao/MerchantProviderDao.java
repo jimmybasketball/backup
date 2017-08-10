@@ -10,4 +10,10 @@ import com.sfebiz.supplychain.persistence.base.merchant.domain.MerchantProviderD
  * @date  2017/7/6 19:29
  */
 public interface MerchantProviderDao extends BaseDao<MerchantProviderDO>{
+    
+    /**
+     * @param merchantProviderId
+     * @return
+     */
+    String queryMerchantProviderIdByNationCode(Long merchantProviderId);
 }

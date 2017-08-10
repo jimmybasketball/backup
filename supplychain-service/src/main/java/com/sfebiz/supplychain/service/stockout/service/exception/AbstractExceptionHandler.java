@@ -19,6 +19,9 @@ import com.sfebiz.supplychain.exposed.stockout.enums.TaskStatus;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderTaskDO;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderTaskManager;
+import com.sfebiz.supplychain.service.stockout.biz.StockoutOrderBizService;
+import com.sfebiz.supplychain.service.stockout.model.StockoutOrderBOFactory;
+import com.sfebiz.supplychain.service.stockout.statemachine.processor.OrderCreateProcessor;
 
 /**
  * User: <a href="mailto:lenolix@163.com">李星</a>
@@ -35,12 +38,15 @@ public abstract class AbstractExceptionHandler implements ExceptionHandler {
     @Resource
     StockoutOrderTaskManager stockoutOrderTaskManager;
 
-//    @Resource
-//    OrderCreateProcessor orderCreateProcessor;
-//
-//    @Resource
-//    StockoutBizService stockoutBizService;
-//
+    @Resource
+    OrderCreateProcessor orderCreateProcessor;
+
+    @Resource
+    StockoutOrderBizService stockoutOrderBizService;
+    
+    @Resource
+    StockoutOrderBOFactory stockoutOrderBOFactory;
+
 //    @Resource
 //    OuterService outerService;
 

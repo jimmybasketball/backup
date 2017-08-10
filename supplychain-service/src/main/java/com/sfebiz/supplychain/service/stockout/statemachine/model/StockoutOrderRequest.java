@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import net.pocrd.entity.ServiceException;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.sfebiz.common.tracelog.HaitaoTraceLogger;
@@ -20,6 +18,8 @@ import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDeclarePri
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDetailBO;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderRecordBO;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderTaskBO;
+
+import net.pocrd.entity.ServiceException;
 
 /**
  * 
@@ -117,6 +117,8 @@ public class StockoutOrderRequest extends EngineRequest {
      * 用于后续获取异常code
      */
     private ServiceException        serviceException;
+    
+    private String pdfRegion;
 
     public String getBizId() {
         return bizId;
@@ -616,6 +618,14 @@ public class StockoutOrderRequest extends EngineRequest {
 
     public static HaitaoTraceLogger getTracelogger() {
         return traceLogger;
+    }
+
+    public String getPdfRegion() {
+        return pdfRegion;
+    }
+
+    public void setPdfRegion(String pdfRegion) {
+        this.pdfRegion = pdfRegion;
     }
 
 }

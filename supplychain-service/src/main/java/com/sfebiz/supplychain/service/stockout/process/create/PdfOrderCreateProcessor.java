@@ -2,14 +2,14 @@ package com.sfebiz.supplychain.service.stockout.process.create;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import net.pocrd.entity.ServiceException;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,19 +25,29 @@ import com.sfebiz.common.tracelog.HaitaoTraceLogger;
 import com.sfebiz.common.tracelog.HaitaoTraceLoggerFactory;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
+import com.sfebiz.common.utils.log.TraceLogEntity;
+import com.sfebiz.supplychain.config.SystemConstants;
 import com.sfebiz.supplychain.exposed.common.code.LogisticsLineReturnCode;
 import com.sfebiz.supplychain.exposed.common.code.StockoutReturnCode;
+import com.sfebiz.supplychain.exposed.common.entity.BaseResult;
 import com.sfebiz.supplychain.exposed.line.enums.PdfTemplateType;
 import com.sfebiz.supplychain.persistence.base.line.domain.LogisticsLineDO;
 import com.sfebiz.supplychain.persistence.base.line.manager.LogisticsLineManager;
+import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderManager;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.ExportedShipOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
 import com.sfebiz.supplychain.service.FileOperationService;
+import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
 import com.sfebiz.supplychain.service.stockout.pdfformat.PDFBillFactory;
 import com.sfebiz.supplychain.service.stockout.pdfformat.PDFFormat;
+import com.sfebiz.supplychain.service.stockout.process.StockoutProcessAction;
+import com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest;
+import com.sfebiz.supplychain.util.FileUtil;
 import com.sfebiz.supplychain.util.NumberUtil;
+
+import net.pocrd.entity.ServiceException;
 
 /**
  * User: <a href="mailto:lenolix@163.com">李星</a>
@@ -45,7 +55,7 @@ import com.sfebiz.supplychain.util.NumberUtil;
  * Since: 16/1/25 下午7:13
  */
 @Component("pdfOrderCreateProcessor")
-public class PdfOrderCreateProcessor {
+public class PdfOrderCreateProcessor extends StockoutProcessAction {
 
     public static final String               TAG                       = "PDF_CREATE";
     private static final Logger              logger                    = LoggerFactory
@@ -67,71 +77,66 @@ public class PdfOrderCreateProcessor {
 
     @Resource
     PDFBillFactory                           pdfBillFactory;
+    
+    @Resource
+    MerchantProviderManager merchantProviderManager;
 
     //    @Resource
     //    AutoExportShipOrderAndSendEmailTask autoExportShipOrderAndSendEmailTask;
 
     public static final String               CONTENT_TYPE_PDF          = "application/pdf";
 
-    public static final String               META_IS_GENERATE_ORDERPDF = "isGenerateOrderPdf";
-
-    public static final String               META_IS_NEED_CARD         = "isNeedCard";
-
-    public static final String               META_REGION               = "region";
-
-    //@Override
+    @Override
     public String getProcessTag() {
         return TAG;
     }
 
-    //@Override
-    /*public BaseResult doProcess(StockoutOrderRequest request) throws ServiceException {
-        StockoutOrderDO stockoutOrderDO = request.getStockoutOrderDO();
+    @Override
+    public BaseResult doProcess(StockoutOrderRequest request) throws ServiceException {
+        StockoutOrderBO stockoutOrderBO = request.getStockoutOrderBO();
         try {
-            LogisticsProviderEntity logisticsProviderEntity = getProviderByWarehouseId(stockoutOrderDO.getWarehouseId());
-            if (null != logisticsProviderEntity && StringUtils.isNotBlank(logisticsProviderEntity.meta)) {
-                Map<String, Object> metaData = JSONUtil.parseJSONMessage(logisticsProviderEntity.meta, Map.class);
-                if (null != metaData && metaData.containsKey(META_IS_GENERATE_ORDERPDF) && StringUtils.equalsIgnoreCase("true", (String) metaData.get(META_IS_GENERATE_ORDERPDF))) {
-                    String region = (String) metaData.get(META_REGION);
-                    if (StringUtils.isNotEmpty(region)) {
-                        List<Long> stockoutOrderIdList = new ArrayList<Long>();
-                        stockoutOrderIdList.add(stockoutOrderDO.getId());
-                        List<ExportedShipOrderDO> shipOrderBOList = stockoutOrderManager.query4Page4AutoShipOrder(stockoutOrderIdList);
-                        if (CollectionUtils.isEmpty(shipOrderDOList)) {
-                            return new BaseResult(Boolean.TRUE);
-                        }
-                        // 生成PDF文件
-                        WarehouseDO warehouseDO = warehouseManager.getById(stockoutOrderDO.getWarehouseId());
-                        Map<Long, LogisticsLineDO> logisticsLineMap = new HashMap<Long, LogisticsLineDO>();
-                        String pdfFileName = generateShipOrderPdfName(stockoutOrderDO.getId());
-                        // PDF文件临时路径
-                        String pdfTmpPath = generateFileTmpPath(pdfFileName);
-                        LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("生成PDF文件临时路径").addParm("PDF文件路径", pdfTmpPath).log();
-                        // 创建发货单PDF文件
-                        buildPdfFile(shipOrderBOList, pdfTmpPath, warehouseDO);
-                        // 文件上传到OSS
-                        //String region = warehouseDO.getRegion();
-                        fileOperationService.uploadFile2OSS(CONTENT_TYPE_PDF, "stockoutorderdownload/", pdfFileName,region);
-                        String ossFileDownloadPath = "http://" + fileOperationService.getOssClientBucketNameByRegion(region) + "." + fileOperationService.getOssClientEndPointByRegion(region).substring("http://".length()) + "/stockoutorderdownload/" + pdfFileName;
-                        LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("ossPDF文件地址").addParm("PDF文件路径", ossFileDownloadPath).log();
-                        // 删除临时文件
-                        FileUtil.deleteFile(pdfTmpPath);
-                    }
+            String region = null;//货主供应商地区
+            if (StringUtils.isNotBlank(request.getPdfRegion())) {
+                region = request.getPdfRegion();
+            }else{
+                region = merchantProviderManager.queryMerchantProviderIdByNationCode(stockoutOrderBO.getDetailBOs().get(0).getMerchantProviderId());
+            }
+            if (StringUtils.isNotBlank(region)) {
+                List<Long> stockoutOrderIdList = new ArrayList<Long>();
+                stockoutOrderIdList.add(stockoutOrderBO.getId());
+                List<ExportedShipOrderDO> shipOrderBOList = stockoutOrderManager.query4Page4AutoShipOrder(stockoutOrderIdList);
+                if (CollectionUtils.isEmpty(shipOrderBOList)) {
+                    return new BaseResult(Boolean.TRUE);
                 }
+                // 生成PDF文件
+                WarehouseDO warehouseDO = warehouseManager.getById(stockoutOrderBO.getWarehouseId());
+                //Map<Long, LogisticsLineDO> logisticsLineMap = new HashMap<Long, LogisticsLineDO>();
+                String pdfFileName = generateShipOrderPdfName(stockoutOrderBO.getId());
+                // PDF文件临时路径
+                String pdfTmpPath = generateFileTmpPath(pdfFileName);
+                LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("生成PDF文件临时路径").addParm("PDF文件路径", pdfTmpPath).log();
+                // 创建发货单PDF文件
+                buildPdfFile(shipOrderBOList, pdfTmpPath, warehouseDO);
+                // 文件上传到OSS
+                fileOperationService.uploadFile2OSS(CONTENT_TYPE_PDF, "stockoutorderdownload/", pdfFileName,region);
+                String ossFileDownloadPath = "http://" + fileOperationService.getOssClientBucketNameByRegion(region) + "." + fileOperationService.getOssClientEndPointByRegion(region).substring("http://".length()) + "/stockoutorderdownload/" + pdfFileName;
+                LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("ossPDF文件地址").addParm("PDF文件路径", ossFileDownloadPath).log();
+                // 删除临时文件
+                FileUtil.deleteFile(pdfTmpPath);
             }
             return new BaseResult(Boolean.TRUE);
         } catch (Exception e) {
             LogBetter.instance(logger)
                     .setLevel(LogLevel.WARN)
-                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockoutOrderDO.getBizId(), SystemConstants.TRACE_APP))
-                    .setMsg("[供应链-生成PDF面单异常]: " + e.getMessage())
-                    .addParm("出库单ID", stockoutOrderDO.getId())
-                    .addParm("包裹ID", stockoutOrderDO.getBizId())
+                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP))
+                    .setMsg("[物流开放平台-生成PDF面单异常]: " + e.getMessage())
+                    .addParm("出库单ID", stockoutOrderBO.getId())
+                    .addParm("包裹ID", stockoutOrderBO.getBizId())
                     .log();
-            request.setExceptionMessage("[供应链-生成PDF面单异常]: " + e.getMessage());
+            request.setExceptionMessage("[物流开放平台-生成PDF面单异常]: " + e.getMessage());
             return new BaseResult(Boolean.FALSE);
         }
-    }*/
+    }
 
     //    public String getShipOrderPdfLine(Long stockoutOrderId, String warehouseCode, String region) {
     //        if (StringUtils.isNotEmpty(region)) {
@@ -321,5 +326,6 @@ public class PdfOrderCreateProcessor {
         }
         LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("[发货单生成PDF文件]:成功").log();
     }
+
 
 }

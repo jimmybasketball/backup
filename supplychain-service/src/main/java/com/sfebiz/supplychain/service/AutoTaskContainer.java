@@ -23,15 +23,20 @@ import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.config.SupplychainConfig;
 import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
+import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
+import com.sfebiz.supplychain.exposed.common.entity.Void;
+import com.sfebiz.supplychain.exposed.route.api.RouteService;
 import com.sfebiz.supplychain.exposed.stockout.enums.StockoutOrderState;
 import com.sfebiz.supplychain.exposed.stockout.enums.SubTaskType;
 import com.sfebiz.supplychain.exposed.stockout.enums.TaskStatus;
 import com.sfebiz.supplychain.exposed.stockout.enums.TaskType;
 import com.sfebiz.supplychain.lock.Lock;
 import com.sfebiz.supplychain.persistence.base.line.manager.LogisticsLineManager;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderTaskDO;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderTaskManager;
+import com.sfebiz.supplychain.service.stockout.service.exception.ExceptionHandlerFactory;
 
 import net.pocrd.entity.ServiceException;
 
@@ -63,8 +68,11 @@ public class AutoTaskContainer implements ApplicationContextAware, InitializingB
 //    private GalOrderService galOrderService;
 //    @Resource
 //    private OrderCreateProcessor orderCreateProcessor;
-//    @Resource
-//    private ExceptionHandlerFactory exceptionHandlerFactory;
+    @Resource
+    private ExceptionHandlerFactory exceptionHandlerFactory;
+    
+    @Resource
+    private RouteService souteService;
 
     private String localIp;
     //key:消息TOPIC value:消息的发送者 失败消息重发根据TOPIC 查询producer
@@ -90,7 +98,7 @@ public class AutoTaskContainer implements ApplicationContextAware, InitializingB
          * 启动轮询线程
          */
         AutoTaskContainerProcessThread autoTaskContainerProcessThread = new AutoTaskContainerProcessThread("AutoTaskContainerProcessThread-Process");
-        //autoTaskContainerProcessThread.start();
+        autoTaskContainerProcessThread.start();
 
 //        AutoTaskContainerUpdateThread autoTaskContainerUpdateThread = new AutoTaskContainerUpdateThread("AutoTaskContainerProcessThread-Update");
 //        autoTaskContainerUpdateThread.start();
@@ -119,20 +127,20 @@ public class AutoTaskContainer implements ApplicationContextAware, InitializingB
         //加上分布式锁的判断，防止多个service重复扫表
         if (distributedLock.fetch(PROCESS_KEY, SupplychainConfig.getInstance().getProcessInterval().longValue() / 2)) {
             try {
-                //0.处理创建出库单异常
-                checkAndRecreateStockoutOrder();
+                //0.处理创建出库单异常(出库单创建异常无需自动重试)
+                //checkAndRecreateStockoutOrder();
 
                 //1.处理出库单下发异常
-                checkAndResendCreateCommandFromTaskTable();
+                //checkAndResendCreateCommandFromTaskTable();
 
                 //2. 尝试重发发货报文
                 checkAndResendSenderCommandFromTaskTable();
 
-                //6. 尝试重发损益确认接口
-                checkAndResendGalOrderConfirm();
+                //6. 尝试重发损益确认接口(暂无)
+                //checkAndResendGalOrderConfirm();
 
-                //7. 尝试重试出库异常的订单
-                checkAndRetryStockout();
+                //7. 尝试重试出库异常的订单(暂时不用)
+                //checkAndRetryStockout();
                 
                 //8. 重新向快递100请求订阅
                 retryRegistRoute();
@@ -184,7 +192,7 @@ public class AutoTaskContainer implements ApplicationContextAware, InitializingB
                     .addParm("主订单ID", orderTaskDO.getBizId())
                     .log();
             try {
-//                exceptionHandlerFactory.getExceptionHandlerByExceptionType(orderTaskDO.getTaskType()).handle(orderTaskDO);
+                exceptionHandlerFactory.getExceptionHandlerByExceptionType(orderTaskDO.getTaskType()).handle(orderTaskDO);
                 Thread.sleep(500);
             } catch (Exception e) {
                 LogBetter.instance(logger).setLevel(LogLevel.ERROR)
@@ -252,7 +260,7 @@ public class AutoTaskContainer implements ApplicationContextAware, InitializingB
         BaseQuery<StockoutOrderTaskDO> taskQuery = BaseQuery.getInstance(stockoutOrderTaskDO);
         taskQuery.addLte("gmtCreate", getOneHoursAgoOnCurrentDate());
         taskQuery.addNotIn("sub_task_type", SubTaskType.allSubTaskType());
-        taskQuery.addLte("excuteTime", new Date());
+        taskQuery.addLte("retryExcuteTime", new Date());
         List<StockoutOrderTaskDO> createOrderTasks = stockoutOrderTaskManager.query(taskQuery);
         if (CollectionUtils.isNotEmpty(createOrderTasks)) {
             orderTasks.addAll(createOrderTasks);
@@ -273,7 +281,7 @@ public class AutoTaskContainer implements ApplicationContextAware, InitializingB
                     .log();
             try {
                 //处理异常任务
-//                exceptionHandlerFactory.getExceptionHandlerByExceptionType(orderTaskDO.getTaskType()).handle(orderTaskDO);
+                exceptionHandlerFactory.getExceptionHandlerByExceptionType(orderTaskDO.getTaskType()).handle(orderTaskDO);
                 Thread.sleep(500);
             } catch (Exception e) {
                 LogBetter.instance(logger).setLevel(LogLevel.ERROR)
@@ -314,7 +322,7 @@ public class AutoTaskContainer implements ApplicationContextAware, InitializingB
                     .addParm("主订单ID", taskOrderDO.getBizId())
                     .log();
             try {
-//                exceptionHandlerFactory.getExceptionHandlerByExceptionType(taskOrderDO.getTaskType()).handle(taskOrderDO);
+                exceptionHandlerFactory.getExceptionHandlerByExceptionType(taskOrderDO.getTaskType()).handle(taskOrderDO);
                 Thread.sleep(500);
             } catch (Exception e) {
                 LogBetter.instance(logger).setLevel(LogLevel.ERROR)
@@ -373,24 +381,35 @@ public class AutoTaskContainer implements ApplicationContextAware, InitializingB
             return;
         }
         for (StockoutOrderTaskDO task : createOrderTasks) {
-//        	StockoutOrderDO stockoutOrder = stockoutOrderManager.getByBizId(task.getBizId());
+            if (null == task || StringUtils.isBlank(task.getBizId())) {
+                LogBetter.instance(logger)
+                .setLevel(LogLevel.WARN)
+                .setMsg("[异常单重试自动任务:向快递100发起订阅]异常单bizId为空")
+                .setParms(task)
+                .log();
+                continue;
+            }
+        	StockoutOrderDO stockoutOrder = stockoutOrderManager.getByBizId(task.getBizId());
+        	if (null == stockoutOrder) {
+        	    continue;
+            }
+        	boolean flag = false;
         	// 重调
         	try {
-//        		ProviderCommand cmd = CommandFactory.createCommand(LogisticsProviderConfig.getKD100CommandVersion(), WmsMessageType.CALLBACK_KD100_DECLARE.getValue());
-//            	TplOrderRegistRoutesCommand tplOrderRegistRoutesCommand = (TplOrderRegistRoutesCommand) cmd;
-//            	tplOrderRegistRoutesCommand.setStockoutOrderDO(stockoutOrder);
-//                if (RouteType.INTERNAL.getType().equals(task.getFeatures())) {
-//                    tplOrderRegistRoutesCommand.setRouteType(RouteType.INTERNAL);
-//                } else if (RouteType.INTERNATIONAL.getType().equals(task.getFeatures())) {
-//                    tplOrderRegistRoutesCommand.setRouteType(RouteType.INTERNATIONAL);
-//                }
-//                tplOrderRegistRoutesCommand.execute();
+        	    
+        	    CommonRet<Void> commonRet = souteService.registKD100Routes(task.getBizId(), task.getFeatures());
+        	    if (null != commonRet && null != commonRet.getRetCode() && SCReturnCode.COMMON_SUCCESS.getCode() == commonRet.getRetCode()) {
+        	        flag = true;
+                }
+                
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 			}
-        	// 修改taskStatus
-        	task.setTaskState(TaskStatus.HANDLE_SUCCESS.getValue());
-            stockoutOrderTaskManager.update(task);
+        	if (flag) {
+        	    // 修改taskStatus
+        	    task.setTaskState(TaskStatus.HANDLE_SUCCESS.getValue());
+        	    stockoutOrderTaskManager.update(task);
+            }
         }
 	}
 

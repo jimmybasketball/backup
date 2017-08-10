@@ -1,21 +1,20 @@
 package com.sfebiz.supplychain.service.stockout.service.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.common.utils.log.TraceLogEntity;
 import com.sfebiz.supplychain.config.SystemConstants;
-import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
-import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
+import com.sfebiz.supplychain.exposed.common.code.StockoutReturnCode;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderTaskDO;
-import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
-import net.pocrd.entity.ServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
 
-import javax.annotation.Resource;
+import net.pocrd.entity.ServiceException;
 
 /**
  * User: <a href="mailto:lenolix@163.com">李星</a>
@@ -29,24 +28,25 @@ public class StockoutSendExceptionHandler extends AbstractExceptionHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(StockoutSendExceptionHandler.class);
 
-    @Resource
-    StockoutOrderManager stockoutOrderManager;
-
     @Override
     public void handle(StockoutOrderTaskDO stockoutOrderTaskDO) throws ServiceException {
         if (!checkExceptionTaskIsAlreadyHandle(stockoutOrderTaskDO)) {
             stockoutOrderTaskDO.setTaskDesc(null);
             JSONObject feature = JSON.parseObject(stockoutOrderTaskDO.getFeatures());
             String currentProcessorTag = feature.getString("currentProcssorTag");
-            StockoutOrderDO stockoutOrderDO = null;
+            StockoutOrderBO stockoutOrderBO = null;
             boolean isHandleSuccess = false;
             try {
                 if (stockoutOrderTaskDO.getStockoutOrderId() != null && stockoutOrderTaskDO.getId().longValue() > 0) {
-                    stockoutOrderDO = stockoutOrderManager.getById(stockoutOrderTaskDO.getStockoutOrderId());
+                    stockoutOrderBO = stockoutOrderBOFactory.loadStockoutBOById(stockoutOrderTaskDO.getStockoutOrderId());
+                }else{
+                    throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_PARAM_ILLIGAL, "[物流平台-重试异常任务]: 出库单stockoutOrderId为空或不合法");
                 }
-//                isHandleSuccess = stockoutBizService.executeStockoutSendProcesses(stockoutOrderTaskDO.getStockoutOrderId(), "again", currentProcessorTag);|
-                //对接出库工作流后干掉
-                throw new ServiceException(SCReturnCode.PARAM_ILLEGAL_ERR, "[物流平台-立即重试异常任务]: ");
+                if (null == stockoutOrderBO) {
+                    throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_PARAM_ILLIGAL, "[物流平台-重试异常任务]: 未查询到出库单信息");
+                }
+
+                isHandleSuccess = stockoutOrderBizService.executeStockoutSendProcesses(stockoutOrderBO, "again", currentProcessorTag);
             } catch (ServiceException se) {
                 LogBetter.instance(logger)
                         .setLevel(LogLevel.WARN)

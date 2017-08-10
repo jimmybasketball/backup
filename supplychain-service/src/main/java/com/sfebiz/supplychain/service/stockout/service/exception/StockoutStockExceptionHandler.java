@@ -1,5 +1,11 @@
 package com.sfebiz.supplychain.service.stockout.service.exception;
 
+import java.util.Calendar;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.common.utils.log.TraceLogEntity;
@@ -9,12 +15,8 @@ import com.sfebiz.supplychain.exposed.stockout.enums.StockoutOrderState;
 import com.sfebiz.supplychain.exposed.stockout.enums.TaskStatus;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderTaskDO;
-import net.pocrd.entity.ServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
+import net.pocrd.entity.ServiceException;
 
 /**
  * User: <a href="mailto:lenolix@163.com">李星</a>
@@ -23,6 +25,7 @@ import java.util.Calendar;
  * <p/>
  * 仓库实际出库时，库存有异常
  */
+//暂时未使用此类
 @Component("stockoutStockExceptionHandler")
 public class StockoutStockExceptionHandler extends AbstractExceptionHandler {
 

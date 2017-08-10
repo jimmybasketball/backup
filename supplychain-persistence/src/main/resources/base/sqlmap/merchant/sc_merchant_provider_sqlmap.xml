@@ -427,5 +427,14 @@
     and is_delete = 0
     for update
 </select>
+<select id="queryMerchantProviderIdByNationCode" resultType="java.lang.String" parameterType="java.lang.Long">
+    SELECT
+		bn.code
+	FROM
+		sc_merchant_provider mp
+	INNER JOIN base_nation bn ON mp.nation_id = bn.id
+	WHERE
+		mp.id = ${merchantProviderId}
+</select>
 
 </mapper>

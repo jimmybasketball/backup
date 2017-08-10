@@ -26,6 +26,7 @@ import net.pocrd.entity.ServiceException;
  * <p/>
  * 下发出库单创建指令失败
  */
+//出库单创建异常无需重试
 @Component("stockoutCreateExceptionHandler")
 public class StockoutCreateExceptionHandler extends AbstractExceptionHandler {
 
@@ -53,10 +54,10 @@ public class StockoutCreateExceptionHandler extends AbstractExceptionHandler {
                 boolean isHandleSuccess = false;
                 try {
                     if (stockoutOrderDO.getOrderType() == StockoutOrderType.ALLOCATION_STOCK_OUT.getValue()) {
-//                        isHandleSuccess = stockoutBizService
+//                        isHandleSuccess = stockoutOrderBizService
 //                                .executeTransferOutOrderCreateProcesses(stockoutOrderDO, "again", currentProcessorTag);
                     } else {
-//                        isHandleSuccess = stockoutBizService
+//                        isHandleSuccess = stockoutOrderBizService
 //                                .executeStockoutCreateProcesses(stockoutOrderDO, "again", currentProcessorTag);
                     }
                     //对接出库工作流后干掉
