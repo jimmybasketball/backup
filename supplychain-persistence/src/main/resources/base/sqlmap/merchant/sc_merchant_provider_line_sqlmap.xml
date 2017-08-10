@@ -170,11 +170,12 @@
 </sql>
 
     <select id="getByProviderAndWarehouse" parameterType="java.util.HashMap" resultMap="merchantProviderLineDOResult">
-        SELECT * FROM sc_merchant_provider_line
-        WHERE merchant_provider_id = #{providerId}
-        AND line_id IN (
+        SELECT line.* FROM sc_merchant_provider_line line LEFT JOIN sc_merchant_provider provider on line.merchant_provider_id = provider.id
+        WHERE line.merchant_provider_id = #{providerId}
+				and provider.merchant_id = #{merchantId}
+        AND line.line_id IN (
 	      SELECT sc_logistics_line.id FROM sc_logistics_line WHERE sc_logistics_line.warehouse_id = #{warehouseId}
-	    )and is_delete = 0 and state = 'ENABLE';
+	    )and line.is_delete = 0 and line.state = 'ENABLE';
     </select>
 
 

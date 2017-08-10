@@ -54,9 +54,9 @@ public class WmsTransferOutOrderCreateProcessor extends StockoutProcessAction {
                     .getLogisticsProviderBO().getInterfaceType(), msgType);
                 WmsTransferOutOrderCreateCommand wmsTransferOutOrderCreateCommand = (WmsTransferOutOrderCreateCommand) cmd;
                 wmsTransferOutOrderCreateCommand.setStockoutOrderBO(stockoutOrderBO);
-                wmsTransferOutOrderCreateCommand.setStockoutOrderDetailBOList(stockoutOrderBO
+                wmsTransferOutOrderCreateCommand.setStockoutOrderDetailBOs(stockoutOrderBO
                     .getDetailBOs());
-                wmsTransferOutOrderCreateCommand.setLineBO(lineEntity);
+                wmsTransferOutOrderCreateCommand.setLogisticsLineBO(lineEntity);
                 boolean createResult = wmsTransferOutOrderCreateCommand.execute();
                 if (createResult) {
                     result.setSuccess(Boolean.TRUE);

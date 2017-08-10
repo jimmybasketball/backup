@@ -3,6 +3,7 @@ package com.sfebiz.supplychain.queue;
 import com.aliyun.openservices.ons.api.*;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
+import com.sfebiz.supplychain.config.mock.MockConfig;
 import com.sfebiz.supplychain.queue.exception.MessageSendExceptionProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,15 +43,15 @@ public class MessageProducer implements InitializingBean, DisposableBean {
                 .addParm("消息", message)
                 .log();
         //  发送消息，只要不抛异常就是成功
-//        boolean isMock = MockConfig.isMocked("msg", message.getTopic());
-//        if (isMock) {
-//            LogBetter.instance(logger)
-//                    .setLevel(LogLevel.INFO)
-//                    .setMsg("mock the message")
-//                    .addParm("message", message)
-//                    .log();
-//            return new SendResult();
-//        }
+        boolean isMock = MockConfig.isMocked("msg", message.getTopic());
+        if (isMock) {
+            LogBetter.instance(logger)
+                    .setLevel(LogLevel.INFO)
+                    .setMsg("mock the message")
+                    .addParm("message", message)
+                    .log();
+            return new SendResult();
+        }
         String oriTopic = message.getTopic();
         SendResult sendResult = null;
         try {
@@ -77,7 +78,7 @@ public class MessageProducer implements InitializingBean, DisposableBean {
                         .log();
             } else {
                 //发送失败处理
-//                messageSendExceptionProcessor.addOrUpdateErrorTaskWhenSendError(message);
+                messageSendExceptionProcessor.addOrUpdateErrorTaskWhenSendError(message);
             }
         }
     }

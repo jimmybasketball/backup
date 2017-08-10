@@ -20,33 +20,38 @@ public abstract class PayOrderQueryCommand extends AbstractCommand {
     /**
      * 支付单申报企业信息编码
      */
-    protected String          payBillDeclareProviderNid;
+    protected String payBillDeclareProviderNid;
 
+    /* 根据stockoutOrderBO整理出的数据结构，方便业务调用，不需要外部传入  */
     /**
      * 路线实体
      */
-    protected LogisticsLineBO lineEntity;
+    protected LogisticsLineBO logisticsLineBO;
 
     /**
      * 支付单申报状态查询结果
      */
-    private String            payBillState;
+    private String payBillState;
 
     /**
      * 支付单申报时的流水号
      */
-    private String            payBillTradeNo;
+    private String payBillTradeNo;
+
+    public StockoutOrderBO getStockoutOrderBO() {
+        return stockoutOrderBO;
+    }
 
     public void setStockoutOrderBO(StockoutOrderBO stockoutOrderBO) {
         this.stockoutOrderBO = stockoutOrderBO;
     }
 
-    public void setLineEntity(LogisticsLineBO lineEntity) {
-        this.lineEntity = lineEntity;
+    public LogisticsLineBO getLogisticsLineBO() {
+        return logisticsLineBO;
     }
 
-    public void setPayBillDeclareProviderNid(String payBillDeclareProviderNid) {
-        this.payBillDeclareProviderNid = payBillDeclareProviderNid;
+    public void setLogisticsLineBO(LogisticsLineBO logisticsLineBO) {
+        this.logisticsLineBO = logisticsLineBO;
     }
 
     public String getPayBillState() {
@@ -64,5 +69,4 @@ public abstract class PayOrderQueryCommand extends AbstractCommand {
     public void setPayBillTradeNo(String payBillTradeNo) {
         this.payBillTradeNo = payBillTradeNo;
     }
-
 }

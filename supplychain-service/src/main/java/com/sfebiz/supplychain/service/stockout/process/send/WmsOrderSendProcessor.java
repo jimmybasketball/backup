@@ -47,7 +47,7 @@ public class WmsOrderSendProcessor extends StockoutProcessAction {
                         WmsMessageType.DELIVER_GOODS.getValue());
                     WmsOrderSenderCommand senderCommand = (WmsOrderSenderCommand) cmd;
                     senderCommand.setStockoutOrderBO(stockoutOrderBO);
-                    senderCommand.setLineBO(stockoutOrderBO.getLineBO());
+                    senderCommand.setLogisticsLineBO(stockoutOrderBO.getLineBO());
                     boolean createResult = senderCommand.execute();
                     result.setSuccess(createResult);
                 } catch (ServiceException e) {

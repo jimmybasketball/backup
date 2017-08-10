@@ -19,13 +19,18 @@ dubbo.export.version=${dubbo.export.version}
 dubbo.export.timeout=${dubbo.export.timeout}
 dubbo.export.host=${dubbo.export.host}
 
-#redis-proxy-db
-com.sfebiz.supplychain.redisproxy.server.host=${com.sfebiz.supplychain.redisproxy.server.host}
-com.sfebiz.supplychain.redisproxy.server.port=${com.sfebiz.supplychain.redisproxy.server.port}
-com.sfebiz.supplychain.redisproxy.server.password=${com.sfebiz.supplychain.redisproxy.server.password}
-com.sfebiz.supplychain.redisproxy.maxIdle=${com.sfebiz.supplychain.redisproxy.maxIdle}
-com.sfebiz.supplychain.redisproxy.maxTotal=${com.sfebiz.supplychain.redisproxy.maxTotal}
-com.sfebiz.supplychain.redisproxy.maxWaitTime=${com.sfebiz.supplychain.redisproxy.maxWaitTime}
-com.sfebiz.supplychain.redisproxy.testOnBorrow=${com.sfebiz.supplychain.redisproxy.testOnBorrow}
-com.sfebiz.supplychain.redisproxy.minIdle=${com.sfebiz.supplychain.redisproxy.minIdle}
-com.sfebiz.supplychain.redisproxy.timeout=${com.sfebiz.supplychain.redisproxy.timeout}
+# jedisCluster
+com.sfebiz.supplychain.rediscluster.server.addresses=${com.sfebiz.supplychain.rediscluster.server.addresses}
+com.sfebiz.supplychain.rediscluster.server.password=${com.sfebiz.supplychain.rediscluster.server.password}
+com.sfebiz.supplychain.rediscluster.maxIdle=${com.sfebiz.supplychain.rediscluster.maxIdle}
+com.sfebiz.supplychain.rediscluster.maxTotal=${com.sfebiz.supplychain.rediscluster.maxTotal}
+com.sfebiz.supplychain.rediscluster.maxWaitTime=${com.sfebiz.supplychain.rediscluster.maxWaitTime}
+com.sfebiz.supplychain.rediscluster.testOnBorrow=${com.sfebiz.supplychain.rediscluster.testOnBorrow}
+com.sfebiz.supplychain.rediscluster.minIdle=${com.sfebiz.supplychain.rediscluster.minIdle}
+com.sfebiz.supplychain.rediscluster.timeout=${com.sfebiz.supplychain.rediscluster.timeout}
+
+# message
+com.sfebiz.queue.accessKey=${com.sfebiz.queue.accessKey}
+com.sfebiz.queue.secretKey=${com.sfebiz.queue.secretKey}
+com.sfebiz.queue.supplychainEventRouteMessageProducerId=${com.sfebiz.queue.supplychainEventRouteMessageProducerId}
+com.sfebiz.queue.supplychainEventRouteMessageConsumerId=${com.sfebiz.queue.supplychainEventRouteMessageConsumerId}

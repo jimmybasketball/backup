@@ -75,10 +75,6 @@ public class StockinOrderEntity implements Serializable {
      */
     public Date predictArrivePort;
     /**
-     * 实际到港时间
-     */
-    public Date actdictArrivePort;
-    /**
      * 仓库理货开始时间
      */
     public Date warehouseConfirmStart;
@@ -93,6 +89,11 @@ public class StockinOrderEntity implements Serializable {
      * 完成收货时间
      */
     public Date stockinFinishTime;
+
+    /**
+     * 备注
+     */
+    public String remarks;
 
     /**
      * 入库明细列表
@@ -118,13 +119,21 @@ public class StockinOrderEntity implements Serializable {
                 ", transportType=" + transportType +
                 ", predictSendTime=" + predictSendTime +
                 ", predictArrivePort=" + predictArrivePort +
-                ", actdictArrivePort=" + actdictArrivePort +
                 ", warehouseConfirmStart=" + warehouseConfirmStart +
                 ", warehouseConfirmEnd=" + warehouseConfirmEnd +
                 ", warehouseStockinTime=" + warehouseStockinTime +
                 ", stockinFinishTime=" + stockinFinishTime +
+                ", remarks='" + remarks + '\'' +
                 ", detailEntities=" + detailEntities +
                 '}';
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
     public Long getId() {
@@ -253,14 +262,6 @@ public class StockinOrderEntity implements Serializable {
 
     public void setPredictArrivePort(Date predictArrivePort) {
         this.predictArrivePort = predictArrivePort;
-    }
-
-    public Date getActdictArrivePort() {
-        return actdictArrivePort;
-    }
-
-    public void setActdictArrivePort(Date actdictArrivePort) {
-        this.actdictArrivePort = actdictArrivePort;
     }
 
     public Date getWarehouseConfirmStart() {

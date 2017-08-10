@@ -1,80 +1,54 @@
 package com.sfebiz.supplychain.provider.command.send.tpl;
 
+import com.sfebiz.supplychain.exposed.route.entity.LogisticsUserRouteEntity;
 import com.sfebiz.supplychain.provider.command.AbstractCommand;
-import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
 
-/**
- * 
- * <p>第三方物流承运商，获取包裹物流信息命令</p>
- * 
- * @author matt
- * @Date 2017年7月28日 下午5:42:18
- */
+import java.util.List;
+
 public abstract class TplOrderGetRoutesCommand extends AbstractCommand {
 
-    /** */
-    protected StockoutOrderBO stockoutOrderBO;
+    protected String mailNo;
 
-    //    /** 国内物流信息 */
-    //    protected List<LogisticsRouteEntity> routes;
-    //
-    //    /** 国际物流信息 */
-    //    protected List<LogisticsRouteEntity> internationalRoutes;
-    //
-    //    /**路由类型 */
-    //    protected RouteType                  routeType;
-    //
-    //    /** 出库单关联的路线实体 */
-    //    protected LogisticsLineBO            lineEntity;
-    //
-    //    /** 是否需要再次查询路由信息 */
-    //    protected boolean                    isNeedToRefetchRoutes;
-    //
-    //    public List<LogisticsRouteEntity> getRoutes() {
-    //        return routes;
-    //    }
-    //
-    //    public void setRoutes(List<LogisticsRouteEntity> routes) {
-    //        this.routes = routes;
-    //    }
-    //
-    //    public List<LogisticsRouteEntity> getInternationalRoutes() {
-    //        return internationalRoutes;
-    //    }
-    //
-    //    public void setInternationalRoutes(List<LogisticsRouteEntity> internationalRoutes) {
-    //        this.internationalRoutes = internationalRoutes;
-    //    }
-    //
-    //    public StockoutOrderDO getStockoutOrderDO() {
-    //        return stockoutOrderBO;
-    //    }
-    //
-    //    public void setStockoutOrderDO(StockoutOrderDO stockoutOrderDO) {
-    //        this.stockoutOrderBO = stockoutOrderDO;
-    //    }
-    //
-    //    public LineEntity getLineEntity() {
-    //        return lineEntity;
-    //    }
-    //
-    //    public void setLineEntity(LineEntity lineEntity) {
-    //        this.lineEntity = lineEntity;
-    //    }
-    //
-    //    public boolean isNeedToRefetchRoutes() {
-    //        return isNeedToRefetchRoutes;
-    //    }
-    //
-    //    public void setNeedToRefetchRoutes(boolean needToRefetchRoutes) {
-    //        isNeedToRefetchRoutes = needToRefetchRoutes;
-    //    }
-    //
-    //    public RouteType getRouteType() {
-    //        return routeType;
-    //    }
-    //
-    //    public void setRouteType(RouteType routeType) {
-    //        this.routeType = routeType;
-    //    }
+    protected String orderId;
+
+    protected String carrierCode;
+
+    /**
+     * 物流信息，执行后输出
+     */
+    private List<LogisticsUserRouteEntity> routes;
+
+
+    public List<LogisticsUserRouteEntity> getRoutes() {
+        return routes;
+    }
+
+    public void setRoutes(List<LogisticsUserRouteEntity> routes) {
+        this.routes = routes;
+    }
+
+    public String getMailNo() {
+        return mailNo;
+    }
+
+    public void setMailNo(String mailNo) {
+        this.mailNo = mailNo;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getCarrierCode() {
+        return carrierCode;
+    }
+
+    public void setCarrierCode(String carrierCode) {
+        this.carrierCode = carrierCode;
+    }
 }
+

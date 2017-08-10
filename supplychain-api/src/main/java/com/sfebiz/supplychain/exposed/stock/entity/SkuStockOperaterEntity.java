@@ -3,12 +3,12 @@ package com.sfebiz.supplychain.exposed.stock.entity;
 import java.io.Serializable;
 
 /**
- * @description: 商品库存操作实体
  * @author yangh [yangh@ifunq.com]
+ * @description: 商品库存操作实体
  * @date 2017/7/24 15:37
  */
 
-public class SkuStockOperaterEntity implements Comparable<SkuStockOperaterEntity>,Serializable {
+public class SkuStockOperaterEntity implements Comparable<SkuStockOperaterEntity>, Serializable {
 
     private static final long serialVersionUID = 5990880363176607606L;
     //商品SKU ID
@@ -18,7 +18,7 @@ public class SkuStockOperaterEntity implements Comparable<SkuStockOperaterEntity
     //商品报损坏品数量
     public Integer wearCount = 0;
     //商品报溢正品数量
-    public Integer overFlowCount= 0;
+    public Integer overFlowCount = 0;
     //商品报溢坏品数量
     public Integer overFlowWearCount = 0;
     //仓库 ID
@@ -27,10 +27,6 @@ public class SkuStockOperaterEntity implements Comparable<SkuStockOperaterEntity
     public Long stockoutOrderId;
     //商品类型
     public Integer skuType;
-    // 商品单价 港币
-    public Integer price;
-    // 商品单价 人民币
-    public Integer priceRmb;
     /**
      * 预售申请单ID
      */
@@ -52,7 +48,8 @@ public class SkuStockOperaterEntity implements Comparable<SkuStockOperaterEntity
      */
     public Integer nopoAdvanceCount = 0;
 
-    public SkuStockOperaterEntity(){}
+    public SkuStockOperaterEntity() {
+    }
 
     public SkuStockOperaterEntity(Long skuId, Long warehouseId, Long stockoutOrderId, Integer count) {
         this.skuId = skuId;
@@ -130,22 +127,6 @@ public class SkuStockOperaterEntity implements Comparable<SkuStockOperaterEntity
         this.skuType = skuType;
     }
 
-    public Integer getPrice() {
-        return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public Integer getPriceRmb() {
-        return priceRmb;
-    }
-
-    public void setPriceRmb(Integer priceRmb) {
-        this.priceRmb = priceRmb;
-    }
-
     public Integer getPresellCount() {
         return presellCount;
     }
@@ -194,7 +175,7 @@ public class SkuStockOperaterEntity implements Comparable<SkuStockOperaterEntity
         } else if (o.getSkuId().longValue() == this.getSkuId().longValue()) {
             if (o.getStockoutOrderId().longValue() > this.getStockoutOrderId().longValue()) {
                 return -1;
-            } else if (o.getStockoutOrderId().longValue() < this.getStockoutOrderId().longValue()){
+            } else if (o.getStockoutOrderId().longValue() < this.getStockoutOrderId().longValue()) {
                 return 1;
             } else {
                 return 0;
@@ -215,8 +196,6 @@ public class SkuStockOperaterEntity implements Comparable<SkuStockOperaterEntity
                 ", warehouseId=" + warehouseId +
                 ", stockoutOrderId=" + stockoutOrderId +
                 ", skuType=" + skuType +
-                ", price=" + price +
-                ", priceRmb=" + priceRmb +
                 ", presellId=" + presellId +
                 ", presellCount=" + presellCount +
                 ", salePresellCount=" + salePresellCount +

@@ -1,8 +1,7 @@
 package com.sfebiz.supplychain.provider.command.send.wms;
 
-import java.util.Date;
-import java.util.List;
-
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import com.sfebiz.supplychain.config.mock.MockConfig;
 import com.sfebiz.supplychain.exposed.sku.entity.SkuEntity;
 import com.sfebiz.supplychain.exposed.sku.enums.SkuWarehouseSyncStateType;
@@ -11,9 +10,18 @@ import com.sfebiz.supplychain.factory.SpringBeanFactory;
 import com.sfebiz.supplychain.persistence.base.sku.domain.SkuWarehouseSyncDO;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuWarehouseSyncLogManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuWarehouseSyncManager;
-import com.sfebiz.supplychain.persistence.base.warehouse.domain.LogisticsProviderDetailDO;
-import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.provider.command.AbstractCommand;
+import com.sfebiz.supplychain.sdk.protocol.*;
+import com.sfebiz.supplychain.service.lp.model.LogisticsProviderBO;
+import com.sfebiz.supplychain.service.warehouse.model.WarehouseBO;
+import com.sfebiz.supplychain.util.DateUtil;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 抽象与仓库进行商品同步
@@ -28,12 +36,12 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
     /**
      * 仓库信息
      */
-    protected WarehouseDO warehouseDO;
+    protected WarehouseBO warehouseBO;
 
     /**
      * 供应商信息
      */
-    protected LogisticsProviderDetailDO logisticsProviderDetailDO;
+    protected LogisticsProviderBO logisticsProviderBO;
     /**
      * 同步失败的异常原因
      */
@@ -51,20 +59,20 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
         this.skuEntities = skuEntities;
     }
 
-    public WarehouseDO getWarehouseDO() {
-        return warehouseDO;
+    public WarehouseBO getWarehouseBO() {
+        return warehouseBO;
     }
 
-    public void setWarehouseDO(WarehouseDO warehouseDO) {
-        this.warehouseDO = warehouseDO;
+    public void setWarehouseBO(WarehouseBO warehouseBO) {
+        this.warehouseBO = warehouseBO;
     }
 
-    public LogisticsProviderDetailDO getLogisticsProviderDetailDO() {
-        return logisticsProviderDetailDO;
+    public LogisticsProviderBO getLogisticsProviderBO() {
+        return logisticsProviderBO;
     }
 
-    public void setLogisticsProviderDetailDO(LogisticsProviderDetailDO logisticsProviderDetailDO) {
-        this.logisticsProviderDetailDO = logisticsProviderDetailDO;
+    public void setLogisticsProviderBO(LogisticsProviderBO logisticsProviderBO) {
+        this.logisticsProviderBO = logisticsProviderBO;
     }
 
     public WmsOperaterType getWmsOperaterType() {
@@ -92,35 +100,35 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
 //
 //        DistributedLock distributedLock = SpringBeanFactory.getBean("distributedLock", DistributedLock.class);
 //        try {
-//            if (logisticsProviderDetailDO == null || warehouseDO == null || CollectionUtils.isEmpty(skuEntities)) {
+//            if (logisticsProviderBO == null || warehouseBO == null || CollectionUtils.isEmpty(skuEntities)) {
 //                LogBetter.instance(logger)
 //                        .setMsg("下发商品同步报文参数异常")
-//                        .addParm("warehouseDO", warehouseDO)
-//                        .addParm("logisticsProviderDetailDO", logisticsProviderDetailDO)
-//                        .addParm("warehouseDO", warehouseDO)
+//                        .addParm("warehouseBO", warehouseBO)
+//                        .addParm("logisticsProviderBO", logisticsProviderBO)
+//                        .addParm("warehouseBO", warehouseBO)
 //                        .log();
 //
 //                return false;
 //            }
 //            LogBetter.instance(logger)
 //                    .setMsg("准备下发商品同步报文")
-//                    .addParm("仓库名称", warehouseDO.getName())
+//                    .addParm("仓库名称", warehouseBO.getName())
 //                    .log();
 //
-//            String url = getLogisticsProviderDetailDO().getInterfaceUrl();
-//            String key = getLogisticsProviderDetailDO().getInterfaceKey();
+//            String url = getLogisticsProviderBO().getInterfaceUrl();
+//            String key = getLogisticsProviderBO().getInterfaceKey();
 //            if (StringUtils.isEmpty(url) || StringUtils.isEmpty(key)) {
 //                return false;
 //            }
 //            LogisticsEventsRequest logisticsEventsRequest = buildLogisticsEventRequest();
 //            LogBetter.instance(logger)
-//                    .setMsg(warehouseDO.getName() + "同步sku报文")
+//                    .setMsg(warehouseBO.getName() + "同步sku报文")
 //                    .addParm("responses", new Gson().toJson(logisticsEventsRequest))
 //                    .setLevel(LogLevel.INFO)
 //                    .log();
 //            LogisticsEventsResponse responses = ProviderBO.getInstance().send(logisticsEventsRequest, WmsMessageType.SKU_SYNC.getValue(), url, key, null);
 //            LogBetter.instance(logger)
-//                    .setMsg(warehouseDO.getName() + "同步sku报文响应")
+//                    .setMsg(warehouseBO.getName() + "同步sku报文响应")
 //                    .addParm("responses", new Gson().toJson(responses))
 //                    .setLevel(LogLevel.INFO)
 //                    .log();
@@ -135,21 +143,21 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
 //                if (isSuccess(response)) {
 //                    logger.info("同步sku成功");
 //                    for (SkuEntity skuEntity : skuEntities) {
-//                        SkuWarehouseSyncDO warehouseSyscDO = SkuBO.getInstance().getSkuWarehouseSyscManager().getBySkuIdAndStorehouseId(skuEntity.getId(), this.getWarehouseDO().getId(), SkuType.BASIC_SKU.getValue());
+//                        SkuWarehouseSyncDO warehouseSyscDO = SkuBO.getInstance().getSkuWarehouseSyscManager().getBySkuIdAndStorehouseId(skuEntity.getId(), this.getWarehouseBO().getId(), SkuType.BASIC_SKU.getValue());
 //                        if (warehouseSyscDO != null) {
-//                            logger.info("skuId:{},warehouseId:{} 存在,update", skuEntity.id, this.getWarehouseDO().getId());
+//                            logger.info("skuId:{},warehouseId:{} 存在,update", skuEntity.id, this.getWarehouseBO().getId());
 //                            warehouseSyscDO.setIsSync(SyncState.SYNC_SUCCESS.value);
 //                            SkuBO.getInstance().getSkuWarehouseSyscManager().update(warehouseSyscDO);
 //                        } else {
-//                            logger.error("skuId:{},warehouseId:{} 不存在", skuEntity.id, this.getWarehouseDO().getId());
+//                            logger.error("skuId:{},warehouseId:{} 不存在", skuEntity.id, this.getWarehouseBO().getId());
 //
 //                        }
-//                        skuWarehouseSyncLogManager.createLog(skuEntity.id, this.getWarehouseDO().getId(), "成功", 0, 1);
+//                        skuWarehouseSyncLogManager.createLog(skuEntity.id, this.getWarehouseBO().getId(), "成功", 0, 1);
 //                    }
 //                    return true;
 //                } else {
 //                    errorMessage = responses.responseItems.get(0).getReason() + " | " + responses.responseItems.get(0).getReasonDesc();
-//                    skuWarehouseSyncLogManager.createLog(0, this.getWarehouseDO().getId(), responses.responseItems.get(0).getReason() + " | " + responses.responseItems.get(0).getReasonDesc(), 0, 0);
+//                    skuWarehouseSyncLogManager.createLog(0, this.getWarehouseBO().getId(), responses.responseItems.get(0).getReason() + " | " + responses.responseItems.get(0).getReasonDesc(), 0, 0);
 //                    logger.info("同步sku失败");
 //                }
 //            }
@@ -161,36 +169,36 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
 //        }
         return false;
     }
-//
-//    public boolean isSuccess(Response response) {
-//        if ("true".equals(response.success)) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-//
-//    public LogisticsEventsRequest buildLogisticsEventRequest() {
-//        String eventSource = "";
-//        String meta = getLogisticsProviderDetailDO().getMeta();
-//        Type type = new TypeToken<Map<String, Object>>() {
-//        }.getType();
-//        Map<String, Object> metaData = new Gson().fromJson(meta, type);
-//        if (metaData != null && metaData.containsKey("event_source")) {
-//            eventSource = (String) metaData.get("event_source");
-//        }
-//        WarehouseDO warehouse = getWarehouseDO();
-//        EventHeader eventHeader = new EventHeader();
-//        eventHeader.setEventType(EventType.LOGISTICS_SKU_SYNC.value);
-//        eventHeader.setEventTime(DateUtil.getCurrentDateTime());
-//        eventHeader.setEventSource(eventSource);
-//        eventHeader.setEventTarget(warehouse.getWarehouseNid());
-//        List<LogisticsOrder> logisticsOrders = new ArrayList<LogisticsOrder>();
-//        List<SkuEntity> skuEntities = getSkuEntities();
-//        SkuDetail skuDetail = new SkuDetail();
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        for (SkuEntity skuEntity : skuEntities) {
-//            Sku sku = new Sku();
+
+    public boolean isSuccess(Response response) {
+        if ("true".equals(response.success)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public LogisticsEventsRequest buildLogisticsEventRequest() {
+        String eventSource = "";
+        String meta = warehouseBO.getLogisticsProviderBO().getInterfaceMeta().get("meta");
+        Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        Map<String, Object> metaData = new Gson().fromJson(meta, type);
+        if (metaData != null && metaData.containsKey("event_source")) {
+            eventSource = (String) metaData.get("event_source");
+        }
+        WarehouseBO warehouse = getWarehouseBO();
+        EventHeader eventHeader = new EventHeader();
+        eventHeader.setEventType(EventType.LOGISTICS_SKU_SYNC.value);
+        eventHeader.setEventTime(DateUtil.getCurrentDateTime());
+        eventHeader.setEventSource(eventSource);
+        eventHeader.setEventTarget(warehouse.getWarehouseNid());
+        List<LogisticsOrder> logisticsOrders = new ArrayList<LogisticsOrder>();
+        List<SkuEntity> skuEntities = getSkuEntities();
+        SkuDetail skuDetail = new SkuDetail();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (SkuEntity skuEntity : skuEntities) {
+            Sku sku = new Sku();
 //            sku.skuId = "" + skuEntity.id;
 //            sku.skuCode = skuEntity.getBarcode() == null ? "" : skuEntity.getBarcode();
 //            // - 是非法字符
@@ -225,27 +233,27 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
 //            sku.maxStockAlarmLimit = skuEntity.maxStockAlarmLimit;
 //            sku.status = 1;
 //            sku.guarantyPeriod = skuEntity.guarantyPeriod;
-//            skuDetail.getSkus().add(sku);
-//        }
-//
-//        LogisticsDetail logisticsDetail = new LogisticsDetail();
-//        logisticsDetail.setLogisticsOrders(logisticsOrders);
-//        EventBody eventBody = new EventBody();
-//        eventBody.setSkuDetail(skuDetail);
-//        LogisticsEvent logisticsEvent = new LogisticsEvent();
-//        logisticsEvent.setEventHeader(eventHeader);
-//        logisticsEvent.setEventBody(eventBody);
-//
-//        LogisticsEventsRequest logisticsEventsRequest = new LogisticsEventsRequest();
-//        logisticsEventsRequest.setLogisticsEvent(logisticsEvent);
-//        return logisticsEventsRequest;
-//    }
-//
+            skuDetail.getSkus().add(sku);
+        }
+
+        LogisticsDetail logisticsDetail = new LogisticsDetail();
+        logisticsDetail.setLogisticsOrders(logisticsOrders);
+        EventBody eventBody = new EventBody();
+        eventBody.setSkuDetail(skuDetail);
+        LogisticsEvent logisticsEvent = new LogisticsEvent();
+        logisticsEvent.setEventHeader(eventHeader);
+        logisticsEvent.setEventBody(eventBody);
+
+        LogisticsEventsRequest logisticsEventsRequest = new LogisticsEventsRequest();
+        logisticsEventsRequest.setLogisticsEvent(logisticsEvent);
+        return logisticsEventsRequest;
+    }
+
     public boolean mockSkuSyncSuccess() {
         SkuWarehouseSyncManager skuWarehouseSyncManager = SpringBeanFactory.getBean("skuWarehouseSyncManager", SkuWarehouseSyncManager.class);
         SkuWarehouseSyncLogManager skuWarehouseSyncLogManager = SpringBeanFactory.getBean("skuWarehouseSyncLogManager", SkuWarehouseSyncLogManager.class);
         for (SkuEntity skuEntity : skuEntities) {
-            SkuWarehouseSyncDO warehouseSyncDO = skuWarehouseSyncManager.getBySkuIdAndWarehouseId(skuEntity.getId(), this.warehouseDO.getId());
+            SkuWarehouseSyncDO warehouseSyncDO = skuWarehouseSyncManager.getBySkuIdAndWarehouseId(skuEntity.getId(), this.warehouseBO.getId());
             if (warehouseSyncDO != null) {
                 if (WmsOperaterType.ADD.equals(getWmsOperaterType())) {
                     warehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_SUCCESS.value);
@@ -255,9 +263,9 @@ public abstract class WmsOrderSkuSyncCommand extends AbstractCommand {
                 warehouseSyncDO.setGmtModified(new Date());
                 skuWarehouseSyncManager.update(warehouseSyncDO);
             } else {
-                logger.error("skuId:{},warehouseId:{} 不存在", skuEntity.id, this.getWarehouseDO().getId());
+                logger.error("skuId:{},warehouseId:{} 不存在", skuEntity.id, this.getWarehouseBO().getId());
             }
-            skuWarehouseSyncLogManager.createLog(skuEntity.id, this.getWarehouseDO().getId(), "成功", "mock", 1);
+            skuWarehouseSyncLogManager.createLog(skuEntity.id, this.getWarehouseBO().getId(), "成功", "mock", 1);
         }
         return true;
     }

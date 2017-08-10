@@ -255,6 +255,12 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
+
+        <!-- 易极付接口调用API -->
+        <dependency>
+            <groupId>com.yiji.openapi.tool</groupId>
+            <artifactId>yijiApi-tool</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -293,8 +299,8 @@
                     <encoding>UTF-8</encoding>
                     <showWarnings>true</showWarnings>
                     <compilerArguments>
-<!--                         <bootclasspath>${java.home}/lib/rt.jar:${java.home}/lib/jce.jar</bootclasspath> -->
-                        <bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
+                        <bootclasspath>${java.home}/lib/rt.jar:${java.home}/lib/jce.jar</bootclasspath>
+                        <!--<bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>-->
                     </compilerArguments>
                 </configuration>
             </plugin>

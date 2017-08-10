@@ -150,4 +150,19 @@ public class StockoutOrderTaskManager extends BaseManager<StockoutOrderTaskDO> {
         }
         return null;
     }
+    
+    /*
+     * 查询发送消息异常的Task
+     *
+     * @param uniqueNo
+     * @param type
+     * @return
+     */
+    public List<StockoutOrderTaskDO> querySendMsgErrorLog(String uniqueNo, String type) {
+        StockoutOrderTaskDO o = new StockoutOrderTaskDO();
+        o.setBizId(uniqueNo);
+        o.setTaskType(type);
+        BaseQuery<StockoutOrderTaskDO> q = BaseQuery.getInstance(o);
+        return stockoutOrderTaskDao.query(q);
+    }
 }

@@ -644,6 +644,13 @@
                 <artifactId>oval</artifactId>
                 <version>1.87</version>
             </dependency>
+
+            <!-- 易极付接口调用API -->
+            <dependency>
+                <groupId>com.yiji.openapi.tool</groupId>
+                <artifactId>yijiApi-tool</artifactId>
+                <version>1.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

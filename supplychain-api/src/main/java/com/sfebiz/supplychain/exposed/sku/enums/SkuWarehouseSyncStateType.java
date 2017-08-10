@@ -26,10 +26,10 @@ public class SkuWarehouseSyncStateType extends Enumerable4StringValue {
 
     private static volatile transient Map<String, SkuWarehouseSyncStateType> allbyname = new HashMap<String, SkuWarehouseSyncStateType>();
 
-    public static SkuWarehouseSyncStateType SYNC_SUCCESS = valueOf("SYNC_SUCCESS", "待备案");
-    public static SkuWarehouseSyncStateType SYNC_FAIL = valueOf("SYNC_FAIL", "备案通过");
-    public static SkuWarehouseSyncStateType SYNC_UPDATE_SUCCESS = valueOf("SYNC_UPDATE_SUCCESS", "备案不通过");
-    public static SkuWarehouseSyncStateType SYNC_UPDATE_FAIL = valueOf("SYNC_UPDATE_FAIL", "备案不通过");
+    public static SkuWarehouseSyncStateType SYNC_SUCCESS = valueOf("SYNC_SUCCESS", "同步成功");
+    public static SkuWarehouseSyncStateType SYNC_FAIL = valueOf("SYNC_FAIL", "同步失败");
+    public static SkuWarehouseSyncStateType SYNC_UPDATE_SUCCESS = valueOf("SYNC_UPDATE_SUCCESS", "同步更新成功");
+    public static SkuWarehouseSyncStateType SYNC_UPDATE_FAIL = valueOf("SYNC_UPDATE_FAIL", "同步更新失败");
 
 
     public SkuWarehouseSyncStateType(String value, String name) {

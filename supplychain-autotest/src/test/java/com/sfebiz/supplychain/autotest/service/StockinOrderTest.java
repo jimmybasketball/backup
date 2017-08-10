@@ -39,7 +39,7 @@ public class StockinOrderTest extends BaseServiceTest{
         stockinOrderEntity.setContactName("张三");
         stockinOrderEntity.setContactPhone("17829082876");
         stockinOrderEntity.setMailNo("886323234234");
-        stockinOrderEntity.setTransportType(StockinTransportType.OCEAN.getType());
+        stockinOrderEntity.setTransportType(StockinTransportType.OCEAN.getValue());
         stockinOrderEntity.setLogisticsCompany("圆通");
 
         stockInService.createStockinOrder(stockinOrderEntity, 1L, "张雅静");

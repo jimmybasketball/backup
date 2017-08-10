@@ -628,7 +628,6 @@ public class MerchantServiceImpl implements MerchantService {
                     commonRet.reSet();
                     commonRet.setRetCode(MerchantReturnCode.MERCHANT_PROVIDER_LINE_ENTITY_VALIDATE_FAIL.getCode());
                     commonRet.setRetMsg(MerchantReturnCode.MERCHANT_PROVIDER_LINE_ENTITY_VALIDATE_FAIL.getDesc());
-                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return commonRet;
                 }
 

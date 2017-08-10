@@ -1,19 +1,5 @@
 package com.sfebiz.supplychain.provider.biz;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
-
 import com.sfebiz.common.dao.domain.BaseQuery;
 import com.sfebiz.common.utils.log.LogBetter;
 import com.sfebiz.common.utils.log.LogLevel;
@@ -34,16 +20,28 @@ import com.sfebiz.supplychain.persistence.base.sku.domain.SkuWarehouseSyncDO;
 import com.sfebiz.supplychain.persistence.base.sku.manager.ProductDeclareManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuWarehouseSyncLogManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuWarehouseSyncManager;
-import com.sfebiz.supplychain.persistence.base.warehouse.domain.LogisticsProviderDetailDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
-import com.sfebiz.supplychain.persistence.base.warehouse.manager.LogisticsProviderDetailManager;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
 import com.sfebiz.supplychain.provider.command.CommandFactory;
 import com.sfebiz.supplychain.provider.command.ProviderCommand;
 import com.sfebiz.supplychain.provider.command.send.ccb.CcbSkuSyncCommand;
 import com.sfebiz.supplychain.provider.command.send.wms.WmsOrderSkuSyncCommand;
-
+import com.sfebiz.supplychain.service.lp.model.LogisticsProviderBO;
+import com.sfebiz.supplychain.service.warehouse.model.WarehouseBO;
 import net.pocrd.entity.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p></p>
@@ -63,9 +61,6 @@ public class SkuSyncBizService implements ApplicationContextAware {
 
 //    @Resource
 //    private MixedSkuManager mixedSkuManager;
-
-    @Resource
-    private LogisticsProviderDetailManager logisticsProviderDetailManager;
 
     @Resource
     private WarehouseManager warehouseManager;
@@ -107,13 +102,13 @@ public class SkuSyncBizService implements ApplicationContextAware {
         if (null == warehouseDO) {
             throw new ServiceException(LogisticsReturnCode.WAREHOUSE_NOT_EXISTS_ERROR_EXCEPTION, LogisticsReturnCode.WAREHOUSE_NOT_EXISTS_ERROR_EXCEPTION.getDesc());
         }
-        LogisticsProviderDetailDO logisticsProviderDetailDO = logisticsProviderDetailManager.getById(Long.parseLong(warehouseDO.getLogisticsProviderId()));
-        if (null == logisticsProviderDetailDO) {
+        LogisticsProviderBO logisticsProviderBO = new LogisticsProviderBO();
+        if (null == logisticsProviderBO) {
             throw new ServiceException(LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION, LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION.getDesc());
         }
 
 //        WmsOrderProductQueryCommand wmsOrderProductQueryCommand = new LscmProductQueryCommand();
-//        wmsOrderProductQueryCommand.setLogisticsProviderDetailDO(logisticsProviderDetailDO);
+//        wmsOrderProductQueryCommand.setLogisticsProviderBO(logisticsProviderDetailDO);
 //        wmsOrderProductQueryCommand.setSkuId(skuId);
 //        if (wmsOrderProductQueryCommand.execute()) {
 //            return wmsOrderProductQueryCommand.getSkuEntity();
@@ -173,15 +168,15 @@ public class SkuSyncBizService implements ApplicationContextAware {
         if (null == warehouseDO) {
             throw new ServiceException(LogisticsReturnCode.WAREHOUSE_NOT_EXISTS_ERROR_EXCEPTION, LogisticsReturnCode.WAREHOUSE_NOT_EXISTS_ERROR_EXCEPTION.getDesc());
         }
-        LogisticsProviderDetailDO logisticsProviderDetailDO = logisticsProviderDetailManager.getById(warehouseDO.getId());
+        LogisticsProviderBO logisticsProviderBO = new LogisticsProviderBO();
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setMsg("向仓库同步基础商品信息")
                 .addParm("skuIds", skuIds)
                 .addParm("warehouseId", warehouseId)
-                .addParm("物流供应商信息", logisticsProviderDetailDO)
+                .addParm("物流供应商信息", logisticsProviderBO)
                 .log();
-        if (null == logisticsProviderDetailDO) {
+        if (null == logisticsProviderBO) {
             throw new ServiceException(LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION, LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION.getDesc());
         }
 
@@ -196,6 +191,19 @@ public class SkuSyncBizService implements ApplicationContextAware {
                 skuWarehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_FAIL.value);
                 skuWarehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value);
                 skuWarehouseSyncManager.insert(skuWarehouseSyncDO);
+            } else if (WmsOperaterType.ADD.equals(type) && !warehouseSyncDO.getSyncState().equals(SkuWarehouseSyncStateType.SYNC_FAIL.value)) {
+                SkuWarehouseSyncDO skuWarehouseSyncDO = new SkuWarehouseSyncDO();
+                skuWarehouseSyncDO.setSkuId(skuEntity.getId());
+                skuWarehouseSyncDO.setWarehouseId(warehouseDO.getId());
+                skuWarehouseSyncDO.setSyncState(SkuWarehouseSyncStateType.SYNC_FAIL.value);
+                skuWarehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value);
+                skuWarehouseSyncManager.update(skuWarehouseSyncDO);
+            } else if (WmsOperaterType.UPDATE.equals(type) && !warehouseSyncDO.getSyncUpdateState().equals(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value)) {
+                SkuWarehouseSyncDO skuWarehouseSyncDO = new SkuWarehouseSyncDO();
+                skuWarehouseSyncDO.setSkuId(skuEntity.getId());
+                skuWarehouseSyncDO.setWarehouseId(warehouseDO.getId());
+                skuWarehouseSyncDO.setSyncUpdateState(SkuWarehouseSyncStateType.SYNC_UPDATE_FAIL.value);
+                skuWarehouseSyncManager.update(skuWarehouseSyncDO);
             }
         }
 
@@ -228,11 +236,14 @@ public class SkuSyncBizService implements ApplicationContextAware {
 
         // 根据command-config.xml配置执行对应的Command
         try {
-            ProviderCommand cmd = CommandFactory.createCommand(logisticsProviderDetailDO.getInterfaceType().toString(), WmsMessageType.SKU_SYNC.getValue());
+            ProviderCommand cmd = CommandFactory.createCommand(logisticsProviderBO.getInterfaceType().toString(), WmsMessageType.SKU_SYNC.getValue());
             WmsOrderSkuSyncCommand productSyncCommand = (WmsOrderSkuSyncCommand) cmd;
-            productSyncCommand.setWarehouseDO(warehouseDO);
+            WarehouseBO warehouseBO = new WarehouseBO();
+            BeanCopier beanCopier = BeanCopier.create(WarehouseDO.class, WarehouseBO.class, false);
+            beanCopier.copy(warehouseDO, warehouseBO, null);
+            productSyncCommand.setWarehouseBO(warehouseBO);
             productSyncCommand.setSkuEntities(skuEntities);
-            productSyncCommand.setLogisticsProviderDetailDO(logisticsProviderDetailDO);
+            productSyncCommand.setLogisticsProviderBO(logisticsProviderBO);
             productSyncCommand.setWmsOperaterType(type);
             if (isSync) {
                 boolean isSuccess = productSyncCommand.execute();
@@ -285,22 +296,22 @@ public class SkuSyncBizService implements ApplicationContextAware {
             skuEntities.add(skuEntity);
         }
 
-        LogisticsProviderDetailDO logisticsProviderDetailDO = logisticsProviderDetailManager.getById(ccbId);
+        LogisticsProviderBO logisticsProviderBO = new LogisticsProviderBO();
         LogBetter.instance(logger)
                 .setLevel(LogLevel.INFO)
                 .setMsg("向仓库同步基础商品信息")
                 .addParm("skuIds", skuIds)
                 .addParm("ccbId", ccbId)
-                .addParm("物流供应商信息", logisticsProviderDetailDO)
+                .addParm("物流供应商信息", logisticsProviderBO)
                 .log();
-        if (null == logisticsProviderDetailDO) {
+        if (null == logisticsProviderBO) {
             throw new ServiceException(LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION, LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION.getDesc());
         }
 
         try {
-            ProviderCommand cmd = CommandFactory.createCommand(logisticsProviderDetailDO.getInterfaceType().toString(), WmsMessageType.CCB_SKU_SYNC.getValue());
+            ProviderCommand cmd = CommandFactory.createCommand(logisticsProviderBO.getInterfaceType().toString(), WmsMessageType.CCB_SKU_SYNC.getValue());
             CcbSkuSyncCommand ccbSkuSyncCommand = (CcbSkuSyncCommand) cmd;
-            ccbSkuSyncCommand.setLogisticsProviderDetailDO(logisticsProviderDetailDO);
+            ccbSkuSyncCommand.setLogisticsProviderBO(logisticsProviderBO);
             ccbSkuSyncCommand.setSkuEntities(skuEntities);
             if (isSync) {
                 boolean isSuccess = ccbSkuSyncCommand.execute();
@@ -356,7 +367,7 @@ public class SkuSyncBizService implements ApplicationContextAware {
 //        if (null == warehouseDO) {
 //            throw new ServiceException(LogisticsReturnCode.WAREHOUSE_NOT_EXISTS_ERROR_EXCEPTION, LogisticsReturnCode.WAREHOUSE_NOT_EXISTS_ERROR_EXCEPTION.getDesc());
 //        }
-//        LogisticsProviderDetailDO logisticsProviderDetailDO = logisticsProviderDetailManager.getById(warehouseDO.getLogisticsProviderId());
+//        LogisticsProviderBO logisticsProviderDetailDO = logisticsProviderDetailManager.getById(warehouseDO.getLogisticsProviderId());
 //        if (null == logisticsProviderDetailDO) {
 //            throw new ServiceException(LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION, LogisticsReturnCode.PROVIDERSKU_NOT_EXIST_EXCEPTION.getDesc());
 //        }
@@ -366,7 +377,7 @@ public class SkuSyncBizService implements ApplicationContextAware {
 //            WmsOrderBomSyncCommand bomSyncCommand = (WmsOrderBomSyncCommand) cmd;
 //            bomSyncCommand.setWarehouseDO(warehouseDO);
 //            bomSyncCommand.setMixedSkuDOs(mixedSkuDOs);
-//            bomSyncCommand.setLogisticsProviderDetailDO(logisticsProviderDetailDO);
+//            bomSyncCommand.setLogisticsProviderBO(logisticsProviderDetailDO);
 //            bomSyncCommand.setMixedSkuId(mixedSkuId.toString());
 //            boolean isSuccess = bomSyncCommand.execute();
 //            baseResult.setSuccess(isSuccess);

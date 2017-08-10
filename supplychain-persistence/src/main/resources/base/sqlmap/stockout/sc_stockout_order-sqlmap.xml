@@ -44,23 +44,6 @@
     <result column="order_state" property="orderState"/>
     <result column="merchant_id" property="merchantId"/>
 </resultMap>
-<resultMap id="waitStockoutOrder4AutoExportResult" extends="stockoutOrderDOResult"
-           type="com.sfebiz.supplychain.persistence.base.stockout.domain.ExportedShipOrderDO">
-    <result column="sku_id_str" property="skuIdStr"/>
-    <result column="sku_name_str" property="skuNameStr"/>
-    <result column="sku_foreign_name_str" property="skuForeignNameStr"/>
-    <result column="sku_weight_str" property="skuWeightStr"/>
-    <result column="sku_count_str" property="skuCountStr"/>
-    <result column="declare_payer_name" property="declarePayerName"/>
-    <result column="price" property="price"/>
-	<result column="third_sku_id" property="thirdSkuId"/>
-	<result column="buyer_address" property="buyerAddress"/>
-	<result column="buyer_name" property="buyerName"/>
-	<result column="buyer_telephone" property="buyerTelephone"/>
-	<result column="sender_name" property="senderName"/>
-	<result column="sender_telephone" property="senderTelephone"/>
-	<result column="address" property="senderAddress"/>
-</resultMap>
 
 <sql id="stockoutOrderDO_columns">
     id,
@@ -845,50 +828,13 @@
     for update
 </select>
 
-<select id="query4Page4AutoShipOrderByStockoutOrderIds" parameterType="java.util.List" resultMap="waitStockoutOrder4AutoExportResult">
-    SELECT 
-    (stockout_order.user_goods_price+stockout_order.user_freight_fee)/100 as price,
-    stockout_order.id,
-    stockout_order.declare_payer_name,
-    buyer.buyer_name,
-    buyer.buyer_telephone,
-    stockout_order.intr_carrier_code,
-    stockout_order.intl_carrier_code,
-    stockout_order.intr_mail_no,
-    stockout_order.intl_mail_no,
-    stockout_order.biz_id,
-    stockout_order.merchant_id,
-    stockout_order.line_id,
-    merchant_package.sender_name,
-    merchant_package.sender_telephone,
-    warehouse.address,
-    #stockout_order.origincode,
-    stockout_order.destcode,
-    stockout_order.order_state,
-    '' as third_sku_id,
-    CONCAT(buyer.buyer_country, buyer.buyer_province, buyer.buyer_city,
-    buyer.buyer_region, buyer.buyer_address) AS buyer_address,
-    GROUP_CONCAT(stockout_order_detail.sku_id ORDER BY stockout_order_detail.sku_id SEPARATOR '######') AS sku_id_str,
-    GROUP_CONCAT(sku.name ORDER BY stockout_order_detail.sku_id SEPARATOR '######') AS sku_name_str,
-    GROUP_CONCAT(case when sku.foreign_name is null or sku.foreign_name = '' then 'null' else sku.foreign_name end
-    ORDER BY stockout_order_detail.sku_id SEPARATOR '######') AS sku_foreign_name_str,
-    GROUP_CONCAT(case when stockout_order_detail.sku_barcode is null or stockout_order_detail.sku_barcode = '' then 'null' else stockout_order_detail.sku_barcode end ORDER BY
-    stockout_order_detail.sku_id SEPARATOR '######') AS remarks,
-    GROUP_CONCAT(IFNULL(sku.gross_weight, 0)/1000 ORDER BY stockout_order_detail.sku_id SEPARATOR '######') AS
-    sku_weight_str,
-    GROUP_CONCAT(stockout_order_detail.quantity ORDER BY stockout_order_detail.sku_id SEPARATOR '######') AS sku_count_str
-    FROM sc_stockout_order stockout_order
-    LEFT JOIN sc_stockout_order_detail stockout_order_detail ON stockout_order.id =
-    stockout_order_detail.stockout_order_id AND stockout_order_detail.is_delete = 0
-    LEFT JOIN sc_stockout_order_buyer buyer ON stockout_order.id = buyer.stockout_order_id
-    LEFT JOIN sc_merchant_package_material merchant_package ON stockout_order.merchant_id = merchant_package.merchant_id and stockout_order.order_source = merchant_package.order_source
-    LEFT JOIN sc_warehouse warehouse ON warehouse.id = stockout_order.warehouse_id
-    LEFT JOIN sc_sku sku ON stockout_order_detail.sku_id = sku.id
-    WHERE stockout_order.id IN
-    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-        #{item}
-    </foreach>
-    ORDER BY stockout_order.id DESC
-</select>
 
+    <select id="getByMailNo" parameterType="map" resultMap="stockoutOrderDOResult" >
+        <include refid="stockoutOrderDO_selector"/>
+        where
+        intl_mail_no = #{mailNo}
+        or  intr_mail_no = #{mailNo}
+        and is_delete = 0
+        and order_state NOT IN ('STOCKOUT_CANCEL','CLOSED', 'SIGNED');
+    </select>
 </mapper>

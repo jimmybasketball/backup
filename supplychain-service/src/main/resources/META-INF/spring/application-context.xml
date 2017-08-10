@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                             http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                             http://www.springframework.org/schema/context
                             http://www.springframework.org/schema/context/spring-context-4.0.xsd"
        default-lazy-init="false">
-    <context:annotation-config/>
+    <import resource="classpath*:persistance.xml"/>
 
     <context:property-placeholder file-encoding="UTF-8" ignore-resource-not-found="true"
                                   location="classpath:config.properties"/>
-
-    <import resource="classpath*:persistance.xml"/>
-    <import resource="command-config.xml"/>
-    <!--<import resource="classpath*:/META-INF/spring/application-statemachine.xml"/>-->
-
-
     <context:component-scan base-package="com.sfebiz.supplychain"/>
     
     <bean id="env" class="java.lang.String">
         <constructor-arg value="${com.sfebiz.env}"/>
     </bean>
+
 
     <bean id="threadPoolTaskExecutor"
           class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -47,28 +43,37 @@
         </property>
     </bean>
 
-    <bean id="jedisProxyUtil" class="com.sfebiz.supplychain.config.JedisProxyUtil" destroy-method="closeJedisProxy">
-        <constructor-arg name="redisHost" value="${com.sfebiz.supplychain.redisproxy.server.host}"/>
-        <constructor-arg name="redisPort" value="${com.sfebiz.supplychain.redisproxy.server.port}"/>
-        <constructor-arg name="redisPassWord" value="${com.sfebiz.supplychain.redisproxy.server.password}"/>
-        <constructor-arg name="redisMaxTotal" value="${com.sfebiz.supplychain.redisproxy.maxTotal}"/>
-        <constructor-arg name="redisMinIdle" value="${com.sfebiz.supplychain.redisproxy.minIdle}"/>
-        <constructor-arg name="redisMaxWaitTime" value="${com.sfebiz.supplychain.redisproxy.maxWaitTime}"/>
-        <constructor-arg name="redisMaxIdle" value="${com.sfebiz.supplychain.redisproxy.maxIdle}"/>
-        <constructor-arg name="redisTestOnBorrow" value="${com.sfebiz.supplychain.redisproxy.testOnBorrow}"/>
-        <constructor-arg name="redisTimeout" value="${com.sfebiz.supplychain.redisproxy.timeout}"/>
-    </bean>
-    
+    <!-- jedisPool 配置-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig" >
+        <!--最大空闲数-->
+        <property name="maxIdle" value="${com.sfebiz.supplychain.rediscluster.maxIdle}" />
+        <!--最大建立连接等待时间-->
+        <property name="maxWaitMillis" value="${com.sfebiz.supplychain.rediscluster.maxWaitTime}" />
+        <!--是否在从池中取出连接前进行检验,如果检验失败,则从池中去除连接并尝试取出另一个-->
+        <property name="testOnBorrow" value="${com.sfebiz.supplychain.rediscluster.testOnBorrow}" />
+        <property name="maxTotal" value="${com.sfebiz.supplychain.rediscluster.maxTotal}" />
+        <property name="minIdle" value="${com.sfebiz.supplychain.rediscluster.minIdle}" />
+    </bean >
+    <!-- jedisCluster 集群 -->
+    <bean id="jedisCluster"  class="com.sfebiz.supplychain.config.JedisClusterFactory" destroy-method="closeJedisCluster" >
+        <property name="addresses" value="${com.sfebiz.supplychain.rediscluster.server.addresses}" />
+        <property name="timeout" value="${com.sfebiz.supplychain.rediscluster.timeout}" />
+        <property name="maxRedirections" value="6" />
+        <property name="genericObjectPoolConfig" ref="poolConfig" />
+    </bean >
+
+
+
     <bean id="exceptionHandlerMap" class="java.util.HashMap">
         <constructor-arg>
             <map>
                 <entry key="STOCKOUT_CREATE_EXCEPTION" value-ref="stockoutCreateExceptionHandler"/>
-                <entry key="STOCKOUT_SEND_EXCEPTION"  value-ref="stockoutSendExceptionHandler"/>
-                <entry key="STOCKOUT_EXCEPTION"  value-ref="stockoutStockExceptionHandler"/>
+                <entry key="STOCKOUT_SEND_EXCEPTION" value-ref="stockoutSendExceptionHandler"/>
+                <entry key="STOCKOUT_EXCEPTION" value-ref="stockoutStockExceptionHandler"/>
             </map>
         </constructor-arg>
     </bean>
-    
+
     <bean id="autotask" class="com.sfebiz.supplychain.service.AutoTaskContainer" depends-on="distributedLock">
         <!-- <property name="msgProducerMap">
             <map>
@@ -79,11 +84,38 @@
             </map>
         </property> -->
     </bean>
-    
-    <bean id="fileOperationService" class="com.sfebiz.supplychain.service.FileOperationService">
-        <property name="accessKeyId" value="${com.sfebiz.queue.accessKey}"/>
-        <property name="accessKeySecret" value="${com.sfebiz.queue.secretKey}"/>
-        <property name="ttfPath" value="${ttf.path}"/>
-        <property name="tmpPath" value="${com.sfebiz.vender.tmpfile.home}"/>
+
+    <!-- 路由读写操作实现 -->
+    <bean id="routeOperation" class="com.sfebiz.supplychain.service.route.op.impl.RouteOperationImpl">
+        <!-- 写操作集合 -->
+        <property name="writeOperations">
+            <list>
+                <ref bean="routeOperationOnOTS"/>
+                <ref bean="routeOperationOnRedis"/>
+            </list>
+        </property>
+
+        <!-- 读操作集合 -->
+        <property name="readOperations">
+            <list>
+                <ref bean="routeOperationOnRedis"/>
+                <ref bean="routeOperationOnOTS"/>
+            </list>
+        </property>
     </bean>
+
+
+    <!-- 路由获取更新处理链 begin -->
+    <!-- 国际段路由获取更新 -->
+    <bean id="internationalRouteFetchHandler"
+          class="com.sfebiz.supplychain.service.route.handler.impl.InternationalRouteFetchHandler">
+        <!-- 下一段是国内段 -->
+        <property name="nextHandler" ref="domesticRouteFetchHandler"/>
+    </bean>
+
+    <!-- 国内段路由获取更新 -->
+    <bean id="domesticRouteFetchHandler"
+          class="com.sfebiz.supplychain.service.route.handler.impl.DomesticRouteFetchHandler"/>
+    <!-- 路由获取更新处理链 end -->
+
 </beans>

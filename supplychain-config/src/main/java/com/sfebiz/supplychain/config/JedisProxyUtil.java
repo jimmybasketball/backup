@@ -8,6 +8,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
+ * 弃用
  * User: <a href="mailto:lenolix@163.com">李星</a>
  * Version: 1.0.0
  * Since: 16/6/14 上午11:20

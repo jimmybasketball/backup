@@ -11,7 +11,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QRUtil
 {
@@ -39,7 +40,7 @@ public class QRUtil
         try
         {
             // 文字编码
-            Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+            Map<EncodeHintType, String> hints = new HashMap<EncodeHintType, String>();
             hints.put(EncodeHintType.CHARACTER_SET, CODE);
 
             BitMatrix bitMatrix = new MultiFormatWriter().encode(str,
@@ -87,7 +88,7 @@ public class QRUtil
         try
         {
             // 文字编码
-            Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+            Map<EncodeHintType, String> hints = new HashMap<EncodeHintType, String>();
             hints.put(EncodeHintType.CHARACTER_SET, CODE);
 
             BitMatrix bitMatrix = new MultiFormatWriter().encode(str,
@@ -109,7 +110,7 @@ public class QRUtil
      * @param str
      * @param height
      * @param file
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public static void getRQWriteFile(String str, Integer height, File file)
             throws IOException
@@ -125,7 +126,7 @@ public class QRUtil
      * @param str
      * @param height
      * @param file
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public static void getBarcodeWriteFile(String str, Integer width,
                                            Integer height, File file) throws IOException
@@ -209,7 +210,7 @@ public class QRUtil
         try
         {
             // 文字编码
-            Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+            Map<EncodeHintType, String> hints = new HashMap<EncodeHintType, String>();
             hints.put(EncodeHintType.CHARACTER_SET, CODE);
 
             BitMatrix bitMatrix = new MultiFormatWriter().encode(str,

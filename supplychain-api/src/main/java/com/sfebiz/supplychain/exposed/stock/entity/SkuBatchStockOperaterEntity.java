@@ -14,8 +14,10 @@ import java.util.Date;
 public class SkuBatchStockOperaterEntity implements Comparable<SkuBatchStockOperaterEntity>, Serializable {
 
     private static final long serialVersionUID = -1325347075910649085L;
-    // 采买模式
-    public String purchaseMode;
+    //批次库存表主键ID
+    private Long id;
+    //货主ID
+    private Long merchantId;
     // 操作数量
     private Integer count;
     // 操作坏品数量
@@ -24,14 +26,8 @@ public class SkuBatchStockOperaterEntity implements Comparable<SkuBatchStockOper
     private Long skuId;
     // 仓库 ID
     private Long warehouseId;
-    // 主键ID
-    private Long id;
     // 批次号
     private String batchNo;
-    // 成本价（港币）
-    private Integer price;
-    // 成本价（人民币）
-    private Integer priceRmb;
     // 供应商
     private Long providerId;
     // 操作后冻结数量
@@ -44,10 +40,6 @@ public class SkuBatchStockOperaterEntity implements Comparable<SkuBatchStockOper
     private Date expirationDate;
     // 入库日期
     private Date stockinDate;
-    // 原币价格
-    private Integer originPrice;
-    // 币种
-    private String currency;
     // 资金来源 0：自营 1：供应链金融 2：非自营
     public Integer moneySource;
     // 采购单ID
@@ -103,21 +95,6 @@ public class SkuBatchStockOperaterEntity implements Comparable<SkuBatchStockOper
         this.batchNo = batchNo;
     }
 
-    public Integer getPrice() {
-        return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public Integer getPriceRmb() {
-        return priceRmb;
-    }
-
-    public void setPriceRmb(Integer priceRmb) {
-        this.priceRmb = priceRmb;
-    }
 
     public Long getProviderId() {
         return providerId;
@@ -125,6 +102,14 @@ public class SkuBatchStockOperaterEntity implements Comparable<SkuBatchStockOper
 
     public void setProviderId(Long providerId) {
         this.providerId = providerId;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 
     public Integer getFreezeCount() {
@@ -187,30 +172,6 @@ public class SkuBatchStockOperaterEntity implements Comparable<SkuBatchStockOper
         this.wearCount = wearCount;
     }
 
-    public String getPurchaseMode() {
-        return purchaseMode;
-    }
-
-    public void setPurchaseMode(String purchaseMode) {
-        this.purchaseMode = purchaseMode;
-    }
-
-    public Integer getOriginPrice() {
-        return originPrice;
-    }
-
-    public void setOriginPrice(Integer originPrice) {
-        this.originPrice = originPrice;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
     public Integer getMoneySource() {
         return moneySource;
     }
@@ -238,23 +199,18 @@ public class SkuBatchStockOperaterEntity implements Comparable<SkuBatchStockOper
     @Override
     public String toString() {
         return "SkuBatchStockOperaterEntity{" +
-                "purchaseMode='" + purchaseMode + '\'' +
                 ", count=" + count +
                 ", wearCount=" + wearCount +
                 ", skuId=" + skuId +
                 ", warehouseId=" + warehouseId +
                 ", id=" + id +
                 ", batchNo='" + batchNo + '\'' +
-                ", price=" + price +
-                ", priceRmb=" + priceRmb +
                 ", providerId=" + providerId +
                 ", freezeCount=" + freezeCount +
                 ", qualityCount=" + qualityCount +
                 ", productionDate=" + productionDate +
                 ", expirationDate=" + expirationDate +
                 ", stockinDate=" + stockinDate +
-                ", originPrice=" + originPrice +
-                ", currency='" + currency + '\'' +
                 ", moneySource=" + moneySource +
                 ", purchaseOrderId=" + purchaseOrderId +
                 ", stockinId=" + stockinId +

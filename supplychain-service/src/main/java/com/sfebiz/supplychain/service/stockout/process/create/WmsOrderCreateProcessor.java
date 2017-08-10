@@ -75,7 +75,7 @@ public class WmsOrderCreateProcessor extends StockoutProcessAction {
                     .getDeclarePriceBO());
                 wmsOrderCreateCommand.setStockoutOrderBO(stockoutOrderBO);
                 wmsOrderCreateCommand.setStockoutOrderDetailBOs(detailBOs);
-                wmsOrderCreateCommand.setLineBO(lineBO);
+                wmsOrderCreateCommand.setLogisticsLineBO(lineBO);
                 wmsOrderCreateCommand.setSkuDeclareBOMap(request.getProductDeclareEntityMap());
                 boolean createResult = wmsOrderCreateCommand.execute();
                 if (createResult) {

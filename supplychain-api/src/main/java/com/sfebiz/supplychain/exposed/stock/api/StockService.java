@@ -17,14 +17,14 @@ public interface StockService {
     /**
      * 入库新增库存
      *
-     * @param storehouseId
+     * @param warehouseId
      * @param stockinOrderId
      * @param stockinType
      * @param skuBatchStockOperaterEntity
      * @return
      * @throws ServiceException
      */
-    boolean incrementSkuBatchStock(long storehouseId, long stockinOrderId, int stockinType, SkuBatchStockOperaterEntity skuBatchStockOperaterEntity) throws ServiceException;
+    boolean incrementSkuBatchStock(long warehouseId, long stockinOrderId, int stockinType, SkuBatchStockOperaterEntity skuBatchStockOperaterEntity) throws ServiceException;
 
     /**
      * 批量冻结商品库存

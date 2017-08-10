@@ -13,14 +13,14 @@ public abstract class WmsOrderSenderCommand extends AbstractCommand {
     /**
      * 出库单关联的路线实体
      */
-    protected LogisticsLineBO lineBO;
+    protected LogisticsLineBO logisticsLineBO;
 
     public void setStockoutOrderBO(StockoutOrderBO stockoutOrderBO) {
         this.stockoutOrderBO = stockoutOrderBO;
     }
 
-    public void setLineBO(LogisticsLineBO lineBO) {
-        this.lineBO = lineBO;
+    public void setLogisticsLineBO(LogisticsLineBO logisticsLineBO) {
+        this.logisticsLineBO = logisticsLineBO;
     }
 
 }

@@ -99,7 +99,7 @@ public class StockoutOrderNoticeBizService {
                 String.valueOf(stockoutOrderDO.getMerchantId()), OpenApiConfigKeys.NOTIFY_URL); // TODO matt
             if (StringUtils.isNotBlank(notifyUrl)) {
                 Message msg = new Message();
-                msg.setTopic(MessageConstants.TOPIC_OPEN_WMS_ROUTE_EVENT);
+                //msg.setTopic(MessageConstants.TOPIC_OPEN_WMS_ROUTE_EVENT);
                 msg.setTag(StockoutOrderMsgTag.TAG_OPEN_WMS_ROUTE_FETCH.getTag());
                 //消息体没有内容
                 msg.setBody(" ".getBytes("UTF-8"));
