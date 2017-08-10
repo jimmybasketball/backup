@@ -118,4 +118,11 @@
           class="com.sfebiz.supplychain.service.route.handler.impl.DomesticRouteFetchHandler"/>
     <!-- 路由获取更新处理链 end -->
 
+    <bean id="fileOperationService" class="com.sfebiz.supplychain.service.FileOperationService">
+        <property name="accessKeyId" value="${com.sfebiz.queue.accessKey}"/>
+        <property name="accessKeySecret" value="${com.sfebiz.queue.secretKey}"/>
+        <property name="ttfPath" value="${com.sfebiz.supplychain.file.ttf.path}"/>
+        <property name="tmpPath" value="${com.sfebiz.supplychain.file.pdf.tmpfile.home}"/>
+    </bean>
+    
 </beans>

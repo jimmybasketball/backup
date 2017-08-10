@@ -34,3 +34,7 @@ com.sfebiz.queue.accessKey=${com.sfebiz.queue.accessKey}
 com.sfebiz.queue.secretKey=${com.sfebiz.queue.secretKey}
 com.sfebiz.queue.supplychainEventRouteMessageProducerId=${com.sfebiz.queue.supplychainEventRouteMessageProducerId}
 com.sfebiz.queue.supplychainEventRouteMessageConsumerId=${com.sfebiz.queue.supplychainEventRouteMessageConsumerId}
+
+# file
+com.sfebiz.supplychain.file.ttf.path=${com.sfebiz.supplychain.file.ttf.path}
+com.sfebiz.supplychain.file.pdf.tmpfile.home=${com.sfebiz.supplychain.file.pdf.tmpfile.home}

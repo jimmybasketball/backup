@@ -38,6 +38,12 @@
         <property name="com.sfebiz.queue.secretKey" description="消息服务SK" required="true"/>
         <property name="com.sfebiz.queue.supplychainEventRouteMessageProducerId" description="路由消息生产者ID" required="true"/>
         <property name="com.sfebiz.queue.supplychainEventRouteMessageConsumerId" description="路由消息消费者ID" required="true"/>
+        
+        <property name="com.sfebiz.queue.accessKey" description="消息服务AK" required="true"/>
+        <property name="com.sfebiz.queue.secretKey" description="消息服务SK" required="true"/>
+        
+        <property name="com.sfebiz.supplychain.file.ttf.path" description="项目使用的字体相关目录" required="true"/>
+        <property name="com.sfebiz.supplychain.file.pdf.tmpfile.home" description="pdf文件临时生成目录" required="true"/>
 
     </group>
 
