@@ -302,7 +302,7 @@ public class FineExSkuSyncCommand extends WmsOrderSkuSyncCommand {
         for (SkuEntity skuEntity : skuEntities) {
             SkuWarehouseSyncDO skuWarehouseSyncDOForQuery = new SkuWarehouseSyncDO();
             skuWarehouseSyncDOForQuery.setSkuId(skuEntity.getId());
-            skuWarehouseSyncDOForQuery.setWarehouseId(this.getWarehouseDO().getId());
+            skuWarehouseSyncDOForQuery.setWarehouseId(this.warehouseBO.getId());
             skuWarehouseSyncDOForQuery.setSyncState(SkuWarehouseSyncStateType.SYNC_SUCCESS.value);
             BaseQuery<SkuWarehouseSyncDO> base = new BaseQuery<SkuWarehouseSyncDO>(
                 skuWarehouseSyncDOForQuery);
