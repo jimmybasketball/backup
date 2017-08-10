@@ -92,9 +92,6 @@ public class StockoutOrderRecordBO extends BaseBO {
     /** 清关运单号 */
     private String            ccbMailNo;
 
-    /** 备注 */
-    private String            remarks;
-
     public Long getStockoutOrderId() {
         return stockoutOrderId;
     }
@@ -293,14 +290,6 @@ public class StockoutOrderRecordBO extends BaseBO {
 
     public void setCcbMailNo(String ccbMailNo) {
         this.ccbMailNo = ccbMailNo;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
     }
 
     /**

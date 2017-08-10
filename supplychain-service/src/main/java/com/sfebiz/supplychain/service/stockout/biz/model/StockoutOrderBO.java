@@ -3,8 +3,6 @@ package com.sfebiz.supplychain.service.stockout.biz.model;
 import java.util.Date;
 import java.util.List;
 
-import net.sf.oval.constraint.NotNull;
-
 import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
 import com.sfebiz.supplychain.service.merchant.model.MerchantPackageMaterialBO;
 
@@ -105,7 +103,6 @@ public class StockoutOrderBO extends BaseBO {
     private String                      merchantPayNo;
 
     /** 支付申报的支付类型，从货主支付申报表获取 */
-    @NotNull(message = "支付申报方式不能为空")
     private String                      declarePayType;
 
     /** 支付申报支付流水 */
@@ -140,6 +137,9 @@ public class StockoutOrderBO extends BaseBO {
 
     /** 备注 */
     private String                      remarks;
+
+    /** pdf存放的oss区域 */
+    private String                      pdfRegionForOSS;
 
     /** 出库单购买人信息 */
     private StockoutOrderBuyerBO        buyerBO;
@@ -482,6 +482,14 @@ public class StockoutOrderBO extends BaseBO {
         this.remarks = remarks;
     }
 
+    public String getPdfRegionForOSS() {
+        return pdfRegionForOSS;
+    }
+
+    public void setPdfRegionForOSS(String pdfRegionForOSS) {
+        this.pdfRegionForOSS = pdfRegionForOSS;
+    }
+
     public StockoutOrderBuyerBO getBuyerBO() {
         return buyerBO;
     }
@@ -557,5 +565,23 @@ public class StockoutOrderBO extends BaseBO {
      */
     public Integer getUserOrderTotalAmount() {
         return userGoodsPrice + userFreightFee;
+    }
+
+    public void updateStockoutOrderId(Long stockoutOrderId, String bizId) {
+        this.setId(stockoutOrderId);
+        this.setBizId(bizId);
+        if (null != this.buyerBO) {
+            this.buyerBO.setStockoutOrderId(stockoutOrderId);
+            this.buyerBO.setBizId(bizId);
+        }
+        if (null != this.recordBO) {
+            this.recordBO.setStockoutOrderId(stockoutOrderId);
+            this.recordBO.setBizId(bizId);
+        }
+        if (null != this.detailBOs) {
+            for (StockoutOrderDetailBO detailBO : detailBOs) {
+                detailBO.setStockoutOrderId(stockoutOrderId);
+            }
+        }
     }
 }

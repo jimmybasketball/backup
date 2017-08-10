@@ -4,83 +4,83 @@
 
 <resultMap id="stockoutOrderDeclarePriceDOResult" type="com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDeclarePriceDO">
     <result column="order_actual_price" property="orderActualPrice"/>
-    <result column="order_total_price" property="orderTotalPrice"/>
-    <result column="goods_total_price" property="goodsTotalPrice"/>
-    <result column="discount_total_price" property="discountTotalPrice"/>
-    <result column="stockout_order_id" property="stockoutOrderId"/>
     <result column="declare_total_price" property="declareTotalPrice"/>
-    <result column="tax_fee" property="taxFee"/>
-    <result column="freight_fee" property="freightFee"/>
-    <result column="is_pay_tax" property="isPayTax"/>
-    <result column="tariff_fee" property="tariffFee"/>
-    <result column="biz_id" property="bizId"/>
-    <result column="memo" property="memo"/>
-    <result column="consumption_duty_tax" property="consumptionDutyTax"/>
-    <result column="added_value_tax" property="addedValueTax"/>
+    <result column="goods_total_price" property="goodsTotalPrice"/>
+    <result column="stockout_order_id" property="stockoutOrderId"/>
+    <result column="order_total_price" property="orderTotalPrice"/>
     <result column="insurance_fee" property="insuranceFee"/>
+    <result column="discount_total_price" property="discountTotalPrice"/>
+    <result column="added_value_tax" property="addedValueTax"/>
+    <result column="consumption_duty_tax" property="consumptionDutyTax"/>
+    <result column="freight_fee" property="freightFee"/>
+    <result column="memo" property="memo"/>
+    <result column="biz_id" property="bizId"/>
+    <result column="tariff_tax" property="tariffTax"/>
+    <result column="is_pay_tax" property="isPayTax"/>
+    <result column="tax_fee" property="taxFee"/>
     <result column="id" property="id"/>
-    <result column="gmt_create" property="gmtCreate"/>
     <result column="gmt_modified" property="gmtModified"/>
+    <result column="gmt_create" property="gmtCreate"/>
 </resultMap>
 
 <sql id="stockoutOrderDeclarePriceDO_columns">
     order_actual_price,
-    order_total_price,
-    goods_total_price,
-    discount_total_price,
-    stockout_order_id,
     declare_total_price,
-    tax_fee,
-    freight_fee,
-    is_pay_tax,
-    tariff_fee,
-    biz_id,
-    memo,
-    consumption_duty_tax,
-    added_value_tax,
+    goods_total_price,
+    stockout_order_id,
+    order_total_price,
     insurance_fee,
+    discount_total_price,
+    added_value_tax,
+    consumption_duty_tax,
+    freight_fee,
+    memo,
+    biz_id,
+    tariff_tax,
+    is_pay_tax,
+    tax_fee,
     id,
-    gmt_create,
-    gmt_modified
+    gmt_modified,
+    gmt_create
 </sql>
 
 <sql id="stockoutOrderDeclarePriceDO_sqlForInsert">
     order_actual_price,
-    order_total_price,
-    goods_total_price,
-    discount_total_price,
-    stockout_order_id,
     declare_total_price,
-    tax_fee,
-    freight_fee,
-    is_pay_tax,
-    tariff_fee,
-    biz_id,
-    memo,
-    consumption_duty_tax,
-    added_value_tax,
+    goods_total_price,
+    stockout_order_id,
+    order_total_price,
     insurance_fee,
+    discount_total_price,
+    added_value_tax,
+    consumption_duty_tax,
+    freight_fee,
+    memo,
+    biz_id,
+    tariff_tax,
+    is_pay_tax,
+    tax_fee,
     id,
-    gmt_create,
-    gmt_modified
+    gmt_modified,
+    gmt_create
 </sql>
 
 <sql id="stockoutOrderDeclarePriceDO_columnsForInsert">
     #{orderActualPrice},
-    #{orderTotalPrice},
-    #{goodsTotalPrice},
-    #{discountTotalPrice},
-    #{stockoutOrderId},
     #{declareTotalPrice},
-    #{taxFee},
-    #{freightFee},
-    #{isPayTax},
-    #{tariffFee},
-    #{bizId},
-    #{memo},
-    #{consumptionDutyTax},
-    #{addedValueTax},
+    #{goodsTotalPrice},
+    #{stockoutOrderId},
+    #{orderTotalPrice},
     #{insuranceFee},
+    #{discountTotalPrice},
+    #{addedValueTax},
+    #{consumptionDutyTax},
+    #{freightFee},
+    #{memo},
+    #{bizId},
+    #{tariffTax},
+    #{isPayTax},
+    #{taxFee},
     #{id},
     now(),
     now()
@@ -92,47 +92,47 @@
         <if test="orderActualPrice != null">
             order_actual_price = #{orderActualPrice},
         </if>
-        <if test="orderTotalPrice != null">
-            order_total_price = #{orderTotalPrice},
+        <if test="declareTotalPrice != null">
+            declare_total_price = #{declareTotalPrice},
         </if>
         <if test="goodsTotalPrice != null">
             goods_total_price = #{goodsTotalPrice},
         </if>
-        <if test="discountTotalPrice != null">
-            discount_total_price = #{discountTotalPrice},
-        </if>
         <if test="stockoutOrderId != null">
             stockout_order_id = #{stockoutOrderId},
         </if>
-        <if test="declareTotalPrice != null">
-            declare_total_price = #{declareTotalPrice},
+        <if test="orderTotalPrice != null">
+            order_total_price = #{orderTotalPrice},
         </if>
-        <if test="taxFee != null">
-            tax_fee = #{taxFee},
+        <if test="insuranceFee != null">
+            insurance_fee = #{insuranceFee},
         </if>
-        <if test="freightFee != null">
-            freight_fee = #{freightFee},
-        </if>
-        <if test="isPayTax != null">
-            is_pay_tax = #{isPayTax},
-        </if>
-        <if test="tariffFee != null">
-            tariff_fee = #{tariffFee},
-        </if>
-        <if test="bizId != null">
-            biz_id = #{bizId},
-        </if>
-        <if test="memo != null">
-            memo = #{memo},
-        </if>
-        <if test="consumptionDutyTax != null">
-            consumption_duty_tax = #{consumptionDutyTax},
+        <if test="discountTotalPrice != null">
+            discount_total_price = #{discountTotalPrice},
         </if>
         <if test="addedValueTax != null">
             added_value_tax = #{addedValueTax},
         </if>
-        <if test="insuranceFee != null">
-            insurance_fee = #{insuranceFee},
+        <if test="consumptionDutyTax != null">
+            consumption_duty_tax = #{consumptionDutyTax},
+        </if>
+        <if test="freightFee != null">
+            freight_fee = #{freightFee},
+        </if>
+        <if test="memo != null">
+            memo = #{memo},
+        </if>
+        <if test="bizId != null">
+            biz_id = #{bizId},
+        </if>
+        <if test="tariffTax != null">
+            tariff_tax = #{tariffTax},
+        </if>
+        <if test="isPayTax != null">
+            is_pay_tax = #{isPayTax},
+        </if>
+        <if test="taxFee != null">
+            tax_fee = #{taxFee},
         </if>
     </set>
 </sql>
@@ -148,56 +148,56 @@
         <if test="data.orderActualPrice != null">
             AND order_actual_price = #{data.orderActualPrice}
         </if>
-        <if test="data.orderTotalPrice != null">
-            AND order_total_price = #{data.orderTotalPrice}
+        <if test="data.declareTotalPrice != null">
+            AND declare_total_price = #{data.declareTotalPrice}
         </if>
         <if test="data.goodsTotalPrice != null">
             AND goods_total_price = #{data.goodsTotalPrice}
         </if>
-        <if test="data.discountTotalPrice != null">
-            AND discount_total_price = #{data.discountTotalPrice}
-        </if>
         <if test="data.stockoutOrderId != null">
             AND stockout_order_id = #{data.stockoutOrderId}
         </if>
-        <if test="data.declareTotalPrice != null">
-            AND declare_total_price = #{data.declareTotalPrice}
-        </if>
-        <if test="data.taxFee != null">
-            AND tax_fee = #{data.taxFee}
-        </if>
-        <if test="data.freightFee != null">
-            AND freight_fee = #{data.freightFee}
-        </if>
-        <if test="data.isPayTax != null">
-            AND is_pay_tax = #{data.isPayTax}
-        </if>
-        <if test="data.tariffFee != null">
-            AND tariff_fee = #{data.tariffFee}
-        </if>
-        <if test="data.bizId != null">
-            AND biz_id = #{data.bizId}
-        </if>
-        <if test="data.memo != null">
-            AND memo = #{data.memo}
-        </if>
-        <if test="data.consumptionDutyTax != null">
-            AND consumption_duty_tax = #{data.consumptionDutyTax}
-        </if>
-        <if test="data.addedValueTax != null">
-            AND added_value_tax = #{data.addedValueTax}
+        <if test="data.orderTotalPrice != null">
+            AND order_total_price = #{data.orderTotalPrice}
         </if>
         <if test="data.insuranceFee != null">
             AND insurance_fee = #{data.insuranceFee}
         </if>
+        <if test="data.discountTotalPrice != null">
+            AND discount_total_price = #{data.discountTotalPrice}
+        </if>
+        <if test="data.addedValueTax != null">
+            AND added_value_tax = #{data.addedValueTax}
+        </if>
+        <if test="data.consumptionDutyTax != null">
+            AND consumption_duty_tax = #{data.consumptionDutyTax}
+        </if>
+        <if test="data.freightFee != null">
+            AND freight_fee = #{data.freightFee}
+        </if>
+        <if test="data.memo != null">
+            AND memo = #{data.memo}
+        </if>
+        <if test="data.bizId != null">
+            AND biz_id = #{data.bizId}
+        </if>
+        <if test="data.tariffTax != null">
+            AND tariff_tax = #{data.tariffTax}
+        </if>
+        <if test="data.isPayTax != null">
+            AND is_pay_tax = #{data.isPayTax}
+        </if>
+        <if test="data.taxFee != null">
+            AND tax_fee = #{data.taxFee}
+        </if>
         <if test="data.id != null">
             AND id = #{data.id}
         </if>
-        <if test="data.gmtCreate != null">
-            AND gmt_create = #{data.gmtCreate}
-        </if>
         <if test="data.gmtModified != null">
             AND gmt_modified = #{data.gmtModified}
+        </if>
+        <if test="data.gmtCreate != null">
+            AND gmt_create = #{data.gmtCreate}
         </if>
         <if test="ins != null and ins != ''">
             AND
@@ -298,47 +298,47 @@
         <if test="update.orderActualPrice != null">
             order_actual_price = #{update.orderActualPrice},
         </if>
-        <if test="update.orderTotalPrice != null">
-            order_total_price = #{update.orderTotalPrice},
+        <if test="update.declareTotalPrice != null">
+            declare_total_price = #{update.declareTotalPrice},
         </if>
         <if test="update.goodsTotalPrice != null">
             goods_total_price = #{update.goodsTotalPrice},
         </if>
-        <if test="update.discountTotalPrice != null">
-            discount_total_price = #{update.discountTotalPrice},
-        </if>
         <if test="update.stockoutOrderId != null">
             stockout_order_id = #{update.stockoutOrderId},
         </if>
-        <if test="update.declareTotalPrice != null">
-            declare_total_price = #{update.declareTotalPrice},
+        <if test="update.orderTotalPrice != null">
+            order_total_price = #{update.orderTotalPrice},
         </if>
-        <if test="update.taxFee != null">
-            tax_fee = #{update.taxFee},
+        <if test="update.insuranceFee != null">
+            insurance_fee = #{update.insuranceFee},
         </if>
-        <if test="update.freightFee != null">
-            freight_fee = #{update.freightFee},
-        </if>
-        <if test="update.isPayTax != null">
-            is_pay_tax = #{update.isPayTax},
-        </if>
-        <if test="update.tariffFee != null">
-            tariff_fee = #{update.tariffFee},
-        </if>
-        <if test="update.bizId != null">
-            biz_id = #{update.bizId},
-        </if>
-        <if test="update.memo != null">
-            memo = #{update.memo},
-        </if>
-        <if test="update.consumptionDutyTax != null">
-            consumption_duty_tax = #{update.consumptionDutyTax},
+        <if test="update.discountTotalPrice != null">
+            discount_total_price = #{update.discountTotalPrice},
         </if>
         <if test="update.addedValueTax != null">
             added_value_tax = #{update.addedValueTax},
         </if>
-        <if test="update.insuranceFee != null">
-            insurance_fee = #{update.insuranceFee},
+        <if test="update.consumptionDutyTax != null">
+            consumption_duty_tax = #{update.consumptionDutyTax},
+        </if>
+        <if test="update.freightFee != null">
+            freight_fee = #{update.freightFee},
+        </if>
+        <if test="update.memo != null">
+            memo = #{update.memo},
+        </if>
+        <if test="update.bizId != null">
+            biz_id = #{update.bizId},
+        </if>
+        <if test="update.tariffTax != null">
+            tariff_tax = #{update.tariffTax},
+        </if>
+        <if test="update.isPayTax != null">
+            is_pay_tax = #{update.isPayTax},
+        </if>
+        <if test="update.taxFee != null">
+            tax_fee = #{update.taxFee},
         </if>
     </set>
     <include refid="stockoutOrderDeclarePriceDO_query_segment"/>
@@ -362,47 +362,47 @@
     <if test="orderActualPrice != null">
         ,order_actual_price = #{orderActualPrice}
     </if>
-    <if test="orderTotalPrice != null">
-        ,order_total_price = #{orderTotalPrice}
+    <if test="declareTotalPrice != null">
+        ,declare_total_price = #{declareTotalPrice}
     </if>
     <if test="goodsTotalPrice != null">
         ,goods_total_price = #{goodsTotalPrice}
     </if>
-    <if test="discountTotalPrice != null">
-        ,discount_total_price = #{discountTotalPrice}
-    </if>
     <if test="stockoutOrderId != null">
         ,stockout_order_id = #{stockoutOrderId}
     </if>
-    <if test="declareTotalPrice != null">
-        ,declare_total_price = #{declareTotalPrice}
+    <if test="orderTotalPrice != null">
+        ,order_total_price = #{orderTotalPrice}
     </if>
-    <if test="taxFee != null">
-        ,tax_fee = #{taxFee}
+    <if test="insuranceFee != null">
+        ,insurance_fee = #{insuranceFee}
     </if>
-    <if test="freightFee != null">
-        ,freight_fee = #{freightFee}
-    </if>
-    <if test="isPayTax != null">
-        ,is_pay_tax = #{isPayTax}
-    </if>
-    <if test="tariffFee != null">
-        ,tariff_fee = #{tariffFee}
-    </if>
-    <if test="bizId != null">
-        ,biz_id = #{bizId}
-    </if>
-    <if test="memo != null">
-        ,memo = #{memo}
-    </if>
-    <if test="consumptionDutyTax != null">
-        ,consumption_duty_tax = #{consumptionDutyTax}
+    <if test="discountTotalPrice != null">
+        ,discount_total_price = #{discountTotalPrice}
     </if>
     <if test="addedValueTax != null">
         ,added_value_tax = #{addedValueTax}
     </if>
-    <if test="insuranceFee != null">
-        ,insurance_fee = #{insuranceFee}
+    <if test="consumptionDutyTax != null">
+        ,consumption_duty_tax = #{consumptionDutyTax}
+    </if>
+    <if test="freightFee != null">
+        ,freight_fee = #{freightFee}
+    </if>
+    <if test="memo != null">
+        ,memo = #{memo}
+    </if>
+    <if test="bizId != null">
+        ,biz_id = #{bizId}
+    </if>
+    <if test="tariffTax != null">
+        ,tariff_tax = #{tariffTax}
+    </if>
+    <if test="isPayTax != null">
+        ,is_pay_tax = #{isPayTax}
+    </if>
+    <if test="taxFee != null">
+        ,tax_fee = #{taxFee}
     </if>
 </insert>
 

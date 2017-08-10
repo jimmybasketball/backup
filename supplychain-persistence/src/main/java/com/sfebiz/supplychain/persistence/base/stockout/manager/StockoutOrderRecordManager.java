@@ -1,9 +1,11 @@
 package com.sfebiz.supplychain.persistence.base.stockout.manager;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ import com.sfebiz.supplychain.exposed.stockout.enums.TplIntrState;
 import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderDao;
 import com.sfebiz.supplychain.persistence.base.stockout.dao.StockoutOrderRecordDao;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderRecordDO;
 
 /**
@@ -43,6 +46,17 @@ public class StockoutOrderRecordManager extends BaseManager<StockoutOrderRecordD
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("C:/sc_stockout_order_record-sqlmap.xml",
                 StockoutOrderRecordDao.class, StockoutOrderRecordDO.class, "sc_stockout_order_record");
+    }
+    
+    public StockoutOrderRecordDO getByStockoutOrderId(Long stockoutOrderId){
+        StockoutOrderRecordDO queryDO = new StockoutOrderRecordDO();
+        queryDO.setStockoutOrderId(stockoutOrderId);
+        BaseQuery<StockoutOrderRecordDO> query = new BaseQuery<StockoutOrderRecordDO>(queryDO);
+        List<StockoutOrderRecordDO> resultDOs = stockoutOrderRecordDao.query(query);
+        if (CollectionUtils.isNotEmpty(resultDOs)) {
+            return resultDOs.get(0);
+        }
+        return null;        
     }
     
     /**

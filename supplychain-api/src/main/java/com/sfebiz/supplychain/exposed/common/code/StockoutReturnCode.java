@@ -2,6 +2,14 @@ package com.sfebiz.supplychain.exposed.common.code;
 
 import com.sfebiz.supplychain.exposed.common.enums.LogisticsReturnCode;
 
+/**
+ * 
+ * <p>出库单相关异常码</p>
+ * 错误范围 2110000 -- 2120000
+ * 
+ * @author matt
+ * @Date 2017年8月10日 下午11:01:28
+ */
 public class StockoutReturnCode extends SCReturnCode {
 
     private static final long serialVersionUID = 1276395419162099579L;
@@ -10,11 +18,12 @@ public class StockoutReturnCode extends SCReturnCode {
         super(desc, code);
     }
 
-    /**
-     * StockoutServiceErrorCode
-     * <p/>
-     * 错误范围 2110000 -- 2120000
-     */
+    /** 出库单加载相关 */
+    public final static int                 STOCKOUT_ORDER_LOAD_NOT_EXIST_ERROR_CODE           = 2110000;
+    public final static LogisticsReturnCode STOCKOUT_ORDER_LOAD_NOT_EXIST_ERROR                = new LogisticsReturnCode(
+        "出库单查询-出库单不存在异常",
+        STOCKOUT_ORDER_LOAD_NOT_EXIST_ERROR_CODE);
+    
     public final static int                 STOCKOUT_ORDER_WAVENO_UPDATE_ERROR_CODE           = 2110000;
     public final static int                 STOCKOUT_ORDER_ORDER_STATE_UPDATE_ERROR_CODE      = 2110001;
     public final static int                 STOCKOUT_ORDER_UPDATE_WAVENO_EXISTS_ERROR_CODE    = 2110002;

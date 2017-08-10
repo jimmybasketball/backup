@@ -33,4 +33,16 @@ public class StockoutOrderDeclarePriceManager extends BaseManager<StockoutOrderD
             StockoutOrderDeclarePriceDao.class, StockoutOrderDeclarePriceDO.class,
             "sc_stockout_order_declare_price");
     }
+    
+    /**
+     * 更新申报表中的税为已支付
+     *
+     * @param stockoutOrderId
+     */
+    public void setOrderDeclarePriceIsPayTax(Long stockoutOrderId) {
+        StockoutOrderDeclarePriceDO stockoutOrderDeclarePriceDO = new StockoutOrderDeclarePriceDO();
+        stockoutOrderDeclarePriceDO.setStockoutOrderId(stockoutOrderId);
+        stockoutOrderDeclarePriceDO.setIsPayTax(1);
+        stockoutOrderDeclarePriceDao.update(stockoutOrderDeclarePriceDO);
+    }
 }

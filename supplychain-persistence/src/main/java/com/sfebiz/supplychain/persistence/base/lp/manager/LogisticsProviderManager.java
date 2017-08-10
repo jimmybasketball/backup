@@ -47,6 +47,6 @@ public class LogisticsProviderManager extends BaseManager<LogisticsProviderDO> {
 
     public static void main(String[] args) {
         DaoHelper.genXMLWithFeature("C:/sc_logistics_provider-sqlmap.xml",
-            StockoutOrderBuyerDao.class, LogisticsProviderDO.class, "sc_logistics_provider");
+            LogisticsProviderDao.class, LogisticsProviderDO.class, "sc_logistics_provider");
     }
 }

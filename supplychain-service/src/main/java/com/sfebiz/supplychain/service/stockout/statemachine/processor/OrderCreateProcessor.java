@@ -99,7 +99,6 @@ public class OrderCreateProcessor extends TemplateProcessor implements
 
         // 获取分布式锁
         if (distributedLock.fetch(CREATE_STOCKOUTORDER_KEY + stockoutOrderBO.getMerchantOrderNo())) {
-
             // 2.1. 开启事务
             DefaultTransactionDefinition def = new DefaultTransactionDefinition();
             def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -213,6 +212,8 @@ public class OrderCreateProcessor extends TemplateProcessor implements
                 // 8. 【执行出库单下发流程】消息通知
                 stockoutOrderNoticeBizService
                     .noticeExecStockoutSendProcess(stockoutOrderBO.getId());
+
+                transactionSuccess = true;
 
             } catch (ServiceException e) {
                 LogBetter
@@ -328,7 +329,7 @@ public class OrderCreateProcessor extends TemplateProcessor implements
         StockoutOrderDO orderDO = StockoutOrderConvert
             .convertStockoutOrderBOToStockoutOrderDO(stockoutOrderBO);
         stockoutOrderManager.insert(orderDO);
-        stockoutOrderBO.setId(orderDO.getId());
+        stockoutOrderBO.updateStockoutOrderId(orderDO.getId(), orderDO.getBizId());
 
         // 2. 初始化状态机
         StockoutOrderRequest stockoutOrderRequest = StockoutOrderRequestFactory

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<bpm code="process.create.CreateStockoutOrder" name="CreateStockoutCommandOrder" type="process" description="下发出库单">
-  <var name="request" description="请求参数" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" inOutType="param"/>
-  <var name="result" description="处理结果" dataType="com.sfebiz.logistics.entity.BaseResult" inOutType="return"/>
+<bpm code="process.stockout.StockoutOrderSendProcess" name="CreateStockoutCommandOrder" type="process" description="下发出库单">
+  <var name="request" description="请求参数" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" inOutType="param"/>
+  <var name="result" description="处理结果" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" inOutType="return"/>
   <start id="1" name="出库订单下发开始" g="227,45,40,40">
     <transition g=":-15,20" to="45"/>
   </start>
-  <autoTask id="45" name="流程数据准备" g="180,111,131,47">
+  <autoTask id="45" name="出库单下发流程数据准备" g="180,111,131,47">
     <transition g=":-15,20" to="46"/>
     <action type="spring-bean">
-      <actionHandle bean="dataPrepareProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.DataPrepareProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="result" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="dataPrepareProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.DataPrepareProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="result" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -21,9 +21,9 @@
   <autoTask id="40" name="验证口岸避税规则" g="181,244,127,48">
     <transition g=":-15,20" to="41"/>
     <action type="spring-bean">
-      <actionHandle bean="portOrderValidateProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.PortOrderValidateProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="portOrderValidateProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.PortOrderValidateProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -34,9 +34,9 @@
   <autoTask id="43" name="运费、税费拆分" g="182,392,127,48">
     <transition g=":-15,20" to="44"/>
     <action type="spring-bean">
-      <actionHandle bean="orderFeeSplitProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.OrderFeeSplitProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="orderFeeSplitProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.OrderFeeSplitProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -47,9 +47,9 @@
   <autoTask id="32" name="给PAY下发支付单申报" g="179,529,136,48">
     <transition g=":-15,20" to="35"/>
     <action type="spring-bean">
-      <actionHandle bean="payOrderCreateProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.PayOrderCreateProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="payOrderCreateProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.PayOrderCreateProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -60,9 +60,9 @@
   <autoTask id="33" name="给PORT下发订单申报" g="182,671,136,48">
     <transition g=":-15,20" to="36"/>
     <action type="spring-bean">
-      <actionHandle bean="portOrderCreateProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.PortOrderCreateProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="portOrderCreateProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.PortOrderCreateProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -73,9 +73,9 @@
   <autoTask id="31" name="给TPL订单下发" tag="tplOrderCreateProcessor" g="178,833,136,48">
     <transition name="跳过或下单成功" g=":-15,20" to="37"/>
     <action type="spring-bean">
-      <actionHandle bean="tplOrderCreateProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.TplOrderCreateProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="tplOrderCreateProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.TplOrderCreateProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -86,9 +86,9 @@
   <autoTask id="34" name="给WMS下发订单信息" g="179,1352,136,48">
     <transition expression="result.isSuccess()" name="跳过或下单成功" g=":-15,20" to="39"/>
     <action type="spring-bean">
-      <actionHandle bean="wmsOrderCreateProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.WmsOrderCreateProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="wmsOrderCreateProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.WmsOrderCreateProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -99,8 +99,8 @@
   <autoTask id="38" name="异常处理" g="423,1668,134,48">
     <transition g=":-15,20" to="11"/>
     <action type="spring-bean">
-      <actionHandle bean="exceptionProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.exception.ExceptionProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+      <actionHandle bean="exceptionProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.exception.ExceptionProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -108,9 +108,9 @@
   <autoTask id="47" name="给CCB下发订单信息" g="181,1023,131,48">
     <transition name="跳过或下单成功" g=":-15,20" to="48"/>
     <action type="spring-bean">
-      <actionHandle bean="ccbOrderCreateProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.CcbOrderCreateProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="ccbOrderCreateProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.CcbOrderCreateProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
@@ -125,18 +125,18 @@
   <autoTask id="56" name="给TWS下发订单信息" g="178,1190,134,44">
     <transition name="跳过或下单成功" g=":-15,20" to="55"/>
     <action type="spring-bean">
-      <actionHandle bean="twsOrderCreateProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.TwsOrderCreateProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="twsOrderCreateProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.TwsOrderCreateProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>
   <autoTask id="57" name="自动生成PDF面单" g="184,1502,128,48">
     <transition name="跳过或下单成功" g=":-15,20" to="58"/>
     <action type="spring-bean">
-      <actionHandle bean="pdfOrderCreateProcessor" clazz="com.sfebiz.logistics.service.stockoutorder.process.create.PdfOrderCreateProcessor" method="process">
-        <var name="request" dataType="com.sfebiz.logistics.service.stockoutorder.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
-        <var name="returnValue" dataType="com.sfebiz.logistics.entity.BaseResult" contextVarName="result" inOutType="return"/>
+      <actionHandle bean="pdfOrderCreateProcessor" clazz="com.sfebiz.supplychain.service.stockout.process.create.PdfOrderCreateProcessor" method="process">
+        <var name="request" dataType="com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest" contextVarName="request" inOutType="param"/>
+        <var name="returnValue" dataType="com.sfebiz.supplychain.exposed.common.entity.BaseResult" contextVarName="result" inOutType="return"/>
       </actionHandle>
     </action>
   </autoTask>

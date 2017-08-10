@@ -18,13 +18,13 @@ public abstract class BaseBO implements Serializable {
     private static final long serialVersionUID = -4285594699891539365L;
 
     /** 主键ID */
-    private Long id;
+    private Long              id;
 
     /** 创建时间 */
-    private Date gmtCreate;
+    private Date              gmtCreate;
 
     /** 修改时间 */
-    private Date gmtModified;
+    private Date              gmtModified;
 
     public Long getId() {
         return id;

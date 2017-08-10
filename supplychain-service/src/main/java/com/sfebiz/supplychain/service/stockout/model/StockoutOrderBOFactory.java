@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.sfebiz.supplychain.exposed.common.code.StockoutReturnCode;
 import com.sfebiz.supplychain.exposed.common.enums.StockOutPlanType;
 import com.sfebiz.supplychain.open.exposed.api.SCOpenReturnCode;
 import com.sfebiz.supplychain.open.exposed.wms.entity.request.OpenWmsTradeOrderCreateRequest;
@@ -28,6 +29,10 @@ import com.sfebiz.supplychain.persistence.base.sku.domain.SkuMerchantDO;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuBarcodeManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuManager;
 import com.sfebiz.supplychain.persistence.base.sku.manager.SkuMerchantManager;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderBuyerDO;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderRecordDO;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderBuyerManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderDeclarePriceDetailManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderDeclarePriceManager;
@@ -39,10 +44,12 @@ import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderTas
 import com.sfebiz.supplychain.persistence.base.warehouse.domain.WarehouseDO;
 import com.sfebiz.supplychain.persistence.base.warehouse.manager.WarehouseManager;
 import com.sfebiz.supplychain.service.line.LogisticsLineBOFactory;
+import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBO;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderBuyerBO;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDetailBO;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderRecordBO;
+import com.sfebiz.supplychain.service.stockout.convert.StockoutOrderConvert;
 import com.sfebiz.supplychain.util.DateUtil;
 import com.sfebiz.supplychain.util.NumberUtil;
 
@@ -254,10 +261,66 @@ public class StockoutOrderBOFactory {
         return stockoutOrderBO;
     }
 
-    public StockoutOrderBO loadStockoutBOById(Long stockoutOrderId) {
-        StockoutOrderBO stockoutOrderBO = new StockoutOrderBO();
-        // TODO matt
+    public StockoutOrderBO loadStockoutBOById(Long stockoutOrderId) throws ServiceException {
+
+        // TODO matt 添加缓存
+
+        // 1. 加载出库单基本信息
+        StockoutOrderBO stockoutOrderBO = loadStockoutOrderBOBasicInfo(stockoutOrderId);
+
+        // 2. 加载出库单商品信息
+        loadStockoutOrderDetailsBasicInfo(stockoutOrderBO);
+
+        // 3. 加载出库单买家相关信息
+        loadStockoutOrderBuyBO(stockoutOrderBO);
+
+        // 4. 加载出库单记录实体信息
+        loadStockoutOrderRecordBO(stockoutOrderBO);
+
+        // 5. 加载线路实体信息
+        loadStockoutOrderLineBO(stockoutOrderBO);
+
         return stockoutOrderBO;
+    }
+
+    /**
+     * 加载出库单主体基本信息
+     * 
+     * @param stockoutOrderId
+     * @return
+     * @throws ServiceException
+     */
+    public StockoutOrderBO loadStockoutOrderBOBasicInfo(Long stockoutOrderId)
+                                                                             throws ServiceException {
+        StockoutOrderDO stockoutOrderDO = stockoutOrderManager.getById(stockoutOrderId);
+        if (null == stockoutOrderDO) {
+            throw new ServiceException(StockoutReturnCode.STOCKOUT_ORDER_LOAD_NOT_EXIST_ERROR,
+                StockoutReturnCode.STOCKOUT_ORDER_LOAD_NOT_EXIST_ERROR.getDesc());
+        }
+        return StockoutOrderConvert.convertDOToBO(stockoutOrderDO);
+    }
+
+    public void loadStockoutOrderDetailsBasicInfo(StockoutOrderBO stockoutOrderBO) {
+        List<StockoutOrderDetailDO> detailDOs = stockoutOrderDetailManager
+            .getByStockoutOrderId(stockoutOrderBO.getId());
+        stockoutOrderBO.setDetailBOs(StockoutOrderConvert.convertDetailDOsToDetailBOs(detailDOs));
+    }
+
+    public void loadStockoutOrderBuyBO(StockoutOrderBO stockoutOrderBO) {
+        StockoutOrderBuyerDO buyerDO = stockoutOrderBuyerManager
+            .getByStockoutOrderId(stockoutOrderBO.getId());
+        stockoutOrderBO.setBuyerBO(StockoutOrderConvert.convertBuyerDOToBO(buyerDO));
+    }
+
+    public void loadStockoutOrderRecordBO(StockoutOrderBO stockoutOrderBO) {
+        StockoutOrderRecordDO recordDO = stockoutOrderRecordManager
+            .getByStockoutOrderId(stockoutOrderBO.getId());
+        stockoutOrderBO.setRecordBO(StockoutOrderConvert.convertRecordDOToBO(recordDO));
+    }
+
+    public void loadStockoutOrderLineBO(StockoutOrderBO stockoutOrderBO) throws ServiceException {
+        LogisticsLineBO lineBO = logisticsLineBOFactory.loadFullLineBO(stockoutOrderBO.getLineId());
+        stockoutOrderBO.setLineBO(lineBO);
     }
 
     /**

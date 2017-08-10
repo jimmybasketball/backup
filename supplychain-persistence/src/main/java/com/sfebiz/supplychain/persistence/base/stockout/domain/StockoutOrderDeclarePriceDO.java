@@ -58,7 +58,7 @@ public class StockoutOrderDeclarePriceDO extends BaseDO {
     private Integer           addedValueTax;
 
     /** 关税，单位分 */
-    private Integer           tariffFee;
+    private Integer           tariffTax;
 
     /** 备注信息 */
     private String            memo;
@@ -167,12 +167,12 @@ public class StockoutOrderDeclarePriceDO extends BaseDO {
         this.addedValueTax = addedValueTax;
     }
 
-    public Integer getTariffFee() {
-        return tariffFee;
+    public Integer getTariffTax() {
+        return tariffTax;
     }
 
-    public void setTariffFee(Integer tariffFee) {
-        this.tariffFee = tariffFee;
+    public void setTariffTax(Integer tariffTax) {
+        this.tariffTax = tariffTax;
     }
 
     public String getMemo() {

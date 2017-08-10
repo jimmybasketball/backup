@@ -135,7 +135,7 @@ public class LogisticsLineBOFactory {
 
         // 2. 组装
         // 2.1. 仓库组装
-        lineBO.setWarehouseBO(warehouseBOFactory.getFullWarehouseBOById(lineDO.getId()));
+        lineBO.setWarehouseBO(warehouseBOFactory.getFullWarehouseBOById(lineDO.getWarehouseId()));
         lineBO.setTransitWarehouseBO(warehouseBOFactory.getFullWarehouseBOById(lineDO
             .getTransitWarehouseId()));
 

@@ -1290,7 +1290,7 @@ public class FeeSplitBizService {
             stockoutOrderDeclarePriceDO.setTaxFee(taxFee);
             stockoutOrderDeclarePriceDO.setConsumptionDutyTax(consumptionDuty);
             stockoutOrderDeclarePriceDO.setAddedValueTax(addedValueTax);
-            stockoutOrderDeclarePriceDO.setTariffFee(tariffFee);
+            stockoutOrderDeclarePriceDO.setTariffTax(tariffFee);
             stockoutOrderDeclarePriceDO.setInsuranceFee(insuranceFee);
             stockoutOrderDeclarePriceDO.setDiscountTotalPrice(discountPrice);
             stockoutOrderDeclarePriceDO.setIsPayTax(0);
@@ -1310,7 +1310,7 @@ public class FeeSplitBizService {
             stockoutOrderDeclarePriceDO.setTaxFee(taxFee);
             stockoutOrderDeclarePriceDO.setConsumptionDutyTax(consumptionDuty);
             stockoutOrderDeclarePriceDO.setAddedValueTax(addedValueTax);
-            stockoutOrderDeclarePriceDO.setTariffFee(tariffFee);
+            stockoutOrderDeclarePriceDO.setTariffTax(tariffFee);
             stockoutOrderDeclarePriceDO.setInsuranceFee(insuranceFee);
             stockoutOrderDeclarePriceDO.setDiscountTotalPrice(discountPrice);
             stockoutOrderDeclarePriceDO.setIsPayTax(0);

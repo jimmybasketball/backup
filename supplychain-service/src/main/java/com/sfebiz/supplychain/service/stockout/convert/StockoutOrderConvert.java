@@ -64,7 +64,9 @@ public class StockoutOrderConvert {
     }
 
     public static StockoutOrderBO convertDOToBO(StockoutOrderDO stockoutOrderDO) {
-        return getModelMapper().map(stockoutOrderDO, StockoutOrderBO.class);
+        StockoutOrderBO stockoutOrderBO = new StockoutOrderBO();
+        BeanUtils.copyProperties(stockoutOrderDO, stockoutOrderBO);
+        return stockoutOrderBO;
     }
 
     public static StockoutOrderDO convertBOToDO(StockoutOrderBO bo) {
@@ -73,14 +75,30 @@ public class StockoutOrderConvert {
 
     public static List<StockoutOrderDetailDO> convertBOToDetailDOList(StockoutOrderBO stockoutOrderBO) {
         List<StockoutOrderDetailDO> detailDOList = new ArrayList<StockoutOrderDetailDO>();
-        for (StockoutOrderDetailBO bo : stockoutOrderBO.getDetailBOs()) {
-            detailDOList.add(convertDetailBOToDetailDO(bo));
+        for (StockoutOrderDetailBO detailBO : stockoutOrderBO.getDetailBOs()) {
+            detailDOList.add(convertDetailBOToDetailDO(detailBO));
         }
         return detailDOList;
     }
 
-    public static StockoutOrderDetailDO convertDetailBOToDetailDO(StockoutOrderDetailBO bo) {
-        return getModelMapper().map(bo, StockoutOrderDetailDO.class);
+    public static StockoutOrderDetailDO convertDetailBOToDetailDO(StockoutOrderDetailBO detailBO) {
+        StockoutOrderDetailDO detailDO = new StockoutOrderDetailDO();
+        BeanUtils.copyProperties(detailBO, detailDO);
+        return detailDO;
+    }
+
+    public static List<StockoutOrderDetailBO> convertDetailDOsToDetailBOs(List<StockoutOrderDetailDO> detailDOs) {
+        List<StockoutOrderDetailBO> detailBOs = new ArrayList<StockoutOrderDetailBO>();
+        for (StockoutOrderDetailDO detailDO : detailDOs) {
+            detailBOs.add(convertDetailDOToDetailBO(detailDO));
+        }
+        return detailBOs;
+    }
+
+    public static StockoutOrderDetailBO convertDetailDOToDetailBO(StockoutOrderDetailDO detailDO) {
+        StockoutOrderDetailBO detailBO = new StockoutOrderDetailBO();
+        BeanUtils.copyProperties(detailDO, detailBO);
+        return detailBO;
     }
 
     public static StockoutOrderDeclarePriceDO convertDeclarePriceBOToDeclarePriceDO(StockoutOrderDeclarePriceBO bo) {
@@ -96,15 +114,21 @@ public class StockoutOrderConvert {
     }
 
     public static StockoutOrderBuyerBO convertBuyerDOToBO(StockoutOrderBuyerDO buyerDO) {
-        return getModelMapper().map(buyerDO, StockoutOrderBuyerBO.class);
+        StockoutOrderBuyerBO buyerBO = new StockoutOrderBuyerBO();
+        BeanUtils.copyProperties(buyerDO, buyerBO);
+        return buyerBO;
     }
 
     public static StockoutOrderBuyerDO convertBuyerBOToDO(StockoutOrderBuyerBO buyerBO) {
-        return getModelMapper().map(buyerBO, StockoutOrderBuyerDO.class);
+        StockoutOrderBuyerDO buyerDO = new StockoutOrderBuyerDO();
+        BeanUtils.copyProperties(buyerBO, buyerDO);
+        return buyerDO;
     }
 
     public static StockoutOrderRecordBO convertRecordDOToBO(StockoutOrderRecordDO recordDO) {
-        return getModelMapper().map(recordDO, StockoutOrderRecordBO.class);
+        StockoutOrderRecordBO recordBO = new StockoutOrderRecordBO();
+        BeanUtils.copyProperties(recordDO, recordBO);
+        return recordBO;
     }
 
     public static StockoutOrderRecordDO convertRecordBOToDO(StockoutOrderRecordBO recordBO) {
@@ -115,7 +139,17 @@ public class StockoutOrderConvert {
         StockoutOrderRecordDO recordDO = new StockoutOrderRecordDO();
         recordDO.setStockoutOrderId(stockoutOrderBO.getId());
         recordDO.setBizId(stockoutOrderBO.getBizId());
+
+        recordDO.setPayState(0);
+        recordDO.setPortState(0);
+        recordDO.setTplIntlState(0);
+        recordDO.setTplIntrState(0);
+        recordDO.setCcbState(0);
+        recordDO.setTwsState(0);
+        recordDO.setWmsState(0);
+
         recordDO.setLogisticsState(LogisticsState.LOGISTICS_STATE_INIT.value);
+
         recordDO.setMerchantMailNo(stockoutOrderBO.getIntrMailNo());
         return recordDO;
     }

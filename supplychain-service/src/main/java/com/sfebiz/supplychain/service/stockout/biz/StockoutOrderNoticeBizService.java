@@ -25,7 +25,7 @@ import com.sfebiz.supplychain.service.stockout.config.LogisticsConfig;
 
 /**
  * 
- * <p>通知服务</p>
+ * <p>出库单消息队列相关通知服务</p>
  * 
  * @author matt
  * @Date 2017年7月26日 下午6:57:13

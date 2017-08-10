@@ -6,6 +6,7 @@ package com.sfebiz.supplychain.exposed.common.enums;
  * @date  2017/7/28 12:00
  */
 public enum SystemUserName {
+    SYSTEM("系统"),
     OPSC("开放物流平台"),
     BSP("BSP"),
     COE("COE"),

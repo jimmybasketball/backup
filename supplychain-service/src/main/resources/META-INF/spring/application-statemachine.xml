@@ -8,6 +8,8 @@
                             http://www.springframework.org/schema/context/spring-context-4.0.xsd"
        default-lazy-init="false">
 
+    <bean id="processConfig" class="com.taobao.tbbpm.process.ProcessConfig"/>
+
     <bean id="shardManager" class="com.taobao.tbbpm.common.persistence.ShardRuleFactory">
         <property name="ruleMaps">
             <map>
@@ -62,6 +64,10 @@
     <bean id="stockinOrderStateMachineService"
           class="com.sfebiz.supplychain.service.stockin.statemachine.StockinOrderStateMachineServiceImpl"
           parent="abstractPersistenceService"/>
+          
+  	<bean id="stockoutOrderStateMachineService"
+          class="com.sfebiz.supplychain.service.stockout.statemachine.StockoutOrderStateMachineServiceImpl"
+          parent="abstractPersistenceService"/>
 
     <bean id="engineService" class="com.sfebiz.supplychain.service.statemachine.EngineServiceImpl"/>
 
@@ -70,6 +76,9 @@
             <map>
                 <entry key="STOCKIN_ORDER">
                     <ref bean="stockinOrderStateMachineService"/>
+                </entry>
+                <entry key="STOCKOUT_ORDER">
+                    <ref bean="stockoutOrderStateMachineService"/>
                 </entry>
             </map>
         </constructor-arg>
@@ -80,6 +89,8 @@
             <map>
                 <!-- 入库单 -->
                 <entry key="STOCKIN_ORDER" value="statemachine.StockInOrderStateMachine"/>
+                <!-- 出库单 -->
+                <entry key="STOCKOUT_ORDER" value="statemachine.stockout.SalesStockout"/>
             </map>
         </constructor-arg>
     </bean>

@@ -1,7 +1,9 @@
 package com.sfebiz.supplychain.autotest.open.wms;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
@@ -10,6 +12,7 @@ import net.pocrd.entity.ServiceException;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
+import com.aliyun.openservices.ons.api.Message;
 import com.sfebiz.supplychain.autotest.BaseServiceTest;
 import com.sfebiz.supplychain.exposed.line.enums.LogisticsLineServiceType;
 import com.sfebiz.supplychain.exposed.stockout.enums.IDType;
@@ -20,11 +23,17 @@ import com.sfebiz.supplychain.open.exposed.wms.entity.trade.OpenWmsTradeConsigne
 import com.sfebiz.supplychain.open.exposed.wms.entity.trade.OpenWmsTradeGoodsItem;
 import com.sfebiz.supplychain.open.exposed.wms.entity.trade.OpenWmsTradeOrderItem;
 import com.sfebiz.supplychain.open.exposed.wms.enums.OpenWmsTradeActionType;
+import com.sfebiz.supplychain.queue.MessageConstants;
+import com.sfebiz.supplychain.queue.consumer.process.stockout.ExecSendProcessEventProcesser;
+import com.sfebiz.supplychain.queue.enums.StockoutOrderMsgTag;
 
 public class OpenWmsTradeServiceTest extends BaseServiceTest{
 
     @Resource
-    OpenWmsTradeService openWmsTradeService;
+    private OpenWmsTradeService openWmsTradeService;
+    
+    @Resource
+    private ExecSendProcessEventProcesser execSendProcessEventProcesser;
     
     @Test
     public void test_createOrder(){
@@ -81,5 +90,26 @@ public class OpenWmsTradeServiceTest extends BaseServiceTest{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * 出库单下发流程测试
+     */
+    @Test
+    public void test_StockoutOrderSendProcess(){
+        Message message = new Message();
+        message.setTopic(MessageConstants.TOPIC_SUPPLY_CHAIN_EVENT);
+        message.setTag(StockoutOrderMsgTag.TAG_STOCKOUTORDER_SEND_TO_PROVIDER.getTag());
+        Properties properties = new Properties();
+        properties.put("stockoutOrderId", String.valueOf("25"));
+        message.setUserProperties(properties);
+        message.setStartDeliverTime(System.currentTimeMillis());
+        try {
+            message.setBody(" ".getBytes("UTF-8")); //BODY不能为空
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        execSendProcessEventProcesser.process(message);
     }
 }
