@@ -81,24 +81,6 @@ public class StockoutOrderRecordManager extends BaseManager<StockoutOrderRecordD
     }
 
     /**
-     * 更新物流状态
-     * 
-     * @param stockoutOrderId
-     * @param logisticsState
-     * @return
-     */
-    public int updateLogisticsState(Long stockoutOrderId, Integer logisticsState) {
-        StockoutOrderRecordDO queryDO = new StockoutOrderRecordDO();
-        queryDO.setStockoutOrderId(stockoutOrderId);
-        BaseQuery<StockoutOrderRecordDO> query = BaseQuery.getInstance(queryDO);
-        StockoutOrderRecordDO updateDO = new StockoutOrderRecordDO();
-        updateDO.setLogisticsState(logisticsState);
-        UpdateByQuery<StockoutOrderRecordDO> updateQuery = new UpdateByQuery<StockoutOrderRecordDO>(
-            query, updateDO);
-        return this.updateByQuery(updateQuery);
-    }
-
-    /**
      * 更新口岸校验通过的时间
      * 
      * @param stockoutOrderId

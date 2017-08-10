@@ -1,5 +1,12 @@
 package com.sfebiz.supplychain.provider.command.send.wms.coe;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.sfebiz.common.tracelog.HaitaoTraceLogger;
 import com.sfebiz.common.tracelog.HaitaoTraceLoggerFactory;
 import com.sfebiz.common.tracelog.TraceLog;
@@ -20,29 +27,42 @@ import com.sfebiz.supplychain.provider.command.common.CommonUtil;
 import com.sfebiz.supplychain.provider.command.send.wms.WmsOrderCreateCommand;
 import com.sfebiz.supplychain.provider.entity.PriceUnit;
 import com.sfebiz.supplychain.provider.entity.ResponseState;
-import com.sfebiz.supplychain.sdk.protocol.*;
+import com.sfebiz.supplychain.sdk.protocol.Attachments;
+import com.sfebiz.supplychain.sdk.protocol.Buyer;
+import com.sfebiz.supplychain.sdk.protocol.ClearanceDetail;
+import com.sfebiz.supplychain.sdk.protocol.ContactDetail;
+import com.sfebiz.supplychain.sdk.protocol.EventBody;
+import com.sfebiz.supplychain.sdk.protocol.EventHeader;
+import com.sfebiz.supplychain.sdk.protocol.EventType;
+import com.sfebiz.supplychain.sdk.protocol.Item;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsDetail;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsEvent;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsEventsRequest;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsEventsResponse;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsOrder;
+import com.sfebiz.supplychain.sdk.protocol.Paid;
+import com.sfebiz.supplychain.sdk.protocol.PaymentDetail;
+import com.sfebiz.supplychain.sdk.protocol.Response;
+import com.sfebiz.supplychain.sdk.protocol.Sku;
+import com.sfebiz.supplychain.sdk.protocol.SkuDetail;
+import com.sfebiz.supplychain.sdk.protocol.TradeDetail;
+import com.sfebiz.supplychain.sdk.protocol.TradeOrder;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDetailBO;
 import com.sfebiz.supplychain.service.warehouse.model.WarehouseBO;
 import com.sfebiz.supplychain.util.DateUtil;
 import com.sfebiz.supplychain.util.JSONUtil;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * 重新下发物流订单消息指令 logistics.event.wms.recreate SF -> LP
  */
 public class COEReCreateCommand extends WmsOrderCreateCommand {
 
-    private static final HaitaoTraceLogger traceLogger = HaitaoTraceLoggerFactory.getTraceLogger("order");
-    private static final String LIULIAN_TRATE_TYPE = "LiuLian";
-    private static final String HEIKE_TRATE_TYPE = "HeiKe";
-    private static final String HAITAO_TRATE_TYPE = "HaiTao";
-    private RouteService routeService;
+    private static final HaitaoTraceLogger traceLogger        = HaitaoTraceLoggerFactory
+                                                                  .getTraceLogger("order");
+    private static final String            LIULIAN_TRATE_TYPE = "LiuLian";
+    private static final String            HEIKE_TRATE_TYPE   = "HeiKe";
+    private static final String            HAITAO_TRATE_TYPE  = "HaiTao";
+    private RouteService                   routeService;
 
     @Override
     public boolean execute() {
@@ -56,8 +76,10 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
                 return true;
             }
             String msgType = WmsMessageType.RE_STOCK_OUT.getValue();
-            String url = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("interfaceUrl");
-            String key = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("interfaceKey");
+            String url = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO()
+                .getInterfaceMeta().get("interfaceUrl");
+            String key = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO()
+                .getInterfaceMeta().get("interfaceKey");
             if (StringUtils.isEmpty(url) || StringUtils.isEmpty(key)) {
                 throw new Exception("线路配置错误" + logisticsLineBO.getLogisticsLineNid());
             }
@@ -65,10 +87,16 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
             routeService = (RouteService) CommandConfig.getSpringBean("routeService");
             LogisticsEventsRequest request = buildCreateCommandRequest();
             //配置指令类型：重发指令
-            request.getLogisticsEvent().getEventHeader().setEventType(EventType.LOGISTICS_SKU_REPAID.value);
+            request.getLogisticsEvent().getEventHeader()
+                .setEventType(EventType.LOGISTICS_SKU_REPAID.value);
 
-            LogisticsEventsResponse responses = ProviderBizService.getInstance().send(request, msgType, url, key,
-                    TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP));
+            LogisticsEventsResponse responses = ProviderBizService.getInstance().send(
+                request,
+                msgType,
+                url,
+                key,
+                TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                    SystemConstants.TRACE_APP));
 
             if (responses.getResponseItems() == null || responses.getResponseItems().size() == 0) {
                 throw new Exception("COE物流下单反馈报文异常");
@@ -81,33 +109,30 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
             } else if (ResponseState.ORDER_EXIST.getCode().equalsIgnoreCase(response.getReason())) {
                 writeCreateCommandSuccessLog();
                 return true;
-            } else if (ResponseState.NET_TIMEOUT.getCode().equalsIgnoreCase(response.getReason()) || "S07".equals(response.getReason())) {
-                LogBetter.instance(logger).setLevel(LogLevel.WARN)
-                        .setMsg("系统下发发货指令失败等待重试")
-                        .setParms(stockoutOrderBO.getBizId())
-                        .setParms(response).log();
+            } else if (ResponseState.NET_TIMEOUT.getCode().equalsIgnoreCase(response.getReason())
+                       || "S07".equals(response.getReason())) {
+                LogBetter.instance(logger).setLevel(LogLevel.WARN).setMsg("系统下发发货指令失败等待重试")
+                    .setParms(stockoutOrderBO.getBizId()).setParms(response).log();
                 writeCreateCommandFailureLog(responses.getResponseItems().get(0).getReasonDesc());
-                traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(), "supplychain", new Date(), TraceLevel.ERROR, "[供应链]海外物流商下发物流下单失败"));
+                traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(), "supplychain", new Date(),
+                    TraceLevel.ERROR, "[供应链]海外物流商下发物流下单失败"));
                 this.setCreateFailureMessage(responses.getResponseItems().get(0).getReasonDesc());
                 return false;
             } else {
                 writeCreateCommandFailureLog("海外物流商下发物流下单失败");
-                LogBetter.instance(logger).setLevel(LogLevel.WARN)
-                        .setMsg("海外物流商下发物流下单失败")
-                        .setParms(stockoutOrderBO.getBizId())
-                        .setParms(response)
-                        .log();
+                LogBetter.instance(logger).setLevel(LogLevel.WARN).setMsg("海外物流商下发物流下单失败")
+                    .setParms(stockoutOrderBO.getBizId()).setParms(response).log();
                 this.setCreateFailureMessage(responses.getResponseItems().get(0).getReasonDesc());
             }
         } catch (Exception e) {
             writeCreateCommandFailureLog(e.getMessage());
-            LogBetter.instance(logger)
-                    .setLevel(LogLevel.ERROR)
-                    .setTraceLogger(TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP))
-                    .setException(e)
-                    .setMsg("海外物流商下发物流下单失败")
-                    .addParm("订单ID", stockoutOrderBO.getBizId())
-                    .log();
+            LogBetter
+                .instance(logger)
+                .setLevel(LogLevel.ERROR)
+                .setTraceLogger(
+                    TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                        SystemConstants.TRACE_APP)).setException(e).setMsg("海外物流商下发物流下单失败")
+                .addParm("订单ID", stockoutOrderBO.getBizId()).log();
             this.setCreateFailureMessage("[供应链-海外物流商下发物流下单]" + e.getMessage());
             return false;
         } finally {
@@ -123,7 +148,8 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
      * @return
      */
     private LogisticsEventsRequest buildCreateCommandRequest() {
-        String meta = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("meta");
+        String meta = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta()
+            .get("meta");
         Map<String, Object> metaData = JSONUtil.parseJSONMessage(meta, Map.class);
         String eventSource = "";
         if (metaData != null && metaData.containsKey("event_source")) {
@@ -159,11 +185,9 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
         List<Item> items = new ArrayList<Item>();
         StringBuilder itemIds = new StringBuilder();
         boolean isSelf = true;
-        boolean isSupportBatch = false;
-        if (logisticsLineBO.getWarehouseBO().getIsSupportBatch() > 0) {
-            isSupportBatch = true;
-        }
-        List<StockoutOrderDetailBO> skuDOListForRequest = CommonUtil.mergeStockoutOrderSku(stockoutOrderDetailBOs, isSupportBatch);
+        boolean isSupportBatch = logisticsLineBO.getWarehouseBO().getIsSupportBatch();
+        List<StockoutOrderDetailBO> skuDOListForRequest = CommonUtil.mergeStockoutOrderSku(
+            stockoutOrderDetailBOs, isSupportBatch);
 
         //支付详情
         PaymentDetail paymentDetail = new PaymentDetail();
@@ -180,16 +204,13 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
         paid.setGoodsValueUnit(PriceUnit.CNF);
         paymentDetail.setPaid(paid);
 
-
         TradeOrder tradeOrder = new TradeOrder();
         tradeOrder.setBuyer(buyer);
         tradeOrder.setItems(items);
         tradeOrder.setTradeOrderId(stockoutOrderBO.getId());
 
-
         List<TradeOrder> tradeOrders = new ArrayList<TradeOrder>();
         tradeOrders.add(tradeOrder);
-
 
         TradeDetail tradeDetail = new TradeDetail();
         tradeDetail.setTradeType("HaiTao");
@@ -218,7 +239,8 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
 
         EventBody eventBody = new EventBody();
         ClearanceDetail clearanceDetail = new ClearanceDetail();
-        LogisticsClearanceDetailEntity clearanceDetailEntity = CommonUtil.buildClearanceDetailEntity(logisticsLineBO, stockoutOrderBO);
+        LogisticsClearanceDetailEntity clearanceDetailEntity = CommonUtil
+            .buildClearanceDetailEntity(logisticsLineBO, stockoutOrderBO);
         clearanceDetail.carrierCode = clearanceDetailEntity.carrierCode;
         clearanceDetail.mailNo = clearanceDetailEntity.mailNo;
         clearanceDetail.orderId = clearanceDetailEntity.orderId;
@@ -229,8 +251,8 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
         clearanceDetail.senderAddress = clearanceDetailEntity.senderAddress;
         eventBody.setClearanceDetail(clearanceDetail);
 
-
-        if (logisticsLineBO.getDomesticLogisticsProviderBO() != null && StringUtils.isBlank(clearanceDetail.deliveryCode)) {
+        if (logisticsLineBO.getDomesticLogisticsProviderBO() != null
+            && StringUtils.isBlank(clearanceDetail.deliveryCode)) {
             throw new IllegalArgumentException("目的地代码不能为空");
         }
 
@@ -244,12 +266,12 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
         logisticsOrder.setReceiverDetail(receiver);
         logisticsOrder.setNeedCheck(LiuLianType.NEED_CHECK_NO.getValue());
         //配置小票格式
-//        String receiptFormat = OpenApiConfig.getInstance().getRule(stockoutOrderBO.getBizType(), OpenApiConfigKeys.RECEIPT_FORMAT);
-//        if (StringUtils.isEmpty(receiptFormat)) {
-//            logisticsOrder.setReceiptFormat(1);
-//        } else {
-//            logisticsOrder.setReceiptFormat(Integer.parseInt(receiptFormat));
-//        }
+        //        String receiptFormat = OpenApiConfig.getInstance().getRule(stockoutOrderBO.getBizType(), OpenApiConfigKeys.RECEIPT_FORMAT);
+        //        if (StringUtils.isEmpty(receiptFormat)) {
+        //            logisticsOrder.setReceiptFormat(1);
+        //        } else {
+        //            logisticsOrder.setReceiptFormat(Integer.parseInt(receiptFormat));
+        //        }
         logisticsOrder.setReceiptFormat(1);
         List<Sku> skus = new ArrayList<Sku>();
         for (StockoutOrderDetailBO item : skuDOListForRequest) {
@@ -271,7 +293,6 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
         LogisticsDetail logisticsDetail = new LogisticsDetail();
         logisticsDetail.setLogisticsOrders(logisticsOrders);
 
-
         eventBody.setPaymentDetail(paymentDetail);
         eventBody.setTradeDetail(tradeDetail);
         eventBody.setLogisticsDetail(logisticsDetail);
@@ -291,7 +312,8 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
      * @param errMsg
      */
     private void writeCreateCommandFailureLog(String errMsg) {
-        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "香港COE仓下物流订单失败," + errMsg, SystemConstants.WARN_LEVEL, new Date(), SystemUserName.OPSC.getValue());
+        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "香港COE仓下物流订单失败," + errMsg,
+            SystemConstants.WARN_LEVEL, new Date(), SystemUserName.OPSC.getValue());
     }
 
     /**
@@ -299,7 +321,8 @@ public class COEReCreateCommand extends WmsOrderCreateCommand {
      *
      */
     private void writeCreateCommandSuccessLog() {
-        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "香港COE仓物流下单成功", SystemConstants.INFO_LEVEL, new Date(), SystemUserName.OPSC.getValue());
+        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "香港COE仓物流下单成功",
+            SystemConstants.INFO_LEVEL, new Date(), SystemUserName.OPSC.getValue());
     }
 
 }

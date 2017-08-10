@@ -1,5 +1,15 @@
 package com.sfebiz.supplychain.provider.command.send.wms.oms;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 import com.sfebiz.common.tracelog.HaitaoTraceLogger;
 import com.sfebiz.common.tracelog.HaitaoTraceLoggerFactory;
 import com.sfebiz.common.tracelog.TraceLog;
@@ -13,7 +23,19 @@ import com.sfebiz.supplychain.exposed.route.api.RouteService;
 import com.sfebiz.supplychain.exposed.stockout.enums.LogisticsState;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderRecordManager;
-import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.*;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutBody;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderAddedService;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderCarrier;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderCustomsDeclarationInfo;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderInvoice;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderItem;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderReceiverInfo;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderSaleOrder;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderSaleOrderRequest;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutOrderSenderInfo;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutRequest;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutRequestHead;
+import com.sfebiz.supplychain.protocol.wms.oms.stockoutorder.StockoutResponse;
 import com.sfebiz.supplychain.provider.command.common.CommandConfig;
 import com.sfebiz.supplychain.provider.command.common.CommonUtil;
 import com.sfebiz.supplychain.provider.command.send.wms.WmsOrderCreateCommand;
@@ -21,15 +43,6 @@ import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDetailBO;
 import com.sfebiz.supplychain.util.JSONUtil;
 import com.sfebiz.supplychain.util.MD5Util;
 import com.sfebiz.supplychain.util.XMLUtil;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -41,62 +54,57 @@ import java.util.Map;
 public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
 
     private static final HaitaoTraceLogger traceLogger = HaitaoTraceLoggerFactory
-            .getTraceLogger("order");
+                                                           .getTraceLogger("order");
 
     /**
      * 出款单管理服务
      */
-    private StockoutOrderManager stockoutOrderManager;
+    private StockoutOrderManager           stockoutOrderManager;
 
     /**
      * 路由服务
      */
-    private RouteService routeService;
+    private RouteService                   routeService;
 
     @Override
     public boolean execute() {
         try {
 
             if (stockoutOrderBO.getRecordBO().getLogisticsState().intValue() == LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS
-                    .getValue()) {
+                .getValue()) {
                 return true;
             }
 
             stockoutOrderManager = (StockoutOrderManager) CommandConfig
-                    .getSpringBean("stockoutOrderManager");
-            routeService = (RouteService) CommandConfig
-                    .getSpringBean("routeService");
+                .getSpringBean("stockoutOrderManager");
+            routeService = (RouteService) CommandConfig.getSpringBean("routeService");
 
-            boolean isMockAutoCreated = MockConfig.isMocked("sf-oms",
-                    "createCommand");
+            boolean isMockAutoCreated = MockConfig.isMocked("sf-oms", "createCommand");
             if (isMockAutoCreated) {
                 // 直接返回仓库已发货
-                logger.info("[MOCK]顺丰oms物流下单 采用MOCK实现，订单id："
-                        + stockoutOrderBO.getBizId());
+                logger.info("[MOCK]顺丰oms物流下单 采用MOCK实现，订单id：" + stockoutOrderBO.getBizId());
                 mockWarehouseStockoutCreateSuccess();
                 return true;
             }
 
-            Map<String, Object> meta = JSONUtil.parseJSONMessage(logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("meta"));
+            Map<String, Object> meta = JSONUtil.parseJSONMessage(logisticsLineBO.getWarehouseBO()
+                .getLogisticsProviderBO().getInterfaceMeta().get("meta"));
             if (!checkLogisticsProviderMetaInfo(meta)) {
                 return false;
             }
 
             StockoutRequest stockoutRequest = buildRequest(meta);
 
-
             return sendStockoutRequest2Wms(stockoutRequest);
 
         } catch (Exception e) {
             LogBetter
-                    .instance(logger)
-                    .setLevel(LogLevel.ERROR)
-                    .setTraceLogger(
-                            TraceLogEntity.instance(traceLogger,
-                                    stockoutOrderBO.getBizId(),
-                                    SystemConstants.TRACE_APP)).setException(e)
-                    .setMsg("海外物流商下发物流下单失败")
-                    .addParm("订单ID", stockoutOrderBO.getBizId()).log();
+                .instance(logger)
+                .setLevel(LogLevel.ERROR)
+                .setTraceLogger(
+                    TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                        SystemConstants.TRACE_APP)).setException(e).setMsg("海外物流商下发物流下单失败")
+                .addParm("订单ID", stockoutOrderBO.getBizId()).log();
             this.setCreateFailureMessage(e.getMessage());
             return false;
         }
@@ -149,7 +157,8 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
 
         stockoutOrderCarrier.setPaymentOfCharge("寄付");
         // 月结账号 需配置由顺丰给出
-        stockoutOrderCarrier.setMonthlyAccount(logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("custId"));
+        stockoutOrderCarrier.setMonthlyAccount(logisticsLineBO.getWarehouseBO()
+            .getLogisticsProviderBO().getInterfaceMeta().get("custId"));
         // 需要配置是否需要回执单
         stockoutOrderCarrier.setReturnService("N");
         // 回迁单号
@@ -160,25 +169,22 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
 
         StockoutOrderReceiverInfo stockoutOrderReceiverInfo = new StockoutOrderReceiverInfo();
         stockoutOrderReceiverInfo.setReceiverCompany("");
-        stockoutOrderReceiverInfo.setReceiverName(stockoutOrderBO
-                .getBuyerBO().getBuyerName());
+        stockoutOrderReceiverInfo.setReceiverName(stockoutOrderBO.getBuyerBO().getBuyerName());
         stockoutOrderReceiverInfo.setReceiverEmail("");
-        stockoutOrderReceiverInfo.setReceiverZipCode(stockoutOrderBO
-                .getBuyerBO().getBuyerZipcode());
-        stockoutOrderReceiverInfo.setReceiverMobile(stockoutOrderBO
-                .getBuyerBO().getBuyerTelephone());
-        stockoutOrderReceiverInfo.setReceiverPhone(stockoutOrderBO
-                .getBuyerBO().getBuyerTelephone());
-        stockoutOrderReceiverInfo.setReceiverCountry(stockoutOrderBO
-                .getBuyerBO().getBuyerCountry());
-        stockoutOrderReceiverInfo.setReceiverProvince(stockoutOrderBO
-                .getBuyerBO().getBuyerProvince());
-        stockoutOrderReceiverInfo.setReceiverCity(stockoutOrderBO
-                .getBuyerBO().getBuyerCity());
-        stockoutOrderReceiverInfo.setReceiverArea(stockoutOrderBO
-                .getBuyerBO().getBuyerRegion());
-        stockoutOrderReceiverInfo.setReceiverAddress(stockoutOrderBO
-                .getBuyerBO().getBuyerAddress());
+        stockoutOrderReceiverInfo
+            .setReceiverZipCode(stockoutOrderBO.getBuyerBO().getBuyerZipcode());
+        stockoutOrderReceiverInfo.setReceiverMobile(stockoutOrderBO.getBuyerBO()
+            .getBuyerTelephone());
+        stockoutOrderReceiverInfo
+            .setReceiverPhone(stockoutOrderBO.getBuyerBO().getBuyerTelephone());
+        stockoutOrderReceiverInfo
+            .setReceiverCountry(stockoutOrderBO.getBuyerBO().getBuyerCountry());
+        stockoutOrderReceiverInfo.setReceiverProvince(stockoutOrderBO.getBuyerBO()
+            .getBuyerProvince());
+        stockoutOrderReceiverInfo.setReceiverCity(stockoutOrderBO.getBuyerBO().getBuyerCity());
+        stockoutOrderReceiverInfo.setReceiverArea(stockoutOrderBO.getBuyerBO().getBuyerRegion());
+        stockoutOrderReceiverInfo
+            .setReceiverAddress(stockoutOrderBO.getBuyerBO().getBuyerAddress());
         stockoutOrderReceiverInfo.setReceiverIdType("ID");
         stockoutOrderReceiverInfo.setReceiverIdCard(stockoutOrderBO.getDeclarePayerCertNo());
         stockoutOrderSaleOrder.setOrderReceiverInfo(stockoutOrderReceiverInfo);
@@ -186,22 +192,25 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
         StockoutOrderSenderInfo stockoutOrderSenderInfo = new StockoutOrderSenderInfo();
 
         stockoutOrderSenderInfo.setSenderCompany("丰趣海淘");
-        stockoutOrderSenderInfo.setSenderName(stockoutOrderBO.getMerchantPackageMaterialBO().getSenderName());
+        stockoutOrderSenderInfo.setSenderName(stockoutOrderBO.getMerchantPackageMaterialBO()
+            .getSenderName());
         stockoutOrderSenderInfo.setSenderEmail("");
         stockoutOrderSenderInfo.setSenderZipCode(logisticsLineBO.getWarehouseBO().getSenderBO()
-                .getSenderZipcode());
-        stockoutOrderSenderInfo.setSenderMobile(stockoutOrderBO.getMerchantPackageMaterialBO().getSenderTelephone());
+            .getSenderZipcode());
+        stockoutOrderSenderInfo.setSenderMobile(stockoutOrderBO.getMerchantPackageMaterialBO()
+            .getSenderTelephone());
         stockoutOrderSenderInfo.setSenderPhone(logisticsLineBO.getWarehouseBO().getSenderBO()
-                .getSenderTelephone());
+            .getSenderTelephone());
         stockoutOrderSenderInfo.setSenderCountry(logisticsLineBO.getWarehouseBO().getSenderBO()
-                .getSenderCountry());
+            .getSenderCountry());
         stockoutOrderSenderInfo.setSenderProvince(logisticsLineBO.getWarehouseBO().getSenderBO()
-                .getSenderProvince());
-        stockoutOrderSenderInfo.setSenderCity(logisticsLineBO.getWarehouseBO().getSenderBO().getSenderCity());
+            .getSenderProvince());
+        stockoutOrderSenderInfo.setSenderCity(logisticsLineBO.getWarehouseBO().getSenderBO()
+            .getSenderCity());
         stockoutOrderSenderInfo.setSenderArea(logisticsLineBO.getWarehouseBO().getSenderBO()
-                .getSenderDistrict());
+            .getSenderDistrict());
         stockoutOrderSenderInfo.setSenderAddress(logisticsLineBO.getWarehouseBO().getSenderBO()
-                .getSenderAddress());
+            .getSenderAddress());
         stockoutOrderSaleOrder.setOrderSenderInfo(stockoutOrderSenderInfo);
 
         StockoutOrderInvoice stockoutOrderInvoice = new StockoutOrderInvoice();
@@ -214,27 +223,24 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
         // 设置商品信息
         List<StockoutOrderItem> stockoutOrderItems = new ArrayList<StockoutOrderItem>();
         // 不支持组合商品，故先移除组合商品
-        boolean isSupportBatch = false;
-        if (logisticsLineBO.getWarehouseBO().getIsSupportBatch() > 0) {
-            isSupportBatch = true;
-        }
+        boolean isSupportBatch = logisticsLineBO.getWarehouseBO().getIsSupportBatch();
         List<StockoutOrderDetailBO> stockoutOrderDetailBOList = CommonUtil.mergeStockoutOrderSku(
-                stockoutOrderDetailBOs, isSupportBatch);
+            stockoutOrderDetailBOs, isSupportBatch);
 
         for (StockoutOrderDetailBO stockoutOrderDetailBO : stockoutOrderDetailBOList) {
 
             StockoutOrderItem stockoutOrderItem1 = new StockoutOrderItem();
-            stockoutOrderItem1.setSkuNo(stockoutOrderDetailBO.getSkuId()
-                    .toString());
+            stockoutOrderItem1.setSkuNo(stockoutOrderDetailBO.getSkuId().toString());
             stockoutOrderItem1.setItemName(stockoutOrderDetailBO.getSkuName());
-            stockoutOrderItem1.setItemUom(stockoutOrderDetailBO.getSkuMerchantBO().getSkuBO().getMeasuringUnit());
-            stockoutOrderItem1.setItemQuantity(stockoutOrderDetailBO.getQuantity()
-                    .toString());
+            stockoutOrderItem1.setItemUom(stockoutOrderDetailBO.getSkuMerchantBO().getSkuBO()
+                .getMeasuringUnit());
+            stockoutOrderItem1.setItemQuantity(stockoutOrderDetailBO.getQuantity().toString());
             stockoutOrderItem1.setItemPrice("");
             stockoutOrderItem1.setItemDiscount("");
             stockoutOrderItem1.setItemBrand(stockoutOrderDetailBO.getBrandName());
             stockoutOrderItem1.setItemSpecifications("");
-            stockoutOrderItem1.setItemSpecifications(stockoutOrderDetailBO.getSkuMerchantBO().getSkuBO().getAttributesDesc());
+            stockoutOrderItem1.setItemSpecifications(stockoutOrderDetailBO.getSkuMerchantBO()
+                .getSkuBO().getAttributesDesc());
             // 是否为组合商品
             stockoutOrderItem1.setBomAction("N");
             stockoutOrderItem1.setIsPresent("N");
@@ -249,8 +255,7 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
         stockoutOrderSaleOrderRequest.setCompanyCode(metaData.get("code").toString());
         List<StockoutOrderSaleOrder> stockoutOrderSaleOrders = new ArrayList<StockoutOrderSaleOrder>();
         stockoutOrderSaleOrders.add(stockoutOrderSaleOrder);
-        stockoutOrderSaleOrderRequest
-                .setStockoutOrderSaleOrders(stockoutOrderSaleOrders);
+        stockoutOrderSaleOrderRequest.setStockoutOrderSaleOrders(stockoutOrderSaleOrders);
 
         StockoutBody stockoutBody = new StockoutBody();
         stockoutBody.setSaleOrderRequest(stockoutOrderSaleOrderRequest);
@@ -280,10 +285,13 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
             return false;
         }
         if (!meta.containsKey("code")) {
-            LogBetter.instance(logger).setLevel(LogLevel.ERROR)
-                    .setMsg("供应商接入码为空")
-                    .setParms(logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getLogisticsProviderNid())
-                    .log();
+            LogBetter
+                .instance(logger)
+                .setLevel(LogLevel.ERROR)
+                .setMsg("供应商接入码为空")
+                .setParms(
+                    logisticsLineBO.getWarehouseBO().getLogisticsProviderBO()
+                        .getLogisticsProviderNid()).log();
             writeCreateCommandFailureLog("创建出库单失败", "供应商接入码为空");
             this.setCreateFailureMessage("供应商接入码为空");
             return false;
@@ -300,8 +308,10 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
 
     private boolean sendStockoutRequest2Wms(StockoutRequest stockoutRequest) {
 
-        String interfaceUrl = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("interfaceUrl");
-        String interfaceKey = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("interfaceKey");
+        String interfaceUrl = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO()
+            .getInterfaceMeta().get("interfaceUrl");
+        String interfaceKey = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO()
+            .getInterfaceMeta().get("interfaceKey");
 
         String requestStr = null;
         String responseStr = null;
@@ -314,8 +324,7 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
                 e1.printStackTrace();
             }
             // 计算签名
-            String strDigest = MD5Util.md5EncodeToBase64(request2XmlFormat
-                    + interfaceKey);
+            String strDigest = MD5Util.md5EncodeToBase64(request2XmlFormat + interfaceKey);
 
             // 组装请求参数
             StringBuilder sb = new StringBuilder();
@@ -324,21 +333,19 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
             requestStr = sb.toString();
             //采用okhttp发送报文
             OkHttpClient client = new OkHttpClient();
-            RequestBody body = RequestBody.create(MediaType
-                            .parse("application/x-www-form-urlencoded;charset=utf-8"),
-                    requestStr);
+            RequestBody body = RequestBody.create(
+                MediaType.parse("application/x-www-form-urlencoded;charset=utf-8"), requestStr);
 
-            okhttp3.Request request = new okhttp3.Request.Builder()
-                    .url(interfaceUrl)
-                    .post(body).build();
+            okhttp3.Request request = new okhttp3.Request.Builder().url(interfaceUrl).post(body)
+                .build();
 
             Response response = client.newCall(request).execute();
 
             StockoutResponse stockoutResponse = null;
             if (response == null || !response.isSuccessful()) {
-                LogBetter.instance(logger).setLevel(LogLevel.WARN)
-                        .setMsg("创建出库单失败").setParms(request2XmlFormat)
-                        .setParms(requestStr).setParms(response.body().string()).log();
+                LogBetter.instance(logger).setLevel(LogLevel.WARN).setMsg("创建出库单失败")
+                    .setParms(request2XmlFormat).setParms(requestStr)
+                    .setParms(response.body().string()).log();
                 writeCreateCommandFailureLog("给顺丰oms下单失败", "请求无响应");
                 this.setCreateFailureMessage("请求无响应；");
                 return false;
@@ -346,92 +353,81 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
                 try {
                     responseStr = response.body().string();
                     //把okhttp的response body转换成stockoutResponse
-                    stockoutResponse = XMLUtil.converyToJavaBean(
-                            responseStr, StockoutResponse.class);
+                    stockoutResponse = XMLUtil.converyToJavaBean(responseStr,
+                        StockoutResponse.class);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
 
                 StockoutOrderManager stockoutOrderManager = (StockoutOrderManager) CommandConfig
-                        .getSpringBean("stockoutOrderManager");
+                    .getSpringBean("stockoutOrderManager");
 
                 StockoutOrderRecordManager stockoutOrderRecordManager = (StockoutOrderRecordManager) CommandConfig
-                        .getSpringBean("stockoutOrderRecordManager");
+                    .getSpringBean("stockoutOrderRecordManager");
 
                 logger.info("打印stockoutResponse" + stockoutResponse.toString());
                 logger.info("打印getResponseBody" + stockoutResponse.getResponseBody().toString());
-                logger.info("打印getSaleOrderResponse" + stockoutResponse.getResponseBody()
-                        .getSaleOrderResponse());
-                logger.info("打印getSaleOrderList" + stockoutResponse.getResponseBody()
-                        .getSaleOrderResponse().getSaleOrderList());
-                logger.info("打印get(0)" + stockoutResponse.getResponseBody()
-                        .getSaleOrderResponse().getSaleOrderList().get(0));
-                logger.info("打印getResult" + stockoutResponse.getResponseBody()
-                        .getSaleOrderResponse().getSaleOrderList().get(0)
-                        .getResult());
-                String result = stockoutResponse.getResponseBody()
-                        .getSaleOrderResponse().getSaleOrderList().get(0)
-                        .getResult();
+                logger.info("打印getSaleOrderResponse"
+                            + stockoutResponse.getResponseBody().getSaleOrderResponse());
+                logger.info("打印getSaleOrderList"
+                            + stockoutResponse.getResponseBody().getSaleOrderResponse()
+                                .getSaleOrderList());
+                logger.info("打印get(0)"
+                            + stockoutResponse.getResponseBody().getSaleOrderResponse()
+                                .getSaleOrderList().get(0));
+                logger.info("打印getResult"
+                            + stockoutResponse.getResponseBody().getSaleOrderResponse()
+                                .getSaleOrderList().get(0).getResult());
+                String result = stockoutResponse.getResponseBody().getSaleOrderResponse()
+                    .getSaleOrderList().get(0).getResult();
 
                 if ("1".equalsIgnoreCase(result)) {
 
                     // oms返回1代表创建出库单成功
-                    LogBetter.instance(logger).setLevel(LogLevel.INFO)
-                            .setMsg("创建出库单成功").setParms(responseStr).log();
-                    traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(),
-                            "supplychain", new Date(),
-                            TraceLog.TraceLevel.INFO,
-                            "[供应链报文状态]下发出库单给顺丰oms：物流下单成功"));
-                    this.stockoutOrderBO.getRecordBO()
-                            .setLogisticsState(LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS
-                                    .getValue());
-                    stockoutOrderRecordManager.updateLogisticsState(
-                            this.stockoutOrderBO.getId(),
-                            LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS
-                                    .getValue());
-//                    stockoutOrderManager.updateDeclareNo(
-//                            this.stockoutOrderBO.getId(),
-//                            this.stockoutOrderBO.getDeclareNo());
+                    LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("创建出库单成功")
+                        .setParms(responseStr).log();
+                    traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(), "supplychain",
+                        new Date(), TraceLog.TraceLevel.INFO, "[供应链报文状态]下发出库单给顺丰oms：物流下单成功"));
+                    this.stockoutOrderBO.getRecordBO().setLogisticsState(
+                        LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
+                    stockoutOrderRecordManager.updateLogisticsState(this.stockoutOrderBO.getId(),
+                        LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
+                    //                    stockoutOrderManager.updateDeclareNo(
+                    //                            this.stockoutOrderBO.getId(),
+                    //                            this.stockoutOrderBO.getDeclareNo());
                     writeCreateCommandSuccessLog();
                     return true;
 
                 } else if ("2".equalsIgnoreCase(result) && responseStr.contains("订单号已存在")) {
                     // oms返回2代表订单号已存在返回成功，其他都是失败
-                    LogBetter.instance(logger).setLevel(LogLevel.INFO)
-                            .setMsg("创建出库单成功").setParms(responseStr).log();
-                    traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(),
-                            "supplychain", new Date(),
-                            TraceLog.TraceLevel.INFO,
-                            "[供应链报文状态]下发出库单给顺丰oms：物流下单成功"));
-                    this.stockoutOrderBO.getRecordBO()
-                            .setLogisticsState(LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS
-                                    .getValue());
-                    stockoutOrderRecordManager.updateLogisticsState(
-                            this.stockoutOrderBO.getId(),
-                            LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS
-                                    .getValue());
-//                    stockoutOrderManager.updateDeclareNo(
-//                            this.stockoutOrderBO.getId(),
-//                            this.stockoutOrderBO.getDeclareNo());
+                    LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("创建出库单成功")
+                        .setParms(responseStr).log();
+                    traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(), "supplychain",
+                        new Date(), TraceLog.TraceLevel.INFO, "[供应链报文状态]下发出库单给顺丰oms：物流下单成功"));
+                    this.stockoutOrderBO.getRecordBO().setLogisticsState(
+                        LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
+                    stockoutOrderRecordManager.updateLogisticsState(this.stockoutOrderBO.getId(),
+                        LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
+                    //                    stockoutOrderManager.updateDeclareNo(
+                    //                            this.stockoutOrderBO.getId(),
+                    //                            this.stockoutOrderBO.getDeclareNo());
                     writeCreateCommandSuccessLog();
                     return true;
 
                 } else {
-                    traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(),
-                            "supplychain", new Date(),
-                            TraceLog.TraceLevel.INFO,
-                            "[供应链报文状态]下发出库单给顺丰oms：物流下单失败"));
-                    LogBetter.instance(logger).setLevel(LogLevel.WARN)
-                            .setMsg("创建出库单失败").setParms(responseStr).log();
+                    traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(), "supplychain",
+                        new Date(), TraceLog.TraceLevel.INFO, "[供应链报文状态]下发出库单给顺丰oms：物流下单失败"));
+                    LogBetter.instance(logger).setLevel(LogLevel.WARN).setMsg("创建出库单失败")
+                        .setParms(responseStr).log();
                     writeCreateCommandFailureLog("创建出库单失败", responseStr);
                     this.setCreateFailureMessage("创建出库单失败，请求顺丰oms结果：" + responseStr);
                     return false;
                 }
             }
         } catch (Exception e) {
-            LogBetter.instance(logger).setLevel(LogLevel.ERROR)
-                    .setErrorMsg("顺丰oms下发出库单异常").setException(e).addParm("接口请求", requestStr).addParm("接口返回", responseStr)
-                    .addParm("异常原因", e.getMessage()).log();
+            LogBetter.instance(logger).setLevel(LogLevel.ERROR).setErrorMsg("顺丰oms下发出库单异常")
+                .setException(e).addParm("接口请求", requestStr).addParm("接口返回", responseStr)
+                .addParm("异常原因", e.getMessage()).log();
             this.setCreateFailureMessage(e.getMessage());
             return false;
         }
@@ -443,18 +439,16 @@ public class OmsCreateNotSupportAssembleCommand extends WmsOrderCreateCommand {
      * @param errMsg
      */
     private void writeCreateCommandFailureLog(String subMsg, String errMsg) {
-        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), subMsg
-                        + errMsg, SystemConstants.WARN_LEVEL, new Date(),
-                SystemUserName.OPSC.getValue());
+        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), subMsg + errMsg,
+            SystemConstants.WARN_LEVEL, new Date(), SystemUserName.OPSC.getValue());
     }
 
     /**
      * 记录成功路由信息 `
      */
     private void writeCreateCommandSuccessLog() {
-        routeService.appandSystemRoute(stockoutOrderBO.getBizId(),
-                "给顺丰oms下发物流订单成功", SystemConstants.INFO_LEVEL, new Date(),
-                SystemUserName.OPSC.getValue());
+        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "给顺丰oms下发物流订单成功",
+            SystemConstants.INFO_LEVEL, new Date(), SystemUserName.OPSC.getValue());
     }
 
 }

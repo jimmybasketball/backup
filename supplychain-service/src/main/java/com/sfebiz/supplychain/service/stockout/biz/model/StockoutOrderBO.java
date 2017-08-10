@@ -6,7 +6,7 @@ import java.util.List;
 import net.sf.oval.constraint.NotNull;
 
 import com.sfebiz.supplychain.service.line.model.LogisticsLineBO;
-import com.sfebiz.supplychain.service.merchant.Model.MerchantPackageMaterialBO;
+import com.sfebiz.supplychain.service.merchant.model.MerchantPackageMaterialBO;
 
 /**
  * <p>出库单实体</p>

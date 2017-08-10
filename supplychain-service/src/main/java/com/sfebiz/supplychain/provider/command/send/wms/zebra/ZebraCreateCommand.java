@@ -1,5 +1,16 @@
 package com.sfebiz.supplychain.provider.command.send.wms.zebra;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import net.pocrd.entity.ServiceException;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.sfebiz.common.tracelog.HaitaoTraceLogger;
 import com.sfebiz.common.tracelog.HaitaoTraceLoggerFactory;
@@ -26,22 +37,34 @@ import com.sfebiz.supplychain.provider.command.send.wms.WmsOrderCreateCommand;
 import com.sfebiz.supplychain.provider.entity.PriceUnit;
 import com.sfebiz.supplychain.provider.entity.ResponseState;
 import com.sfebiz.supplychain.provider.entity.ZebraConstants;
-import com.sfebiz.supplychain.sdk.protocol.*;
+import com.sfebiz.supplychain.sdk.protocol.Attachments;
+import com.sfebiz.supplychain.sdk.protocol.Buyer;
+import com.sfebiz.supplychain.sdk.protocol.ClearanceDetail;
+import com.sfebiz.supplychain.sdk.protocol.ContactDetail;
+import com.sfebiz.supplychain.sdk.protocol.EventBody;
+import com.sfebiz.supplychain.sdk.protocol.EventHeader;
+import com.sfebiz.supplychain.sdk.protocol.EventType;
+import com.sfebiz.supplychain.sdk.protocol.Item;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsDetail;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsEvent;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsEventsRequest;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsEventsResponse;
+import com.sfebiz.supplychain.sdk.protocol.LogisticsOrder;
+import com.sfebiz.supplychain.sdk.protocol.Paid;
+import com.sfebiz.supplychain.sdk.protocol.PaymentDetail;
+import com.sfebiz.supplychain.sdk.protocol.ReceiptDetail;
+import com.sfebiz.supplychain.sdk.protocol.ReceiptFooter;
+import com.sfebiz.supplychain.sdk.protocol.ReceiptHeader;
+import com.sfebiz.supplychain.sdk.protocol.Response;
+import com.sfebiz.supplychain.sdk.protocol.Sku;
+import com.sfebiz.supplychain.sdk.protocol.SkuDetail;
+import com.sfebiz.supplychain.sdk.protocol.TradeDetail;
+import com.sfebiz.supplychain.sdk.protocol.TradeOrder;
 import com.sfebiz.supplychain.service.stockout.biz.model.StockoutOrderDetailBO;
 import com.sfebiz.supplychain.service.warehouse.model.WarehouseBO;
 import com.sfebiz.supplychain.util.DateUtil;
 import com.sfebiz.supplychain.util.JSONUtil;
 import com.sfebiz.supplychain.util.XMLUtil;
-import net.pocrd.entity.ServiceException;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 /**
  * 下发物流订单消息指令 logistics.event.wms.create SF -> LP
@@ -50,26 +73,32 @@ import java.util.concurrent.atomic.AtomicInteger;
  * LOGISTICS_SKU_PAID
  */
 public class ZebraCreateCommand extends WmsOrderCreateCommand {
-    private static final String serviceName = "OutboundOrder";
-    private static final HaitaoTraceLogger traceLogger = HaitaoTraceLoggerFactory.getTraceLogger("order");
-    private static final String HEIKE_TRATE_TYPE = "HeiKe";
-    private static final String HAITAO_TRATE_TYPE = "HaiTao";
-    private StockoutOrderRecordManager stockoutOrderRecordManager;
-    private RouteService routeService;
+    private static final String            serviceName       = "OutboundOrder";
+    private static final HaitaoTraceLogger traceLogger       = HaitaoTraceLoggerFactory
+                                                                 .getTraceLogger("order");
+    private static final String            HEIKE_TRATE_TYPE  = "HeiKe";
+    private static final String            HAITAO_TRATE_TYPE = "HaiTao";
+    private StockoutOrderRecordManager     stockoutOrderRecordManager;
+    private RouteService                   routeService;
 
-    private static AtomicInteger blockCount = new AtomicInteger(0);//用于统计延迟线程数
+    private static AtomicInteger           blockCount        = new AtomicInteger(0);       //用于统计延迟线程数
 
     @Override
     public boolean execute() {
         logger.info("斑马 下发物流订单消息指令: start");
         try {
-            if (stockoutOrderBO.getRecordBO().getLogisticsState() == LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue()
-                    || stockoutOrderBO.getRecordBO().getLogisticsState() == LogisticsState.LOGISTICS_STATE_GOODS_WEIGHT.getValue()
-                    || stockoutOrderBO.getRecordBO().getLogisticsState() == LogisticsState.LOGISTICS_STATE_SEND_SUCCESS.getValue()
-                    || stockoutOrderBO.getRecordBO().getLogisticsState() == LogisticsState.LOGISTICS_STATE_STOCKOUT.getValue()) {
+            if (stockoutOrderBO.getRecordBO().getLogisticsState() == LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS
+                .getValue()
+                || stockoutOrderBO.getRecordBO().getLogisticsState() == LogisticsState.LOGISTICS_STATE_GOODS_WEIGHT
+                    .getValue()
+                || stockoutOrderBO.getRecordBO().getLogisticsState() == LogisticsState.LOGISTICS_STATE_SEND_SUCCESS
+                    .getValue()
+                || stockoutOrderBO.getRecordBO().getLogisticsState() == LogisticsState.LOGISTICS_STATE_STOCKOUT
+                    .getValue()) {
                 return true;
             }
-            stockoutOrderRecordManager = (StockoutOrderRecordManager) CommandConfig.getSpringBean("stockoutOrderRecordManager");
+            stockoutOrderRecordManager = (StockoutOrderRecordManager) CommandConfig
+                .getSpringBean("stockoutOrderRecordManager");
             routeService = (RouteService) CommandConfig.getSpringBean("routeService");
             boolean isMockAutoCreated = MockConfig.isMocked("zebra", "createCommand");
             if (isMockAutoCreated) {
@@ -79,8 +108,10 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
             }
 
             String msgType = WmsMessageType.STOCK_OUT.getValue();
-            String url = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("interfaceUrl");
-            String key = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("interfaceKey");
+            String url = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO()
+                .getInterfaceMeta().get("interfaceUrl");
+            String key = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO()
+                .getInterfaceMeta().get("interfaceKey");
 
             if (StringUtils.isEmpty(url) || StringUtils.isEmpty(key)) {
                 throw new Exception("路线配置错误" + logisticsLineBO.getLogisticsLineNid());
@@ -89,102 +120,130 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
                 url = url.concat("/");
             }
             url = url.concat(serviceName);
-            LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("[海外物流商下发物流下单]")
-                    .addParm("线路信息", logisticsLineBO).addParm("wmsProviderEntity", logisticsLineBO.getWarehouseBO().getLogisticsProviderBO())
-                    .addParm("url信息", url).addParm("interfaceKey", key).log();
+            LogBetter
+                .instance(logger)
+                .setLevel(LogLevel.INFO)
+                .setMsg("[海外物流商下发物流下单]")
+                .addParm("线路信息", logisticsLineBO)
+                .addParm("wmsProviderEntity",
+                    logisticsLineBO.getWarehouseBO().getLogisticsProviderBO())
+                .addParm("url信息", url).addParm("interfaceKey", key).log();
             LogisticsEventsRequest request = buildCreateCommandRequest();
             LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("[海外物流商下发物流下单]")
-                    .addParm("出库单信息", stockoutOrderBO).log();
+                .addParm("出库单信息", stockoutOrderBO).log();
 
             //下发指令
-            LogisticsEventsResponse responses = ProviderBizService.getInstance().send(request, msgType, url, key,
-                    TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP), ZebraConstants.PARTNER_CODE);
+            LogisticsEventsResponse responses = ProviderBizService.getInstance().send(
+                request,
+                msgType,
+                url,
+                key,
+                TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                    SystemConstants.TRACE_APP), ZebraConstants.PARTNER_CODE);
 
             if (responses.getResponseItems() == null || responses.getResponseItems().size() == 0) {
                 /** 2017-03-24 出库单推送异常优化 by liujunchi  **/
-                LogBetter.instance(logger).setLevel(LogLevel.INFO)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP))
-                        .setMsg("[斑马物流下单] 响应报文为空，执行出库单确认请求，延时2分钟 当前阻塞线程数：" + blockCount.incrementAndGet())
-                        .log();
+                LogBetter
+                    .instance(logger)
+                    .setLevel(LogLevel.INFO)
+                    .setTraceLogger(
+                        TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                            SystemConstants.TRACE_APP))
+                    .setMsg(
+                        "[斑马物流下单] 响应报文为空，执行出库单确认请求，延时2分钟 当前阻塞线程数：" + blockCount.incrementAndGet())
+                    .log();
 
                 TimeUnit.SECONDS.sleep(120);
-                LogBetter.instance(logger).setLevel(LogLevel.INFO)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP))
-                        .setMsg("[斑马物流下单] 响应报文为空，执行出库单确认请求，延时结束 当前阻塞线程数：" + blockCount.decrementAndGet())
-                        .addParm("请求报文", XMLUtil.convertToXml(request))
-                        .addParm("响应报文", JSONUtil.toJson(responses))
-                        .log();
+                LogBetter
+                    .instance(logger)
+                    .setLevel(LogLevel.INFO)
+                    .setTraceLogger(
+                        TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                            SystemConstants.TRACE_APP))
+                    .setMsg(
+                        "[斑马物流下单] 响应报文为空，执行出库单确认请求，延时结束 当前阻塞线程数：" + blockCount.decrementAndGet())
+                    .addParm("请求报文", XMLUtil.convertToXml(request))
+                    .addParm("响应报文", JSONUtil.toJson(responses)).log();
 
                 //执行确认请求
-                url = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("interfaceUrl");
+                url = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta()
+                    .get("interfaceUrl");
                 if (!url.endsWith("/")) {
                     url = url.concat("/");
                 }
                 url = url.concat("logisticsOrderConfirm");
                 logger.info("斑马出库单确认请求开始————");
-                LogisticsEventsResponse confirmResponses = ProviderBizService.getInstance().send(request, "LOGISTICS_ORDER_CONFIRM", url, key,
-                        TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP), ZebraConstants.PARTNER_CODE);
+                LogisticsEventsResponse confirmResponses = ProviderBizService.getInstance().send(
+                    request,
+                    "LOGISTICS_ORDER_CONFIRM",
+                    url,
+                    key,
+                    TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                        SystemConstants.TRACE_APP), ZebraConstants.PARTNER_CODE);
                 logger.info("斑马出库单确认请求完成————");
-                if (confirmResponses.getResponseItems() == null || confirmResponses.getResponseItems().size() == 0) {
-                    LogBetter.instance(logger).setLevel(LogLevel.ERROR)
-                            .setTraceLogger(TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP))
-                            .setMsg("[斑马物流下单] 响应报文为空，执行出库单确认请求 响应依然为空")
-                            .addParm("请求报文", XMLUtil.convertToXml(request))
-                            .addParm("响应报文",JSONUtil.toJson(responses))
-                            .log();
+                if (confirmResponses.getResponseItems() == null
+                    || confirmResponses.getResponseItems().size() == 0) {
+                    LogBetter
+                        .instance(logger)
+                        .setLevel(LogLevel.ERROR)
+                        .setTraceLogger(
+                            TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                                SystemConstants.TRACE_APP))
+                        .setMsg("[斑马物流下单] 响应报文为空，执行出库单确认请求 响应依然为空")
+                        .addParm("请求报文", XMLUtil.convertToXml(request))
+                        .addParm("响应报文", JSONUtil.toJson(responses)).log();
                     writeCreateCommandFailureLog("斑马物流下单]  出库单确认请求 响应报文依然为空");
                     this.setCreateFailureMessage("[斑马物流下单]  出库单确认请求 响应报文依然为空");
                     throw new Exception("[斑马物流下单]  出库单确认请求 响应报文依然为空");
-                }else {
+                } else {
                     responses = confirmResponses;
                 }
             }
 
             Response response = responses.getResponseItems().get(0);
             if (ResponseState.TRUE.getCode().equalsIgnoreCase(response.success)) {
-                stockoutOrderBO.getRecordBO().setLogisticsState(LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
-                stockoutOrderRecordManager.updateLogisticsState(stockoutOrderBO.getId(), LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
+                stockoutOrderBO.getRecordBO().setLogisticsState(
+                    LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
+                stockoutOrderRecordManager.updateLogisticsState(stockoutOrderBO.getId(),
+                    LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
                 writeCreateCommandSuccessLog();
                 return true;
             } else if (ResponseState.ORDER_EXIST.getCode().equalsIgnoreCase(response.getReason())) {
-                stockoutOrderBO.getRecordBO().setLogisticsState(LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
-                stockoutOrderRecordManager.updateLogisticsState(stockoutOrderBO.getId(), LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
+                stockoutOrderBO.getRecordBO().setLogisticsState(
+                    LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
+                stockoutOrderRecordManager.updateLogisticsState(stockoutOrderBO.getId(),
+                    LogisticsState.LOGISTICS_STATE_CREATE_SUCCESS.getValue());
                 writeCreateCommandSuccessLog();
                 return true;
-            } else if (ResponseState.NET_TIMEOUT.getCode().equalsIgnoreCase(response.getReason()) || "S07".equals(response.getReason())) {
-                LogBetter.instance(logger).setLevel(LogLevel.WARN)
-                        .setMsg("系统下发发货指令失败等待重试")
-                        .setParms(stockoutOrderBO.getBizId())
-                        .setParms(response).log();
+            } else if (ResponseState.NET_TIMEOUT.getCode().equalsIgnoreCase(response.getReason())
+                       || "S07".equals(response.getReason())) {
+                LogBetter.instance(logger).setLevel(LogLevel.WARN).setMsg("系统下发发货指令失败等待重试")
+                    .setParms(stockoutOrderBO.getBizId()).setParms(response).log();
                 writeCreateCommandFailureLog("网络超时");
                 this.setCreateFailureMessage("网络超时");
                 return false;
             } else {
-                stockoutOrderBO.getRecordBO().setLogisticsState(LogisticsState.LOGISTICS_STATE_CREATE_ERROR.getValue());
-                stockoutOrderRecordManager.updateLogisticsState(stockoutOrderBO.getId(), LogisticsState.LOGISTICS_STATE_CREATE_ERROR.getValue());
+                stockoutOrderBO.getRecordBO().setLogisticsState(
+                    LogisticsState.LOGISTICS_STATE_CREATE_ERROR.getValue());
+                stockoutOrderRecordManager.updateLogisticsState(stockoutOrderBO.getId(),
+                    LogisticsState.LOGISTICS_STATE_CREATE_ERROR.getValue());
                 writeCreateCommandFailureLog(responses.getResponseItems().get(0).getReasonDesc());
-                LogBetter.instance(logger).setLevel(LogLevel.ERROR)
-                        .setTraceLogger(TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(), SystemConstants.TRACE_APP))
-                        .setMsg("[供应链-海外物流商下发物流下单失败]")
-                        .setParms(stockoutOrderBO.getBizId())
-                        .setParms(response)
-                        .log();
+                LogBetter
+                    .instance(logger)
+                    .setLevel(LogLevel.ERROR)
+                    .setTraceLogger(
+                        TraceLogEntity.instance(traceLogger, stockoutOrderBO.getBizId(),
+                            SystemConstants.TRACE_APP)).setMsg("[供应链-海外物流商下发物流下单失败]")
+                    .setParms(stockoutOrderBO.getBizId()).setParms(response).log();
                 this.setCreateFailureMessage(responses.getResponseItems().get(0).getReasonDesc());
             }
         } catch (Exception e) {
             writeCreateCommandFailureLog(e.getMessage());
-            LogBetter.instance(logger)
-                    .setLevel(LogLevel.ERROR)
-                    .setException(e)
-                    .setMsg("海外物流商下发物流下单失败")
-                    .addParm("订单ID", stockoutOrderBO.getBizId())
-                    .log();
-            traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(), "supplychain", new Date(), TraceLevel.ERROR,
-                    "[供应链报文-向斑马仓库下发指令异常]: "
-                            + "[订单ID:" + stockoutOrderBO.getBizId()
-                            + ", 异常信息: " + e.getMessage()
-                            + "]"
-            ));
+            LogBetter.instance(logger).setLevel(LogLevel.ERROR).setException(e)
+                .setMsg("海外物流商下发物流下单失败").addParm("订单ID", stockoutOrderBO.getBizId()).log();
+            traceLogger.log(new TraceLog(stockoutOrderBO.getBizId(), "supplychain", new Date(),
+                TraceLevel.ERROR, "[供应链报文-向斑马仓库下发指令异常]: " + "[订单ID:" + stockoutOrderBO.getBizId()
+                                  + ", 异常信息: " + e.getMessage() + "]"));
             this.setCreateFailureMessage(e.getMessage());
             return false;
         } finally {
@@ -200,7 +259,8 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
      * @return
      */
     public LogisticsEventsRequest buildCreateCommandRequest() throws ServiceException {
-        String meta = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta().get("meta");
+        String meta = logisticsLineBO.getWarehouseBO().getLogisticsProviderBO().getInterfaceMeta()
+            .get("meta");
         Map<String, Object> metaData = JSONUtil.parseJSONMessage(meta, Map.class);
         String eventSource = "";
         String sendEnInfo = "false";
@@ -226,7 +286,8 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
 
         EventBody eventBody = new EventBody();
         ClearanceDetail clearanceDetail = new ClearanceDetail();
-        LogisticsClearanceDetailEntity clearanceDetailEntity = CommonUtil.buildClearanceDetailEntity(logisticsLineBO, stockoutOrderBO);
+        LogisticsClearanceDetailEntity clearanceDetailEntity = CommonUtil
+            .buildClearanceDetailEntity(logisticsLineBO, stockoutOrderBO);
         clearanceDetail.carrierCode = clearanceDetailEntity.carrierCode;
         clearanceDetail.mailNo = clearanceDetailEntity.mailNo;
         clearanceDetail.orderId = clearanceDetailEntity.orderId;
@@ -238,7 +299,9 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
         clearanceDetail.logo = clearanceDetailEntity.logo;
         eventBody.setClearanceDetail(clearanceDetail);
 
-        if (stockoutOrderBO.getOrderType().equals(StockoutOrderType.SALES_STOCK_OUT.value) && logisticsLineBO.domesticLogisticsProviderBO != null && StringUtils.isBlank(clearanceDetail.deliveryCode)) {
+        if (stockoutOrderBO.getOrderType().equals(StockoutOrderType.SALES_STOCK_OUT.value)
+            && logisticsLineBO.domesticLogisticsProviderBO != null
+            && StringUtils.isBlank(clearanceDetail.deliveryCode)) {
             throw new IllegalArgumentException("目的地代码不能为空");
         }
 
@@ -266,11 +329,9 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
         List<Item> items = new ArrayList<Item>();
         StringBuilder itemIds = new StringBuilder();
         boolean isSelfType = true;
-        boolean isSupportBatch = false;
-        if (logisticsLineBO.getWarehouseBO().getIsSupportBatch() > 0) {
-            isSupportBatch = true;
-        }
-        List<StockoutOrderDetailBO> skuDOListForRequest = CommonUtil.mergeStockoutOrderSku(stockoutOrderDetailBOs, isSupportBatch);
+        boolean isSupportBatch = logisticsLineBO.getWarehouseBO().getIsSupportBatch();
+        List<StockoutOrderDetailBO> skuDOListForRequest = CommonUtil.mergeStockoutOrderSku(
+            stockoutOrderDetailBOs, isSupportBatch);
         //转运出库单
         if (stockoutOrderBO.getOrderType() == StockoutOrderType.TRANSPORT_STOCK_OUT.value) {
             for (StockoutOrderDetailBO sku : skuDOListForRequest) {
@@ -289,7 +350,7 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
                 item.setBrand(sku.getBrandName());
                 item.setSpecification(sku.getSkuMerchantBO().getSkuBO().getAttributesDesc());
                 item.setNetWeight(sku.getWeight() == null ? 0 : sku.getWeight().intValue());
-//                item.setItemCategoryName(sku.getCategory());
+                //                item.setItemCategoryName(sku.getCategory());
                 item.setItemRemark(sku.getRemark());
                 items.add(item);
             }
@@ -300,11 +361,16 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
             Buyer buyerEn = new Buyer();
             buyerEn.setName(PinyinUtil.convertToPinyin(userName));
             buyerEn.setMobile(stockoutOrderBO.getBuyerBO().getBuyerTelephone());
-            buyerEn.setCountry(PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO().getBuyerCountry()));
-            buyerEn.setProvince(PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO().getBuyerProvince()));
-            buyerEn.setCity(PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO().getBuyerCity()));
-            buyerEn.setDistrict(PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO().getBuyerRegion()));
-            String addressEn = PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO().getBuyerAddress());
+            buyerEn.setCountry(PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO()
+                .getBuyerCountry()));
+            buyerEn.setProvince(PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO()
+                .getBuyerProvince()));
+            buyerEn
+                .setCity(PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO().getBuyerCity()));
+            buyerEn.setDistrict(PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO()
+                .getBuyerRegion()));
+            String addressEn = PinyinUtil.convertToPinyin(stockoutOrderBO.getBuyerBO()
+                .getBuyerAddress());
             addressEn = addressEn.replaceAll("，", ",");
             addressEn = addressEn.replaceAll("。", ".");
             addressEn = addressEn.replaceAll("（", "");
@@ -339,7 +405,6 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
         tradeOrder.setBuyer(buyer);
         tradeOrder.setItems(items);
         tradeOrder.setTradeOrderId(stockoutOrderBO.getId());
-
 
         List<TradeOrder> tradeOrders = new ArrayList<TradeOrder>();
         tradeOrders.add(tradeOrder);
@@ -388,8 +453,10 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
             String routeIdConf = stockoutOrderBO.getMerchantPackageMaterialBO().getRouteId();
             if (StringUtils.isNotEmpty(routeIdConf)) {
                 Map<String, String> routeIdMap = JSON.parseObject(routeIdConf, Map.class);
-                if (null != routeIdMap && routeIdMap.containsKey(stockoutOrderBO.getWarehouseId().toString())) {
-                    logisticsOrder.setRouteId(routeIdMap.get(stockoutOrderBO.getWarehouseId().toString()));
+                if (null != routeIdMap
+                    && routeIdMap.containsKey(stockoutOrderBO.getWarehouseId().toString())) {
+                    logisticsOrder.setRouteId(routeIdMap.get(stockoutOrderBO.getWarehouseId()
+                        .toString()));
                 }
             }
 
@@ -398,12 +465,12 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
             logisticsOrder.setReceiverDetail(receiver);
             logisticsOrder.setNeedCheck(LiuLianType.NEED_CHECK_NO.getValue());
             //配置小票格式
-//            String receiptFormat = OpenApiConfig.getInstance().getRule(stockoutOrderBO.getBizType(), OpenApiConfigKeys.RECEIPT_FORMAT);
-//            if (StringUtils.isEmpty(receiptFormat)) {
-//                logisticsOrder.setReceiptFormat(1);
-//            } else {
-//                logisticsOrder.setReceiptFormat(Integer.parseInt(receiptFormat));
-//            }
+            //            String receiptFormat = OpenApiConfig.getInstance().getRule(stockoutOrderBO.getBizType(), OpenApiConfigKeys.RECEIPT_FORMAT);
+            //            if (StringUtils.isEmpty(receiptFormat)) {
+            //                logisticsOrder.setReceiptFormat(1);
+            //            } else {
+            //                logisticsOrder.setReceiptFormat(Integer.parseInt(receiptFormat));
+            //            }
             logisticsOrder.setReceiptFormat(1);
             List<Sku> skus = new ArrayList<Sku>();
 
@@ -432,7 +499,8 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
                     if (StringUtils.isNotBlank(foreignName)) {
                         //usps item英文名字最大字符长度为24
                         if (foreignName.length() > 24) {
-                            foreignName = foreignName.substring(foreignName.length() - 24, foreignName.length());
+                            foreignName = foreignName.substring(foreignName.length() - 24,
+                                foreignName.length());
                         }
                     } else {
                         throw new IllegalArgumentException("商品外文名称不能为空，skuId：" + item.getSkuId());
@@ -452,13 +520,17 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
             ReceiptDetail receiptDetail = new ReceiptDetail();
             receiptDetail.setHeader(new ReceiptHeader());
             receiptDetail.setFooter(new ReceiptFooter());
-            receiptDetail.getHeader().setLogo(stockoutOrderBO.getMerchantPackageMaterialBO().getHeaderLogo());
-            receiptDetail.getHeader().setTitle(stockoutOrderBO.getMerchantPackageMaterialBO().getHeaderTitle());
-            receiptDetail.getFooter().setAdvert(stockoutOrderBO.getMerchantPackageMaterialBO().getFooterAdvert());
-            receiptDetail.getFooter().setDesc(stockoutOrderBO.getMerchantPackageMaterialBO().getFooterDesc());
+            receiptDetail.getHeader().setLogo(
+                stockoutOrderBO.getMerchantPackageMaterialBO().getHeaderLogo());
+            receiptDetail.getHeader().setTitle(
+                stockoutOrderBO.getMerchantPackageMaterialBO().getHeaderTitle());
+            receiptDetail.getFooter().setAdvert(
+                stockoutOrderBO.getMerchantPackageMaterialBO().getFooterAdvert());
+            receiptDetail.getFooter().setDesc(
+                stockoutOrderBO.getMerchantPackageMaterialBO().getFooterDesc());
             logisticsOrder.setReceiptDetail(receiptDetail);
-            logisticsOrder.setPackingMaterials(stockoutOrderBO.getMerchantPackageMaterialBO().getPackageMaterialType());
-
+            logisticsOrder.setPackingMaterials(stockoutOrderBO.getMerchantPackageMaterialBO()
+                .getPackageMaterialType());
 
             logisticsOrders.add(logisticsOrder);
         } else {
@@ -466,7 +538,8 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
             eventHeader.setEventType(EventType.LOGISTICS_TRADE_PAID.value);
             for (StockoutOrderDetailBO item : stockoutOrderDetailBOs) {
                 LogisticsOrder logisticsOrder = new LogisticsOrder();
-                logisticsOrder.setPoNo(stockoutOrderBO.getId() + "M" + stockoutOrderBO.getIntrMailNo());
+                logisticsOrder.setPoNo(stockoutOrderBO.getId() + "M"
+                                       + stockoutOrderBO.getIntrMailNo());
                 logisticsOrder.setCarrierCode("");
                 logisticsOrder.setMailNo(stockoutOrderBO.getIntrMailNo());
                 logisticsOrder.setSenderDetail(sender);
@@ -509,14 +582,16 @@ public class ZebraCreateCommand extends WmsOrderCreateCommand {
      * @param errMsg
      */
     private void writeCreateCommandFailureLog(String errMsg) {
-        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "香港COE仓下物流订单失败," + errMsg, SystemConstants.WARN_LEVEL, new Date(), SystemUserName.OPSC.getValue());
+        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "香港COE仓下物流订单失败," + errMsg,
+            SystemConstants.WARN_LEVEL, new Date(), SystemUserName.OPSC.getValue());
     }
 
     /**
      * 记录下发出库指令成功日志                   `
      */
     private void writeCreateCommandSuccessLog() {
-        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "香港COE仓物流下单成功", SystemConstants.INFO_LEVEL, new Date(), SystemUserName.OPSC.getValue());
+        routeService.appandSystemRoute(stockoutOrderBO.getBizId(), "香港COE仓物流下单成功",
+            SystemConstants.INFO_LEVEL, new Date(), SystemUserName.OPSC.getValue());
     }
 
     private String bizType2TradeType(String bizType) {
