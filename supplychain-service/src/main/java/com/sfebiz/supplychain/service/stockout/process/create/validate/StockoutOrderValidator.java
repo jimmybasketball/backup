@@ -268,7 +268,7 @@ public abstract class StockoutOrderValidator {
         Double declaredTaxMoney = 0.0;
         if (ListUtil.isNotEmpty(declaredDos)) {
             for (StockoutOrderDeclarePriceDO d : declaredDos) {
-                declaredTaxMoney = declaredTaxMoney + d.getTariffFee();
+                declaredTaxMoney = declaredTaxMoney + d.getTariffTax();
             }
         }
         return declaredTaxMoney.intValue();
