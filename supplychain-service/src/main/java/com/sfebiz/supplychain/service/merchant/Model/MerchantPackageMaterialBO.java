@@ -39,9 +39,49 @@ public class MerchantPackageMaterialBO extends BaseBO {
     private String            packageMaterialType;
 
     /**
-     * 宁波店铺号
+     * 宁波店铺号（宁波跨境购使用）
      */
     private String            nbShopNumber;
+
+    /**
+     * 品牌的Logo（头部）（图片路径）
+     * 示例：http://img0.fengqucdn.com/logo/fq-logo.png
+     */
+    private String            headerLogo;
+
+    /**
+     * 品牌的标题（头部）
+     * 示例：丰趣海淘购物清单
+     */
+    private String            headerTitle;
+
+    /**
+     * 品牌的广告（尾部）
+     * 示例：http://img0.fengqucdn.com/logo/footer-logo.jpg
+     */
+    private String            footerAdvert;
+
+    /**
+     * 品牌的说明（尾部）
+     * 示例：非常感谢您在供销社海外购网站 www.coopoverseasbuy.com 购物，我们期待您的再次光临！
+     */
+    private String            footerDesc;
+
+    /**
+     * 寄件人名PDF
+     */
+    private String            pdfSenderName;
+
+    /**
+     * 管道代码，跟仓绑定，不同的仓使用不同的管道代码, 还要区分不同的渠道类型（斑马仓使用）
+     * 示例：route_id={"43":"HKH-CN-FQEP","95":"SHA-CN-FQEP"}
+     */
+    private String            routeId;
+
+    /**
+     * 渠道区分（费舍尔仓使用）
+     */
+    private String            isMaster;
 
     public Long getMerchantId() {
         return merchantId;
@@ -89,6 +129,62 @@ public class MerchantPackageMaterialBO extends BaseBO {
 
     public void setNbShopNumber(String nbShopNumber) {
         this.nbShopNumber = nbShopNumber;
+    }
+
+    public String getHeaderLogo() {
+        return headerLogo;
+    }
+
+    public void setHeaderLogo(String headerLogo) {
+        this.headerLogo = headerLogo;
+    }
+
+    public String getHeaderTitle() {
+        return headerTitle;
+    }
+
+    public void setHeaderTitle(String headerTitle) {
+        this.headerTitle = headerTitle;
+    }
+
+    public String getFooterAdvert() {
+        return footerAdvert;
+    }
+
+    public void setFooterAdvert(String footerAdvert) {
+        this.footerAdvert = footerAdvert;
+    }
+
+    public String getFooterDesc() {
+        return footerDesc;
+    }
+
+    public void setFooterDesc(String footerDesc) {
+        this.footerDesc = footerDesc;
+    }
+
+    public String getPdfSenderName() {
+        return pdfSenderName;
+    }
+
+    public void setPdfSenderName(String pdfSenderName) {
+        this.pdfSenderName = pdfSenderName;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
+    public String getIsMaster() {
+        return isMaster;
+    }
+
+    public void setIsMaster(String isMaster) {
+        this.isMaster = isMaster;
     }
 
     /**
