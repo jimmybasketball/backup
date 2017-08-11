@@ -37,4 +37,11 @@ public interface StockoutService {
      * @param userName
      */
     CommonRet<Void> updateStockoutExceptionTaskExecuteTime(Long id, Date executeTime, Long userId, String userName);
+    
+    /**
+     * 获取出库单PDF面单url
+     * @param stockoutOrderBizId
+     * @return
+     */
+    CommonRet<String> getStockoutPDFBillUrl(Long stockoutOrderBizId);
 }

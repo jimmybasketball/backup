@@ -4,9 +4,12 @@
 package com.sfebiz.supplychain.service.stockout;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,13 +23,21 @@ import com.sfebiz.common.utils.log.LogLevel;
 import com.sfebiz.supplychain.aop.annotation.MethodParamValidate;
 import com.sfebiz.supplychain.aop.annotation.ParamNotBlank;
 import com.sfebiz.supplychain.exposed.common.code.SCReturnCode;
+import com.sfebiz.supplychain.exposed.common.code.StockoutReturnCode;
 import com.sfebiz.supplychain.exposed.common.code.StockoutTaskReturnCode;
 import com.sfebiz.supplychain.exposed.common.entity.CommonRet;
 import com.sfebiz.supplychain.exposed.common.entity.Void;
 import com.sfebiz.supplychain.exposed.stockout.api.StockoutService;
 import com.sfebiz.supplychain.lock.Lock;
+import com.sfebiz.supplychain.persistence.base.merchant.manager.MerchantProviderManager;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDO;
+import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderDetailDO;
 import com.sfebiz.supplychain.persistence.base.stockout.domain.StockoutOrderTaskDO;
+import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderDetailManager;
+import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderManager;
 import com.sfebiz.supplychain.persistence.base.stockout.manager.StockoutOrderTaskManager;
+import com.sfebiz.supplychain.service.FileOperationService;
+import com.sfebiz.supplychain.service.stockout.process.create.PdfOrderCreateProcessor;
 import com.sfebiz.supplychain.service.stockout.service.exception.ExceptionHandlerFactory;
 
 /**
@@ -51,6 +62,16 @@ public class StockoutServiceImpl implements StockoutService {
     private Lock distributedLock;
     @Resource
     private ExceptionHandlerFactory exceptionHandlerFactory;
+    @Resource
+    private PdfOrderCreateProcessor pdfOrderCreateProcessor;
+    @Resource
+    private FileOperationService fileOperationService;
+    @Resource
+    private StockoutOrderManager stockoutOrderManager;
+    @Resource
+    private StockoutOrderDetailManager stockoutOrderDetailManager;
+    @Resource
+    private MerchantProviderManager merchantProviderManager;
     /*
      * (non-Javadoc)
      * 
@@ -94,6 +115,8 @@ public class StockoutServiceImpl implements StockoutService {
                 }
               //根据异常类型选择不同的处理类
                 exceptionHandlerFactory.getExceptionHandlerByExceptionType(stockoutOrderTaskDO.getTaskType()).handle(stockoutOrderTaskDO);
+                commonRet.setRetCode(SCReturnCode.COMMON_SUCCESS.getCode());
+                commonRet.setRetMsg(SCReturnCode.COMMON_SUCCESS.getDesc());
             } catch (Exception e) {
                 LogBetter.instance(logger)
                 .setLevel(LogLevel.ERROR)
@@ -124,7 +147,7 @@ public class StockoutServiceImpl implements StockoutService {
     @Override
     @MethodParamValidate
     public CommonRet<Void> updateStockoutExceptionTaskExecuteTime(
-            @ParamNotBlank("业务订单ID不能为空") Long id, @ParamNotBlank("task下次执行时间不能为空") Date executeTime, Long userId,
+            @ParamNotBlank("异常任务ID不能为空") Long id, @ParamNotBlank("task下次执行时间不能为空") Date executeTime, Long userId,
             String userName) {
         LogBetter.instance(logger).setLevel(LogLevel.INFO)
         .setMsg("[物流开放平台-更新异常任务的重试时间]")
@@ -160,6 +183,8 @@ public class StockoutServiceImpl implements StockoutService {
                 update.setId(id);
                 update.setRetryExcuteTime(executeTime);
                 stockoutOrderTaskManager.update(update);
+                commonRet.setRetCode(SCReturnCode.COMMON_SUCCESS.getCode());
+                commonRet.setRetMsg(SCReturnCode.COMMON_SUCCESS.getDesc());
             } catch (Exception e) {
                 LogBetter.instance(logger)
                 .setLevel(LogLevel.ERROR)
@@ -182,6 +207,74 @@ public class StockoutServiceImpl implements StockoutService {
         }
         return commonRet;
         
+    }
+    /* (non-Javadoc)
+     * @see com.sfebiz.supplychain.exposed.stockout.api.StockoutService#getStockoutPDFBill(java.lang.Long)
+     */
+    @Override
+    @MethodParamValidate
+    public CommonRet<String> getStockoutPDFBillUrl(@ParamNotBlank("出库单biz不能为空") Long stockoutOrderBizId) {
+        LogBetter.instance(logger).setLevel(LogLevel.INFO)
+        .setMsg("[物流开放平台-获取出库单PDF面单url]")
+        .addParm("stockoutOrderBizId", stockoutOrderBizId)
+        .log();
+        CommonRet<String> commonRet = new CommonRet<String>();
+        try {
+            
+            StockoutOrderDO stockoutOrderDO = stockoutOrderManager.getByBizId(String.valueOf(stockoutOrderBizId));
+            if (null == stockoutOrderDO || null == stockoutOrderDO.getMerchantProviderId()) {
+                LogBetter.instance(logger).setLevel(LogLevel.ERROR)
+                .setErrorMsg("[物流开放平台-获取出库单PDF面单url]:出库单信息不存在")
+                .addParm("stockoutOrderBizId", stockoutOrderBizId)
+                .log();
+                commonRet.setRetCode(StockoutReturnCode.STOCKOUT_ORDER_PARAM_ILLIGAL.getCode());
+                commonRet.setRetMsg(StockoutReturnCode.STOCKOUT_ORDER_PARAM_ILLIGAL.getDesc());
+                return commonRet;
+            }
+            List<StockoutOrderDetailDO> stockoutOrderDetailList = stockoutOrderDetailManager.getByStockoutOrderId(stockoutOrderDO.getId());
+            if (CollectionUtils.isEmpty(stockoutOrderDetailList)) {
+                LogBetter.instance(logger).setLevel(LogLevel.ERROR)
+                .setErrorMsg("[物流开放平台-获取出库单PDF面单url]:出库单商品详情信息不存在")
+                .addParm("stockoutOrderBizId", stockoutOrderBizId)
+                .log();
+                commonRet.setRetCode(StockoutReturnCode.STOCKOUT_ORDER_PARAM_ILLIGAL.getCode());
+                commonRet.setRetMsg(StockoutReturnCode.STOCKOUT_ORDER_PARAM_ILLIGAL.getDesc());
+                return commonRet;
+            }
+            String region = merchantProviderManager.queryMerchantProviderIdByNationCode(stockoutOrderDetailList.get(0).getMerchantProviderId());
+            if (StringUtils.isBlank(region)) {
+                LogBetter.instance(logger).setLevel(LogLevel.ERROR)
+                .setErrorMsg("[物流开放平台-获取出库单PDF面单url]:该出库单货主供应商地区不存在")
+                .addParm("stockoutOrderBizId", stockoutOrderBizId)
+                .log();
+                commonRet.setRetCode(StockoutReturnCode.STOCKOUT_ORDER_PARAM_ILLIGAL.getCode());
+                commonRet.setRetMsg(StockoutReturnCode.STOCKOUT_ORDER_PARAM_ILLIGAL.getDesc());
+                return commonRet;
+            }
+            //按规则生成PDF的文件名称
+            String pdfFileName = pdfOrderCreateProcessor.generateShipOrderPdfName(stockoutOrderBizId);
+            String ossFileDownloadPath = "http://"
+                    + fileOperationService
+                        .getOssClientBucketNameByRegion(region)
+                    + "."
+                    + fileOperationService.getOssClientEndPointByRegion(
+                        region).substring("http://".length())
+                    + "/supplychainStockoutorderdownload/" + pdfFileName;
+            commonRet.setResult(ossFileDownloadPath);
+            commonRet.setRetCode(SCReturnCode.COMMON_SUCCESS.getCode());
+            commonRet.setRetMsg(SCReturnCode.COMMON_SUCCESS.getDesc());
+        } catch (Exception e) {
+            LogBetter.instance(logger)
+            .setLevel(LogLevel.ERROR)
+            .setErrorMsg("[物流开放平台-获取出库单PDF面单url] 异常")
+            .setException(e)
+            .log();
+
+            commonRet.setRetCode(StockoutTaskReturnCode.STOCKOUTTASK_UNKNOWN_ERROR.getCode());
+            commonRet.setRetMsg(e.getMessage());
+        }
+        
+        return commonRet;
     }
 
 }

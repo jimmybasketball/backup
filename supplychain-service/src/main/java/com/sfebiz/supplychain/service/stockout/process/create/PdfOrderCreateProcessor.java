@@ -9,8 +9,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import net.pocrd.entity.ServiceException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -48,6 +46,8 @@ import com.sfebiz.supplychain.service.stockout.process.StockoutProcessAction;
 import com.sfebiz.supplychain.service.stockout.statemachine.model.StockoutOrderRequest;
 import com.sfebiz.supplychain.util.FileUtil;
 import com.sfebiz.supplychain.util.NumberUtil;
+
+import net.pocrd.entity.ServiceException;
 
 /**
  * User: <a href="mailto:lenolix@163.com">李星</a>
@@ -123,7 +123,7 @@ public class PdfOrderCreateProcessor extends StockoutProcessAction {
                 // 创建发货单PDF文件
                 buildPdfFile(shipOrderBOList, pdfTmpPath, warehouseDO);
                 // 文件上传到OSS
-                fileOperationService.uploadFile2OSS(CONTENT_TYPE_PDF, "stockoutorderdownload/",
+                fileOperationService.uploadFile2OSS(CONTENT_TYPE_PDF, "supplychainStockoutorderdownload/",
                     pdfFileName, region);
                 String ossFileDownloadPath = "http://"
                                              + fileOperationService
@@ -131,7 +131,7 @@ public class PdfOrderCreateProcessor extends StockoutProcessAction {
                                              + "."
                                              + fileOperationService.getOssClientEndPointByRegion(
                                                  region).substring("http://".length())
-                                             + "/stockoutorderdownload/" + pdfFileName;
+                                             + "/supplychainStockoutorderdownload/" + pdfFileName;
                 LogBetter.instance(logger).setLevel(LogLevel.INFO).setMsg("ossPDF文件地址")
                     .addParm("PDF文件路径", ossFileDownloadPath).log();
                 // 删除临时文件
@@ -203,7 +203,7 @@ public class PdfOrderCreateProcessor extends StockoutProcessAction {
     //        return logisticsProvider;
     //    }
 
-    protected String generateShipOrderPdfName(Long stockoutOrderId) {
+    public String generateShipOrderPdfName(Long stockoutOrderId) {
         return "shiporder-" + stockoutOrderId + ".pdf";
     }
 
