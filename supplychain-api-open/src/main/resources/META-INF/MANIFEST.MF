@@ -1,2 +1,0 @@
-Api-Export: com.sfebiz.supplychain.open.exposed.wms.api.OpenWmsGoodsService com.sfebiz.supplychain.open.exposed.wms.api.OpenWmsTradeService
-Api-Dependency-Type: dubbo

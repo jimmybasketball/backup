@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Suite1]">
+  <test name="Test1(failed)">
+    <parameter name="myName" value="jimmy"/>
+    <parameter name="boyName" value="kevin"/>
+    <classes>
+      <class name="testngLearn.ParameterizedTest1">
+        <methods>
+          <include name="parameterTest"/>
+          <include name="parameterTest2"/>
+        </methods>
+      </class> <!-- testngLearn.ParameterizedTest1 -->
+    </classes>
+  </test> <!-- Test1(failed) -->
+</suite> <!-- Failed suite [Suite1] -->

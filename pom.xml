@@ -663,5 +663,6 @@
         <module>supplychain-persistence</module>
         <module>supplychain-sdk</module>
         <module>supplychain-sdk-tws</module>
+    <module>jimmy01</module>
   </modules>
 </project>

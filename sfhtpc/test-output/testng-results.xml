@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="3" passed="3">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Suite" duration-ms="46" started-at="2017-06-22T08:47:16Z" finished-at="2017-06-22T08:47:16Z">
+    <groups>
+    </groups>
+    <test name="Test" duration-ms="46" started-at="2017-06-22T08:47:16Z" finished-at="2017-06-22T08:47:16Z">
+      <class name="testngLearn.DependencyTestUsingAnnotation">
+        <test-method status="PASS" signature="initEnvironmentTest()[pri:0, instance:testngLearn.DependencyTestUsingAnnotation@cb5822]" name="initEnvironmentTest" duration-ms="10" started-at="2017-06-22T16:47:16Z" finished-at="2017-06-22T16:47:16Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initEnvironmentTest -->
+        <test-method status="PASS" signature="testPrintMessage()[pri:0, instance:testngLearn.DependencyTestUsingAnnotation@cb5822]" name="testPrintMessage" duration-ms="4" started-at="2017-06-22T16:47:16Z" finished-at="2017-06-22T16:47:16Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testPrintMessage -->
+        <test-method status="PASS" signature="testSalutationMessage()[pri:0, instance:testngLearn.DependencyTestUsingAnnotation@cb5822]" name="testSalutationMessage" duration-ms="1" started-at="2017-06-22T16:47:16Z" depends-on-methods="testngLearn.DependencyTestUsingAnnotation.initEnvironmentTest" finished-at="2017-06-22T16:47:16Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSalutationMessage -->
+      </class> <!-- testngLearn.DependencyTestUsingAnnotation -->
+    </test> <!-- Test -->
+  </suite> <!-- Suite -->
+</testng-results>

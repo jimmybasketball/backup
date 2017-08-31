@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.fq.logistics</groupId>
+    <artifactId>logistics-demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>com.fq.logistics</groupId>
+            <artifactId>logistics-demo</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    <!--Rest assured依赖包-->
+    <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>rest-assured</artifactId>
+        <version>3.0.1</version>
+        <!--<scope>test</scope>&lt;!&ndash;会发现我们自己建的类无法使用，是因为设置了只在测试时使用，用于编译和运行测试代码。不会随项目发布，删除<scope>后所有类都可使用&ndash;&gt;-->
+    </dependency>
+    <!--独立Json path依赖包-->
+    <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>json-path</artifactId>
+        <version>3.0.1</version>
+    </dependency>
+    <!--独立的Xml path依赖包-->
+    <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>xml-path</artifactId>
+        <version>3.0.1</version>
+    </dependency>
+
+</project>
